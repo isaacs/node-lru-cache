@@ -1,0 +1,7 @@
+{ "name" : "lru-cache"
+, "description" : "A cache object that deletes the least-recently-used items."
+, "version" : "1.0.0"
+, "author" : "Isaac Z. Schlueter <i@izs.me>"
+, "scripts" : { "test" : "node lib/lru-cache.js" }
+, "main" : "lib/lru-cache"
+}
