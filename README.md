@@ -6,7 +6,7 @@ Usage:
 
     var LRU = require("lru-cache")
       , cache = LRU(10) // max 10 items. default = Infinity
-    cache.put("key", "value")
+    cache.set("key", "value")
     cache.get("key") // "value"
 
 RTFS for more info.
