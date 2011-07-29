@@ -5,4 +5,9 @@
 , "scripts" : { "test" : "node lib/lru-cache.js" }
 , "main" : "lib/lru-cache"
 , "repository" : "git://github.com/isaacs/node-lru-cache.git"
+, "licenses" :
+  [ { "type" : "MIT"
+    , "url" : "http://github.com/isaacs/node-lru-cache/raw/master/LICENSE"
+    }
+  ]
 }
