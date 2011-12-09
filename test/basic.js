@@ -79,3 +79,15 @@ test('maxLength', function (t) {
   }
   t.end()
 })
+
+test('reset', function (t) {
+  var cache = new LRU(10)
+  cache.set("a", "A")
+  cache.set("b", "B")
+  cache.reset()
+  t.equal(cache.length, 0)
+  t.equal(cache.maxLength, 10)
+  t.equal(cache.get("a"), undefined)
+  t.equal(cache.get("b"), undefined)
+  t.end()
+})
