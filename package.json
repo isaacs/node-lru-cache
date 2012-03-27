@@ -1,6 +1,6 @@
 { "name": "lru-cache"
 , "description": "A cache object that deletes the least-recently-used items."
-, "version": "1.0.5"
+, "version": "1.0.6"
 , "author": "Isaac Z. Schlueter <i@izs.me>"
 , "scripts": { "test": "tap test" }
 , "main": "lib/lru-cache.js"
