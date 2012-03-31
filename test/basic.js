@@ -92,6 +92,7 @@ test('reset', function (t) {
   t.end()
 })
 
+
 // Note: `<cache>.dump()` is a debugging tool only. No guarantees are made
 // about the format/layout of the response.
 test('dump', function (t) {
@@ -113,5 +114,36 @@ test('dump', function (t) {
   t.equal(d.b.value, 'B')
   t.equal(d.b.lu, 2)
 
+  t.end()
+})
+
+
+test('basicLengthCalculator', function (t) {
+  //console.log("WOOT")
+  var cache = new LRU(100, function (item) { return item.size } )
+  cache.set("key", {val: "value", size: 50})
+  t.equal(cache.get("key").val, "value")
+  t.equal(cache.get("nada"), undefined)
+  //console.log("WOOT")
+  //console.log(cache.lengthCalculator)
+  t.equal(cache.lengthCalculator(cache.get("key")), 50)  
+  t.equal(cache.length, 50)
+  t.equal(cache.maxLength, 100)
+  t.end()
+})
+
+
+test('itemTooLarge', function (t) {
+  //console.log("WOOT")
+  var cache = new LRU(10, function (item) { return item.size } )
+  t.equal(cache.maxLength, 10)
+  
+  try {
+    cache.set("key", {val: "value", size: 50})  
+  } catch (e) {
+    t.equal("Trying to add an item with a length[50] superior to the maxLength[10]", e.message)  
+  }
+
+  t.equal(cache.length, 0)
   t.end()
 })
