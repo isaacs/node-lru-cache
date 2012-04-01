@@ -118,14 +118,11 @@ test('dump', function (t) {
 })
 
 
-test('basicLengthCalculator', function (t) {
-  //console.log("WOOT")
+test('basic with weighed length', function (t) {
   var cache = new LRU(100, function (item) { return item.size } )
   cache.set("key", {val: "value", size: 50})
   t.equal(cache.get("key").val, "value")
   t.equal(cache.get("nada"), undefined)
-  //console.log("WOOT")
-  //console.log(cache.lengthCalculator)
   t.equal(cache.lengthCalculator(cache.get("key")), 50)  
   t.equal(cache.length, 50)
   t.equal(cache.maxLength, 100)
@@ -133,8 +130,7 @@ test('basicLengthCalculator', function (t) {
 })
 
 
-test('itemTooLarge', function (t) {
-  //console.log("WOOT")
+test('weighed length item too large', function (t) {
   var cache = new LRU(10, function (item) { return item.size } )
   t.equal(cache.maxLength, 10)
   
@@ -145,5 +141,33 @@ test('itemTooLarge', function (t) {
   }
 
   t.equal(cache.length, 0)
+  t.end()
+})
+
+test('least recently set with weighed length', function (t) {
+  var cache = new LRU(8, function (item) { return item.length })
+  cache.set("a", "A")
+  cache.set("b", "BB")
+  cache.set("c", "CCC")
+  cache.set("d", "DDDD")
+  t.equal(cache.get("d"), "DDDD")
+  t.equal(cache.get("c"), "CCC")
+  t.equal(cache.get("b"), undefined)
+  t.equal(cache.get("a"), undefined)
+  t.end()
+})
+
+test('lru recently gotten with weighed length', function (t) {
+  var cache = new LRU(8, function (item) { return item.length })
+  cache.set("a", "A")
+  cache.set("b", "BB")
+  cache.set("c", "CCC")
+  cache.get("a")
+  cache.get("b")
+  cache.set("d", "DDDD")
+  t.equal(cache.get("c"), undefined)
+  t.equal(cache.get("d"), "DDDD")
+  t.equal(cache.get("b"), "BB")
+  t.equal(cache.get("a"), "A")
   t.end()
 })
