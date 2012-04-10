@@ -1,7 +1,7 @@
-var test = require('tap').test
-  , LRU = require('../')
+var test = require("tap").test
+  , LRU = require("../")
 
-test('basic', function (t) {
+test("basic", function (t) {
   var cache = new LRU(10)
   cache.set("key", "value")
   t.equal(cache.get("key"), "value")
@@ -11,7 +11,7 @@ test('basic', function (t) {
   t.end()
 })
 
-test('least recently set', function (t) {
+test("least recently set", function (t) {
   var cache = new LRU(2)
   cache.set("a", "A")
   cache.set("b", "B")
@@ -22,7 +22,7 @@ test('least recently set', function (t) {
   t.end()
 })
 
-test('lru recently gotten', function (t) {
+test("lru recently gotten", function (t) {
   var cache = new LRU(2)
   cache.set("a", "A")
   cache.set("b", "B")
@@ -34,7 +34,7 @@ test('lru recently gotten', function (t) {
   t.end()
 })
 
-test('del', function (t) {
+test("del", function (t) {
   var cache = new LRU(2)
   cache.set("a", "A")
   cache.del("a")
@@ -42,7 +42,7 @@ test('del', function (t) {
   t.end()
 })
 
-test('maxLength', function (t) {
+test("maxLength", function (t) {
   var cache = new LRU(3)
 
   // test changing the maxLength, verify that the LRU items get dropped.
@@ -80,7 +80,7 @@ test('maxLength', function (t) {
   t.end()
 })
 
-test('reset', function (t) {
+test("reset", function (t) {
   var cache = new LRU(10)
   cache.set("a", "A")
   cache.set("b", "B")
@@ -95,56 +95,54 @@ test('reset', function (t) {
 
 // Note: `<cache>.dump()` is a debugging tool only. No guarantees are made
 // about the format/layout of the response.
-test('dump', function (t) {
+test("dump", function (t) {
   var cache = new LRU(10)
   var d = cache.dump();
   t.equal(Object.keys(d).length, 0, "nothing in dump for empty cache")
   cache.set("a", "A")
-  var d = cache.dump()  // { a: { key: 'a', value: 'A', lu: 0 } }
+  var d = cache.dump()  // { a: { key: "a", value: "A", lu: 0 } }
   t.ok(d.a)
-  t.equal(d.a.key, 'a')
-  t.equal(d.a.value, 'A')
+  t.equal(d.a.key, "a")
+  t.equal(d.a.value, "A")
   t.equal(d.a.lu, 0)
 
   cache.set("b", "B")
   cache.get("b")
   d = cache.dump()
   t.ok(d.b)
-  t.equal(d.b.key, 'b')
-  t.equal(d.b.value, 'B')
+  t.equal(d.b.key, "b")
+  t.equal(d.b.value, "B")
   t.equal(d.b.lu, 2)
 
   t.end()
 })
 
 
-test('basic with weighed length', function (t) {
+test("basic with weighed length", function (t) {
   var cache = new LRU(100, function (item) { return item.size } )
   cache.set("key", {val: "value", size: 50})
   t.equal(cache.get("key").val, "value")
   t.equal(cache.get("nada"), undefined)
-  t.equal(cache.lengthCalculator(cache.get("key")), 50)  
+  t.equal(cache.lengthCalculator(cache.get("key")), 50)
   t.equal(cache.length, 50)
   t.equal(cache.maxLength, 100)
   t.end()
 })
 
 
-test('weighed length item too large', function (t) {
+test("weighed length item too large", function (t) {
   var cache = new LRU(10, function (item) { return item.size } )
   t.equal(cache.maxLength, 10)
-  
-  try {
-    cache.set("key", {val: "value", size: 50})  
-  } catch (e) {
-    t.equal("Trying to add an item with a length[50] superior to the maxLength[10]", e.message)  
-  }
+
+  // should fall out immediately
+  cache.set("key", {val: "value", size: 50})
 
   t.equal(cache.length, 0)
+  t.equal(cache.get("key"), undefined)
   t.end()
 })
 
-test('least recently set with weighed length', function (t) {
+test("least recently set with weighed length", function (t) {
   var cache = new LRU(8, function (item) { return item.length })
   cache.set("a", "A")
   cache.set("b", "BB")
@@ -157,7 +155,7 @@ test('least recently set with weighed length', function (t) {
   t.end()
 })
 
-test('lru recently gotten with weighed length', function (t) {
+test("lru recently gotten with weighed length", function (t) {
   var cache = new LRU(8, function (item) { return item.length })
   cache.set("a", "A")
   cache.set("b", "BB")
