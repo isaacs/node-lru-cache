@@ -170,7 +170,6 @@ test("lru recently gotten with weighed length", function (t) {
   t.end()
 })
 
-
 test("set returns proper booleans", function(t) {
   var cache = new LRU(5, function (item) { return item.length })
   t.equal(cache.set("a", "A"), true)
