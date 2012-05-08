@@ -177,7 +177,7 @@ test("set returns proper booleans", function(t) {
   // should return false for maxLength exceeded
   t.equal(cache.set("b", "donuts"), false)
 
-  t.equal(cache.set("b", "B"), true);
-  t.equal(cache.set("c", "CCCC"), true);
+  t.equal(cache.set("b", "B"), true)
+  t.equal(cache.set("c", "CCCC"), true)
   t.end()
 })
