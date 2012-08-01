@@ -181,3 +181,30 @@ test("set returns proper booleans", function(t) {
   t.equal(cache.set("c", "CCCC"), true)
   t.end()
 })
+
+test("drop the old items", function(t) {
+  var cache = new LRU(5, null, 50)
+
+  cache.set("a", "A")
+
+  setTimeout(function () {
+    cache.set("b", "b")
+    t.equal(cache.get("a"), "A")
+  }, 25)
+
+  setTimeout(function () {
+    cache.set("c", "C")
+    // timed out
+    t.notOk(cache.get("a"))
+  }, 51)
+
+  setTimeout(function () {
+    t.notOk(cache.get("b"))
+    t.equal(cache.get("c"), "C")
+  }, 90)
+
+  setTimeout(function () {
+    t.notOk(cache.get("c"))
+    t.end()
+  }, 155)
+})
