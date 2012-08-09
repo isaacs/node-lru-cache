@@ -227,3 +227,22 @@ test("drop the old items", function(t) {
     t.end()
   }, 155)
 })
+
+test("disposal function", function(t) {
+  var disposed = false
+  var cache = new LRU({
+    max: 1,
+    dispose: function (k, n) {
+      disposed = n
+    }
+  })
+
+  cache.set(1, 1)
+  cache.set(2, 2)
+  t.equal(disposed, 1)
+  cache.set(3, 3)
+  t.equal(disposed, 2)
+  cache.reset()
+  t.equal(disposed, 3)
+  t.end()
+})
