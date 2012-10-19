@@ -279,6 +279,23 @@ test("has()", function(t) {
   t.equal(cache.has('blu'), true)
   setTimeout(function() {
     t.equal(cache.has('blu'), false)
+    t.end()
   }, 10)
-  t.end()
+})
+
+test("stale", function(t) {
+  var cache = new LRU({
+    maxAge: 10,
+    stale: true
+  })
+
+  cache.set('foo', 'bar')
+  t.equal(cache.get('foo'), 'bar')
+  t.equal(cache.has('foo'), true)
+  setTimeout(function() {
+    t.equal(cache.has('foo'), false)
+    t.equal(cache.get('foo'), 'bar')
+    t.equal(cache.get('foo'), undefined)
+    t.end()
+  }, 10)
 })
