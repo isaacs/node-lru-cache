@@ -265,3 +265,20 @@ test("disposal function on too big of item", function(t) {
   t.equal(disposed, obj)
   t.end()
 })
+
+test("has()", function(t) {
+  var cache = new LRU({
+    max: 1,
+    maxAge: 10
+  })
+
+  cache.set('foo', 'bar')
+  t.equal(cache.has('foo'), true)
+  cache.set('blu', 'baz')
+  t.equal(cache.has('foo'), false)
+  t.equal(cache.has('blu'), true)
+  setTimeout(function() {
+    t.equal(cache.has('blu'), false)
+  }, 10)
+  t.end()
+})
