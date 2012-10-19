@@ -280,7 +280,7 @@ test("has()", function(t) {
   setTimeout(function() {
     t.equal(cache.has('blu'), false)
     t.end()
-  }, 10)
+  }, 15)
 })
 
 test("stale", function(t) {
@@ -297,5 +297,5 @@ test("stale", function(t) {
     t.equal(cache.get('foo'), 'bar')
     t.equal(cache.get('foo'), undefined)
     t.end()
-  }, 10)
+  }, 15)
 })
