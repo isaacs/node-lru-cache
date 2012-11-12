@@ -228,6 +228,83 @@ test("drop the old items", function(t) {
   }, 155)
 })
 
+test("drop the old items with set options", function(t) {
+  var cache = new LRU({
+    max: 5
+  })
+  var opts = { maxAge: 50 }
+
+  cache.set("a", "A", opts)
+
+  setTimeout(function () {
+    cache.set("b", "b", opts)
+    t.equal(cache.get("a"), "A")
+  }, 25)
+
+  setTimeout(function () {
+    cache.set("c", "C", opts)
+    // timed out
+    t.notOk(cache.get("a"))
+  }, 60)
+
+  setTimeout(function () {
+    t.notOk(cache.get("b"))
+    t.equal(cache.get("c"), "C")
+  }, 90)
+
+  setTimeout(function () {
+    t.notOk(cache.get("c"))
+    t.end()
+  }, 155)
+})
+
+test("don't get the old items with get options", function(t) {
+  var cache = new LRU({
+    max: 10,
+    maxAge: 100
+  })
+  var ma50 = { maxAge: 50 }
+
+  cache.set("a", "A") // expires at 100
+
+  setTimeout(function () {
+    cache.set("b", "b", { maxAge: 60 }) // expires at 85
+    t.equal(cache.get("a"), "A")
+    t.equal(cache.get("a", ma50), "A")
+  }, 25)
+
+  setTimeout(function () {
+    cache.set("c", "C") // expires at 160
+    cache.set("d", "D") // expires at 160
+    cache.set("e", "E", { maxAge: 10 }) // expires at 70
+    t.equal(cache.get("a"), "A")
+    
+    t.notOk(cache.get("a", ma50)) // 60 > 50
+  }, 60)
+
+  setTimeout(function () {
+    t.notOk(cache.get("b", ma50))
+    t.notOk(cache.get("b"))
+    t.equal(cache.get("c", ma50), "C")
+    t.equal(cache.get("c"), "C")
+  }, 90)
+
+  setTimeout(function () {
+    t.notOk(cache.get("c", ma50))
+    t.equal(cache.get("c"), "C")
+    t.notOk(cache.get("d", ma50))
+    t.equal(cache.get("d"), "D")
+    t.notOk(cache.get("e", ma50))
+    t.notOk(cache.get("e")) // expired
+  }, 150)
+
+  setTimeout(function () {
+    t.notOk(cache.get("c", ma50))
+    t.notOk(cache.get("d"))
+    t.end()
+  }, 190)
+})
+
 test("disposal function", function(t) {
   var disposed = false
   var cache = new LRU({
@@ -283,6 +360,19 @@ test("has()", function(t) {
   }, 15)
 })
 
+test("has() with options", function(t) {
+  var cache = new LRU({
+    max: 1
+  })
+
+  cache.set('blu', 'baz')
+  t.equal(cache.has('blu', { maxAge: 10 }), true)
+  setTimeout(function() {
+    t.equal(cache.has('blu', { maxAge: 10 }), false)
+    t.end()
+  }, 15)
+})
+
 test("stale", function(t) {
   var cache = new LRU({
     maxAge: 10,
@@ -296,6 +386,38 @@ test("stale", function(t) {
     t.equal(cache.has('foo'), false)
     t.equal(cache.get('foo'), 'bar')
     t.equal(cache.get('foo'), undefined)
+    t.end()
+  }, 15)
+})
+
+test("stale in options", function(t) {
+  var cache = new LRU({
+    maxAge: 10
+  })
+
+  cache.set('foo', 'bar')
+  t.equal(cache.get('foo'), 'bar')
+  t.equal(cache.has('foo'), true)
+  setTimeout(function() {
+    t.equal(cache.has('foo'), false)
+    t.equal(cache.get('foo', { stale: true }), 'bar')
+    t.equal(cache.get('foo', { stale: true }), undefined)
+    t.end()
+  }, 15)
+})
+
+test("stale in options overrides global stale", function(t) {
+  var cache = new LRU({
+    maxAge: 10,
+    stale: true
+  })
+
+  cache.set('foo', 'bar')
+  t.equal(cache.get('foo'), 'bar')
+  t.equal(cache.has('foo'), true)
+  setTimeout(function() {
+    t.equal(cache.has('foo'), false)
+    t.equal(cache.get('foo', { stale: false }), undefined)
     t.end()
   }, 15)
 })
