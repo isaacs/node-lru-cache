@@ -77,3 +77,11 @@ away.
     Just like `Array.prototype.forEach`.  Iterates over all the keys
     in the cache, in order of recent-ness.  (Ie, more recently used
     items are iterated over first.)
+
+* `keys()`
+
+    Return an array of the keys in the cache.
+
+* `values()`
+
+    Return an array of the values in the cache.
