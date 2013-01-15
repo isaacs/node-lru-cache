@@ -26,7 +26,7 @@ away.
 
 ## Options
 
-* `max` The maximum number of items.  Not setting this is kind of
+* `max` The maximum size of the cache, checked by applying the length function to all values in the cache.  Not setting this is kind of
   silly, since that's the whole purpose of this lib, but it defaults
   to `Infinity`.
 * `maxAge` Maximum age in ms.  Items are not pro-actively pruned out
