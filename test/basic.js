@@ -315,3 +315,15 @@ test("lru update via set", function(t) {
   t.equal(cache.get('qux'), 4)
   t.end()
 })
+
+test("least recently set w/ peek", function (t) {
+  var cache = new LRU(2)
+  cache.set("a", "A")
+  cache.set("b", "B")
+  t.equal(cache.peek("a"), "A")
+  cache.set("c", "C")
+  t.equal(cache.get("c"), "C")
+  t.equal(cache.get("b"), "B")
+  t.equal(cache.get("a"), undefined)
+  t.end()
+})
