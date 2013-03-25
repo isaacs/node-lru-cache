@@ -60,6 +60,15 @@ away.
     Both of these will update the "recently used"-ness of the key.
     They do what you think.
 
+* `peek(key)`
+
+    Returns the key value (or `undefined` if not found) without
+    updating the "recently used"-ness of the key.
+
+    (If you find yourself using this a lot, you *might* be using the
+    wrong sort of data structure, but there are some use cases where
+    it's handy.)
+
 * `del(key)`
 
     Deletes a key out of the cache.

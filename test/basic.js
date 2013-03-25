@@ -300,12 +300,12 @@ test("stale", function(t) {
   }, 15)
 })
 
-test("least recently set w/ _get", function (t) {
+test("least recently set w/ peek", function (t) {
   var cache = new LRU(2)
   cache.set("a", "A")
   cache.set("b", "B")
+  t.equal(cache.peek("a"), "A")
   cache.set("c", "C")
-  cache._get("a")
   t.equal(cache.get("c"), "C")
   t.equal(cache.get("b"), "B")
   t.equal(cache.get("a"), undefined)
