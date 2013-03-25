@@ -299,3 +299,15 @@ test("stale", function(t) {
     t.end()
   }, 15)
 })
+
+test("least recently set w/ _get", function (t) {
+  var cache = new LRU(2)
+  cache.set("a", "A")
+  cache.set("b", "B")
+  cache.set("c", "C")
+  cache._get("a")
+  t.equal(cache.get("c"), "C")
+  t.equal(cache.get("b"), "B")
+  t.equal(cache.get("a"), undefined)
+  t.end()
+})
