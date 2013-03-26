@@ -299,3 +299,19 @@ test("stale", function(t) {
     t.end()
   }, 15)
 })
+
+test("lru update via set", function(t) {
+  var cache = LRU({ max: 2 });
+
+  cache.set('foo', 1);
+  cache.set('bar', 2);
+  cache.del('bar');
+  cache.set('baz', 3);
+  cache.set('qux', 4);
+
+  t.equal(cache.get('foo'), undefined)
+  t.equal(cache.get('bar'), undefined)
+  t.equal(cache.get('baz'), 3)
+  t.equal(cache.get('qux'), 4)
+  t.end()
+})
