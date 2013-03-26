@@ -1,7 +1,7 @@
 {
   "name": "lru-cache",
   "description": "A cache object that deletes the least-recently-used items.",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "author": "Isaac Z. Schlueter <i@izs.me>",
   "scripts": {
     "test": "tap test --gc"
