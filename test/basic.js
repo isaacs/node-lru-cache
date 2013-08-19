@@ -11,6 +11,17 @@ test("basic", function (t) {
   t.end()
 })
 
+test("special keys", function (t) {
+  var cache = new LRU(2)
+  cache.set("__proto__", Array.prototype)
+  cache.set("toString", console.error)
+  var d = cache.dump()
+  t.equal(d.__proto__, null)
+  t.equal(d.toString, undefined)
+  t.same(Object.keys(d), [ 'lru___proto__', 'lru_toString' ])
+  t.end()
+})
+
 test("least recently set", function (t) {
   var cache = new LRU(2)
   cache.set("a", "A")
@@ -101,22 +112,21 @@ test("dump", function (t) {
   t.equal(Object.keys(d).length, 0, "nothing in dump for empty cache")
   cache.set("a", "A")
   var d = cache.dump()  // { a: { key: "a", value: "A", lu: 0 } }
-  t.ok(d.a)
-  t.equal(d.a.key, "a")
-  t.equal(d.a.value, "A")
-  t.equal(d.a.lu, 0)
+  t.ok(d.lru_a)
+  t.equal(d.lru_a.key, "a")
+  t.equal(d.lru_a.value, "A")
+  t.equal(d.lru_a.lu, 0)
 
   cache.set("b", "B")
   cache.get("b")
   d = cache.dump()
-  t.ok(d.b)
-  t.equal(d.b.key, "b")
-  t.equal(d.b.value, "B")
-  t.equal(d.b.lu, 2)
+  t.ok(d.lru_b)
+  t.equal(d.lru_b.key, "b")
+  t.equal(d.lru_b.value, "B")
+  t.equal(d.lru_b.lu, 2)
 
   t.end()
 })
-
 
 test("basic with weighed length", function (t) {
   var cache = new LRU({
