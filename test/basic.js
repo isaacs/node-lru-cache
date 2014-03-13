@@ -228,6 +228,19 @@ test("drop the old items", function(t) {
   }, 155)
 })
 
+test("individual item can have it's own maxAge", function(t) {
+  var cache = new LRU({
+    max: 5,
+    maxAge: 50
+  })
+
+  cache.set("a", "A", 20)
+  setTimeout(function () {
+    t.notOk(cache.get("a"))
+    t.end()
+  }, 25)
+})
+
 test("disposal function", function(t) {
   var disposed = false
   var cache = new LRU({
