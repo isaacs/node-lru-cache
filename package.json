@@ -3,6 +3,9 @@
   "description": "A cache object that deletes the least-recently-used items.",
   "version": "2.5.2",
   "author": "Isaac Z. Schlueter <i@izs.me>",
+  "keywords": [
+    "mru"
+  ],
   "scripts": {
     "test": "tap test --gc"
   },
