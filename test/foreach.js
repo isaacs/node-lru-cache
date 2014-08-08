@@ -28,6 +28,7 @@ test('forEach', function (t) {
     t.equal(key, j.toString())
     t.equal(val, j.toString(2))
   })
+  t.equal(i, order.length);
 
   t.end()
 })
@@ -50,3 +51,35 @@ test('keys() and values()', function (t) {
 
   t.end()
 })
+
+test('expires', function (t) {
+  var l = new LRU({
+    max: 10,
+    maxAge: 50
+  })
+  for (var i = 0; i < 10; i++) {
+    l.set(i.toString(), i.toString(2), ((i % 2) ? 25 : undefined))
+  }
+
+  var i = 0
+  var order = [ 8, 6, 4, 2, 0 ]
+  setTimeout(function () {
+    l.forEach(function (val, key, cache) {
+      var j = order[i++]
+      t.equal(cache, l)
+      t.equal(key, j.toString())
+      t.equal(val, j.toString(2))
+    })
+    t.equal(i, order.length);
+    t.end()
+
+    setTimeout(function () {
+      var count = 0;
+      l.forEach(function (val, key, cache) { count++; })
+      t.equal(0, count);
+      t.end()
+    }, 25)
+
+  }, 26)
+})
+

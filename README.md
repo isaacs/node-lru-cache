@@ -1,4 +1,4 @@
-# lru cache
+# lru cache plus
 
 A cache object that deletes the least-recently-used items.
 
@@ -54,11 +54,12 @@ away.
 
 ## API
 
-* `set(key, value)`
+* `set(key, value, max)`
 * `get(key) => value`
 
     Both of these will update the "recently used"-ness of the key.
-    They do what you think.
+    They do what you think. `max` is optional and overrides the
+    cache `max` option if provided.
 
 * `peek(key)`
 
