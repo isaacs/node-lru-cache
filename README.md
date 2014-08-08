@@ -1,4 +1,4 @@
-# lru cache
+# lru cache plus
 
 A cache object that deletes the least-recently-used items.
 

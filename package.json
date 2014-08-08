@@ -1,8 +1,11 @@
 {
-  "name": "lru-cache",
-  "description": "A cache object that deletes the least-recently-used items.",
+  "name": "lru-cache-plus",
+  "description": "Isaac's lru-cache 2.5.0 plus: cached items may have individual expirations.",
   "version": "2.5.0",
   "author": "Isaac Z. Schlueter <i@izs.me>",
+  "contributors": [
+    "Scott Ganyo <sganyo@apigee.com>"
+  ],
   "scripts": {
     "test": "tap test --gc"
   },
