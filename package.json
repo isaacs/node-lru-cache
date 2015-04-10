@@ -9,7 +9,7 @@
   "main": "lib/lru-cache.js",
   "repository": "git://github.com/isaacs/node-lru-cache.git",
   "devDependencies": {
-    "tap": "",
+    "tap": "^0.7.1",
     "weak": ""
   },
   "license": {
