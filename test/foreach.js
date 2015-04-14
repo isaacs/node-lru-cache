@@ -50,3 +50,40 @@ test('keys() and values()', function (t) {
 
   t.end()
 })
+
+test('all entries are iterated over', function(t) {
+  var l = new LRU(5)
+  for (var i = 0; i < 10; i ++) {
+    l.set(i.toString(), i.toString(2))
+  }
+
+  var i = 0
+  l.forEach(function (val, key, cache) {
+    if (i > 0) {
+      cache.del(key)
+    }
+    i += 1
+  })
+
+  t.equal(i, 5)
+  t.equal(l.keys().length, 1)
+
+  t.end()
+})
+
+test('all stale entries are removed', function(t) {
+  var l = new LRU({ max: 5, maxAge: -5, stale: true })
+  for (var i = 0; i < 10; i ++) {
+    l.set(i.toString(), i.toString(2))
+  }
+
+  var i = 0
+  l.forEach(function () {
+    i += 1
+  })
+
+  t.equal(i, 5)
+  t.equal(l.keys().length, 0)
+
+  t.end()
+})
