@@ -4,7 +4,9 @@
   "version": "2.5.2",
   "author": "Isaac Z. Schlueter <i@izs.me>",
   "keywords": [
-    "mru"
+    "mru",
+    "lru",
+    "cache"
   ],
   "scripts": {
     "test": "tap test --gc"
