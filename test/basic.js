@@ -93,31 +93,6 @@ test("reset", function (t) {
 })
 
 
-// Note: `<cache>.dump()` is a debugging tool only. No guarantees are made
-// about the format/layout of the response.
-test("dump", function (t) {
-  var cache = new LRU(10)
-  var d = cache.dump();
-  t.equal(Object.keys(d).length, 0, "nothing in dump for empty cache")
-  cache.set("a", "A")
-  var d = cache.dump()  // { a: { key: "a", value: "A", lu: 0 } }
-  t.ok(d.a)
-  t.equal(d.a.key, "a")
-  t.equal(d.a.value, "A")
-  t.equal(d.a.lu, 0)
-
-  cache.set("b", "B")
-  cache.get("b")
-  d = cache.dump()
-  t.ok(d.b)
-  t.equal(d.b.key, "b")
-  t.equal(d.b.value, "B")
-  t.equal(d.b.lu, 2)
-
-  t.end()
-})
-
-
 test("basic with weighed length", function (t) {
   var cache = new LRU({
     max: 100,
