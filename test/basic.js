@@ -157,6 +157,32 @@ test("lru recently gotten with weighed length", function (t) {
   t.end()
 })
 
+test("lru recently updated with weighed length", function (t) {
+  var cache = new LRU({
+    max: 8,
+    length: function (item) { return item.length }
+  })
+  cache.set("a", "A")
+  cache.set("b", "BB")
+  cache.set("c", "CCC")
+  t.equal(cache.length, 6) //CCC BB A
+  cache.set("a", "+A")
+  t.equal(cache.length, 7) //+A CCC BB
+  cache.set("b", "++BB")
+  t.equal(cache.length, 6) //++BB +A
+  t.equal(cache.get("c"), undefined)
+
+  cache.set("c", "oversized")
+  t.equal(cache.length, 6) //++BB +A
+  t.equal(cache.get("c"), undefined)
+
+  cache.set("a", "oversized")
+  t.equal(cache.length, 4) //++BB
+  t.equal(cache.get("a"), undefined)
+  t.equal(cache.get("b"), "++BB")
+  t.end()
+})
+
 test("set returns proper booleans", function(t) {
   var cache = new LRU({
     max: 5,
