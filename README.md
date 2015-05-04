@@ -36,7 +36,7 @@ away.
 * `length` Function that is used to calculate the length of stored
   items.  If you're storing strings or buffers, then you probably want
   to do something like `function(n){return n.length}`.  The default is
-  `function(n){return 1}`, which is fine if you want to store `n`
+  `function(n){return 1}`, which is fine if you want to store `max`
   like-sized things.
 * `dispose` Function that is called on items when they are dropped
   from the cache.  This can be handy if you want to close file
