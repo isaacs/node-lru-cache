@@ -102,7 +102,7 @@ away.
     Return total length of objects in cache taking into account
     `length` options function.
 
-* `itemCount()`
+* `itemCount`
 
     Return total quantity of objects currently in cache. Note, that
     `stale` (see options) items are returned as part of this item
