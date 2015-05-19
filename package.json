@@ -17,8 +17,5 @@
     "tap": "^0.7.1",
     "weak": ""
   },
-  "license": {
-    "type": "MIT",
-    "url": "http://github.com/isaacs/node-lru-cache/raw/master/LICENSE"
-  }
+  "license": "ISC"
 }
