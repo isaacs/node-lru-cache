@@ -1,5 +1,10 @@
 #!/usr/bin/env node --expose_gc
 
+if (!(/^v0.10/.test(process.version))) {
+  require('tap').pass('weak module only works on 0.10', { skip: true })
+  return
+}
+
 var weak = require('weak');
 var test = require('tap').test
 var LRU = require('../')
