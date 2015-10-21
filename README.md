@@ -59,7 +59,8 @@ away.
 
     Both of these will update the "recently used"-ness of the key.
     They do what you think. `max` is optional and overrides the
-    cache `max` option if provided.
+    cache `max` option if provided. If a key is not found, `get`
+    will return `undefined`.
 
 * `peek(key)`
 
