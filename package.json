@@ -17,5 +17,8 @@
     "tap": "^1.2.0",
     "weak": ""
   },
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "pseudomap": "^1.0.1"
+  }
 }

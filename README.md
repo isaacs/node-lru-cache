@@ -16,6 +16,12 @@ var LRU = require("lru-cache")
 cache.set("key", "value")
 cache.get("key") // "value"
 
+// non-string keys ARE fully supported
+var someObject = {}
+cache.set(someObject, 'a value')
+cache.set('[object Object]', 'a different value')
+assert.equal(cache.get(someObject), 'a value')
+
 cache.reset()    // empty the cache
 ```
 
