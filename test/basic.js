@@ -409,16 +409,8 @@ test("get and set only accepts strings and numbers as keys", function(t) {
   }, "set should not accept objects as keys")
 
   t.throws(function() {
-    cache.get({ someObjectKey: true })
-  }, "get should not accept objects as keys")
-
-  t.throws(function() {
     cache.set([1,2,3], "b")
   }, "set should not accept arrays as keys")
-
-  t.throws(function() {
-    cache.get([1,2,3])
-  }, "get should not accept arrays as keys")
 
   t.end()
 })
@@ -431,15 +423,6 @@ test("peek only accepts strings and numbers as keys", function(t) {
 
   t.equal(cache.peek("key"), "value")
   t.equal(cache.peek(123), 456)
-
-  t.throws(function() {
-    cache.peek({ someObjectKey: true })
-  }, "peek should not accept objects as keys")
-
-  t.throws(function() {
-    cache.peek([1,2,3])
-  }, "peek should not accept arrays as keys")
-
   t.end()
 })
 
@@ -455,13 +438,9 @@ test("del only accepts strings and numbers as keys", function(t) {
   t.assertNot(cache.has("key"))
   t.assertNot(cache.has(123))
 
-  t.throws(function() {
-    cache.del({ someObjectKey: true })
-  }, "del should not accept objects as keys")
-
-  t.throws(function() {
-    cache.del([1,2,3])
-  }, "del should not accept arrays as keys")
+  cache.set('[object Object]', 123)
+  t.assertNot(cache.has({}))
+  t.assert(cache.has(String({})))
 
   t.end()
 })
@@ -472,14 +451,6 @@ test("has only accepts strings and numbers as keys", function(t) {
 
   cache.has("key")
   cache.has(123)
-
-  t.throws(function() {
-    cache.has({ someObjectKey: true })
-  }, "has should not accept objects as keys")
-
-  t.throws(function() {
-    cache.has([1,2,3])
-  }, "has should not accept arrays as keys")
 
   t.end()
 })
