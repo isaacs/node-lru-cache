@@ -96,12 +96,15 @@ test("reset", function (t) {
 test("basic with weighed length", function (t) {
   var cache = new LRU({
     max: 100,
-    length: function (item) { return item.size }
+    length: function (item, key) {
+      t.isa(key, 'string')
+      return item.size
+    }
   })
   cache.set("key", {val: "value", size: 50})
   t.equal(cache.get("key").val, "value")
   t.equal(cache.get("nada"), undefined)
-  t.equal(cache.lengthCalculator(cache.get("key")), 50)
+  t.equal(cache.lengthCalculator(cache.get("key"), 'key'), 50)
   t.equal(cache.length, 50)
   t.equal(cache.max, 100)
   t.end()

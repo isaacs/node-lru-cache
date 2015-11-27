@@ -7,7 +7,7 @@ A cache object that deletes the least-recently-used items.
 ```javascript
 var LRU = require("lru-cache")
   , options = { max: 500
-              , length: function (n) { return n * 2 }
+              , length: function (n, key) { return n * 2 + key.length }
               , dispose: function (key, n) { n.close() }
               , maxAge: 1000 * 60 * 60 }
   , cache = LRU(options)
@@ -41,9 +41,10 @@ away.
   drop it and return undefined instead of giving it to you.
 * `length` Function that is used to calculate the length of stored
   items.  If you're storing strings or buffers, then you probably want
-  to do something like `function(n){return n.length}`.  The default is
-  `function(n){return 1}`, which is fine if you want to store `max`
-  like-sized things.
+  to do something like `function(n, key){return n.length}`.  The default is
+  `function(){return 1}`, which is fine if you want to store `max`
+  like-sized things.  They item is passed as the first argument, and
+  the key is passed as the second argumnet.
 * `dispose` Function that is called on items when they are dropped
   from the cache.  This can be handy if you want to close file
   descriptors or do other cleanup tasks when items are no longer
