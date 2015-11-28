@@ -96,6 +96,12 @@ away.
     in the cache, in order of recent-ness.  (Ie, more recently used
     items are iterated over first.)
 
+* `rforEach(function(value,key,cache), [thisp])`
+
+    The same as `cache.forEach(...)` but items are iterated over in
+    reverse order.  (ie, less recently used items are iterated over
+    first.)
+
 * `keys()`
 
     Return an array of the keys in the cache.

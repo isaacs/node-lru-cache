@@ -28,7 +28,17 @@ test('forEach', function (t) {
     t.equal(key, j)
     t.equal(val, j.toString(2))
   })
-  t.equal(i, order.length);
+  t.equal(i, order.length)
+
+  i = 0
+  order.reverse()
+  l.rforEach(function (val, key, cache) {
+    var j = order[i ++]
+    t.equal(cache, l)
+    t.equal(key, j)
+    t.equal(val, j.toString(2))
+  })
+  t.equal(i, order.length)
 
   t.end()
 })
