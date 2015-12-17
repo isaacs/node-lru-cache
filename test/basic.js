@@ -232,6 +232,28 @@ test("drop the old items", function(t) {
   }, 155)
 })
 
+test("manual pruning", function(t) {
+  var cache = new LRU({
+    max: 5,
+    maxAge: 10
+  })
+
+  cache.set("a", "A")
+  cache.set("b", "b")
+  cache.set("c", "C")
+
+  setTimeout(function() {
+    cache.prune();  // manually prune old entries
+
+    t.notOk(cache.get("a"));
+    t.notOk(cache.get("b"));
+    t.notOk(cache.get("c"));
+
+    t.end();
+  }, 20);
+})
+
+
 test("individual item can have its own maxAge", function(t) {
   var cache = new LRU({
     max: 5,

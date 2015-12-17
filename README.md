@@ -130,3 +130,7 @@ away.
 
     Loads another cache entries array, obtained with `sourceCache.dump()`,
     into the cache. The destination cache is reset before loading new entries
+
+* `prune()`
+
+    Manually iterates over the entire cache proactively pruning old entries
