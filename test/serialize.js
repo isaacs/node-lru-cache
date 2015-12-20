@@ -1,5 +1,6 @@
 var test = require('tap').test
 var LRU = require('../')
+var Yallist = require('yallist')
 
 test('dump', function (t) {
   var cache = new LRU()
@@ -217,4 +218,10 @@ test('load to other age cache', function (t) {
     t.equal(simple.get('c'), undefined)
     t.end()
   }, 500)
+})
+
+test('dumpLru', function (t) {
+  var l = LRU()
+  t.isa(l.dumpLru(), Yallist)
+  t.end()
 })

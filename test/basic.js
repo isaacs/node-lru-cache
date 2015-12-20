@@ -269,8 +269,10 @@ test('disposal function', function (t) {
   cache.set(1, 1)
   cache.set(2, 2)
   t.equal(disposed, 1)
-  cache.set(3, 3)
+  cache.set(2, 10)
   t.equal(disposed, 2)
+  cache.set(3, 3)
+  t.equal(disposed, 10)
   cache.reset()
   t.equal(disposed, 3)
   t.end()
@@ -423,4 +425,69 @@ test('peek with wierd keys', function (t) {
   }), undefined)
 
   t.end()
+})
+
+test('invalid length calc results in basic length', function (t) {
+  var l = new LRU({ length: true })
+  t.isa(l.lengthCalculator, 'function')
+  t.end()
+})
+
+test('change length calculator recalculates', function (t) {
+  var l = new LRU({ max: 3 })
+  l.set(2, 2)
+  l.set(1, 1)
+  l.lengthCalculator = function (key, val) {
+    return key + val
+  }
+  t.equal(l.itemCount, 1)
+  t.equal(l.get(2), undefined)
+  t.equal(l.get(1), 1)
+  l.set(0, 1)
+  t.equal(l.itemCount, 2)
+  l.lengthCalculator = function (key, val) {
+    return key
+  }
+  t.equal(l.lengthCalculator(1, 10), 1)
+  t.equal(l.lengthCalculator(10, 1), 10)
+  l.lengthCalculator = { not: 'a function' }
+  t.equal(l.lengthCalculator(1, 10), 1)
+  t.equal(l.lengthCalculator(10, 1), 1)
+  t.end()
+})
+
+test('delete non-existent item has no effect', function (t) {
+  var l = new LRU({ max: 2 })
+  l.set('foo', 1)
+  l.set('bar', 2)
+  l.del('baz')
+  t.same(l.dumpLru().toArray().map(function (hit) {
+    return hit.key
+  }), [ 'bar', 'foo' ])
+  t.end()
+})
+
+test('maxAge on list, cleared in forEach', function (t) {
+  var l = new LRU({ stale: true })
+  l.set('foo', 1)
+
+  // hacky.  make it seem older.
+  l.dumpLru().head.value.now = Date.now() - 100000
+
+  // setting maxAge to invalid values does nothing.
+  t.equal(l.maxAge, null)
+  l.maxAge = -100
+  t.equal(l.maxAge, null)
+  l.maxAge = {}
+  t.equal(l.maxAge, null)
+
+  l.maxAge = 1
+
+  var saw = false
+  l.forEach(function (val, key) {
+    saw = true
+    t.equal(key, 'foo')
+  })
+  t.ok(saw)
+  t.equal(l.length, 0)
 })
