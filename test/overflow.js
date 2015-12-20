@@ -20,25 +20,26 @@ function test (c) {
   })
 }
 
-for (var i = 0; i < 6; i++) {
+var i
+for (i = 0; i < 6; i++) {
   c.set(i, i)
 }
 
 test(c)
 
-for (var i = 0; i < 6; i++) {
+for (i = 0; i < 6; i++) {
   c.set(i, i)
 }
 
 test(c)
 
-for (var i = 0; i < 6; i++) {
+for (i = 0; i < 6; i++) {
   c.set(i, i)
 }
 
 test(c)
 
-for (var i = 0; i < 6; i++) {
+for (i = 0; i < 6; i++) {
   c.set(i, i)
 }
 
