@@ -9,7 +9,7 @@
     "cache"
   ],
   "scripts": {
-    "test": "tap test --gc"
+    "test": "tap test --gc --cov"
   },
   "main": "lib/lru-cache.js",
   "repository": "git://github.com/isaacs/node-lru-cache.git",
