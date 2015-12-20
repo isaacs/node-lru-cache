@@ -19,6 +19,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "pseudomap": "^1.0.1"
+    "pseudomap": "^1.0.1",
+    "yallist": "^2.0.0"
   }
 }
