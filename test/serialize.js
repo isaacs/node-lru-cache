@@ -153,24 +153,24 @@ test("load to other size cache", function(t) {
 
 
 test("load to other age cache", function(t) {
-  var cache = new LRU({maxAge: 50}),
-      aged = new LRU({maxAge: 100}),
+  var cache = new LRU({maxAge: 250}),
+      aged = new LRU({maxAge: 500}),
       simple = new LRU(),
       arr,
       expired
 
   //created at 0
-  //a would be valid till 0 + 50
+  //a would be valid till 0 + 250
   cache.set("a", "A")
   setTimeout(function () {
     //created at 20
-    //b would be valid till 20 + 50
+    //b would be valid till 100 + 250
     cache.set("b", "B")
-    //b would be valid till 20 + 70
-    cache.set("c", "C", 70)
+    //b would be valid till 100 + 350
+    cache.set("c", "C", 350)
     arr = cache.dump()
     t.equal(arr.length, 3)
-  }, 20)
+  }, 100)
 
   setTimeout(function () {
     t.equal(cache.get("a"), undefined)
@@ -186,7 +186,7 @@ test("load to other age cache", function(t) {
     t.equal(simple.get("a"), undefined)
     t.equal(simple.get("b"), "B")
     t.equal(simple.get("c"), "C")
-  }, 60)
+  }, 300)
 
   setTimeout(function () {
     t.equal(cache.get("a"), undefined)
@@ -202,7 +202,7 @@ test("load to other age cache", function(t) {
     t.equal(simple.get("a"), undefined)
     t.equal(simple.get("b"), undefined)
     t.equal(simple.get("c"), "C")
-  }, 80)
+  }, 400)
 
   setTimeout(function () {
     t.equal(cache.get("a"), undefined)
@@ -219,6 +219,6 @@ test("load to other age cache", function(t) {
     t.equal(simple.get("b"), undefined)
     t.equal(simple.get("c"), undefined)
     t.end()
-  }, 100)
+  }, 500)
 
 })
