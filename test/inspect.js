@@ -51,4 +51,4 @@ setTimeout(function () {
 
   l.lengthCalculator = null
   inspect('LRUCache {\n  1 => { value: { a: { b: [Object] } } }\n}')
-}, 20)
+}, 100)
