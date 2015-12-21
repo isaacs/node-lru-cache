@@ -430,6 +430,8 @@ test('peek with wierd keys', function (t) {
 test('invalid length calc results in basic length', function (t) {
   var l = new LRU({ length: true })
   t.isa(l.lengthCalculator, 'function')
+  l.lengthCalculator = 'not a function'
+  t.isa(l.lengthCalculator, 'function')
   t.end()
 })
 
@@ -475,11 +477,11 @@ test('maxAge on list, cleared in forEach', function (t) {
   l.dumpLru().head.value.now = Date.now() - 100000
 
   // setting maxAge to invalid values does nothing.
-  t.equal(l.maxAge, null)
+  t.equal(l.maxAge, 0)
   l.maxAge = -100
-  t.equal(l.maxAge, null)
+  t.equal(l.maxAge, 0)
   l.maxAge = {}
-  t.equal(l.maxAge, null)
+  t.equal(l.maxAge, 0)
 
   l.maxAge = 1
 
