@@ -320,6 +320,8 @@ test('stale', function (t) {
     stale: true
   })
 
+  t.equal(cache.allowStale, true)
+
   cache.set('foo', 'bar')
   t.equal(cache.get('foo'), 'bar')
   t.equal(cache.has('foo'), true)
