@@ -67,8 +67,12 @@ away.
 * `get(key) => value`
 
     Both of these will update the "recently used"-ness of the key.
-    They do what you think. `max` is optional and overrides the
-    cache `max` option if provided.
+    They do what you think. `maxAge` is optional and overrides the
+    cache `maxAge` option if provided.
+
+    If the key is not found, `get()` will return `undefined`.
+
+    The key and val can be any value.
 
 * `peek(key)`
 
