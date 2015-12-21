@@ -494,4 +494,6 @@ test('maxAge on list, cleared in forEach', function (t) {
   })
   t.ok(saw)
   t.equal(l.length, 0)
+
+  t.end()
 })
