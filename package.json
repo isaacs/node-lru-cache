@@ -9,15 +9,14 @@
     "cache"
   ],
   "scripts": {
-    "test": "tap test --gc --cov",
+    "test": "tap test --cov",
     "posttest": "standard test/*.js lib/*.js"
   },
   "main": "lib/lru-cache.js",
   "repository": "git://github.com/isaacs/node-lru-cache.git",
   "devDependencies": {
     "standard": "^5.4.1",
-    "tap": "^2.3.3",
-    "weak": ""
+    "tap": "^2.3.3"
   },
   "license": "ISC",
   "dependencies": {
