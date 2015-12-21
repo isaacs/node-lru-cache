@@ -1,3 +1,4 @@
+// vim: set nowrap:
 var util = require('util')
 var t = require('tap')
 var LRU = require('../')
