@@ -15,21 +15,21 @@ inspect('LRUCache {}')
 l.max = 10
 inspect('LRUCache {\n  max: 10\n}')
 
-l.maxAge = 10
-inspect('LRUCache {\n  max: 10,\n  maxAge: 10\n}')
+l.maxAge = 50
+inspect('LRUCache {\n  max: 10,\n  maxAge: 50\n}')
 
 l.set({ foo: 'bar' }, 'baz')
-inspect("LRUCache {\n  max: 10,\n  maxAge: 10,\n\n  { foo: 'bar' } => { value: 'baz' }\n}")
+inspect("LRUCache {\n  max: 10,\n  maxAge: 50,\n\n  { foo: 'bar' } => { value: 'baz' }\n}")
 
 l.maxAge = 0
 l.set(1, {a: {b: {c: {d: {e: {f: {}}}}}}})
-inspect("LRUCache {\n  max: 10,\n\n  1 => { value: { a: { b: [Object] } } },\n  { foo: 'bar' } => { value: 'baz', maxAge: 10 }\n}")
+inspect("LRUCache {\n  max: 10,\n\n  1 => { value: { a: { b: [Object] } } },\n  { foo: 'bar' } => { value: 'baz', maxAge: 50 }\n}")
 
 l.allowStale = true
-inspect("LRUCache {\n  allowStale: true,\n  max: 10,\n\n  1 => { value: { a: { b: [Object] } } },\n  { foo: 'bar' } => { value: 'baz', maxAge: 10 }\n}")
+inspect("LRUCache {\n  allowStale: true,\n  max: 10,\n\n  1 => { value: { a: { b: [Object] } } },\n  { foo: 'bar' } => { value: 'baz', maxAge: 50 }\n}")
 
 setTimeout(function () {
-  inspect("LRUCache {\n  allowStale: true,\n  max: 10,\n\n  1 => { value: { a: { b: [Object] } } },\n  { foo: 'bar' } => { value: 'baz', maxAge: 10, stale: true }\n}")
+  inspect("LRUCache {\n  allowStale: true,\n  max: 10,\n\n  1 => { value: { a: { b: [Object] } } },\n  { foo: 'bar' } => { value: 'baz', maxAge: 50, stale: true }\n}")
 
   // prune stale items
   l.forEach(function () {})
