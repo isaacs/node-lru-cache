@@ -116,7 +116,7 @@ away.
 
     Return an array of the values in the cache.
 
-* `length()`
+* `length`
 
     Return total length of objects in cache taking into account
     `length` options function.
