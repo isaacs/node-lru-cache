@@ -300,6 +300,22 @@ test('disposal function', function (t) {
   t.end()
 })
 
+test('no dispose on set', function (t) {
+  var disposed = false
+  var cache = new LRU({
+    max: 1,
+    noDisposeOnSet: true,
+    dispose: function (k, n) {
+      disposed = n
+    }
+  })
+
+  cache.set(1, 1)
+  cache.set(1, 10)
+  t.equal(disposed, false)
+  t.end()
+})
+
 test('disposal function on too big of item', function (t) {
   var disposed = false
   var cache = new LRU({
