@@ -1,0 +1,8 @@
+test/
+coverage/
+benchmarks/
+nyc_output/
+.nyc_output/
+CONTRIBUTORS
+.npmignore
+.travis.yml
