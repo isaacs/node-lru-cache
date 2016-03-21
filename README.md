@@ -38,9 +38,11 @@ away.
   function to all values in the cache.  Not setting this is kind of
   silly, since that's the whole purpose of this lib, but it defaults
   to `Infinity`.
-* `maxAge` Maximum age in ms.  Items are not pro-actively pruned out
+* `maxAge` Maximum age in ms. Items are not pro-actively pruned out
   as they age, but if you try to get an item that is too old, it'll
-  drop it and return undefined instead of giving it to you.
+  drop it and return undefined instead of giving it to you. Items with a maxAge
+  value of 0 will never become stale, and items with a negative maxAge value
+  (e.g -1) will immediately become stale.
 * `length` Function that is used to calculate the length of stored
   items.  If you're storing strings or buffers, then you probably want
   to do something like `function(n, key){return n.length}`.  The default is
