@@ -278,6 +278,30 @@ test('individual item can have its own maxAge > cache', function (t) {
   }, 25)
 })
 
+test('expire individual item if its own maxAge is -1', function (t) {
+  var cache = new LRU({
+    max: 5,
+    maxAge: 50
+  })
+
+  cache.set('a', 'A', -1)
+  t.notOk(cache.get('a'))
+  t.end()
+})
+
+test('do not expire individual item if its own maxAge is 0', function (t) {
+  var cache = new LRU({
+    max: 5,
+    maxAge: 20
+  })
+
+  cache.set('a', 'A', 0)
+  setTimeout(function () {
+    t.equal(cache.get('a'), 'A')
+    t.end()
+  }, 25)
+})
+
 test('disposal function', function (t) {
   var disposed = false
   var cache = new LRU({
