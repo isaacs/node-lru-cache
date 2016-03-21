@@ -303,20 +303,20 @@ test('do not expire individual item if its own maxAge is 0', function (t) {
 })
 
 test('cache can have a maxAge set of -1', function (t) {
-   var cache = new LRU({
-     maxAge: 1000,
-     stale : true
-   })
+  var cache = new LRU({
+    maxAge: 1000,
+    stale: true
+  })
 
-   cache.maxAge = -1;
+  cache.maxAge = -1
 
-   cache.set('a', 'A')
-   cache.set('b', 'B')
+  cache.set('a', 'A')
+  cache.set('b', 'B')
 
-   t.equal(cache.get('a'), 'A')
-   t.equal(cache.get('b'), 'B')
-   t.equal(cache.length, 0)
-   t.end()
+  t.equal(cache.get('a'), 'A')
+  t.equal(cache.get('b'), 'B')
+  t.equal(cache.length, 0)
+  t.end()
 })
 
 test('disposal function', function (t) {
@@ -535,8 +535,8 @@ test('delete non-existent item has no effect', function (t) {
 
 test('maxAge on list, cleared in forEach', function (t) {
   var l = new LRU({
-    maxAge : 1,
-    stale  : true
+    maxAge: 1,
+    stale: true
   })
   l.set('foo', 1)
 
