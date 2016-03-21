@@ -534,14 +534,17 @@ test('delete non-existent item has no effect', function (t) {
 })
 
 test('maxAge on list, cleared in forEach', function (t) {
-  var l = new LRU({ stale: true })
+  var l = new LRU({
+    maxAge : 1,
+    stale  : true
+  })
   l.set('foo', 1)
 
   // hacky.  make it seem older.
   l.dumpLru().head.value.now = Date.now() - 100000
 
   // setting maxAge to invalid values does nothing.
-  t.equal(l.maxAge, 0)
+  t.equal(l.maxAge, 1)
   l.maxAge = -100
   t.equal(l.maxAge, 0)
   l.maxAge = {}
