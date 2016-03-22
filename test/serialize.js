@@ -10,33 +10,33 @@ test('dump', function (t) {
   cache.set('a', 'A')
   cache.set('b', 'B')
   t.deepEqual(cache.dump(), [
-    { k: 'b', v: 'B', e: 0 },
-    { k: 'a', v: 'A', e: 0 }
+    { k: 'b', v: 'B', e: Infinity },
+    { k: 'a', v: 'A', e: Infinity }
   ])
 
   cache.set(123, 456)
   t.deepEqual(cache.dump(), [
-    { k: 123, v: 456, e: 0 },
-    { k: 'b', v: 'B', e: 0 },
-    { k: 'a', v: 'A', e: 0 }
+    { k: 123, v: 456, e: Infinity },
+    { k: 'b', v: 'B', e: Infinity },
+    { k: 'a', v: 'A', e: Infinity }
   ])
   cache.del(123)
 
   cache.set('a', 'A')
   t.deepEqual(cache.dump(), [
-    { k: 'a', v: 'A', e: 0 },
-    { k: 'b', v: 'B', e: 0 }
+    { k: 'a', v: 'A', e: Infinity },
+    { k: 'b', v: 'B', e: Infinity }
   ])
 
   cache.get('b')
   t.deepEqual(cache.dump(), [
-    { k: 'b', v: 'B', e: 0 },
-    { k: 'a', v: 'A', e: 0 }
+    { k: 'b', v: 'B', e: Infinity },
+    { k: 'a', v: 'A', e: Infinity }
   ])
 
   cache.del('a')
   t.deepEqual(cache.dump(), [
-    { k: 'b', v: 'B', e: 0 }
+    { k: 'b', v: 'B', e: Infinity }
   ])
 
   t.end()

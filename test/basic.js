@@ -254,7 +254,6 @@ test('manual pruning', function (t) {
 
 test('individual item can have its own maxAge', function (t) {
   var cache = new LRU({
-    max: 5,
     maxAge: 50
   })
 
@@ -267,7 +266,6 @@ test('individual item can have its own maxAge', function (t) {
 
 test('individual item can have its own maxAge > cache', function (t) {
   var cache = new LRU({
-    max: 5,
     maxAge: 20
   })
 
@@ -280,7 +278,6 @@ test('individual item can have its own maxAge > cache', function (t) {
 
 test('expire individual item if its own maxAge is -1', function (t) {
   var cache = new LRU({
-    max: 5,
     maxAge: 50
   })
 
@@ -291,7 +288,6 @@ test('expire individual item if its own maxAge is -1', function (t) {
 
 test('do not expire individual item if its own maxAge is 0', function (t) {
   var cache = new LRU({
-    max: 5,
     maxAge: 20
   })
 
@@ -548,6 +544,8 @@ test('maxAge on list, cleared in forEach', function (t) {
   l.maxAge = -100
   t.equal(l.maxAge, 0)
   l.maxAge = {}
+  t.equal(l.maxAge, 0)
+  l.maxAge = undefined
   t.equal(l.maxAge, 0)
 
   l.maxAge = 1
