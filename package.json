@@ -22,5 +22,8 @@
   "dependencies": {
     "pseudomap": "^1.0.1",
     "yallist": "^2.0.0"
-  }
+  },
+  "files": [
+    "lib/lru-cache.js"
+  ]
 }
