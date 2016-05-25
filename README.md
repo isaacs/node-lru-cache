@@ -45,7 +45,7 @@ away.
   items.  If you're storing strings or buffers, then you probably want
   to do something like `function(n, key){return n.length}`.  The default is
   `function(){return 1}`, which is fine if you want to store `max`
-  like-sized things.  They item is passed as the first argument, and
+  like-sized things.  The item is passed as the first argument, and
   the key is passed as the second argumnet.
 * `dispose` Function that is called on items when they are dropped
   from the cache.  This can be handy if you want to close file
