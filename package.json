@@ -15,7 +15,7 @@
   "main": "lib/lru-cache.js",
   "repository": "git://github.com/isaacs/node-lru-cache.git",
   "devDependencies": {
-    "standard": "^5.4.1",
+    "standard": "^7.1.2",
     "tap": "^5.1.1"
   },
   "license": "ISC",
