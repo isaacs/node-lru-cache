@@ -79,6 +79,13 @@ test('max', function (t) {
   for (i = 98; i < 100; i++) {
     t.equal(cache.get(i), i)
   }
+  // test that changing the max to 0 will evict everything
+  cache.max = 0
+  t.equal(cache.max, 0)
+  t.equal(cache.length, 0)
+  for (i = 0; i < 100; i++) {
+    t.equal(cache.get(i), undefined)
+  }
   t.end()
 })
 
