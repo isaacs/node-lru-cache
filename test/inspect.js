@@ -38,7 +38,7 @@ setTimeout(function () {
   l.lengthCalculator = function () { return 5 }
   inspect('LRUCache {\n  allowStale: true,\n  max: 10,\n  length: 5,\n\n  1 => { value: { a: { b: [Object] } }, length: 5 }\n}')
 
-  l.max = 0
+  l.max = Infinity
   inspect('LRUCache {\n  allowStale: true,\n  length: 5,\n\n  1 => { value: { a: { b: [Object] } }, length: 5 }\n}')
 
   l.maxAge = 100
@@ -51,4 +51,7 @@ setTimeout(function () {
 
   l.lengthCalculator = null
   inspect('LRUCache {\n  1 => { value: { a: { b: [Object] } } }\n}')
+
+  l.max = 0
+  inspect('LRUCache {}')
 }, 100)
