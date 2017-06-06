@@ -106,8 +106,8 @@ test('load basic cache', function (t) {
 })
 
 test('load staled cache', function (t) {
-  var cache = new LRU({maxAge: 50})
-  var copy = new LRU({maxAge: 50})
+  var cache = new LRU({maxAge: 100})
+  var copy = new LRU({maxAge: 100})
   var arr
 
   // expires at 50
@@ -117,18 +117,18 @@ test('load staled cache', function (t) {
     cache.set('b', 'B')
     arr = cache.dump()
     t.equal(arr.length, 2)
-  }, 30)
+  }, 50)
 
   setTimeout(function () {
     copy.load(arr)
     t.equal(copy.get('a'), undefined)
     t.equal(copy.get('b'), 'B')
-  }, 60)
+  }, 120)
 
   setTimeout(function () {
     t.equal(copy.get('b'), undefined)
     t.end()
-  }, 90)
+  }, 180)
 })
 
 test('load to other size cache', function (t) {
