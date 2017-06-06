@@ -10,9 +10,9 @@
   ],
   "scripts": {
     "test": "tap test --100",
-    "posttest": "standard test/*.js lib/*.js"
+    "posttest": "standard test/*.js index.js"
   },
-  "main": "lib/lru-cache.js",
+  "main": "index.js",
   "repository": "git://github.com/isaacs/node-lru-cache.git",
   "devDependencies": {
     "standard": "^5.4.1",
@@ -24,6 +24,6 @@
     "yallist": "^2.0.0"
   },
   "files": [
-    "lib/lru-cache.js"
+    "index.js"
   ]
 }
