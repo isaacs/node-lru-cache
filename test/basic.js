@@ -213,7 +213,7 @@ test('drop the old items', function (t) {
   setTimeout(function () {
     cache.set('b', 'b')
     t.equal(cache.get('a'), 'A')
-  }, 25)
+  })
 
   setTimeout(function () {
     cache.set('c', 'C')
@@ -224,12 +224,12 @@ test('drop the old items', function (t) {
   setTimeout(function () {
     t.notOk(cache.get('b'))
     t.equal(cache.get('c'), 'C')
-  }, 90)
+  }, 120)
 
   setTimeout(function () {
     t.notOk(cache.get('c'))
     t.end()
-  }, 155)
+  }, 200)
 })
 
 test('manual pruning', function (t) {
