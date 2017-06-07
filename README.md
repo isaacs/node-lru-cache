@@ -35,7 +35,7 @@ cache.reset()    // empty the cache
 
 If you put more stuff in it, then items will fall out.
 
-If you try to put an oversized thing in it, then it'll fall out right
+If you try to put an over sized thing in it, then it'll fall out right
 away.
 
 ## Options
@@ -52,7 +52,7 @@ away.
   to do something like `function(n, key){return n.length}`.  The default is
   `function(){return 1}`, which is fine if you want to store `max`
   like-sized things.  The item is passed as the first argument, and
-  the key is passed as the second argumnet.
+  the key is passed as the second argument.
 * `dispose` Function that is called on items when they are dropped
   from the cache.  This can be handy if you want to close file
   descriptors or do other cleanup tasks when items are no longer
@@ -62,7 +62,7 @@ away.
   `nextTick` or `setTimeout` callback or it won't do anything.
 * `stale` By default, if you set a `maxAge`, it'll only actually pull
   stale items out of the cache when you `get(key)`.  (That is, it's
-  not pre-emptively doing a `setTimeout` or anything.)  If you set
+  not preemptively doing a `setTimeout` or anything.)  If you set
   `stale:true`, it'll return the stale value before deleting it.  If
   you don't set this, then it'll return `undefined` when you try to
   get a stale entry, as if it had already been deleted.
@@ -109,13 +109,13 @@ away.
 * `forEach(function(value,key,cache), [thisp])`
 
     Just like `Array.prototype.forEach`.  Iterates over all the keys
-    in the cache, in order of recent-ness.  (Ie, more recently used
+    in the cache, in order of recent-ness.  (IE, more recently used
     items are iterated over first.)
 
 * `rforEach(function(value,key,cache), [thisp])`
 
     The same as `cache.forEach(...)` but items are iterated over in
-    reverse order.  (ie, less recently used items are iterated over
+    reverse order.  (IE, less recently used items are iterated over
     first.)
 
 * `keys()`
@@ -149,4 +149,4 @@ away.
 
 * `prune()`
 
-    Manually iterates over the entire cache proactively pruning old entries
+    Manually iterates over the entire cache pro-actively pruning old entries
