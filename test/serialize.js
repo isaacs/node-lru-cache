@@ -43,52 +43,58 @@ test('dump', function (t) {
 })
 
 test('do not dump stale items', function (t) {
+  var n = process.env.CI ? 1000 : 50
   var cache = new LRU({
     max: 5,
-    maxAge: 50
+    maxAge: Math.floor(n * 1.5)
   })
 
   // expires at 50
   cache.set('a', 'A')
+  setTimeout(step1, n)
 
-  setTimeout(function () {
+  function step1 () {
     // expires at 75
     cache.set('b', 'B')
     var s = cache.dump()
     t.equal(s.length, 2)
     t.equal(s[0].k, 'b')
     t.equal(s[1].k, 'a')
-  }, 25)
+    setTimeout(step2, n)
+  }
 
-  setTimeout(function () {
+  function step2 () {
     // expires at 110
     cache.set('c', 'C')
     var s = cache.dump()
     t.equal(s.length, 2)
     t.equal(s[0].k, 'c')
     t.equal(s[1].k, 'b')
-  }, 60)
+    setTimeout(step3, n)
+  }
 
-  setTimeout(function () {
+  function step3 () {
     // expires at 130
-    cache.set('d', 'D', 40)
+    cache.set('d', 'D', n * 3)
     var s = cache.dump()
     t.equal(s.length, 2)
     t.equal(s[0].k, 'd')
     t.equal(s[1].k, 'c')
-  }, 90)
+    setTimeout(step4, n * 2)
+  }
 
-  setTimeout(function () {
+  function step4 () {
     var s = cache.dump()
     t.equal(s.length, 1)
     t.equal(s[0].k, 'd')
-  }, 120)
+    setTimeout(step5, n)
+  }
 
-  setTimeout(function () {
+  function step5 () {
     var s = cache.dump()
     t.deepEqual(s, [])
     t.end()
-  }, 155)
+  }
 })
 
 test('load basic cache', function (t) {

@@ -203,9 +203,10 @@ test('set returns proper booleans', function (t) {
 })
 
 test('drop the old items', function (t) {
+  var n = process.env.CI ? 1000 : 100
   var cache = new LRU({
     max: 5,
-    maxAge: 200
+    maxAge: n * 2
   })
 
   cache.set('a', 'A')
@@ -213,23 +214,23 @@ test('drop the old items', function (t) {
   setTimeout(function () {
     cache.set('b', 'b')
     t.equal(cache.get('a'), 'A')
-  }, 100)
+  }, n)
 
   setTimeout(function () {
     cache.set('c', 'C')
     // timed out
     t.notOk(cache.get('a'))
-  }, 300)
+  }, n * 3)
 
   setTimeout(function () {
     t.notOk(cache.get('b'))
     t.equal(cache.get('c'), 'C')
-  }, 400)
+  }, n * 4)
 
   setTimeout(function () {
     t.notOk(cache.get('c'))
     t.end()
-  }, 600)
+  }, n * 6)
 })
 
 test('manual pruning', function (t) {
