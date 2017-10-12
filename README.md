@@ -93,11 +93,11 @@ away.
     wrong sort of data structure, but there are some use cases where
     it's handy.)
 
-* `del(key)`
+* `del(key)` or `delete(key)`
 
     Deletes a key out of the cache.
 
-* `reset()`
+* `reset()` or `clear()`
 
     Clear the cache entirely, throwing away all values.
 

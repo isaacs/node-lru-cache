@@ -203,6 +203,11 @@ LRUCache.prototype.reset = function () {
   this[LENGTH] = 0 // length of items in the list
 }
 
+// alias for reset
+LRUCache.prototype.clear = function () {
+  this.reset()
+}
+
 LRUCache.prototype.dump = function () {
   return this[LRU_LIST].map(function (hit) {
     if (!isStale(this, hit)) {
@@ -369,6 +374,11 @@ LRUCache.prototype.pop = function () {
 
 LRUCache.prototype.del = function (key) {
   del(this, this[CACHE].get(key))
+}
+
+// alias for del
+LRUCache.prototype.delete = function (key) {
+  this.del(key)
 }
 
 LRUCache.prototype.load = function (arr) {
