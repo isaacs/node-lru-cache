@@ -117,17 +117,11 @@ test('expires', function (t) {
   var order = [ 8, 6, 4, 2, 0 ]
   setTimeout(function () {
     l.forEach(function (val, key, cache) {
-      console.log('>forEach iteration (val, key, cache)<', val, key, cache)
       var j = order[i++]
-      console.log('j(order[i++]', j)
-      console.log('Comparing ', cache, 'to', l)
       t.equal(cache, l)
-      console.log('Comparing ', key, 'to', j.toString())
       t.equal(key, j.toString())
-      console.log('Comparing ', val, 'to', j.toString(2))
       t.equal(val, j.toString(2))
     })
-    console.log('Comparing', i, 'to', order.length)
     t.equal(i, order.length)
 
     setTimeout(function () {
