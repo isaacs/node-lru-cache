@@ -1,9 +1,10 @@
 var test = require('tap').test
 if (global.NoSymbol) global.Symbol = false
 var LRU = require('../')
+var ItemManager = LRU.SessionItemManager
 
 test('basic', function (t) {
-  var cache = new LRU({max: 10})
+  var cache = new LRU({max: 10, itemManager: ItemManager})
   cache.set('key', 'value')
   t.equal(cache.get('key'), 'value')
   t.equal(cache.get('nada'), undefined)
@@ -13,7 +14,7 @@ test('basic', function (t) {
 })
 
 test('least recently set', function (t) {
-  var cache = new LRU(2)
+  var cache = new LRU({max: 2, itemManager: ItemManager})
   cache.set('a', 'A')
   cache.set('b', 'B')
   cache.set('c', 'C')
@@ -24,7 +25,7 @@ test('least recently set', function (t) {
 })
 
 test('lru recently gotten', function (t) {
-  var cache = new LRU(2)
+  var cache = new LRU({max: 2, itemManager: ItemManager})
   cache.set('a', 'A')
   cache.set('b', 'B')
   cache.get('a')
@@ -36,7 +37,7 @@ test('lru recently gotten', function (t) {
 })
 
 test('del', function (t) {
-  var cache = new LRU(2)
+  var cache = new LRU({max: 2, itemManager: ItemManager})
   cache.set('a', 'A')
   cache.del('a')
   t.equal(cache.get('a'), undefined)
@@ -44,7 +45,7 @@ test('del', function (t) {
 })
 
 test('max', function (t) {
-  var cache = new LRU(3)
+  var cache = new LRU({max: 3, itemManager: ItemManager})
 
   // test changing the max, verify that the LRU items get dropped.
   cache.max = 100
@@ -83,7 +84,7 @@ test('max', function (t) {
 })
 
 test('reset', function (t) {
-  var cache = new LRU(10)
+  var cache = new LRU({max: 10, itemManager: ItemManager})
   cache.set('a', 'A')
   cache.set('b', 'B')
   cache.reset()
@@ -100,7 +101,8 @@ test('basic with weighed length', function (t) {
     length: function (item, key) {
       t.isa(key, 'string')
       return item.size
-    }
+    },
+    itemManager: ItemManager
   })
   cache.set('key', {val: 'value', size: 50})
   t.equal(cache.get('key').val, 'value')
@@ -114,7 +116,8 @@ test('basic with weighed length', function (t) {
 test('weighed length item too large', function (t) {
   var cache = new LRU({
     max: 10,
-    length: function (item) { return item.size }
+    length: function (item) { return item.size },
+    itemManager: ItemManager
   })
   t.equal(cache.max, 10)
 
@@ -129,7 +132,8 @@ test('weighed length item too large', function (t) {
 test('least recently set with weighed length', function (t) {
   var cache = new LRU({
     max: 8,
-    length: function (item) { return item.length }
+    length: function (item) { return item.length },
+    itemManager: ItemManager
   })
   cache.set('a', 'A')
   cache.set('b', 'BB')
@@ -145,7 +149,8 @@ test('least recently set with weighed length', function (t) {
 test('lru recently gotten with weighed length', function (t) {
   var cache = new LRU({
     max: 8,
-    length: function (item) { return item.length }
+    length: function (item) { return item.length },
+    itemManager: ItemManager
   })
   cache.set('a', 'A')
   cache.set('b', 'BB')
@@ -163,7 +168,8 @@ test('lru recently gotten with weighed length', function (t) {
 test('lru recently updated with weighed length', function (t) {
   var cache = new LRU({
     max: 8,
-    length: function (item) { return item.length }
+    length: function (item) { return item.length },
+    itemManager: ItemManager
   })
   cache.set('a', 'A')
   cache.set('b', 'BB')
@@ -189,7 +195,8 @@ test('lru recently updated with weighed length', function (t) {
 test('set returns proper booleans', function (t) {
   var cache = new LRU({
     max: 5,
-    length: function (item) { return item.length }
+    length: function (item) { return item.length },
+    itemManager: ItemManager
   })
 
   t.equal(cache.set('a', 'A'), true)
@@ -206,23 +213,21 @@ test('drop the old items', function (t) {
   var n = process.env.CI ? 1000 : 100
   var cache = new LRU({
     max: 5,
-    maxAge: n * 2
+    maxAge: n * 2,
+    itemManager: ItemManager
   })
 
-  cache.set('a', 'A')
-  cache.set('a1', 'A1', n * 2 + 80)
+  cache.set('a', 'A', n * 2 + 80)
 
   setTimeout(function () {
     cache.set('b', 'b')
     t.equal(cache.get('a'), 'A')
-    cache.set('a1', 'A1x')
+    cache.set('a', 'A1')
   }, n)
 
   setTimeout(function () {
     cache.set('c', 'C')
-    t.equal(cache.get('a1'), 'A1x')
-    // timed out
-    t.notOk(cache.get('a'))
+    t.equal(cache.peek('a'), 'A1')
   }, n * 3)
 
   setTimeout(function () {
@@ -230,19 +235,25 @@ test('drop the old items', function (t) {
     t.equal(cache.get('c'), 'C')
 
     // timed out
-    t.notOk(cache.get('a1'))
+    t.notOk(cache.get('a'))
   }, n * 4)
 
   setTimeout(function () {
+    t.equal(cache.peek('c'), 'C')
+  }, n * 6)
+
+  setTimeout(function () {
+    // timed out
     t.notOk(cache.get('c'))
     t.end()
-  }, n * 6)
+  }, n * 7)
 })
 
 test('manual pruning', function (t) {
   var cache = new LRU({
     max: 5,
-    maxAge: 50
+    maxAge: 50,
+    itemManager: ItemManager
   })
 
   cache.set('a', 'A')
@@ -263,7 +274,8 @@ test('manual pruning', function (t) {
 test('individual item can have its own maxAge', function (t) {
   var cache = new LRU({
     max: 5,
-    maxAge: 50
+    maxAge: 50,
+    itemManager: ItemManager
   })
 
   cache.set('a', 'A', 20)
@@ -276,7 +288,8 @@ test('individual item can have its own maxAge', function (t) {
 test('individual item can have its own maxAge > cache', function (t) {
   var cache = new LRU({
     max: 5,
-    maxAge: 20
+    maxAge: 20,
+    itemManager: ItemManager
   })
 
   cache.set('a', 'A', 50)
@@ -292,7 +305,8 @@ test('disposal function', function (t) {
     max: 1,
     dispose: function (k, n) {
       disposed = n
-    }
+    },
+    itemManager: ItemManager
   })
 
   cache.set(1, 1)
@@ -314,7 +328,8 @@ test('no dispose on set', function (t) {
     noDisposeOnSet: true,
     dispose: function (k, n) {
       disposed = n
-    }
+    },
+    itemManager: ItemManager
   })
 
   cache.set(1, 1)
@@ -332,7 +347,8 @@ test('disposal function on too big of item', function (t) {
     },
     dispose: function (k, n) {
       disposed = n
-    }
+    },
+    itemManager: ItemManager
   })
   var obj = [ 1, 2 ]
 
@@ -345,7 +361,8 @@ test('disposal function on too big of item', function (t) {
 test('has()', function (t) {
   var cache = new LRU({
     max: 1,
-    maxAge: 10
+    maxAge: 10,
+    itemManager: ItemManager
   })
 
   cache.set('foo', 'bar')
@@ -362,7 +379,8 @@ test('has()', function (t) {
 test('stale', function (t) {
   var cache = new LRU({
     maxAge: 10,
-    stale: true
+    stale: true,
+    itemManager: ItemManager
   })
 
   t.equal(cache.allowStale, true)
@@ -379,7 +397,7 @@ test('stale', function (t) {
 })
 
 test('lru update via set', function (t) {
-  var cache = LRU({ max: 2 })
+  var cache = LRU({ max: 2, itemManager: ItemManager })
 
   cache.set('foo', 1)
   cache.set('bar', 2)
@@ -395,7 +413,7 @@ test('lru update via set', function (t) {
 })
 
 test('least recently set w/ peek', function (t) {
-  var cache = new LRU(2)
+  var cache = new LRU({ max: 2, itemManager: ItemManager })
   cache.set('a', 'A')
   cache.set('b', 'B')
   t.equal(cache.peek('a'), 'A')
@@ -407,7 +425,7 @@ test('least recently set w/ peek', function (t) {
 })
 
 test('pop the least used item', function (t) {
-  var cache = new LRU(3)
+  var cache = new LRU({ max: 3, itemManager: ItemManager })
   var last
 
   cache.set('a', 'A')
@@ -447,7 +465,7 @@ test('pop the least used item', function (t) {
 })
 
 test('get and set only accepts strings and numbers as keys', function (t) {
-  var cache = new LRU()
+  var cache = new LRU({itemManager: ItemManager})
 
   cache.set('key', 'value')
   cache.set(123, 456)
@@ -459,7 +477,7 @@ test('get and set only accepts strings and numbers as keys', function (t) {
 })
 
 test('peek with wierd keys', function (t) {
-  var cache = new LRU()
+  var cache = new LRU({itemManager: ItemManager})
 
   cache.set('key', 'value')
   cache.set(123, 456)
@@ -475,7 +493,7 @@ test('peek with wierd keys', function (t) {
 })
 
 test('invalid length calc results in basic length', function (t) {
-  var l = new LRU({ length: true })
+  var l = new LRU({ length: true, itemManager: ItemManager })
   t.isa(l.lengthCalculator, 'function')
   l.lengthCalculator = 'not a function'
   t.isa(l.lengthCalculator, 'function')
@@ -483,7 +501,7 @@ test('invalid length calc results in basic length', function (t) {
 })
 
 test('change length calculator recalculates', function (t) {
-  var l = new LRU({ max: 3 })
+  var l = new LRU({ max: 3, itemManager: ItemManager })
   l.set(2, 2)
   l.set(1, 1)
   l.lengthCalculator = function (key, val) {
@@ -506,7 +524,7 @@ test('change length calculator recalculates', function (t) {
 })
 
 test('delete non-existent item has no effect', function (t) {
-  var l = new LRU({ max: 2 })
+  var l = new LRU({ max: 2, itemManager: ItemManager })
   l.set('foo', 1)
   l.set('bar', 2)
   l.del('baz')
@@ -517,7 +535,7 @@ test('delete non-existent item has no effect', function (t) {
 })
 
 test('maxAge on list, cleared in forEach', function (t) {
-  var l = new LRU({ stale: true })
+  var l = new LRU({ stale: true, itemManager: ItemManager })
   l.set('foo', 1)
 
   // hacky.  make it seem older.

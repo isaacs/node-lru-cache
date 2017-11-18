@@ -1,6 +1,8 @@
 'use strict'
 
 module.exports = LRUCache
+LRUCache.CacheItemManager = require('./CacheItemManager')
+LRUCache.SessionItemManager = require('./SessionItemManager')
 
 // This will be a proper iterable 'Map' in engines that support it,
 // or a fakey-fake PseudoMap in older versions.
@@ -32,6 +34,7 @@ var DISPOSE = makeSymbol('dispose')
 var NO_DISPOSE_ON_SET = makeSymbol('noDisposeOnSet')
 var LRU_LIST = makeSymbol('lruList')
 var CACHE = makeSymbol('cache')
+var ITEM_MANAGER = makeSymbol('itemManager')
 
 function naiveLength () { return 1 }
 
@@ -74,6 +77,9 @@ function LRUCache (options) {
   this[MAX_AGE] = options.maxAge || 0
   this[DISPOSE] = options.dispose
   this[NO_DISPOSE_ON_SET] = options.noDisposeOnSet || false
+
+  var _itemManagerType = options.itemManager || LRUCache.CacheItemManager
+  this[ITEM_MANAGER] = new _itemManagerType(this)
   this.reset()
 }
 
@@ -294,9 +300,6 @@ LRUCache.prototype.inspect = function (n, opts) {
 }
 
 LRUCache.prototype.set = function (key, value, maxAge) {
-  maxAge = maxAge || this[MAX_AGE]
-
-  var now = maxAge ? Date.now() : 0
   var len = this[LENGTH_CALCULATOR](value, key)
 
   if (this[CACHE].has(key)) {
@@ -316,15 +319,15 @@ LRUCache.prototype.set = function (key, value, maxAge) {
       }
     }
 
-    item.now = now
-    item.maxAge = maxAge
-    item.value = value
+    this[ITEM_MANAGER].update(item, value, maxAge)
     this[LENGTH] += len - item.length
     item.length = len
     this.get(key)
     trim(this)
     return true
   }
+  maxAge = maxAge || this[MAX_AGE]
+  var now = maxAge ? Date.now() : 0
 
   var hit = new Entry(key, value, len, now, maxAge)
 
@@ -410,6 +413,7 @@ function get (self, key, doUse) {
     } else {
       if (doUse) {
         self[LRU_LIST].unshiftNode(node)
+        self[ITEM_MANAGER].touch(node.value)
       }
     }
     if (hit) hit = hit.value
