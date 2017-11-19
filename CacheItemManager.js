@@ -14,4 +14,4 @@ exports = module.exports = function(cache) {
   this.touch = function(item) {
     // nothing to do
   }
-}
+};
