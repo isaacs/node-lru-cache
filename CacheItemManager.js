@@ -1,3 +1,5 @@
+'use strict'
+
 exports = module.exports = function(cache) {
   var _cache = cache;
 
