@@ -210,7 +210,7 @@ test('drop the old items', function (t) {
   })
 
   cache.set('a', 'A')
-  cache.set('a1', 'A1', n * 2 + 80)
+  cache.set('a1', 'A1', n * 2 + 20)
 
   setTimeout(function () {
     cache.set('b', 'b')
@@ -219,8 +219,11 @@ test('drop the old items', function (t) {
   }, n)
 
   setTimeout(function () {
-    cache.set('c', 'C')
     t.equal(cache.get('a1'), 'A1x')
+  }, n * 2)
+
+  setTimeout(function () {
+    cache.set('c', 'C')
     // timed out
     t.notOk(cache.get('a'))
   }, n * 3)

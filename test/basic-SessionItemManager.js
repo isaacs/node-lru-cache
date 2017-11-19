@@ -217,7 +217,7 @@ test('drop the old items', function (t) {
     itemManager: ItemManager
   })
 
-  cache.set('a', 'A', n * 2 + 80)
+  cache.set('a', 'A', n * 2 + 10)
 
   setTimeout(function () {
     cache.set('b', 'b')
@@ -240,7 +240,7 @@ test('drop the old items', function (t) {
 
   setTimeout(function () {
     t.equal(cache.peek('c'), 'C')
-  }, n * 6)
+  }, n * 5 + n / 2)
 
   setTimeout(function () {
     // timed out
