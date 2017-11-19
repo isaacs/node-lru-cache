@@ -1,7 +1,7 @@
 'use strict'
 
 exports = module.exports = function(cache) {
-  var _cache = cache;
+  var _cache = cache
 
   this.update = function(item, value, maxAge) {
     maxAge  = maxAge || item.maxAge
@@ -18,4 +18,4 @@ exports = module.exports = function(cache) {
       item.now = Date.now()
     }
   }
-};
+}

@@ -1,7 +1,7 @@
 'use strict'
 
 exports = module.exports = function(cache) {
-  var _cache = cache;
+  var _cache = cache
 
   this.update = function(item, value, maxAge) {
     maxAge  = maxAge || _cache.maxAge
@@ -16,4 +16,4 @@ exports = module.exports = function(cache) {
   this.touch = function(item) {
     // nothing to do
   }
-};
+}
