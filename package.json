@@ -20,7 +20,7 @@
   "devDependencies": {
     "benchmark": "^2.1.4",
     "standard": "^5.4.1",
-    "tap": "^10.3.3"
+    "tap": "^11.1.4"
   },
   "license": "ISC",
   "dependencies": {
