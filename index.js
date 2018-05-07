@@ -11,7 +11,7 @@ var util = require('util')
 var Yallist = require('yallist')
 
 // use symbols if possible, otherwise just _props
-var hasSymbol = typeof Symbol === 'function'
+var hasSymbol = typeof Symbol === 'function' && typeof Symbol.for === 'function'
 var makeSymbol
 if (hasSymbol) {
   makeSymbol = function (key) {
