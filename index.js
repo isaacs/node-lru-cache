@@ -352,8 +352,13 @@ LRUCache.prototype.has = function (key) {
   return true
 }
 
-LRUCache.prototype.get = function (key) {
-  return get(this, key, true)
+LRUCache.prototype.get = function (key, initialiser) {
+  var hit = get(this, key, true)
+  if (!hit && typeof initialiser === 'function') {
+    hit = initialiser()
+    this.set(key, hit)
+  }
+  return hit
 }
 
 LRUCache.prototype.peek = function (key) {
