@@ -40,6 +40,4 @@ test('get with initialiser and expiry', function (t) {
     t.equal(cache.get('a', initialiser), 'bar3')
     t.end()
   }, n * 3)
-
 })
-
