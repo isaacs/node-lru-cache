@@ -26,18 +26,18 @@ test('get with initialiser and expiry', function (t) {
   })
 
   var x = 1
-  var initialiser = () => 'bar' + (++x)
+  var initialiser = key => `${key}-bar-${++x}`
 
-  t.equal(cache.get('a', initialiser), 'bar2')
+  t.equal(cache.get('a', initialiser), 'a-bar-2')
 
   // pre first timeout
   setTimeout(function () {
-    t.equal(cache.get('a', initialiser), 'bar2')
+    t.equal(cache.get('a', initialiser), 'a-bar-2')
   }, n) // expires at 2n
 
   // post first timeout
   setTimeout(function () {
-    t.equal(cache.get('a', initialiser), 'bar3')
+    t.equal(cache.get('a', initialiser), 'a-bar-3')
     t.end()
   }, n * 3)
 })

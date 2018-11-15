@@ -355,7 +355,7 @@ LRUCache.prototype.has = function (key) {
 LRUCache.prototype.get = function (key, initialiser) {
   var hit = get(this, key, true)
   if (!hit && typeof initialiser === 'function') {
-    hit = initialiser()
+    hit = initialiser(key)
     this.set(key, hit)
   }
   return hit
