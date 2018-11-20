@@ -568,3 +568,13 @@ test('drop the old items but do not do it if set used an override maxAge', funct
   }, n * 6)
 })
 
+test('drop the old items with set override maxAge', function (t) {
+  var cache = new LRU({
+    max: 2
+  })
+
+  t.throw(function setMaxAgeWithAObject () {
+    cache.set('a', 'A', {expire: 20})
+  }, {message: 'maxAge needs to need a number'})
+  t.end()
+})

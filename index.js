@@ -71,6 +71,8 @@ function LRUCache (options) {
   this[LENGTH_CALCULATOR] = lc
 
   this[ALLOW_STALE] = options.stale || false
+
+  if (options.maxAge && isNaN(options.maxAge)) throw new Error('maxAge needs to need a number')
   this[MAX_AGE] = options.maxAge || 0
   this[DISPOSE] = options.dispose
   this[NO_DISPOSE_ON_SET] = options.noDisposeOnSet || false
@@ -295,6 +297,8 @@ LRUCache.prototype.inspect = function (n, opts) {
 
 LRUCache.prototype.set = function (key, value, maxAge) {
   maxAge = maxAge || this[MAX_AGE]
+
+  if (maxAge && isNaN(maxAge)) throw new Error('maxAge needs to need a number')
 
   var now = maxAge ? Date.now() : 0
   var len = this[LENGTH_CALCULATOR](value, key)

@@ -1,7 +1,7 @@
 {
   "name": "lru-cache",
   "description": "A cache object that deletes the least-recently-used items.",
-  "version": "4.1.3",
+  "version": "5.0.0",
   "author": "Isaac Z. Schlueter <i@izs.me>",
   "keywords": [
     "mru",
@@ -11,6 +11,7 @@
   "scripts": {
     "test": "tap test/*.js --100 -J",
     "posttest": "standard test/*.js index.js",
+    "lintfix": "standard --fix test/*.js index.js",
     "preversion": "npm test",
     "postversion": "npm publish",
     "postpublish": "git push origin --all; git push origin --tags"
