@@ -1,5 +1,4 @@
 var test = require('tap').test
-if (global.NoSymbol) global.Symbol = false
 var LRU = require('../')
 
 test('basic', function (t) {

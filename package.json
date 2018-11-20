@@ -11,6 +11,7 @@
   "scripts": {
     "test": "tap test/*.js --100 -J",
     "posttest": "standard test/*.js index.js",
+    "coveragerport": "tap --coverage-report=html",
     "lintfix": "standard --fix test/*.js index.js",
     "preversion": "npm test",
     "postversion": "npm publish",
