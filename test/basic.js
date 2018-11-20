@@ -3,7 +3,7 @@ if (global.NoSymbol) global.Symbol = false
 var LRU = require('../')
 
 test('basic', function (t) {
-  var cache = new LRU({max: 10})
+  var cache = new LRU({ max: 10 })
   cache.set('key', 'value')
   t.equal(cache.get('key'), 'value')
   t.equal(cache.get('nada'), undefined)
@@ -102,7 +102,7 @@ test('basic with weighed length', function (t) {
       return item.size
     }
   })
-  cache.set('key', {val: 'value', size: 50})
+  cache.set('key', { val: 'value', size: 50 })
   t.equal(cache.get('key').val, 'value')
   t.equal(cache.get('nada'), undefined)
   t.equal(cache.lengthCalculator(cache.get('key'), 'key'), 50)
@@ -119,7 +119,7 @@ test('weighed length item too large', function (t) {
   t.equal(cache.max, 10)
 
   // should fall out immediately
-  cache.set('key', {val: 'value', size: 50})
+  cache.set('key', { val: 'value', size: 50 })
 
   t.equal(cache.length, 0)
   t.equal(cache.get('key'), undefined)

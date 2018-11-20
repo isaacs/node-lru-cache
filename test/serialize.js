@@ -112,8 +112,8 @@ test('load basic cache', function (t) {
 })
 
 test('load staled cache', function (t) {
-  var cache = new LRU({maxAge: 100})
-  var copy = new LRU({maxAge: 100})
+  var cache = new LRU({ maxAge: 100 })
+  var copy = new LRU({ maxAge: 100 })
   var arr
 
   // expires at 50
@@ -138,8 +138,8 @@ test('load staled cache', function (t) {
 })
 
 test('load to other size cache', function (t) {
-  var cache = new LRU({max: 2})
-  var copy = new LRU({max: 1})
+  var cache = new LRU({ max: 2 })
+  var copy = new LRU({ max: 1 })
 
   cache.set('a', 'A')
   cache.set('b', 'B')
@@ -158,8 +158,8 @@ test('load to other size cache', function (t) {
 })
 
 test('load to other age cache', function (t) {
-  var cache = new LRU({maxAge: 250})
-  var aged = new LRU({maxAge: 500})
+  var cache = new LRU({ maxAge: 250 })
+  var aged = new LRU({ maxAge: 500 })
   var simple = new LRU()
   var arr
 

@@ -26,7 +26,7 @@ l.set({ foo: 'bar' }, 'baz')
 inspect()
 
 l.maxAge = 0
-l.set(1, {a: {b: {c: {d: {e: {f: {}}}}}}})
+l.set(1, { a: { b: { c: { d: { e: { f: {} } } } } } })
 inspect()
 
 l.allowStale = true

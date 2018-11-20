@@ -434,7 +434,7 @@ function isStale (self, hit) {
 function trim (self) {
   if (self[LENGTH] > self[MAX]) {
     for (var walker = self[LRU_LIST].tail;
-         self[LENGTH] > self[MAX] && walker !== null;) {
+      self[LENGTH] > self[MAX] && walker !== null;) {
       // We know that we're about to delete this one, and also
       // what the next least recently used key will be, so just
       // go ahead and set it now.
