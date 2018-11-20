@@ -536,3 +536,35 @@ test('maxAge on list, cleared in forEach', function (t) {
 
   t.end()
 })
+
+test('drop the old items but do not do it if set used an override maxAge', function (t) {
+  var n = process.env.CI ? 1000 : 100
+  var cache = new LRU({
+    max: 5,
+    maxAge: n * 2
+  })
+
+  cache.set('a', 'A', n * 10) // Override maxAge!
+
+  setTimeout(function () {
+    cache.set('b', 'b')
+    t.equal(cache.get('a'), 'A')
+  }, n)
+
+  setTimeout(function () {
+    cache.set('c', 'C')
+    // timed out
+    t.equal(cache.get('a'), 'A')
+  }, n * 3)
+
+  setTimeout(function () {
+    t.notOk(cache.get('b'))
+    t.equal(cache.get('c'), 'C')
+  }, n * 4)
+
+  setTimeout(function () {
+    t.notOk(cache.get('c'))
+    t.end()
+  }, n * 6)
+})
+
