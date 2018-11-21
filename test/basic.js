@@ -540,6 +540,10 @@ test('bad max/maxAge options', t => {
   t.throws(() => { new LRU().maxAge = 'foo' }, 'maxAge must be a number')
   t.throws(() => new LRU({ max: true }), 'max must be a non-negative number')
   t.throws(() => { new LRU().max = 'foo' }, 'max must be a non-negative number')
+  const c = new LRU({
+    max: 2
+  })
+  t.throw(() => c.set('a', 'A', 'true'), 'maxAge must be a number')
   t.end()
 })
 

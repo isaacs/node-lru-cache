@@ -153,6 +153,9 @@ class LRUCache {
   set (key, value, maxAge) {
     maxAge = maxAge || this[MAX_AGE]
 
+    if (maxAge && typeof maxAge !== 'number')
+      throw new TypeError('maxAge must be a number')
+
     const now = maxAge ? Date.now() : 0
     const len = this[LENGTH_CALCULATOR](value, key)
 
