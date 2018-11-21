@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "test": "tap test/*.js --100 -J",
+    "snap": "TAP_SNAPSHOT=1 tap test/*.js -J",
     "posttest": "standard test/*.js index.js",
     "coveragerport": "tap --coverage-report=html",
     "lintfix": "standard --fix test/*.js index.js",
