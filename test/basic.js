@@ -559,3 +559,13 @@ test('update age on get', t => {
   t.ok(e2 < e3, 'time updated on second get')
   t.end()
 })
+
+test('drop the old items with set override maxAge', function (t) {
+  var cache = new LRU({
+    max: 2
+  })
+   t.throw(function setMaxAgeWithAObject () {
+    cache.set('a', 'A', {expire: 20})
+  }, 'maxAge must be a number')
+  t.end()
+})
