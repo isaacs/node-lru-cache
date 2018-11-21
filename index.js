@@ -12,6 +12,7 @@ const DISPOSE = Symbol('dispose')
 const NO_DISPOSE_ON_SET = Symbol('noDisposeOnSet')
 const LRU_LIST = Symbol('lruList')
 const CACHE = Symbol('cache')
+const UPDATE_AGE_ON_GET = Symbol('updateAgeOnGet')
 
 const naiveLength = () => 1
 
@@ -44,6 +45,7 @@ class LRUCache {
     this[MAX_AGE] = options.maxAge || 0
     this[DISPOSE] = options.dispose
     this[NO_DISPOSE_ON_SET] = options.noDisposeOnSet || false
+    this[UPDATE_AGE_ON_GET] = options.updateAgeOnGet || false
     this.reset()
   }
 
@@ -260,8 +262,11 @@ const get = (self, key, doUse) => {
       if (!self[ALLOW_STALE])
         return undefined
     } else {
-      if (doUse)
+      if (doUse) {
+        if (self[UPDATE_AGE_ON_GET])
+          node.value.now = Date.now()
         self[LRU_LIST].unshiftNode(node)
+      }
     }
     return hit.value
   }

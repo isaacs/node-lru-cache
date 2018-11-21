@@ -79,6 +79,11 @@ away.
   it'll be called whenever a `set()` operation overwrites an existing
   key.  If you set this option, `dispose()` will only be called when a
   key falls out of the cache, not when it is overwritten.
+* `updateAgeOnGet` When using time-expiring entries with `maxAge`,
+  setting this to `true` will make each item's effective time update
+  to the current time whenever it is retrieved from cache, causing it
+  to not expire.  (It can still fall out of cache based on recency of
+  use, of course.)
 
 ## API
 
