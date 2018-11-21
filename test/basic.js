@@ -359,6 +359,10 @@ test('stale', function (t) {
   })
 
   t.equal(cache.allowStale, true)
+  cache.allowStale = false
+  t.equal(cache.allowStale, false)
+  cache.allowStale = true
+  t.equal(cache.allowStale, true)
 
   cache.set('foo', 'bar')
   t.equal(cache.get('foo'), 'bar')

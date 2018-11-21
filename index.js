@@ -11,7 +11,7 @@ var util = require('util')
 var Yallist = require('yallist')
 
 // use symbols if possible, otherwise just _props
-var hasSymbol = typeof Symbol === 'function' && !global._nodeLRUCacheForceNoSymbol
+var hasSymbol = typeof Symbol === 'function' && process.env._nodeLRUCacheForceNoSymbol !== '1'
 var makeSymbol
 if (hasSymbol) {
   makeSymbol = function (key) {
@@ -221,6 +221,7 @@ LRUCache.prototype.dumpLru = function () {
   return this[LRU_LIST]
 }
 
+/* istanbul ignore next */
 LRUCache.prototype.inspect = function (n, opts) {
   var str = 'LRUCache {'
   var extras = false
