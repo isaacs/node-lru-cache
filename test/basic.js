@@ -63,7 +63,7 @@ test('max', function (t) {
   }
 
   // now remove the max restriction, and try again.
-  cache.max = 'hello'
+  cache.max = 0
   for (i = 0; i < 100; i++) cache.set(i, i)
   t.equal(cache.length, 100)
   for (i = 0; i < 100; i++) {
@@ -520,11 +520,6 @@ test('maxAge on list, cleared in forEach', function (t) {
   // hacky.  make it seem older.
   l.dumpLru().head.value.now = Date.now() - 100000
 
-  // setting maxAge to invalid values does nothing.
-  t.equal(l.maxAge, 0)
-  l.maxAge = -100
-  t.equal(l.maxAge, 0)
-  l.maxAge = {}
   t.equal(l.maxAge, 0)
 
   l.maxAge = 1
@@ -537,5 +532,13 @@ test('maxAge on list, cleared in forEach', function (t) {
   t.ok(saw)
   t.equal(l.length, 0)
 
+  t.end()
+})
+
+test('bad max/maxAge options', t => {
+  t.throws(() => new LRU({ maxAge: true }), 'maxAge must be a number')
+  t.throws(() => { new LRU().maxAge = 'foo' }, 'maxAge must be a number')
+  t.throws(() => new LRU({ max: true }), 'max must be a non-negative number')
+  t.throws(() => { new LRU().max = 'foo' }, 'max must be a non-negative number')
   t.end()
 })

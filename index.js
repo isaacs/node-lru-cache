@@ -31,16 +31,16 @@ class LRUCache {
     if (!options)
       options = {}
 
-    const max = this[MAX] = options.max
+    if (options.max && (typeof options.max !== 'number' || options.max < 0))
+      throw new TypeError('max must be a non-negative number')
     // Kind of weird to have a default max of Infinity, but oh well.
-    if (!max ||
-        !(typeof max === 'number') ||
-        max <= 0)
-      this[MAX] = Infinity
+    const max = this[MAX] = options.max || Infinity
 
     const lc = options.length || naiveLength
     this[LENGTH_CALCULATOR] = (typeof lc !== 'function') ? naiveLength : lc
     this[ALLOW_STALE] = options.stale || false
+    if (options.maxAge && typeof options.maxAge !== 'number')
+      throw new TypeError('maxAge must be a number')
     this[MAX_AGE] = options.maxAge || 0
     this[DISPOSE] = options.dispose
     this[NO_DISPOSE_ON_SET] = options.noDisposeOnSet || false
@@ -49,10 +49,10 @@ class LRUCache {
 
   // resize the cache when the max changes.
   set max (mL) {
-    if (!mL || !(typeof mL === 'number') || mL <= 0)
-      mL = Infinity
+    if (typeof mL !== 'number' || mL < 0)
+      throw new TypeError('max must be a non-negative number')
 
-    this[MAX] = mL
+    this[MAX] = mL || Infinity
     trim(this)
   }
   get max () {
@@ -67,8 +67,8 @@ class LRUCache {
   }
 
   set maxAge (mA) {
-    if (!mA || !(typeof mA === 'number') || mA < 0)
-      mA = 0
+    if (typeof mA !== 'number')
+      throw new TypeError('maxAge must be a non-negative number')
 
     this[MAX_AGE] = mA
     trim(this)
