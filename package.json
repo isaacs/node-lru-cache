@@ -11,9 +11,7 @@
   "scripts": {
     "test": "tap test/*.js --100 -J",
     "snap": "TAP_SNAPSHOT=1 tap test/*.js -J",
-    "posttest": "standard test/*.js index.js",
     "coveragerport": "tap --coverage-report=html",
-    "lintfix": "standard --fix test/*.js index.js",
     "preversion": "npm test",
     "postversion": "npm publish",
     "postpublish": "git push origin --all; git push origin --tags"
@@ -22,12 +20,10 @@
   "repository": "git://github.com/isaacs/node-lru-cache.git",
   "devDependencies": {
     "benchmark": "^2.1.4",
-    "standard": "^12.0.1",
     "tap": "^12.1.0"
   },
   "license": "ISC",
   "dependencies": {
-    "pseudomap": "^1.0.2",
     "yallist": "^3.0.2"
   },
   "files": [

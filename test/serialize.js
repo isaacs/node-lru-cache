@@ -227,7 +227,7 @@ test('load to other age cache', function (t) {
 })
 
 test('dumpLru', function (t) {
-  var l = LRU()
+  var l = new LRU()
   t.isa(l.dumpLru(), Yallist)
   t.end()
 })

@@ -376,7 +376,7 @@ test('stale', function (t) {
 })
 
 test('lru update via set', function (t) {
-  var cache = LRU({ max: 2 })
+  var cache = new LRU({ max: 2 })
 
   cache.set('foo', 1)
   cache.set('bar', 2)
