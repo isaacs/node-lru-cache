@@ -1,7 +1,7 @@
 {
   "name": "lru-cache",
   "description": "A cache object that deletes the least-recently-used items.",
-  "version": "4.1.4",
+  "version": "4.1.5",
   "author": "Isaac Z. Schlueter <i@izs.me>",
   "keywords": [
     "mru",
