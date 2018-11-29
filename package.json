@@ -15,7 +15,7 @@
     "coveragerport": "tap --coverage-report=html",
     "lintfix": "standard --fix test/*.js index.js",
     "preversion": "npm test",
-    "postversion": "npm publish",
+    "postversion": "npm publish --tag=legacy",
     "postpublish": "git push origin --all; git push origin --tags"
   },
   "main": "index.js",
