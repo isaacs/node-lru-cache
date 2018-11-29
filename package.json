@@ -28,7 +28,7 @@
   "license": "ISC",
   "dependencies": {
     "pseudomap": "^1.0.2",
-    "yallist": "^3.0.2"
+    "yallist": "^2.1.2"
   },
   "files": [
     "index.js"
