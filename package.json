@@ -8,6 +8,9 @@
     "lru",
     "cache"
   ],
+  "engines": {
+    "node": ">=6.0.0"
+  },
   "scripts": {
     "test": "tap test/*.js --100 -J",
     "snap": "TAP_SNAPSHOT=1 tap test/*.js -J",
