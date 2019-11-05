@@ -104,8 +104,7 @@ away.
     Neither of these will update "recently used"-ness of the key.
     They are self explanatory in that they get the maxAge of a key
     (or globally configured max-age if none is defined for the key)
-    
-    and the time cached.
+    and the time cached as a JS timestamp (millis since epoch) respectively.
 
     if no key exists, they will return undefined.
 
