@@ -1,11 +1,19 @@
 var test = require('tap').test
 var LRU = require('../')
 
+function range(val, min, max) {
+  return [val >= min && val < max, `${val} should be inside range ${min} to ${max}`]
+}
+
 test('basic', function (t) {
   var cache = new LRU({ max: 10 })
   cache.set('key', 'value')
   t.equal(cache.get('key'), 'value')
   t.equal(cache.get('nada'), undefined)
+  t.equal(cache.getMaxAge('key'), 0)
+  t.equal(cache.getMaxAge('nada'), undefined)
+  t.equal(cache.getCachedTime('key'), 0)
+  t.equal(cache.getCachedTime('nada'), undefined)
   t.equal(cache.length, 1)
   t.equal(cache.max, 10)
   t.end()
@@ -562,4 +570,136 @@ test('update age on get', t => {
   t.ok(e1 < e2, 'time updated on first get')
   t.ok(e2 < e3, 'time updated on second get')
   t.end()
+})
+
+test('maxAge getter with global maxAge set', t => {
+  var l = new LRU({
+    max: 5,
+    maxAge: 100
+  })
+  l.set('foo', 'bar')
+  l.set('fizz', 'buzz', 200)
+  t.equal(l.getMaxAge('nada'), undefined)
+  t.equal(l.getMaxAge('foo'), 100)
+  t.equal(l.getMaxAge('fizz'), 200)
+  t.end()
+})
+
+test('maxAge getter with no global maxAge set', t => {
+  var l = new LRU({
+    max: 5,
+  })
+  l.set('foo', 'bar')
+  l.set('fizz', 'buzz', 200)
+  t.equal(l.getMaxAge('nada'), undefined)
+  t.equal(l.getMaxAge('foo'), 0)
+  t.equal(l.getMaxAge('fizz'), 200)
+  t.end()
+})
+
+test('cachedTime getter with global maxAge set', t => {
+  var l = new LRU({
+    max: 5,
+    maxAge: 100
+  })
+  const now = Date.now();
+  var time;
+  l.set('foo', 'bar')
+  l.set('fizz', 'buzz', 200)
+  t.equal(l.getCachedTime('nada'), undefined)
+  time = l.getCachedTime('foo')
+  t.ok(...range(time, now, now + 5))
+  time = l.getCachedTime('fizz')
+  t.ok(...range(time, now, now + 5))
+  t.end()
+})
+
+test('cachedTime getter with no global maxAge set', t => {
+  var l = new LRU({
+    max: 5,
+  })
+  const now = Date.now();
+  var time
+  l.set('foo', 'bar')
+  l.set('fizz', 'buzz', 200)
+  t.equal(l.getCachedTime('nada'), undefined)
+  t.equal(l.getCachedTime('foo'), 0)
+  time = l.getCachedTime('fizz')
+  t.ok(...range(time, now, now + 5))
+  t.end()
+})
+
+test('cachedTime getter staleCache and allowStale true', t => {
+  var n = process.env.CI ? 1000 : 100
+  var l = new LRU({
+    max: 5,
+    maxAge: n * 2,
+    stale: true
+  })
+  const now = Date.now();
+  l.set('foo', 'bar')
+  setTimeout(function () {
+    var time = l.getCachedTime('foo')
+    t.ok(...range(time, now, now + 5))
+  }, n)
+  setTimeout(function () {
+    var time = l.getCachedTime('foo')
+    t.ok(...range(time, now, now + 5))
+    t.end()
+  }, n * 3)
+})
+
+test('cachedTime getter staleCache and allowStale false', t => {
+  var n = process.env.CI ? 1000 : 100
+  var l = new LRU({
+    max: 5,
+    maxAge: n * 2,
+    allowStale: false
+  })
+  const now = Date.now();
+  l.set('foo', 'bar')
+  setTimeout(function () {
+    var time = l.getCachedTime('foo')
+    t.ok(...range(time, now, now + 5))
+  }, n)
+  setTimeout(function () {
+    t.equal(l.getCachedTime('foo'), undefined)
+    t.end()
+  }, n * 3)
+})
+
+test('maxAge getter staleCache and allowStale true', t => {
+  var n = process.env.CI ? 1000 : 100
+  var l = new LRU({
+    max: 5,
+    maxAge: n * 2,
+    stale: true
+  })
+  const now = Date.now();
+  l.set('foo', 'bar')
+  setTimeout(function () {
+    t.equal(l.getMaxAge('foo'), n * 2)
+  }, n)
+  setTimeout(function () {
+    t.equal(l.getMaxAge('foo'), n * 2)
+    t.end()
+  }, n * 3)
+})
+
+test('maxAge getter staleCache and allowStale false', t => {
+  var n = process.env.CI ? 1000 : 100
+  var l = new LRU({
+    max: 5,
+    maxAge: n * 2,
+    allowStale: false
+  })
+  const now = Date.now();
+  l.set('foo', 'bar')
+  setTimeout(function () {
+    t.equal(l.getMaxAge('foo'), n * 2)
+  }, n)
+  setTimeout(function () {
+    t.equal(l.getMaxAge('foo'), undefined)
+    t.end()
+  }, n * 3)
 })
