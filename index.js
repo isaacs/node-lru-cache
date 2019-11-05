@@ -216,6 +216,10 @@ class LRUCache {
     return getCachedTime(this, key)
   }
 
+  getMaxAge (key) {
+    return getMaxAge(this, key)
+  }
+
   peek (key) {
     return get(this, key, false)
   }
@@ -289,6 +293,19 @@ const getCachedTime = (self, key) => {
       }
     }
     return hit.now
+  }
+}
+
+const getMaxAge = (self, key) => {
+  const node = self[CACHE].get(key)
+  if (node) {
+    const hit = node.value
+    if (isStale(self, hit)) {
+      if (!self[ALLOW_STALE]) {
+        return undefined
+      }
+    }
+    return hit.maxAge || self[MAX_AGE]
   }
 }
 
