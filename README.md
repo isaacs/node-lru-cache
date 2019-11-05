@@ -98,6 +98,19 @@ away.
 
     The key and val can be any value.
 
+* `getMaxAge(key)`
+* `getCachedTime(key)`
+
+    Neither of these will update "recently used"-ness of the key.
+    They are self explanatory in that they get the maxAge of a key
+    (or globally configured max-age if none is defined for the key)
+    
+    and the time cached.
+
+    if no key exists, they will return undefined.
+
+    `getCachedTime` will return 0 if no maxAge is set.
+
 * `peek(key)`
 
     Returns the key value (or `undefined` if not found) without
