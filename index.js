@@ -212,6 +212,10 @@ class LRUCache {
     return get(this, key, true)
   }
 
+  getCachedTime (key) {
+    return getCachedTime(this, key)
+  }
+
   peek (key) {
     return get(this, key, false)
   }
@@ -272,6 +276,19 @@ const get = (self, key, doUse) => {
       }
     }
     return hit.value
+  }
+}
+
+const getCachedTime = (self, key) => {
+  const node = self[CACHE].get(key)
+  if (node) {
+    const hit = node.value
+    if (isStale(self, hit)) {
+      if (!self[ALLOW_STALE]) {
+        return undefined
+      }
+    }
+    return hit.now
   }
 }
 
