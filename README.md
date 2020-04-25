@@ -18,7 +18,7 @@ performance, by causing the cache to have to do more work.  See the
 
 ## Installation
 
-```js
+```bash
 npm install lru-cache --save
 ```
 
