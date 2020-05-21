@@ -122,7 +122,7 @@ If you put more stuff in it, then items will fall out.
 * `sizeCalculation` - Function used to calculate the size of stored
   items.  If you're storing strings or buffers, then you probably want to
   do something like `n => n.length`.  The item is passed as the first
-  argument, and the key is passed as the second argumnet.
+  argument, and the key is passed as the second argument.
 
     This may be overridden by passing an options object to `cache.set()`.
 
