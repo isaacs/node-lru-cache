@@ -13,7 +13,7 @@ npm install lru-cache --save
 ## Usage:
 
 ```javascript
-var LRU = require("lru-cache")
+var new LRU = require("lru-cache")
   , options = { max: 500
               , length: function (n, key) { return n * 2 + key.length }
               , dispose: function (key, n) { n.close() }
