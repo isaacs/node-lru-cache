@@ -6,7 +6,7 @@ A cache object that deletes the least-recently-used items.
 
 ## Installation:
 
-```javascript
+```bash
 npm install lru-cache --save
 ```
 
