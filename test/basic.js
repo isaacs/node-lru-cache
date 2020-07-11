@@ -548,18 +548,19 @@ test('bad max/maxAge options', t => {
 })
 
 test('update age on get', t => {
-  const l = new LRU({ updateAgeOnGet: true, maxAge: 10 })
+  const l = new LRU({ updateAgeOnGet: true, maxAge: 100 })
   l.set('foo', 'bar')
   const e1 = l.dump()[0].e
-  // spin for 5ms
-  for (let then = Date.now() + 5; then > Date.now(); );
-  l.get('foo')
-  const e2 = l.dump()[0].e
-  // spin for 5ms
-  for (let then = Date.now() + 5; then > Date.now(); );
-  l.get('foo')
-  const e3 = l.dump()[0].e
-  t.ok(e1 < e2, 'time updated on first get')
-  t.ok(e2 < e3, 'time updated on second get')
-  t.end()
+  setTimeout(function() {
+    l.get('foo')
+    const e2 = l.dump()[0].e
+    setTimeout(function() {
+      l.get('foo')
+      const e3 = l.dump()[0].e
+      t.ok(e1 < e2, 'time updated on first get')
+      t.ok(e2 < e3, 'time updated on second get')
+      t.end()
+    }, 50)
+  }, 50)
 })
+
