@@ -158,7 +158,9 @@ class LRUCache {
 
     const now = maxAge ? Date.now() : 0
     const len = this[LENGTH_CALCULATOR](value, key)
-
+    if (typeof len !== 'number') {
+        throw new TypeError('length calculator function must return a number')
+    }
     if (this[CACHE].has(key)) {
       if (len > this[MAX]) {
         del(this, this[CACHE].get(key))

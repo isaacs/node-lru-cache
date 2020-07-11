@@ -563,3 +563,12 @@ test('update age on get', t => {
   t.ok(e2 < e3, 'time updated on second get')
   t.end()
 })
+
+test('Validate calculator function return', function (t) {
+    var cache = new LRU({length:function () {
+          return "String"
+        }})
+
+    t.throws(function() {cache.set('a', 'A')},'length calculator function must return a number')
+    t.end()
+})
