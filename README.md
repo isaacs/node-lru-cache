@@ -1,19 +1,17 @@
-# lru cache
+# lru cache (with file system swapping)
 
 A cache object that deletes the least-recently-used items.
-
-[![Build Status](https://travis-ci.org/isaacs/node-lru-cache.svg?branch=master)](https://travis-ci.org/isaacs/node-lru-cache) [![Coverage Status](https://coveralls.io/repos/isaacs/node-lru-cache/badge.svg?service=github)](https://coveralls.io/github/isaacs/node-lru-cache)
 
 ## Installation:
 
 ```javascript
-npm install lru-cache --save
+npm install lru-fs --save
 ```
 
 ## Usage:
 
 ```javascript
-var LRU = require("lru-cache")
+var LRU = require("lru-fs")
   , options = { max: 500
               , length: function (n, key) { return n * 2 + key.length }
               , dispose: function (key, n) { n.close() }
@@ -84,6 +82,9 @@ away.
   to the current time whenever it is retrieved from cache, causing it
   to not expire.  (It can still fall out of cache based on recency of
   use, of course.)
+* `default:undefined` Default value of key, will be set on `get()` call if key wasn't cached before.
+* `swap:false` Swaps cached values to temporary folder in `json` format on `del()` call.
+* `swapDir:null` Folder to swap cached values on `del()` call.
 
 ## API
 
@@ -94,7 +95,8 @@ away.
     They do what you think. `maxAge` is optional and overrides the
     cache `maxAge` option if provided.
 
-    If the key is not found, `get()` will return `undefined`.
+    If the key is not found, `get()` searches it in swapped data (if swap is activated),
+    then sets default value (if default is defined), otherwise will return `undefined`.
 
     The key and val can be any value.
 
@@ -109,7 +111,11 @@ away.
 
 * `del(key)`
 
-    Deletes a key out of the cache.
+    Deletes a key out of the cache. Swaps its value to file system if the option is active.
+
+* `terminate(key)`
+
+    Deletes a key out of the cache. Also deletes a swapped file if exists.
 
 * `reset()`
 
@@ -154,7 +160,7 @@ away.
 * `dump()`
 
     Return an array of the cache entries ready for serialization and usage
-    with 'destinationCache.load(arr)`.
+    with `destinationCache.load(arr)`.
 
 * `load(cacheEntriesArray)`
 
