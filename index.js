@@ -1,5 +1,10 @@
 'use strict'
 
+const _ = require('lodash')
+const fs = require('fs-extra')
+const path = require('path')
+const tmp = require('tmp')
+
 // A linked list to keep track of recently-used-ness
 const Yallist = require('yallist')
 
@@ -13,6 +18,8 @@ const NO_DISPOSE_ON_SET = Symbol('noDisposeOnSet')
 const LRU_LIST = Symbol('lruList')
 const CACHE = Symbol('cache')
 const UPDATE_AGE_ON_GET = Symbol('updateAgeOnGet')
+const SWAP_DIR = Symbol('swapDir')
+const DEFAULT_VALUE = Symbol('defaultValue')
 
 const naiveLength = () => 1
 
@@ -46,6 +53,8 @@ class LRUCache {
     this[DISPOSE] = options.dispose
     this[NO_DISPOSE_ON_SET] = options.noDisposeOnSet || false
     this[UPDATE_AGE_ON_GET] = options.updateAgeOnGet || false
+    this[SWAP_DIR] = options.swapDir || options.swap ? tmp.dirSync().name : null
+    this[DEFAULT_VALUE] = options.default === undefined ? undefined : options.default
     this.reset()
   }
 
@@ -208,8 +217,41 @@ class LRUCache {
     return !isStale(this, hit)
   }
 
-  get (key) {
+  _getSwap (key) {
+    if (!this[SWAP_DIR])
+      return
+
+    try {
+      const content = JSON.parse(fs.readFileSync(
+        path.join(this[SWAP_DIR], key)).toString());
+      this.set(key, content)
+      return get(this, key, true)
+
+    } catch (e) {
+      return
+    }
+  }
+
+  _getDefault (key) {
+    if (this[DEFAULT_VALUE] === undefined)
+      return
+
+    this.set(key, _.cloneDeep(this[DEFAULT_VALUE]))
     return get(this, key, true)
+  }
+
+  get (key) {
+    let result = get(this, key, true)
+
+    if (result === undefined) {
+      result = this._getSwap(key)
+
+      if (result === undefined) {
+        result = this._getDefault(key)
+      }
+    }
+
+    return result
   }
 
   peek (key) {
@@ -227,6 +269,10 @@ class LRUCache {
 
   del (key) {
     del(this, this[CACHE].get(key))
+  }
+
+  terminate (key) {
+    del(this, this[CACHE].get(key), true)
   }
 
   load (arr) {
@@ -298,7 +344,7 @@ const trim = self => {
   }
 }
 
-const del = (self, node) => {
+const del = (self, node, terminate = false) => {
   if (node) {
     const hit = node.value
     if (self[DISPOSE])
@@ -307,6 +353,16 @@ const del = (self, node) => {
     self[LENGTH] -= hit.length
     self[CACHE].delete(hit.key)
     self[LRU_LIST].removeNode(node)
+
+    if (self[SWAP_DIR]) {
+      if (terminate) {
+        fs.removeSync(path.join(self[SWAP_DIR], hit.key))
+      } else {
+        fs.writeFileSync(
+          path.join(self[SWAP_DIR], hit.key),
+          JSON.stringify(hit.value));
+      }
+    }
   }
 }
 

@@ -23,6 +23,9 @@
   },
   "license": "ISC",
   "dependencies": {
+    "fs-extra": "^9.0.1",
+    "lodash": "^4.17.19",
+    "tmp": "^0.2.1",
     "yallist": "^4.0.0"
   },
   "files": [
