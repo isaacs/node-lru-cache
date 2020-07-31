@@ -341,6 +341,10 @@ const trim = self => {
       del(self, walker)
       walker = prev
     }
+  } else {
+    let node = self[LRU_LIST].tail
+    if (node && isStale(self, node.value))
+      del(self, node)
   }
 }
 
