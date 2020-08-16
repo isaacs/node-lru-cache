@@ -252,7 +252,10 @@ class LRUCache {
   }
 
   prune () {
-    this[CACHE].forEach((value, key) => get(this, key, false))
+    if (this[ALLOW_STALE])
+      this[CACHE].forEach((value, key) => get(this, key, false))
+    else
+      this[CACHE].forEach((value, key) => { }) // will be auto-deleted
   }
 }
 
