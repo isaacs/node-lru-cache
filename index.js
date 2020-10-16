@@ -129,7 +129,7 @@ class LRUCache {
     if (this[DISPOSE] &&
         this[LRU_LIST] &&
         this[LRU_LIST].length) {
-      this[LRU_LIST].forEach(hit => this[DISPOSE](hit.key, hit.value))
+      this[LRU_LIST].forEach(hit => this[DISPOSE](hit.key, hit.value, hit.now))
     }
 
     this[CACHE] = new Map() // hash of items by key
@@ -172,7 +172,8 @@ class LRUCache {
       // split out into 2 ifs for better coverage tracking
       if (this[DISPOSE]) {
         if (!this[NO_DISPOSE_ON_SET])
-          this[DISPOSE](key, item.value)
+          
+          this[DISPOSE](key, item.value, item.now)
       }
 
       item.now = now
@@ -190,7 +191,7 @@ class LRUCache {
     // oversized objects fall out of cache automatically.
     if (hit.length > this[MAX]) {
       if (this[DISPOSE])
-        this[DISPOSE](key, value)
+        this[DISPOSE](key, value, now)
 
       return false
     }
@@ -302,7 +303,7 @@ const del = (self, node) => {
   if (node) {
     const hit = node.value
     if (self[DISPOSE])
-      self[DISPOSE](hit.key, hit.value)
+      self[DISPOSE](hit.key, hit.value, hit.now)
 
     self[LENGTH] -= hit.length
     self[CACHE].delete(hit.key)
