@@ -2,6 +2,7 @@ language: node_js
 
 node_js:
   - node
+  - 14
   - 12
   - 10
 
@@ -9,9 +10,18 @@ os:
   - linux
   - windows
 
+arch:
+  - amd64
+  - ppc64le
+
 cache:
   directories:
     - $HOME/.npm
+    
+jobs:
+  exclude:
+     - arch: ppc64le
+       os: windows
 
 notifications:
   email: false
