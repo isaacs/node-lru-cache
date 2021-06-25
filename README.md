@@ -120,13 +120,13 @@ away.
     Check if a key is in the cache, without updating the recent-ness
     or deleting it for being stale.
 
-* `forEach(function(value,key,cache), [thisp])`
+* `forEach(function(key,value,cache), [thisp])`
 
     Just like `Array.prototype.forEach`.  Iterates over all the keys
     in the cache, in order of recent-ness.  (Ie, more recently used
     items are iterated over first.)
 
-* `rforEach(function(value,key,cache), [thisp])`
+* `rforEach(function(key,value,cache), [thisp])`
 
     The same as `cache.forEach(...)` but items are iterated over in
     reverse order.  (ie, less recently used items are iterated over
