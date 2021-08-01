@@ -19,7 +19,7 @@
   "repository": "git://github.com/isaacs/node-lru-cache.git",
   "devDependencies": {
     "benchmark": "^2.1.4",
-    "tap": "^14.10.7"
+    "tap": "^15.0.9"
   },
   "license": "ISC",
   "dependencies": {
