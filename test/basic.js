@@ -79,6 +79,11 @@ t.test('basic operation', t => {
   t.equal(c.has(10, true), false)
   t.equal(c.current.size, 1)
   t.equal(c.old.size, 10)
+  c.set(true, 'true')
+  t.equal(c.has(true), true)
+  t.equal(c.get(true), 'true')
+  c.delete(true)
+  t.equal(c.has(true), false)
 
   t.end()
 })

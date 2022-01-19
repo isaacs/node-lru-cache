@@ -1,10 +1,12 @@
 class LRUEntry {
-  constructor (value) {
+  constructor (value, size) {
     this.value = value
+    this.size = size
   }
 }
 
 const asInt = n => ~~n
+const naiveLength = () => 1
 
 class LRUCache {
   constructor (options) {
@@ -19,12 +21,22 @@ class LRUCache {
     this.max = options.max
     this.old = new Map()
     this.current = new Map()
+    this.oldSize = 0
+    this.currentSize = 0
+    this.sizeCalculation = options.length || naiveLength
   }
   get size () {
-    return this.current.size + this.old.size
+    return this.oldSize + this.currentSize
   }
   set (key, value) {
-    this.current.set(key, new LRUEntry(value))
+    const entry = new LRUEntry(value, this.sizeCalculation(value))
+    this.currentSize += entry.size
+    this.current.set(key, entry)
+    this.prune()
+  }
+  promote (key, entry) {
+    this.current.set(key, entry)
+    this.currentSize += entry.size
     this.prune()
   }
   get (key) {
@@ -34,15 +46,22 @@ class LRUCache {
     } else {
       const fromOld = this.old.get(key)
       if (fromOld) {
-        this.current.set(key, fromOld)
-        this.prune()
+        this.promote(key, fromOld)
         return fromOld.value
       }
     }
   }
   delete (key) {
-    this.old.delete(key)
-    this.current.delete(key)
+    const fromOld = this.old.get(key)
+    if (fromOld) {
+      this.old.delete(key)
+      this.oldSize -= fromOld.size
+    }
+    const fromCurrent = this.current.get(key)
+    if (fromCurrent) {
+      this.current.delete(key)
+      this.currentSize -= fromCurrent.size
+    }
   }
   has (key, updateRecency) {
     if (this.current.has(key)) {
@@ -50,18 +69,21 @@ class LRUCache {
     }
     const oldHas = this.old.get(key)
     if (oldHas && updateRecency) {
-      this.current.set(key, oldHas)
-      this.prune()
+      this.promote(key, oldHas)
     }
     return !!oldHas
   }
   reset () {
     this.old = new Map()
+    this.oldSize = 0
     this.current = new Map()
+    this.currentSize = 0
   }
   prune () {
-    if (this.current.size >= this.max) {
+    if (this.currentSize >= this.max) {
+      this.oldSize = this.currentSize
       this.old = this.current
+      this.currentSize = 0
       this.current = new Map()
     }
   }
