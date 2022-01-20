@@ -22,7 +22,7 @@ const runTests = (LRU, t) => {
     t.equal(c.get(1), undefined)
     t.equal(c.size, 0)
 
-    c.set(2, 2, 100)
+    c.set(2, 2, { ttl: 100 })
     clock.advance(50)
     t.equal(c.has(2), true)
     t.equal(c.get(2), 2)
@@ -33,6 +33,40 @@ const runTests = (LRU, t) => {
     c.reset()
     for (let i = 0; i < 9; i++) {
       c.set(i, i)
+    }
+    // now we have 9 items
+    // get an expired item from old set
+    clock.advance(11)
+    t.equal(c.has(4), false)
+    t.equal(c.get(4), undefined)
+
+    t.end()
+  })
+
+  t.test('ttl on set, not on cache', t => {
+    const c = new LRU({ max: 5 })
+    c.set(1, 1, { ttl: 10 })
+    t.equal(c.get(1), 1)
+    clock.advance(5)
+    t.equal(c.get(1), 1)
+    clock.advance(5)
+    t.equal(c.get(1), 1)
+    clock.advance(1)
+    t.equal(c.has(1), false)
+    t.equal(c.get(1), undefined)
+    t.equal(c.size, 0)
+
+    c.set(2, 2, { ttl: 100 })
+    clock.advance(50)
+    t.equal(c.has(2), true)
+    t.equal(c.get(2), 2)
+    clock.advance(51)
+    t.equal(c.has(2), false)
+    t.equal(c.get(2), undefined)
+
+    c.reset()
+    for (let i = 0; i < 9; i++) {
+      c.set(i, i, { ttl: 10 })
     }
     // now we have 9 items
     // get an expired item from old set
@@ -57,7 +91,7 @@ const runTests = (LRU, t) => {
     t.equal(c.get(1), undefined)
     t.equal(c.size, 0)
 
-    c.set(2, 2, 100)
+    c.set(2, 2, { ttl: 100 })
     clock.advance(50)
     t.equal(c.has(2), true)
     t.equal(c.get(2), 2)
@@ -94,7 +128,7 @@ const runTests = (LRU, t) => {
     t.equal(c.size, 1)
     c.reset()
 
-    c.set(2, 2, 100)
+    c.set(2, 2, { ttl: 100 })
     for (let i = 0; i < 10; i++) {
       clock.advance(50)
       t.equal(c.has(2), true)

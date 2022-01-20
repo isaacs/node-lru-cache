@@ -2,6 +2,8 @@ const t = require('tap')
 const LRU = require('../')
 
 t.test('disposal', t => {
+  t.throws(() => new LRU({max: 1, noDisposeOnSet: true, dispose: () => {}}))
+
   const disposed = []
   const c = new LRU({max:5, dispose: (k,v) => disposed.push([k,v])})
   for (let i = 0; i < 9; i++) {
@@ -24,7 +26,7 @@ t.test('disposal', t => {
   disposed.length = 0
   c.set('asdf', 'foo')
   c.set('asdf', 'asdf')
-  t.strictSame(disposed, [['asdf', 'foo']])
+  t.strictSame(disposed, [['foo', 'asdf']])
 
   disposed.length = 0
   for (let i = 0; i < 5; i++) {
@@ -36,7 +38,7 @@ t.test('disposal', t => {
   disposed.length = 0
   c.set('asdf', 'foo')
   c.delete('asdf')
-  t.strictSame(disposed, [['asdf', 'asdf'], ['asdf', 'foo']])
+  t.strictSame(disposed, [['asdf', 'asdf'], ['foo', 'asdf']])
 
   // delete non-existing key, no disposal
   disposed.length = 0

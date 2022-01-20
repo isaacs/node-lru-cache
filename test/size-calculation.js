@@ -19,7 +19,8 @@ t.test('store strings, size = length', t => {
   t.equal(c.oldSize, 150)
   t.equal(c.current.size, 0)
   t.equal(c.currentSize, 0)
-  c.set('big', 'y'.repeat(10))
+  // override the size on set
+  c.set('big', 'y'.repeat(100), { sizeCalculation: () => 10 })
   t.equal(c.size, 160)
   t.equal(c.old.size, 6)
   t.equal(c.oldSize, 150)
@@ -47,5 +48,14 @@ t.test('store strings, size = length', t => {
   t.equal(c.currentSize, 10)
   t.equal(c.get('repeated'), 'j'.repeat(10))
 
+  t.end()
+})
+
+t.test('bad size calculation fn, use 1 instead', t => {
+  const c = new LRU({ max: 5, sizeCalculation: () => 'asdf' })
+  c.set(1, '1'.repeat(100))
+  t.equal(c.size, 1)
+  c.set(2, '2'.repeat(100), { sizeCalculation: () => 'foobar' })
+  t.equal(c.size, 2)
   t.end()
 })
