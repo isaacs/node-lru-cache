@@ -27,5 +27,8 @@
   ],
   "engines": {
     "node": ">=12"
+  },
+  "tap": {
+    "coverage-map": "map.js"
   }
 }
