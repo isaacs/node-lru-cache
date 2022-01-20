@@ -1,5 +1,8 @@
-const asInt = n => ~~n
-const asPosInt = n => typeof n === 'number' && n > 0 ? asInt(n) : null
+const safe = n => n >= Number.MIN_SAFE_INTEGER && n <= Number.MAX_SAFE_INTEGER
+const isInt = n => safe(n) && n === Math.floor(n)
+const isPosInt = n => n > 0 && isInt(n)
+const asInt = n => safe(n) ? Math.floor(n) : null
+const asPosInt = (n, f = null) => n > 0 && asInt(n) || f
 const ifFunc = n => typeof n === 'function' ? n : null
 
 // not a global until after the supported versions
@@ -15,22 +18,27 @@ const tryRequire = mod => {
 const { performance = Date } = tryRequire('perf_hooks')
 const { now } = performance
 
+const newEntry = (value, size, start, ttl) =>
+  ttl ? new LRUEntryTTL(value, size, start, ttl)
+  : new LRUEntryNoTTL(value, size)
+
 class LRUEntry {
-  constructor (value, size, start, ttl) {
-    if (ttl) {
-      return new LRUEntryTTL(value, size, start, ttl)
-    } else {
-      return new LRUEntryNoTTL(value, size)
-    }
+  constructor (value, size, start, ttl, isSuper = false) {
     this.value = value
     this.size = size
   }
+  toObject () {
+    const { value, size, ttl, start, stale } = this
+    return { value, size, ttl, start, stale }
+  }
 }
 
-class LRUEntryNoTTL {
+class LRUEntryNoTTL extends LRUEntry {
   constructor (value, size) {
-    super()
+    super(value, size)
     this.stale = false
+    this.ttl = 0
+    this.start = 0
   }
 }
 
@@ -41,13 +49,21 @@ class LRUEntryTTL extends LRUEntry {
     this.ttl = ttl
   }
 
-  get age () {
-    return now() - this.start
-  }
-
   get stale () {
-    return this.age > this.ttl
+    return now() - this.start > this.ttl
   }
+}
+
+const optsWarned = new Set()
+const { hasOwnProperty } = Object
+const has = (o, k) => hasOwnProperty.call(o, k)
+const deprOpt = (opt, msg, options) => {
+  if (process.noDeprecation || !has(options, opt) || optsWarned.has(opt)) {
+    return
+  }
+  optsWarned.add(opt)
+  const code = `LRU_CACHE_${opt}`
+  process.emitWarning(msg, 'DeprecationWarning', code, LRUCache)
 }
 
 class LRUCache {
@@ -55,39 +71,129 @@ class LRUCache {
     if (!options || typeof options !== 'object') {
       throw new Error('invalid options object')
     }
-    const maxOk = options.max && (options.max === asPosInt(options.max))
-    if (!maxOk) {
+    if (!isPosInt(options.max)) {
       throw new Error('options.max must be integer >0')
     }
+    deprOpt('stale', 'please use options.allowStale instead', options)
+    deprOpt('maxAge', 'please use options.ttl instead', options)
+    deprOpt('length', 'please use options.sizeCalculation instead', options)
     this.max = options.max
     this.ttl = asPosInt(options.ttl) || asPosInt(options.maxAge)
-    this.allowStale = this.ttl && (!!options.allowStale || !!options.stale)
-    this.updateAgeOnGet = this.ttl && !!options.updateAgeOnGet
+    this.allowStale = !!options.allowStale || !!options.stale
+    this.updateRecencyOnGet = options.updateRecencyOnGet !== false
+    this.updateAgeOnGet = !!options.updateAgeOnGet
+    this.updateAgeOnHas = !!options.updateAgeOnHas
+    this.updateRecencyOnHas = !!options.updateRecencyOnHas
+    this.sizeCalculation = ifFunc(options.sizeCalculation) ||
+      has(options, 'length') && ifFunc(options.length)
     this.old = new Map()
     this.current = new Map()
     this.oldSize = 0
     this.currentSize = 0
-    this.sizeCalculation = ifFunc(options.sizeCalculation) ||
-      ifFunc(options.length)
     this.dispose = ifFunc(options.dispose)
-    if (this.dispose && options.noDisposeOnSet) {
-      throw new TypeError('noDisposeOnSet removed in lru-cache version 7')
-    }
+    this.noDisposeOnSet = !!options.noDisposeOnSet
   }
 
   get size () {
     return this.oldSize + this.currentSize
   }
+  get length () {
+    if (!optsWarned.has('length_property')) {
+      optsWarned.add('length_property')
+      const code = 'LRU_CACHE_length_getter'
+      const msg = 'please use cache.size instead'
+      const { prototype } = LRUCache
+      const { get } = Object.getOwnPropertyDescriptor(prototype, 'length')
+      process.emitWarning(msg, 'DeprecationWarning', code, get)
+    }
+    return this.size
+  }
 
-  set (key, value, { ttl, sizeCalculation } = this) {
+  get itemCount () {
+    return this.old.size + this.current.size
+  }
+
+  // walk over old first, so we can show in the order added
+  *rawIterate () {
+    for (const [key, entry] of this.old.entries()) {
+      if (entry.stale || this.current.has(key)) {
+        continue
+      }
+      yield [key, entry]
+    }
+    for (const [key, entry] of this.current.entries()) {
+      if (entry.stale) {
+        continue
+      }
+      yield [key, entry]
+    }
+  }
+
+  // print old first, so we can show them in the order added
+  *keys () {
+    for (const [key, entry] of this.rawIterate()) {
+      yield key
+    }
+  }
+
+  *values () {
+    for (const [key, entry] of this.rawIterate()) {
+      yield entry.value
+    }
+  }
+
+  *entries () {
+    for (const [key, entry] of this.rawIterate()) {
+      yield [key, entry.value]
+    }
+  }
+
+  // returns a list of [key,entry] items, in the order they should be
+  // inserted to rebuild the lru cache in its former state
+  dump () {
+    const arr = []
+    for (const [key, entry] of this.rawIterate()) {
+      arr.push([key, entry.toObject()])
+    }
+    return arr
+  }
+
+  find (fn, getOptions = {}) {
+    for (const [key, entry] of this.rawIterate()) {
+      if (fn(entry.value, key, this)) {
+        return this.get(key, getOptions)
+      }
+    }
+  }
+
+  load (list) {
+    this.reset()
+    for (const [key, entry] of list) {
+      this.set(key, entry.value, entry)
+    }
+  }
+
+  set (key, value, {
+    ttl = this.ttl,
+    sizeCalculation = this.sizeCalculation,
+    size = null,
+  } = {}) {
+    const { dispose } = this
+    ttl = asPosInt(ttl, 0)
     const start = ttl ? now() : 0
-    const s = asPosInt(sizeCalculation ? sizeCalculation(value, key) : 1) || 1
-    const entry = new LRUEntry(value, s, start, ttl)
+    const s = isPosInt(size) ? size
+      : sizeCalculation ? asPosInt(sizeCalculation(value, key), 1)
+      : 1
+    const entry = newEntry(value, s, start, ttl)
     const replace = this.current.get(key)
     this.currentSize += entry.size - (replace ? replace.size : 0)
-    const { dispose } = this
-    if (dispose && replace && this.old.get(key) !== replace) {
-      dispose(replace.value, key)
+    const fromOld = this.old.get(key)
+    if (dispose && !this.noDisposeOnSet) {
+      if (replace && fromOld !== replace) {
+        dispose(replace.value, key, replace.toObject())
+      } else if (fromOld && fromOld.value !== entry.value) {
+        dispose(fromOld.value, key, fromOld.toObject())
+      }
     }
     this.current.set(key, entry)
     this.prune()
@@ -99,14 +205,18 @@ class LRUCache {
     this.prune()
   }
 
-  get (key) {
+  get (key, {
+    updateAgeOnGet = this.updateAgeOnGet,
+    updateRecencyOnGet = this.updateRecencyOnGet,
+    allowStale = this.allowStale,
+  } = {}) {
     const fromCurrent = this.current.get(key)
     if (fromCurrent) {
       if (fromCurrent.stale) {
         this.delete(key)
-        return this.allowStale ? fromCurrent.value : undefined
+        return allowStale ? fromCurrent.value : undefined
       }
-      if (this.updateAgeOnGet) {
+      if (updateAgeOnGet && fromCurrent.ttl) {
         fromCurrent.start = now()
       }
       return fromCurrent.value
@@ -115,12 +225,14 @@ class LRUCache {
       if (fromOld) {
         if (fromOld.stale) {
           this.delete(key)
-          return this.allowStale ? fromOld.value : undefined
+          return allowStale ? fromOld.value : undefined
         }
-        if (this.updateAgeOnGet) {
+        if (updateAgeOnGet && fromOld.ttl) {
           fromOld.start = now()
         }
-        this.promote(key, fromOld)
+        if (updateRecencyOnGet !== false) {
+          this.promote(key, fromOld)
+        }
         return fromOld.value
       }
     }
@@ -138,26 +250,46 @@ class LRUCache {
       this.current.delete(key)
       this.currentSize -= fromCurrent.size
     }
-    if (dispose && (fromOld || fromCurrent)) {
-      if (fromOld) {
-        dispose(fromOld.value, key)
-      }
-      if (fromCurrent && fromCurrent !== fromOld) {
-        dispose(fromCurrent.value, key)
+    if (dispose) {
+      // if we have a current value, we will have already disposed
+      // the old when it was overridden, or NOT disposed it, because
+      // noDisposeOnSet=true
+      if (fromCurrent) {
+        dispose(fromCurrent.value, key, fromCurrent.toObject())
+      } else if (fromOld) {
+        dispose(fromOld.value, key, fromOld.toObject())
       }
     }
   }
 
-  has (key, updateRecency) {
+  has (key, {
+    updateRecencyOnHas = this.updateRecencyOnHas,
+    updateAgeOnHas = this.updateAgeOnHas,
+  } = {}) {
     const fromCurrent = this.current.get(key)
     if (fromCurrent) {
-      return !fromCurrent.stale
+      if (fromCurrent.stale) {
+        return false
+      }
+      if (updateAgeOnHas && fromCurrent.ttl) {
+        fromCurrent.start = now()
+      }
+      return true
     }
     const fromOld = this.old.get(key)
-    if (fromOld && updateRecency) {
-      this.promote(key, fromOld)
+    if (fromOld) {
+      if (fromOld.stale) {
+        return false
+      }
+      if (updateAgeOnHas && fromOld.ttl) {
+        fromOld.start = now()
+      }
+      if (updateRecencyOnHas) {
+        this.promote(key, fromOld)
+      }
+      return true
     }
-    return !!fromOld && !fromOld.stale
+    return false
   }
 
   reset () {
@@ -172,7 +304,7 @@ class LRUCache {
   }
 
   swap () {
-    const { current, old, dispose } = this
+    const { current, old, dispose, noDisposeOnSet } = this
     this.oldSize = this.currentSize
     this.old = this.current
     this.currentSize = 0
@@ -180,8 +312,11 @@ class LRUCache {
     // do this *after* it's dropped from the cache
     if (dispose) {
       for (const [key, entry] of old.entries()) {
-        if (current.get(key) !== entry) {
-          dispose(entry.value, key)
+        const fromCurrent = current.get(key)
+        // if we have it in the current, then either we disposed it
+        // when we overrode it, or we're doing noDisposeOnSet
+        if (!fromCurrent) {
+          dispose(entry.value, key, entry.toObject())
         }
       }
     }

@@ -2,8 +2,6 @@ const t = require('tap')
 const LRU = require('../')
 
 t.test('disposal', t => {
-  t.throws(() => new LRU({max: 1, noDisposeOnSet: true, dispose: () => {}}))
-
   const disposed = []
   const c = new LRU({max:5, dispose: (k,v) => disposed.push([k,v])})
   for (let i = 0; i < 9; i++) {
@@ -56,8 +54,20 @@ t.test('disposal', t => {
   c.delete(3)
   t.strictSame(disposed, [[3, 3]])
 
-  // no disposal if the entries stayed around in current,
-  // only for the entries that actually fell out
+  // disposed because of being overwritten
+  c.reset()
+  disposed.length = 0
+  for (let i = 0; i < 5; i++) {
+    c.set(i, i)
+  }
+  c.set(2, 'two')
+  t.strictSame(disposed, [[2, 2]])
+  for (let i = 0; i < 5; i++) {
+    t.equal(c.get(i), i === 2 ? 'two' : i)
+  }
+  t.strictSame(disposed, [[2, 2]])
+
+  c.noDisposeOnSet = true
   c.reset()
   disposed.length = 0
   for (let i = 0; i < 5; i++) {
@@ -67,7 +77,51 @@ t.test('disposal', t => {
   for (let i = 0; i < 5; i++) {
     t.equal(c.get(i), i === 2 ? 'two' : i)
   }
-  t.strictSame(disposed, [[2, 2]])
+  t.strictSame(disposed, [])
+
+  t.end()
+})
+
+t.test('noDisposeOnSet with delete()', t => {
+  const disposed = []
+  const dispose = (v, k) => disposed.push([v, k])
+
+  const c = new LRU({ max: 5, dispose, noDisposeOnSet: true })
+  for (let i = 0; i < 5; i++) {
+    c.set(i, i)
+  }
+  for (let i = 0; i < 4; i++) {
+    c.set(i, `new ${i}`)
+  }
+  t.strictSame(disposed, [])
+  c.delete(0)
+  c.delete(4)
+  t.strictSame(disposed, [['new 0', 0], [4, 4]])
+  disposed.length = 0
+
+  const d = new LRU({ max: 5, dispose })
+  for (let i = 0; i < 5; i++) {
+    d.set(i, i)
+  }
+  for (let i = 0; i < 4; i++) {
+    d.set(i, `new ${i}`)
+  }
+  t.strictSame(disposed, [
+    [0, 0],
+    [1, 1],
+    [2, 2],
+    [3, 3],
+  ])
+  d.delete(0)
+  d.delete(4)
+  t.strictSame(disposed, [
+    [0, 0],
+    [1, 1],
+    [2, 2],
+    [3, 3],
+    ['new 0', 0],
+    [4, 4],
+  ])
 
   t.end()
 })

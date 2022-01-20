@@ -27,6 +27,15 @@ t.test('basic operation', t => {
   // got pruned and replaced
   t.equal(c.current.size, 0)
   t.equal(c.old.size, 10)
+
+  // get without updating recency
+  for (const key of c.old.keys()) {
+    c.get(key, { updateRecencyOnGet: false })
+    // nothing moved
+    t.equal(c.current.size, 0)
+    t.equal(c.old.size, 10)
+  }
+
   for (let i = 10; i < 15; i++) {
     c.set(i, i)
   }
@@ -69,14 +78,14 @@ t.test('basic operation', t => {
   t.equal(c.has(0), true)
   t.equal(c.current.size, 0)
   t.equal(c.old.size, 10)
-  t.equal(c.has(0, true), true)
+  t.equal(c.has(0, { updateRecencyOnHas: true }), true)
   t.equal(c.current.size, 1)
   t.equal(c.old.size, 10)
-  t.equal(c.has(0, true), true)
+  t.equal(c.has(0, { updateRecencyOnHas: true }), true)
   t.equal(c.current.size, 1)
   t.equal(c.old.size, 10)
   t.equal(c.has(10), false)
-  t.equal(c.has(10, true), false)
+  t.equal(c.has(10, { updateRecencyOnHas: true }), false)
   t.equal(c.current.size, 1)
   t.equal(c.old.size, 10)
   c.set(true, 'true')
@@ -94,3 +103,12 @@ t.throws(() => new LRU(null))
 t.throws(() => new LRU({ max: -123 }))
 t.throws(() => new LRU({ max: 0 }))
 t.throws(() => new LRU({ max: 2.5 }))
+
+t.test('setting ttl with non-integer values', t => {
+  t.equal(new LRU({ max: 10, ttl: 10.5 }).ttl, 10)
+  t.equal(new LRU({ max: 10, ttl: -10 }).ttl, null)
+  t.equal(new LRU({ max: 10, ttl: 'banana' }).ttl, null)
+  t.equal(new LRU({ max: 10, ttl: Infinity }).ttl, null)
+
+  t.end()
+})

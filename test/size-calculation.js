@@ -4,7 +4,7 @@ const LRU = require('../')
 t.test('store strings, size = length', t => {
   const c = new LRU({
     max: 100,
-    length: n => n.length,
+    sizeCalculation: n => n.length,
   })
   const s = 'x'.repeat(10)
   for (let i = 0; i < 5; i++) {
@@ -22,6 +22,7 @@ t.test('store strings, size = length', t => {
   // override the size on set
   c.set('big', 'y'.repeat(100), { sizeCalculation: () => 10 })
   t.equal(c.size, 160)
+  t.equal(c.itemCount, 7)
   t.equal(c.old.size, 6)
   t.equal(c.oldSize, 150)
   t.equal(c.current.size, 1)
