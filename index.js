@@ -6,6 +6,7 @@ class LRUEntry {
 }
 
 const asInt = n => ~~n
+const ifFunc = n => typeof n === 'function' ? n : null
 const naiveLength = () => 1
 
 class LRUCache {
@@ -23,14 +24,22 @@ class LRUCache {
     this.current = new Map()
     this.oldSize = 0
     this.currentSize = 0
-    this.sizeCalculation = options.length || naiveLength
+    this.sizeCalculation = ifFunc(options.sizeCalculation) ||
+      ifFunc(options.length) ||
+      naiveLength
+    this.dispose = ifFunc(options.dispose)
   }
   get size () {
     return this.oldSize + this.currentSize
   }
   set (key, value) {
-    const entry = new LRUEntry(value, this.sizeCalculation(value))
-    this.currentSize += entry.size
+    const entry = new LRUEntry(value, this.sizeCalculation(value, key))
+    const replace = this.current.get(key)
+    this.currentSize += entry.size - (replace ? replace.size : 0)
+    const { dispose } = this
+    if (dispose && replace && this.old.get(key) !== replace) {
+      dispose(key, replace.value)
+    }
     this.current.set(key, entry)
     this.prune()
   }
@@ -52,6 +61,7 @@ class LRUCache {
     }
   }
   delete (key) {
+    const { dispose } = this
     const fromOld = this.old.get(key)
     if (fromOld) {
       this.old.delete(key)
@@ -61,6 +71,14 @@ class LRUCache {
     if (fromCurrent) {
       this.current.delete(key)
       this.currentSize -= fromCurrent.size
+    }
+    if (dispose && (fromOld || fromCurrent)) {
+      if (fromOld) {
+        dispose(key, fromOld.value)
+      }
+      if (fromCurrent && fromCurrent !== fromOld) {
+        dispose(key, fromCurrent.value)
+      }
     }
   }
   has (key, updateRecency) {
@@ -74,17 +92,27 @@ class LRUCache {
     return !!oldHas
   }
   reset () {
-    this.old = new Map()
-    this.oldSize = 0
-    this.current = new Map()
-    this.currentSize = 0
+    this.swap()
+    this.swap()
   }
   prune () {
     if (this.currentSize >= this.max) {
-      this.oldSize = this.currentSize
-      this.old = this.current
-      this.currentSize = 0
-      this.current = new Map()
+      this.swap()
+    }
+  }
+  swap () {
+    const { current, old, dispose } = this
+    this.oldSize = this.currentSize
+    this.old = this.current
+    this.currentSize = 0
+    this.current = new Map()
+    // do this *after* it's dropped from the cache
+    if (dispose) {
+      for (const [key, entry] of old.entries()) {
+        if (current.get(key) !== entry) {
+          dispose(key, entry.value)
+        }
+      }
     }
   }
 }
