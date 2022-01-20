@@ -1,39 +1,73 @@
+// not a global until after the supported versions
+// use Date.now() if not in a Node env or not available
+const tryRequire = mod => {
+  try {
+    return require(mod)
+  } catch (e)
+  /* istanbul ignore next - no easy way to make require() throw */
+  { return {} }
+}
+const { performance = Date } = tryRequire('perf_hooks')
+const { now } = performance
+
 class LRUEntry {
-  constructor (value, size) {
+  constructor (value, size, start, ttl) {
+    if (ttl) {
+      return new LRUEntryTTL(value, size, start, ttl)
+    }
     this.value = value
     this.size = size
   }
 }
 
+class LRUEntryTTL extends LRUEntry {
+  constructor (value, size, start, ttl) {
+    super(value, size)
+    this.start = start
+    this.ttl = ttl
+  }
+  get age () {
+    return now() - this.start
+  }
+  get stale () {
+    return this.age > this.ttl
+  }
+}
+
 const asInt = n => ~~n
+const asPosInt = n => typeof n === 'number' && n > 0 ? asInt(n) : null
 const ifFunc = n => typeof n === 'function' ? n : null
-const naiveLength = () => 1
 
 class LRUCache {
   constructor (options) {
     if (!options || typeof options !== 'object') {
       throw new Error('invalid options object')
     }
-    const maxOk = options.max === asInt(options.max) &&
-      options.max > 0
+    const maxOk = options.max && (options.max === asPosInt(options.max))
     if (!maxOk) {
       throw new Error('options.max must be integer >0')
     }
     this.max = options.max
+    this.ttl = asPosInt(options.ttl)
+    this.allowStale = this.ttl && !!options.allowStale
+    this.updateAgeOnGet = this.ttl && !!options.updateAgeOnGet
     this.old = new Map()
     this.current = new Map()
     this.oldSize = 0
     this.currentSize = 0
     this.sizeCalculation = ifFunc(options.sizeCalculation) ||
-      ifFunc(options.length) ||
-      naiveLength
+      ifFunc(options.length)
     this.dispose = ifFunc(options.dispose)
   }
   get size () {
     return this.oldSize + this.currentSize
   }
-  set (key, value) {
-    const entry = new LRUEntry(value, this.sizeCalculation(value, key))
+  set (key, value, ttl = this.ttl) {
+    const { sizeCalculation } = this
+    const n = ttl ? now() : 0
+    const s = sizeCalculation ? sizeCalculation(value, key) : 1
+    const entry = new LRUEntry(value, s, n, ttl)
+
     const replace = this.current.get(key)
     this.currentSize += entry.size - (replace ? replace.size : 0)
     const { dispose } = this
@@ -51,10 +85,24 @@ class LRUCache {
   get (key) {
     const fromCurrent = this.current.get(key)
     if (fromCurrent) {
+      if (this.ttl && fromCurrent.stale) {
+        this.delete(key)
+        return this.allowStale ? fromCurrent.value : undefined
+      }
+      if (this.updateAgeOnGet) {
+        fromCurrent.start = now()
+      }
       return fromCurrent.value
     } else {
       const fromOld = this.old.get(key)
       if (fromOld) {
+        if (this.ttl && fromOld.stale) {
+          this.delete(key)
+          return this.allowStale ? fromOld.value : undefined
+        }
+        if (this.updateAgeOnGet) {
+          fromOld.start = now()
+        }
         this.promote(key, fromOld)
         return fromOld.value
       }
@@ -82,14 +130,15 @@ class LRUCache {
     }
   }
   has (key, updateRecency) {
-    if (this.current.has(key)) {
-      return true
+    const fromCurrent = this.current.get(key)
+    if (fromCurrent) {
+      return this.ttl ? !fromCurrent.stale : true
     }
-    const oldHas = this.old.get(key)
-    if (oldHas && updateRecency) {
-      this.promote(key, oldHas)
+    const fromOld = this.old.get(key)
+    if (fromOld && updateRecency) {
+      this.promote(key, fromOld)
     }
-    return !!oldHas
+    return !!fromOld && (this.ttl ? !fromOld.stale : true)
   }
   reset () {
     this.swap()
