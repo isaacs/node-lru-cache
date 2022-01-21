@@ -238,6 +238,23 @@ class LRUCache {
     }
   }
 
+  /* istanbul ignore next - deprecated */
+  peek (key, opts = {}) {
+    if (!optsWarned.has('length_property')) {
+      optsWarned.add('length_property')
+      const code = 'LRU_CACHE_peek'
+      const msg = 'please use cache.get(key, {updateRecencyOnGet:false}) instead'
+      const { prototype } = LRUCache
+      const { get } = Object.getOwnPropertyDescriptor(prototype, 'peek')
+      process.emitWarning(msg, 'DeprecationWarning', code, get)
+    }
+    return this.get(key, {
+      ...opts,
+      updateAgeOnGet: false,
+      updateRecencyOnGet: false,
+    })
+  }
+
   delete (key) {
     const { dispose } = this
     const fromOld = this.old.get(key)
