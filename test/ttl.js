@@ -1,24 +1,28 @@
 const t = require('tap')
 
 const clock = {
-  performance: {
-    now: () => clock.now,
-  },
-  now: 0,
-  advance: n => clock.now += n,
+  now: () => clock._now,
+  _now: 1,
+  advance: n => clock._now += n,
 }
 
 const runTests = (LRU, t) => {
   t.test('ttl tests defaults', t => {
     const c = new LRU({ max: 5, ttl: 10 })
     c.set(1, 1)
-    t.equal(c.get(1), 1)
+    t.equal(c.get(1), 1, '1 get not stale', { now: clock._now })
     clock.advance(5)
-    t.equal(c.get(1), 1)
+    t.equal(c.get(1), 1, '1 get not stale', { now: clock._now })
     clock.advance(5)
-    t.equal(c.get(1), 1)
+    t.equal(c.get(1), 1, '1 get not stale', { now: clock._now })
     clock.advance(1)
-    t.equal(c.has(1), false)
+    t.equal(c.has(1), false, '1 has stale', {
+      now: clock._now,
+      ttls: c.ttls,
+      starts: c.starts,
+      index: c.keyMap.get(1),
+      stale: c.isStale(c.keyMap.get(1)),
+    })
     t.equal(c.get(1), undefined)
     t.equal(c.size, 0)
 
@@ -30,7 +34,7 @@ const runTests = (LRU, t) => {
     t.equal(c.has(2), false)
     t.equal(c.get(2), undefined)
 
-    c.reset()
+    c.clear()
     for (let i = 0; i < 9; i++) {
       c.set(i, i)
     }
@@ -64,7 +68,7 @@ const runTests = (LRU, t) => {
     t.equal(c.has(2), false)
     t.equal(c.get(2), undefined)
 
-    c.reset()
+    c.clear()
     for (let i = 0; i < 9; i++) {
       c.set(i, i, { ttl: 10 })
     }
@@ -100,7 +104,7 @@ const runTests = (LRU, t) => {
     t.equal(c.get(2), 2)
     t.equal(c.get(2), undefined)
 
-    c.reset()
+    c.clear()
     for (let i = 0; i < 9; i++) {
       c.set(i, i)
     }
@@ -126,7 +130,7 @@ const runTests = (LRU, t) => {
     t.equal(c.has(1), true)
     t.equal(c.get(1), 1)
     t.equal(c.size, 1)
-    c.reset()
+    c.clear()
 
     c.set(2, 2, { ttl: 100 })
     for (let i = 0; i < 10; i++) {
@@ -138,50 +142,14 @@ const runTests = (LRU, t) => {
     t.equal(c.has(2), false)
     t.equal(c.get(2), undefined)
 
-    c.reset()
+    c.clear()
     for (let i = 0; i < 9; i++) {
       c.set(i, i)
     }
     // now we have 9 items
-    // get an expired item from old set
-    t.equal(c.has(3), true)
-    t.equal(c.get(3), 3)
-    clock.advance(11)
-    t.equal(c.has(4), false)
-    t.equal(c.get(4), undefined)
-
-    t.end()
-  })
-
-  t.test('ttl with updateAgeOnHas', t => {
-    const c = new LRU({ max: 5, ttl: 10, updateAgeOnHas: true })
-    c.set(1, 1)
-    t.equal(c.has(1), true)
-    clock.advance(5)
-    t.equal(c.has(1), true)
-    clock.advance(5)
-    t.equal(c.has(1), true)
-    clock.advance(1)
-    t.equal(c.has(1), true)
-    t.equal(c.size, 1)
-    c.reset()
-
-    c.set(2, 2, { ttl: 100 })
-    for (let i = 0; i < 10; i++) {
-      clock.advance(50)
-      t.equal(c.has(2), true)
-    }
-    clock.advance(101)
-    t.equal(c.has(2), false)
-
-    c.reset()
-    for (let i = 0; i < 9; i++) {
-      c.set(i, i)
-    }
-    // now we have 9 items
-    // get an expired item from old set
-    t.equal(c.has(3), true)
-    t.equal(c.get(3), 3)
+    // get an expired item
+    t.equal(c.has(3), false)
+    t.equal(c.get(3), undefined)
     clock.advance(11)
     t.equal(c.has(4), false)
     t.equal(c.get(4), undefined)
@@ -193,14 +161,20 @@ const runTests = (LRU, t) => {
 }
 
 t.test('tests with perf_hooks.performance.now()', t => {
-  const LRU = t.mock('../', { perf_hooks: clock })
+  const { performance } = global
+  t.teardown(() => global.performance = performance)
+  global.performance = clock
+  const LRU = t.mock('../')
   runTests(LRU, t)
 })
 
 t.test('tests using Date.now()', t => {
-  const Date_ = global.Date
-  t.teardown(() => global.Date = Date_)
-  global.Date = clock.performance
-  const LRU = t.mock('../', { perf_hooks: {} })
+  const { now } = Date
+  const { performance } = global
+  t.teardown(() => global.performance = performance)
+  t.teardown(() => Date.now = now)
+  Date.now = () => clock.now()
+  global.performance = null
+  const LRU = t.mock('../')
   runTests(LRU, t)
 })

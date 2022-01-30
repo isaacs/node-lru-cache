@@ -3,31 +3,45 @@
 A cache object that deletes the least-recently-used items.
 
 Specify a max number of the most recently used items that you want to keep,
-and this cache will keep at least that many of the most recently accessed
-items.
+and this cache will keep that many of the most recently accessed items.
 
 This is not primarily a TTL cache, and does not make strong TTL guarantees.
-There is no pre-emptive pruning of expired items, but you _may_ set a TTL
-on the cache, and it will treat expired items as missing when they are
-fetched, and delete them.
+There is no preemptive pruning of expired items, but you _may_ set a TTL
+on the cache or on a single `set`.  If you do so, it will treat expired
+items as missing, and delete them when fetched.
 
-## Installation:
+As of version 7, this is one of the most performant LRU implementations
+available in JavaScript, and supports a wide diversity of use cases.
+However, note that using some of the features will necessarily impact
+performance, by causing the cache to have to do more work.  See the
+"Performance" section below.
+
+## Installation
 
 ```js
 npm install lru-cache --save
 ```
 
-## Usage:
+## Usage
 
-```javascript
+```js
 const LRU = require('lru-cache')
 
-// only 'max' is required
+// only 'max' is required, the others are optional, but MAY be
+// required if certain other fields are set.
 const options = {
-  // the number of most recently used items to keep at minimum.
-  // note that actual cache storage MAY grow to as much as 2*max-1
-  // must be a positive integer.
+  // the number of most recently used items to keep.
+  // note that we may store fewer items than this if sizeMax is hit.
   max: 500,
+
+  // if you wish to track item size, you must provide a sizeMax
+  // note that we still will only keep up to max *actual items*,
+  // so size tracking may cause fewer than max items to be stored.
+  // At the extreme, a single item of sizeMax size will cause everything
+  // else in the cache to be dropped when it is added.  Use with caution!
+  // Note also that size tracking can negatively impact performance,
+  // though for most cases, only minimally.
+  sizeMax: 5000,
 
   // function to calculate size of items.  useful if storing strings or
   // buffers or other items where memory size depends on the object itself.
@@ -39,10 +53,8 @@ const options = {
     return 1
   },
 
-  // function to call when the item is removed entirely from the cache
-  // note that this may be long after the item becomes _inaccessible_ by
-  // virtue of being moved to the old list, and then overridden by a new
-  // value.  do not depend precise timing here!
+  // function to call when the item is removed from the cache
+  // Note that using this can negatively impact performance.
   dispose: (value, key) => {
     freeFromMemoryOrWhatever(value)
   },
@@ -53,8 +65,7 @@ const options = {
   // have expired.
   // Also, as this cache is optimized for LRU/MRU operations, some of
   // the staleness/TTL checks will reduce performance, as they will incur
-  // overhead by deleting from Map objects rather than simply throwing old
-  // Map objects away.
+  // overhead by deleting items.
   // Must be a positive integer in ms, defaults to 0, which means "no TTL"
   ttl: 1000 * 60 * 5,
 
@@ -92,28 +103,48 @@ assert.equal(cache.get(someObject), 'a value')
 // because it's a different object identity
 assert.equal(cache.get({ a: 1 }), undefined)
 
-cache.reset()    // empty the cache
+cache.clear()    // empty the cache
 ```
 
 If you put more stuff in it, then items will fall out.
 
 ## Options
 
-* `max` - The maximum number (or size) of items that are gauranteed to
-  remain in the cache (assuming no TTL pruning or explicit deletions).
-  Note that the _actual_ storage may be as much as `2 * max - 1`, or much
-  more if using a `sizeCalculation` function where a single item can be any
-  arbitrary size.  This must be a positive finite intger.
+* `max` - The maximum number (or size) of items that remain in the cache
+  (assuming no TTL pruning or explicit deletions).  Note that fewer items
+  may be stored if size calculation is used, and `sizeMax` is exceeded.
+  This must be a positive finite intger.
 
-* `sizeCalculation` - Functionthat is used to calculate the size of stored
+* `sizeMax` - Set to a positive integer to track the sizes of items added
+  to the cache, and automatically evict items in order to stay below this
+  size.  Note that this may result in fewer than `max` items being stored.
+
+* `mode` - Either `'map'`, `'object'`, or `'auto'`.  Determines the data
+  structure to use to associate keys with indexes.
+
+    In `'auto'` mode, it will use an object, and only switch to using a
+    `Map` when a key is used that is not a `Symbol` or a string less than
+    length of 256.
+
+    Note that the switch does incur some performance penalty, as does the
+    ongoing type checking and string-length checking on each set operation.
+    If you are 100% confident that you will never use a key that is costly
+    or unsafe to store in an object, then `mode: 'object'` will _generally_
+    yield better performance.  (See "Performance" below.)
+
+    Likewise, if you are reasonably confident that you will eventually need
+    to store a mix of key types, or keys that cannot be used as object
+    keys, then you will get slightly better performance using `mode:
+    'map'`.
+
+* `sizeCalculation` - Function used to calculate the size of stored
   items.  If you're storing strings or buffers, then you probably want to
   do something like `n => n.length`.  The item is passed as the first
   argument, and the key is passed as the second argumnet.
 
     This may be overridden by passing an options object to `cache.set()`.
 
-    Optional, must be a function.  If not set to a function, the default
-    behavior is to treat every item as `size=1`.
+    Requires `sizeMax` to be set.
 
     Deprecated alias: `length`
 
@@ -121,10 +152,6 @@ If you put more stuff in it, then items will fall out.
   from the cache.  This can be handy if you want to close file
   descriptors or do other cleanup tasks when items are no longer
   stored in the cache.
-
-    Note that this may be long after the item becomes _inaccessible_ by
-    virtue of being moved to the old list, and then overridden by a new
-    value.  Do not depend precise timing here!
 
     It is called *after* the item has been fully removed from the cache, so
     if you want to put it right back in, that is safe to do.
@@ -138,6 +165,10 @@ If you put more stuff in it, then items will fall out.
 
 * `noDisposeOnSet` Set to `true` to suppress calling the `dispose()`
   function if the entry key is still accessible within the cache.
+
+    This may be overridden by passing an options object to `cache.set()`.
+
+    Boolean, default `false`.  Only relevant if `dispose` option is set.
 
 * `ttl` - max time to live for items before they are considered stale.
   Note that stale items are NOT preemptively removed, and MAY live in the
@@ -163,7 +194,7 @@ If you put more stuff in it, then items will fall out.
   items from the cache when you `get(key)`.  That is, it's not
   pre-emptively pruning items.
 
-    If you set `allowStale:true`, it'll return the stale value before
+    If you set `allowStale:true`, it'll return the stale value as well as
     deleting it.  If you don't set this, then it'll return `undefined` when
     you try to get a stale entry.
 
@@ -205,9 +236,8 @@ If you put more stuff in it, then items will fall out.
   `cache.has()`.  By default, cache entry recency is only updated when
   calling `cache.get()` or `cache.set()`.
 
-    Note that using this option means that `cache.has()` can affect the
-    shape of the cache, and even cause items to be dropped, if updating an
-    item's recency allows less recently used items to be discarded.
+    Note that using this option means that `cache.has()` is no longer
+    idempotent, as it can change a cache entry's recency of use.
 
     This may be overridden by passing an options object to `cache.has()`.
 
@@ -217,7 +247,7 @@ If you put more stuff in it, then items will fall out.
   item when `cache.get()` retrieves it from the cache.
 
     Setting this option to `false` is only useful in rare scenarios.  It
-    effectively removes the whole point of this library, by no longer
+    significantly changes the behavior of this library, by no longer
     tracking "use" of cache entries.  However, note that less recently
     _added_ items will still be dropped from cache as new items are added.
 
@@ -241,74 +271,60 @@ If you put more stuff in it, then items will fall out.
 
 * `cache.size`
 
-    The total size of items held in the cache at the current moment.
-
-    Note that this value will often be _greater_ than `cache.max`, but as
-    long as at least `cache.max` items have been added, it will never be
-    _less_ than `cache.max`.
-
-    When using the default sizeCalculation method of `()=>1`, `cache.size`
-    will never grow beyond `2 * max - 1`.  If a `sizeCalculation` method
-    returns different sizes based on entry values, then `cache.size` may be
-    much greater than `cache.max`, but will still never shrink below
-    `cache.max` once reached.
-
-* `cache.itemCount`
-
     The total number of items held in the cache at the current moment.
 
-    Note that this value will often be _greater_ than `cache.max`, but as
-    long as at least `cache.max` items have been added, it will never be
-    _less_ than `cache.max`.
+* `cache.calculatedSize`
 
-    When using the default sizeCalculation method of `()=>1`, `cache.size`
-    will never grow beyond `2 * max - 1`.  If a `sizeCalculation` method
-    returns different sizes based on entry values, then `cache.size` may be
-    much greater than `cache.max`, but will still never shrink below
-    `cache.max` once reached.
+    The total size of items in cache when using size tracking.
 
-* `set(key, value, [{size, sizeCalculation, ttl }])`
+* `set(key, value, [{size, sizeCalculation, ttl, noDisposeOnSet }])`
 
-    Add a value to the cache.  Optional options object may contain `ttl`
-    and `sizeCalculation` as described above, which default to the settings
-    on the cache object.  Options object my also include `size`, which will
-    prevent calling the `sizeCalculation` function and just use the
-    specified number if it is a positive integer.
+    Add a value to the cache.
 
-    Will update the recency of the entry, adding it to the current
-    generation.
+    Optional options object may contain `ttl` and `sizeCalculation` as
+    described above, which default to the settings on the cache object.
 
-* `get(key, [{ updateAgeOnGet, updateRecencyOnGet, allowStale }]) => value`
+    Options object my also include `size`, which will prevent calling the
+    `sizeCalculation` function and just use the specified number if it is a
+    positive integer, and `noDisposeOnSet` which will prevent calling a
+    `dispose` function in the case of overwrites.
+
+    Will update the recency of the entry.
+
+* `get(key, { updateAgeOnGet, allowStale } = {}) => value`
 
     Return a value from the cache.
 
-    By default, will update the recency of the cache entry found.
+    Will update the recency of the cache entry found.
 
     If the key is not found, `get()` will return `undefined`.  This can be
     confusing when setting values specifically to `undefined`, as in
     `cache.set(key, undefined)`.  Use `cache.has()` to determine whether a
     key is present in the cache at all.
 
-    The key and val can be any value.
+* `peek(key, { allowStale } = {}) => value`
 
-* `has(key, [{ updateRecencyOnHas, updateAgeOnHas }])`
+    Like `get()` but doesn't update recency or delete stale items.
 
-    Check if a key is in the cache, without (by default) updating the
-    recency or age.
+    Returns `undefined` if the item is stale, unless `allowStale` is set
+    either on the cache or in the options object.
 
-    Will return `false` if the item has a ttl and is stale, even though it
-    is technically in the cache.
+* `has(key)`
+
+    Check if a key is in the cache, without updating the recency or age.
+
+    Will return `false` if the item is stale, even though it is technically
+    in the cache.
 
 * `delete(key)`
 
     Deletes a key out of the cache.
 
-    This should not be done often in normal circumstances, as it can
-    negatively impact performance.
-
-* `reset()`
+* `clear()`
 
     Clear the cache entirely, throwing away all values.
+
+    Deprecated alias: `reset()`
 
 * `keys()`
 
@@ -346,111 +362,100 @@ If you put more stuff in it, then items will fall out.
     Note that the shape of the resulting cache may be different if the same
     options are not used in both caches.
 
+* `purgeStale()`
+
+    Delete any stale entries.  Returns `true` if anything was removed,
+    `false` otherwise.
+
 ### Internal Methods and Properties
 
-Do not use or rely on these.  This documentation is here so that it is
-especially clear that this not "undocumented" because someone forgot; it
-_is_ documented, and the documentation is telling you not to do it.
+Do not use or rely on these.  They will change or be removed without
+notice.  They will cause undefined behavior if used inappropriately.
+
+This documentation is here so that it is especially clear that this not
+"undocumented" because someone forgot; it _is_ documented, and the
+documentation is telling you not to do it.
 
 Do not report bugs that stem from using these properties.  They will be
 ignored.
 
-* `cache.current` **INTERNAL**
+* `setKeyIndex()` Assign an index to a given key.
+* `getKeyIndex()` Get the index for a given key.
+* `deleteKeyIndex()` Remove the index for a given key.
+* `getDisposeData()` Get the data to pass to a `dispose()` call.
+* `callDispose()` Actually call the `dispose()` function.
+* `onSet()` Called to assign data when `set()` is called.
+* `evict()` Delete the least recently used item.
+* `onDelete()` Perform actions required for deleting an entry.
+* `isStale()` Check if an item is stale, by index.
+* `list` The internal linked list of indexes defining recency.
 
-    Internal `Map()` object storing the current generation of entries.
+## Performance
 
-    Do not use or rely on this.
+As of January 2022, version 7 of this library is one of the most performant
+LRU cache implementations in JavaScript.
 
-* `cache.old` **INTERNAL**
+Note that benchmarks can be extremely difficult to get right.  In
+particular, the performance of set/get/delete operations on objects will
+vary _wildly_ depending on the type of key used.  V8 is highly optimized
+for objects with keys that are short strings, especially integer numeric
+strings.  Thus any benchmark which tests _solely_ using numbers as keys
+will tend to find that an object-based approach performs the best.
 
-    Internal `Map()` object storing the previous generation of entries.
+Note that coercing _anything_ to strings to use as object keys is unsafe,
+unless you can be 100% certain that no other type of value will be used.
+For example:
 
-    Do not use or rely on this.
+```js
+const myCache = {}
+const set = (k, v) => myCache[k] = v
+const get = (k) => myCache[k]
 
-* `rawIterate` **INTERNAL**
+set({}, 'please hang onto this for me')
+set('[object Object]', 'oopsie')
+```
 
-    Helper method used by keys, values, entries, and dump.
+Also beware of "Just So" stories regarding performance.  Garbage collection
+of large (especially: deep) object graphs can be incredibly costly, with
+several "tipping points" where it increases exponentially.  As a result,
+putting that off until later can make it much worse, and less predictable.
+If a library performs well, but only in a scenario where the object graph is
+kept shallow, then that won't help you if you are using large objects as
+keys.
 
-    Do not use or rely on this.
+In general, when attempting to use a library to improve performance (such
+as a cache like this one), it's best to choose an option that will perform
+well in the sorts of scenarios where you'll actually use it.
 
-* `promote(key, entry)` **INTERNAL**
+This library is optimized for repeated gets and minimizing eviction time,
+since that is the expected need of a LRU.  Set operations are somewhat
+slower on average than a few other options, in part because of that
+optimization.  It is assumed that you'll be caching some costly operation,
+ideally as rarely as possible, so optimizing set over get would be unwise.
 
-    Move an entry from the old generation to the current generation.
+If performance matters to you:
 
-    Do not use or rely on this.
+1. If it's at all possible to use small integer values as keys, and you can
+   guarantee that no other types of values will be used as keys, then do that,
+   and use `mode: 'object'`.
+2. Failing that, if at all possible, use short non-numeric strings (ie,
+   less than 256 characters) as your keys, with `mode: 'object'`.
+3. If you know that the types of your keys will be long strings, strings
+   that look like floats, `null`, objects, or some mix of any random thing,
+   then use `mode: 'map'` to skip the detection logic.
+4. Do not use a `dispose` function, size tracking, or ttl behavior, unless
+   absolutely needed.  These features are convenient, and necessary in some
+   use cases, and every attempt has been made to make the performance
+   impact minimal, but it isn't nothing.
 
 ## Breaking Changes in Version 7
 
 This library changed to a different algorithm and internal data structure
 in version 7, yielding significantly better performance, albeit with
-some subtle changes to the semantics and some removed API surface as a
-result.
+some subtle changes as a result.
 
-### Semantic/Contract Changes
-
-Instead of keeping a list of items sorted by use recency, there are two
-maps, a `current` and `old` map.  When a key is not found in the `current`
-map, but is in the `old` map, it is copied to `current`.  When the number
-of items in `current` is greater than or equal to the specified `max`, then
-`current` becomes `old`, `old` is discarded, and a new map is created for
-`current`, thus discarding the old generation in one operation with less
-bookkeeping.
-
-All `set()` oprations are performed on the `current()` map.
-
-This means:
-
-* Items _may_ be retained (in the old map) even when they are no longer
-  accessible, by virtue of being shadowed by a different entry with the
-  same key in the `current` map.
-
-* We may in some cases store as much as `2 * max - 1` items, because we
-  only discard anything once `current` is full.
-
-* `dispose()` calls may be performed long after the item has ceased to be
-  accessible, since we only do this when discarding the `old` map.
-
-* An item may be accessible, even if it is not strictly within the `max`
-  most recently used items.
-
-* Many of the features that relied on iteration/ordering no longer make
-  sense.  For example, `cache.pop()` isn't possible, since we don't
-  keep items in order of recency, only in batches.
-
-For example, consider a cache with `{ max: 5 }`.
-
-* Add 5 items to the cache, in order.  This causes a `swap()` to the
-  `old` generation.
-* Add 4 more items, which all stay in the `current` generation.
-* At this point there are _9_ items accessible.
-
-```js
-const LRU = require('lru-cache')
-const cache = new LRU({ max: 5 })
-for (let i = 0; i < 5; i++) {
-  cache.set(i, i)
-}
-// now 0-4 are all in old generation, current generation is empty
-for (let i = 5; i < 9; i++) {
-  cache.set(i, i)
-}
-// now 5-8 are in the current generation, 0-4 in old gen
-// but 0 was less recently used than 4.
-console.log(cache.get(0)) // v7+: '0', previously: 'undefined'
-// this pulls 0 from old to current, so current.size = 5,
-// and a swap is performed.
-// we have just discarded 4 in favor of 0!
-```
-
-If we `get()` the first item added in the first step, it will move to
-the `current` generation, and the other 4 items in the `old`
-generation will be pruned.
-
-In previous versions of this library, at most exactly 5 items would
-ever be accessible, and they would always be the most recently used 5
-items.  The above scenario shows that it is no longer possible to rely
-on the contract that this cache will always and only return exactly the
-`max` most recently used items.
+If you were relying on the internals of LRUCache in version 6 or before, it
+probably will not work in version 7 and above.
 
 ### Specific API Changes
 
@@ -463,7 +468,6 @@ well.
   instead of positional booleans/integers for optional parameters.
 * `size` can be set explicitly on `set()`.
 * `updateAgeOnHas` and `updateRecencyOnHas` added.
-* `peek()` method removed, use the `{updateRecencyOnGet:false}` option.
 * `cache.length` was renamed to the more fitting `cache.size`.
 * Option name deprecations:
   * `stale` -> `allowStale`
