@@ -435,18 +435,21 @@ ideally as rarely as possible, so optimizing set over get would be unwise.
 If performance matters to you:
 
 1. If it's at all possible to use small integer values as keys, and you can
-   guarantee that no other types of values will be used as keys, then do that,
-   and use a cache such as [lru-fast](https://npmjs.com/package/lru-fast)
-   which uses an Object as its data store.
+   guarantee that no other types of values will be used as keys, then do
+   that, and use a cache such as
+   [lru-fast](https://npmjs.com/package/lru-fast), or [mnemonist's
+   LRUCache](https://yomguithereal.github.io/mnemonist/lru-cache) which
+   uses an Object as its data store.
 2. Failing that, if at all possible, use short non-numeric strings (ie,
-   less than 256 characters) as your keys.
-3. If you know that the types of your keys will be long strings, strings
-   that look like floats, `null`, objects, or some mix of types, then this
-   library will work well for you.
-4. Do not use a `dispose` function, size tracking, or ttl behavior, unless
-   absolutely needed.  These features are convenient, and necessary in some
-   use cases, and every attempt has been made to make the performance
-   impact minimal, but it isn't nothing.
+   less than 256 characters) as your keys, and use [mnemonist's
+   LRUCache](https://yomguithereal.github.io/mnemonist/lru-cache).
+3. If the types of your keys will be long strings, strings that look like
+   floats, `null`, objects, or some mix of types, or if you aren't sure,
+   then this library will work well for you.
+4. Do not use a `dispose` function, size tracking, or especially ttl
+   behavior, unless absolutely needed.  These features are convenient, and
+   necessary in some use cases, and every attempt has been made to make the
+   performance impact minimal, but it isn't nothing.
 
 ## Breaking Changes in Version 7
 
