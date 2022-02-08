@@ -1,7 +1,6 @@
 const perf = typeof performance === 'object' && performance &&
   typeof performance.now === 'function' ? performance : Date
 
-
 const warned = new Set()
 const deprecatedOption = (opt, msg) => {
   const code = `LRU_CACHE_OPTION_${opt}`
