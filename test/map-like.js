@@ -1,3 +1,7 @@
+if (typeof performance === 'undefined') {
+  global.performance = require('perf_hooks').performance
+}
+
 const t = require('tap')
 const LRU = require('../')
 
