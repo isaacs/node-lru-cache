@@ -3,59 +3,70 @@ const LRU = require('../')
 
 t.test('disposal', t => {
   const disposed = []
-  const c = new LRU({max:5, dispose: (k,v) => disposed.push([k,v])})
+  const c = new LRU({max:5, dispose: (k,v,r) => disposed.push([k,v,r])})
   for (let i = 0; i < 9; i++) {
     c.set(i, i)
   }
   t.strictSame(disposed, [
-    [0, 0],
-    [1, 1],
-    [2, 2],
-    [3, 3],
+    [0, 0, 'evict'],
+    [1, 1, 'evict'],
+    [2, 2, 'evict'],
+    [3, 3, 'evict'],
   ])
   t.equal(c.size, 5)
 
   c.set(9, 9)
   t.strictSame(disposed, [
-    [0, 0],
-    [1, 1],
-    [2, 2],
-    [3, 3],
-    [4, 4],
+    [0, 0, 'evict'],
+    [1, 1, 'evict'],
+    [2, 2, 'evict'],
+    [3, 3, 'evict'],
+    [4, 4, 'evict'],
   ])
 
   disposed.length = 0
   c.set('asdf', 'foo')
   c.set('asdf', 'asdf')
-  t.strictSame(disposed, [[5,5], ['foo', 'asdf']])
+  t.strictSame(disposed, [[5,5,'evict'], ['foo', 'asdf', 'set']])
 
   disposed.length = 0
   for (let i = 0; i < 5; i++) {
     c.set(i, i)
   }
-  t.strictSame(disposed, [[6, 6], [7, 7], [8, 8], [9, 9], ['asdf', 'asdf']])
+  t.strictSame(disposed, [
+    [6, 6, 'evict'],
+    [7, 7, 'evict'],
+    [8, 8, 'evict'],
+    [9, 9, 'evict'],
+    ['asdf', 'asdf', 'evict'],
+  ])
 
   // dispose both old and current
   disposed.length = 0
   c.set('asdf', 'foo')
   c.delete('asdf')
-  t.strictSame(disposed, [[0, 0], ['foo', 'asdf']])
+  t.strictSame(disposed, [[0, 0, 'evict'], ['foo', 'asdf', 'delete']])
 
   // delete non-existing key, no disposal
   disposed.length = 0
   c.delete('asdf')
   t.strictSame(disposed, [])
 
-  // delete key that's only in new
+  // delete via clear()
   disposed.length = 0
-  c.delete(4)
-  t.strictSame(disposed, [[4, 4]])
+  c.clear()
+  t.strictSame(disposed, [
+    [1, 1, 'delete'],
+    [2, 2, 'delete'],
+    [3, 3, 'delete'],
+    [4, 4, 'delete'],
+  ])
 
-  // delete key that's been promoted, only dispose one time
   disposed.length = 0
+  c.set(3, 3)
   t.equal(c.get(3), 3)
   c.delete(3)
-  t.strictSame(disposed, [[3, 3]])
+  t.strictSame(disposed, [[3, 3, 'delete']])
 
   // disposed because of being overwritten
   c.clear()
@@ -64,11 +75,11 @@ t.test('disposal', t => {
     c.set(i, i)
   }
   c.set(2, 'two')
-  t.strictSame(disposed, [[2, 2]])
+  t.strictSame(disposed, [[2, 2, 'set']])
   for (let i = 0; i < 5; i++) {
     t.equal(c.get(i), i === 2 ? 'two' : i)
   }
-  t.strictSame(disposed, [[2, 2]])
+  t.strictSame(disposed, [[2, 2, 'set']])
 
   c.noDisposeOnSet = true
   c.clear()

@@ -1,6 +1,10 @@
 # cringe lorg
 
-### 7.1.0 - 2022-02
+## 7.2.0
+
+* Add reason to dispose() calls.
+
+## 7.1.0
 
 * Add `ttlResolution` option
 * Add `ttlAutopurge` option

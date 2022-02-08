@@ -131,17 +131,29 @@ If you put more stuff in it, then items will fall out.
     Deprecated alias: `length`
 
 * `dispose` Function that is called on items when they are dropped
-  from the cache.  This can be handy if you want to close file
-  descriptors or do other cleanup tasks when items are no longer
-  stored in the cache.
+  from the cache, as `this.dispose(value, key, reason)`.
 
-    It is called *after* the item has been fully removed from the cache, so
-    if you want to put it right back in, that is safe to do.
+    This can be handy if you want to close file descriptors or do other
+    cleanup tasks when items are no longer stored in the cache.
+
+    **NOTE**: It is called *before* the item has been fully removed from
+    the cache, so if you want to put it right back in, you need to wait
+    until the next tick.  If you try to add it back in during the
+    `dispose()` function call, it will break things in subtle and weird
+    ways.
 
     Unlike several other options, this may _not_ be overridden by passing
     an option to `set()`, for performance reasons.  If disposal functions
     may vary between cache entries, then the entire list must be scanned
     on every cache swap, even if no disposal function is in use.
+
+    The `reason` will be one of the following strings, corresponding to the
+    reason for the item's deletion:
+
+    * `evict` Item was evicted to make space for a new addition
+    * `set` Item was overwritten by a new value
+    * `delete` Item was removed by explicit `cache.delete(key)` or by
+      calling `cache.clear()`, which deletes everything.
 
     Optional, must be a function.
 

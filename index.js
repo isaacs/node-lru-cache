@@ -341,7 +341,7 @@ class LRUCache {
     }
   }
 
-  dispose (v, k) {}
+  dispose (v, k, reason) {}
 
   set (k, v, {
     ttl = this.ttl,
@@ -366,7 +366,7 @@ class LRUCache {
       const oldVal = this.valList[index]
       if (v !== oldVal) {
         if (!noDisposeOnSet) {
-          this.dispose(oldVal, k)
+          this.dispose(oldVal, k, 'set')
         }
         this.removeItemSize(index)
         this.valList[index] = v
@@ -405,7 +405,8 @@ class LRUCache {
   evict () {
     const head = this.head
     const k = this.keyList[head]
-    this.dispose(this.valList[head], k)
+    const v = this.valList[head]
+    this.dispose(v, k, 'evict')
     this.removeItemSize(head)
     this.head = this.next[head]
     this.keyMap.delete(k)
@@ -474,11 +475,11 @@ class LRUCache {
     if (this.size !== 0) {
       const index = this.keyMap.get(k)
       if (index !== undefined) {
-        this.dispose(this.valList[index], k)
-        this.removeItemSize(index)
         if (this.size === 1) {
           this.clear()
         } else {
+          this.removeItemSize(index)
+          this.dispose(this.valList[index], k, 'delete')
           this.keyMap.delete(k)
           this.keyList[index] = null
           this.valList[index] = null
@@ -491,13 +492,18 @@ class LRUCache {
             this.prev[this.next[index]] = this.prev[index]
           }
           this.size --
+          this.free.push(index)
         }
-        this.free.push(index)
       }
     }
   }
 
   clear () {
+    if (this.dispose !== LRUCache.prototype.dispose) {
+      for (const index of this.rindexes()) {
+        this.dispose(this.valList[index], this.keyList[index], 'delete')
+      }
+    }
     this.keyMap.clear()
     this.valList.fill(null)
     this.keyList.fill(null)
