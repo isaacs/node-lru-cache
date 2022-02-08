@@ -341,12 +341,12 @@ ignored.
 As of January 2022, version 7 of this library is one of the most performant
 LRU cache implementations in JavaScript.
 
-Note that benchmarks can be extremely difficult to get right.  In
-particular, the performance of set/get/delete operations on objects will
-vary _wildly_ depending on the type of key used.  V8 is highly optimized
-for objects with keys that are short strings, especially integer numeric
-strings.  Thus any benchmark which tests _solely_ using numbers as keys
-will tend to find that an object-based approach performs the best.
+Benchmarks can be extremely difficult to get right.  In particular, the
+performance of set/get/delete operations on objects will vary _wildly_
+depending on the type of key used.  V8 is highly optimized for objects with
+keys that are short strings, especially integer numeric strings.  Thus any
+benchmark which tests _solely_ using numbers as keys will tend to find that
+an object-based approach performs the best.
 
 Note that coercing _anything_ to strings to use as object keys is unsafe,
 unless you can be 100% certain that no other type of value will be used.
@@ -383,12 +383,13 @@ If performance matters to you:
 
 1. If it's at all possible to use small integer values as keys, and you can
    guarantee that no other types of values will be used as keys, then do that,
-   and use `mode: 'object'`.
+   and use a cache such as [lru-fast](https://npmjs.com/package/lru-fast)
+   which uses an Object as its data store.
 2. Failing that, if at all possible, use short non-numeric strings (ie,
-   less than 256 characters) as your keys, with `mode: 'object'`.
+   less than 256 characters) as your keys.
 3. If you know that the types of your keys will be long strings, strings
-   that look like floats, `null`, objects, or some mix of any random thing,
-   then use `mode: 'map'` to skip the detection logic.
+   that look like floats, `null`, objects, or some mix of types, then this
+   library will work well for you.
 4. Do not use a `dispose` function, size tracking, or ttl behavior, unless
    absolutely needed.  These features are convenient, and necessary in some
    use cases, and every attempt has been made to make the performance
@@ -413,7 +414,6 @@ well.
 * The `set()`, `get()`, and `has()` functions take options objects
   instead of positional booleans/integers for optional parameters.
 * `size` can be set explicitly on `set()`.
-* `updateAgeOnHas` and `updateRecencyOnHas` added.
 * `cache.length` was renamed to the more fitting `cache.size`.
 * Option name deprecations:
   * `stale` -> `allowStale`
