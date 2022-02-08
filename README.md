@@ -208,7 +208,9 @@ If you put more stuff in it, then items will fall out.
     Create a new LRUCache.  All options are documented above, and are on
     the cache as public members.
 
-* `cache.max`, `cache.ttl`, `cache.allowStale`, etc.
+* `cache.max`, `cache.maxSize`, `cache.allowStale`, `cache.noDisposeOnSet`,
+  `cache.sizeCalculation`, `cache.dispose`, `cache.maxSize`, `cache.ttl`,
+  `cache.updateAgeOnGet`
 
     All option names are exposed as public members on the cache object.
 
@@ -315,26 +317,54 @@ If you put more stuff in it, then items will fall out.
 
 ### Internal Methods and Properties
 
-Do not use or rely on these.  They will change or be removed without
-notice.  They will cause undefined behavior if used inappropriately.
+In order to optimize performance as much as possible, "private" members and
+methods are exposed on the object as normal properties, rather than being
+accessed via Symbols, private members, or closure variables.
+
+**Do not use or rely on these.**  They will change or be removed without
+notice.  They will cause undefined behavior if used inappropriately.  There
+is no need or reason to ever call them directly.
 
 This documentation is here so that it is especially clear that this not
 "undocumented" because someone forgot; it _is_ documented, and the
 documentation is telling you not to do it.
 
-Do not report bugs that stem from using these properties.  They will be
+**Do not report bugs that stem from using these properties.**  They will be
 ignored.
 
-* `setKeyIndex()` Assign an index to a given key.
-* `getKeyIndex()` Get the index for a given key.
-* `deleteKeyIndex()` Remove the index for a given key.
-* `getDisposeData()` Get the data to pass to a `dispose()` call.
-* `callDispose()` Actually call the `dispose()` function.
-* `onSet()` Called to assign data when `set()` is called.
-* `evict()` Delete the least recently used item.
-* `onDelete()` Perform actions required for deleting an entry.
-* `isStale()` Check if an item is stale, by index.
-* `list` The internal linked list of indexes defining recency.
+* `initializeTTLTracking()` Set up the cache for tracking TTLs
+* `updateItemAge(index)` Called when an item age is updated, by internal ID
+* `setItemTTL(index)` Called when an item ttl is updated, by internal ID
+* `isStale(index)` Called to check an item's staleness, by internal ID
+* `initializeSizeTracking()` Set up the cache for tracking item size.
+  Called automatically when a size is specified.
+* `removeItemSize(index)` Updates the internal size calculation when an
+  item is removed or modified, by internal ID
+* `addItemSize(index)` Updates the internal size calculation when an item
+  is added or modified, by internal ID
+* `indexes()` An iterator over the non-stale internal IDs, from most
+  recently to least recently used.
+* `rindexes()` An iterator over the non-stale internal IDs, from least
+  recently to most recently used.
+* `newIndex()` Create a new internal ID, either reusing a deleted ID,
+  evicting the least recently used ID, or walking to the end of the
+  allotted space.
+* `evict()` Evict the least recently used internal ID, returning its ID.
+  Does not do any bounds checking.
+* `connect(p, n)` Connect the `p` and `n` internal IDs in the linked list.
+* `moveToTail(index)` Move the specified internal ID to the most recently
+  used position.
+* `keyMap` Map of keys to internal IDs
+* `keyList` List of keys by internal ID
+* `valList` List of values by internal ID
+* `sizes` List of calculated sizes by internal ID
+* `ttls` List of TTL values by internal ID
+* `starts` List of start time values by internal ID
+* `next` Array of "next" pointers by internal ID
+* `prev` Array of "previous" pointers by internal ID
+* `head` Internal ID of least recently used item
+* `tail` Internal ID of most recently used item
+* `free` Stack of deleted internal IDs
 
 ## Performance
 
