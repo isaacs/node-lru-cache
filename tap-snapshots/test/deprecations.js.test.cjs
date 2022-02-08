@@ -29,13 +29,19 @@ Array [
     "The reset method is deprecated. Please use cache.clear() instead.",
     "DeprecationWarning",
     "LRU_CACHE_METHOD_reset",
-    undefined,
+    Function get reset(),
   ],
   Array [
     "The length property is deprecated. Please use cache.size instead.",
     "DeprecationWarning",
     "LRU_CACHE_PROPERTY_length",
     Function get length(),
+  ],
+  Array [
+    "The prune method is deprecated. Please use cache.purgeStale() instead.",
+    "DeprecationWarning",
+    "LRU_CACHE_METHOD_prune",
+    Function get prune(),
   ],
 ]
 `

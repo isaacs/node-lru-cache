@@ -235,18 +235,63 @@ Array [
   Array [
     "new value 4",
     4,
+    Object {
+      "a": 1,
+    },
   ],
   Array [
     "6",
     6,
+    Object {
+      "a": 1,
+    },
   ],
   Array [
     "5",
     5,
+    Object {
+      "a": 1,
+    },
   ],
   Array [
     "3",
     3,
+    Object {
+      "a": 1,
+    },
+  ],
+]
+`
+
+exports[`test/map-like.js TAP > forEach, with thisp 2`] = `
+Array [
+  Array [
+    "3",
+    3,
+    Object {
+      "r": 1,
+    },
+  ],
+  Array [
+    "5",
+    5,
+    Object {
+      "r": 1,
+    },
+  ],
+  Array [
+    "6",
+    6,
+    Object {
+      "r": 1,
+    },
+  ],
+  Array [
+    "new value 4",
+    4,
+    Object {
+      "r": 1,
+    },
   ],
 ]
 `
@@ -277,6 +322,27 @@ Generator [
   6,
   5,
   3,
+]
+`
+
+exports[`test/map-like.js TAP > rforEach, no thisp 1`] = `
+Array [
+  Array [
+    "3",
+    3,
+  ],
+  Array [
+    "5",
+    5,
+  ],
+  Array [
+    "6",
+    6,
+  ],
+  Array [
+    "new value 4",
+    4,
+  ],
 ]
 `
 

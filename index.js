@@ -11,8 +11,9 @@ const deprecatedOption = (opt, msg) => {
 const deprecatedMethod = (method, msg) => {
   const code = `LRU_CACHE_METHOD_${method}`
   if (shouldWarn(code)) {
-    const fn = LRUCache.prototype[method]
-    warn(code, `The ${method} method is deprecated. ${msg}`)
+    const { prototype } = LRUCache
+    const { get } = Object.getOwnPropertyDescriptor(prototype, method)
+    warn(code, `The ${method} method is deprecated. ${msg}`, get)
   }
 }
 const deprecatedProperty = (field, msg) => {
@@ -208,6 +209,18 @@ class LRUCache {
       }
     }
   }
+  *rindexes () {
+    if (this.size) {
+      for (let i = this.head; true; i = this.next[i]) {
+        if (!this.isStale(i)) {
+          yield i
+        }
+        if (i === this.tail) {
+          break
+        }
+      }
+    }
+  }
 
   *entries () {
     for (const i of this.indexes()) {
@@ -243,6 +256,17 @@ class LRUCache {
     for (const i of this.indexes()) {
       fn.call(thisp, this.valList[i], this.keyList[i], this)
     }
+  }
+
+  rforEach (fn, thisp = this) {
+    for (const i of this.rindexes()) {
+      fn.call(thisp, this.valList[i], this.keyList[i], this)
+    }
+  }
+
+  get prune () {
+    deprecatedMethod('prune', 'Please use cache.purgeStale() instead.')
+    return this.purgeStale
   }
 
   purgeStale () {
@@ -451,9 +475,9 @@ class LRUCache {
     this.calculatedSize = 0
     this.size = 0
   }
-  reset () {
+  get reset () {
     deprecatedMethod('reset', 'Please use cache.clear() instead.')
-    return this.clear()
+    return this.clear
   }
 
   get length () {

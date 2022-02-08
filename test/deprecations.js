@@ -14,6 +14,8 @@ const c = new LRU({
 })
 c.reset()
 t.equal(c.length, 0)
+t.equal(c.prune, c.purgeStale)
+t.equal(c.reset, c.clear)
 
 t.matchSnapshot(warnings)
 
@@ -28,4 +30,6 @@ const d = new LRU({
 d.reset()
 
 t.equal(d.length, 0)
+t.equal(d.prune, d.purgeStale)
+t.equal(d.reset, d.clear)
 t.strictSame(warnings, [], 'only warn once')

@@ -48,6 +48,14 @@ for (const i of c.indexes()) {
     throw new Error('cycle on ' + i)
   }
 }
+seen.length = 0
+for (const i of c.rindexes()) {
+  seen[i] = seen[i] || 0
+  seen[i]++
+  if (seen[i] > 2) {
+    throw new Error('cycle on ' + i)
+  }
+}
 t.matchSnapshot(c.keys(), 'keys, 7 stale')
 t.matchSnapshot(c.values(), 'values, 7 stale')
 t.matchSnapshot(c.entries(), 'entries, 7 stale')
@@ -56,7 +64,19 @@ t.matchSnapshot(c.dump(), 'dump, 7 stale')
 const feArr = []
 c.forEach((value, key) => feArr.push([value, key]))
 t.matchSnapshot(feArr, 'forEach, no thisp')
+const rfeArr = []
+c.rforEach((value, key) => rfeArr.push([value, key]))
+t.matchSnapshot(rfeArr, 'rforEach, no thisp')
 const feArrThisp = []
 const thisp = {a:1}
-c.forEach(function (value, key) { feArrThisp.push([value, key, this]) })
-t.matchSnapshot(feArr, 'forEach, with thisp')
+c.forEach(function (value, key) { feArrThisp.push([value, key, this]) }, thisp)
+t.matchSnapshot(feArrThisp, 'forEach, with thisp')
+const rfeArrThisp = []
+const rthisp = {r:1}
+c.rforEach(function (value, key) { rfeArrThisp.push([value, key, this]) }, rthisp)
+t.matchSnapshot(rfeArrThisp, 'forEach, with thisp')
+
+// when cache is empty, these should do nothing
+const empty = new LRU({max:10})
+empty.forEach(() => { throw new Error('fail empty forEach') })
+empty.rforEach(() => { throw new Error('fail empty rforEach') })
