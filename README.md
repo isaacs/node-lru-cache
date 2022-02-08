@@ -315,6 +315,29 @@ If you put more stuff in it, then items will fall out.
     Delete any stale entries.  Returns `true` if anything was removed,
     `false` otherwise.
 
+    Deprecated alias: `prune`
+
+* `forEach(fn, [thisp])`
+
+    Call the `fn` function with each set of `fn(value, key, cache)` in the
+    LRU cache, from most recent to least recently used.
+
+    Does not affect recency of use.
+
+    If `thisp` is provided, function will be called in the `this`-context
+    of the provided object.
+
+* `rforEach(fn, [thisp])`
+
+    Same as `cache.forEach(fn, thisp)`, but in order from least recently
+    used to most recently used.
+
+* `pop()`
+
+    Evict the least recently used item, returning its value.
+
+    Returns `undefined` if cache is empty.
+
 ### Internal Methods and Properties
 
 In order to optimize performance as much as possible, "private" members and

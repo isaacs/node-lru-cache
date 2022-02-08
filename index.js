@@ -363,6 +363,14 @@ class LRUCache {
     return this.tail + 1
   }
 
+  pop () {
+    if (this.size) {
+      const val = this.valList[this.head]
+      this.evict()
+      return val
+    }
+  }
+
   evict () {
     const head = this.head
     const k = this.keyList[head]
