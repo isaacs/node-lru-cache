@@ -7,12 +7,38 @@ const t = require('tap')
 const clock = {
   now: () => clock._now,
   _now: 1,
-  advance: n => clock._now += n,
+  advance: n => {
+    const start = clock._now
+    clock._now += n
+    for (const [w, fns] of Object.entries(clock.timers)) {
+      if (w <= clock._now) {
+        delete clock.timers[w]
+        fns.forEach(f => f())
+      }
+    }
+  },
+  timers: {},
+  setTimeout: (fn, n = 0) => {
+    const w = n + clock._now
+    clock.timers[w] = clock.timers[w] || []
+    clock.timers[w].push(fn)
+    return {
+      unref: () => {},
+      clear: () =>
+        clock.timers[w] = (clock.timers[w] || []).filter(f => f !== fn),
+    }
+  },
+  clearTimeout: k => k && k.clear && k.clear(),
 }
 
 const runTests = (LRU, t) => {
+  const { setTimeout, clearTimeout } = global
+  t.teardown(() => Object.assign(global, { setTimeout, clearTimeout }))
+  global.setTimeout = clock.setTimeout
+  global.clearTimeout = clock.clearTimeout
+
   t.test('ttl tests defaults', t => {
-    const c = new LRU({ max: 5, ttl: 10 })
+    const c = new LRU({ max: 5, ttl: 10, ttlResolution: 0 })
     c.set(1, 1)
     t.equal(c.get(1), 1, '1 get not stale', { now: clock._now })
     clock.advance(5)
@@ -59,8 +85,62 @@ const runTests = (LRU, t) => {
     t.end()
   })
 
+  t.test('ttl tests with ttlResolution=100', t => {
+    const c = new LRU({ max: 5, ttl: 10, ttlResolution: 100 })
+    c.set(1, 1)
+    t.equal(c.get(1), 1, '1 get not stale', { now: clock._now })
+    clock.advance(5)
+    t.equal(c.get(1), 1, '1 get not stale', { now: clock._now })
+    clock.advance(5)
+    t.equal(c.get(1), 1, '1 get not stale', { now: clock._now })
+    clock.advance(1)
+    t.equal(c.has(1), true, '1 has stale', {
+      now: clock._now,
+      ttls: c.ttls,
+      starts: c.starts,
+      index: c.keyMap.get(1),
+      stale: c.isStale(c.keyMap.get(1)),
+    })
+    t.equal(c.get(1), 1)
+    clock.advance(100)
+    t.equal(c.has(1), false, '1 has stale', {
+      now: clock._now,
+      ttls: c.ttls,
+      starts: c.starts,
+      index: c.keyMap.get(1),
+      stale: c.isStale(c.keyMap.get(1)),
+    })
+    t.equal(c.get(1), undefined)
+    t.equal(c.size, 0)
+    t.end()
+  })
+
+  t.test('ttlResolution only respected if non-negative integer', t => {
+    const invalids = [ -1, null, undefined, 'banana', {} ]
+    for (const i of invalids) {
+      const c = new LRU({ max: 5, ttlResolution: i })
+      t.not(c.ttlResolution, i)
+      t.equal(c.ttlResolution, Math.floor(c.ttlResolution))
+      t.ok(c.ttlResolution >= 0)
+    }
+    t.end()
+  })
+
+  t.test('ttlAutopurge', t => {
+    const c = new LRU({ max: 2, ttl: 10, ttlAutopurge: true, ttlResolution: 0 })
+    c.set(1, 1)
+    c.set(2, 2)
+    t.equal(c.size, 2)
+    c.set(2, 3, { ttl: 11 })
+    clock.advance(11)
+    t.equal(c.size, 1)
+    clock.advance(1)
+    t.equal(c.size, 0)
+    t.end()
+  })
+
   t.test('ttl on set, not on cache', t => {
-    const c = new LRU({ max: 5 })
+    const c = new LRU({ max: 5, ttlResolution: 0 })
     c.set(1, 1, { ttl: 10 })
     t.equal(c.get(1), 1)
     clock.advance(5)
@@ -94,7 +174,7 @@ const runTests = (LRU, t) => {
   })
 
   t.test('ttl with allowStale', t => {
-    const c = new LRU({ max: 5, ttl: 10, allowStale: true })
+    const c = new LRU({ max: 5, ttl: 10, allowStale: true, ttlResolution: 0 })
     c.set(1, 1)
     t.equal(c.get(1), 1)
     clock.advance(5)
@@ -131,7 +211,7 @@ const runTests = (LRU, t) => {
   })
 
   t.test('ttl with updateAgeOnGet', t => {
-    const c = new LRU({ max: 5, ttl: 10, updateAgeOnGet: true })
+    const c = new LRU({ max: 5, ttl: 10, updateAgeOnGet: true, ttlResolution: 0 })
     c.set(1, 1)
     t.equal(c.get(1), 1)
     clock.advance(5)
@@ -170,7 +250,7 @@ const runTests = (LRU, t) => {
   })
 
   t.test('purge stale items', t => {
-    const c = new LRU({ max: 10 })
+    const c = new LRU({ max: 10, ttlResolution: 0 })
     for (let i = 0; i < 10; i++) {
       c.set(i, i, { ttl: i + 1 })
     }

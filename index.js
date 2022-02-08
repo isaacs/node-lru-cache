@@ -73,6 +73,8 @@ class LRUCache {
     const {
       max,
       ttl,
+      ttlResolution = 1,
+      ttlAutopurge,
       updateAgeOnGet,
       allowStale,
       dispose,
@@ -133,6 +135,9 @@ class LRUCache {
 
     this.allowStale = !!allowStale || !!stale
     this.updateAgeOnGet = !!updateAgeOnGet
+    this.ttlResolution = isPosInt(ttlResolution) || ttlResolution === 0
+      ? ttlResolution : 1
+    this.ttlAutopurge = !!ttlAutopurge
     this.ttl = ttl || maxAge || 0
     if (this.ttl) {
       if (!isPosInt(this.ttl)) {
@@ -158,13 +163,39 @@ class LRUCache {
     this.setItemTTL = (index, ttl) => {
       this.starts[index] = ttl !== 0 ? perf.now() : 0
       this.ttls[index] = ttl
+      if (ttl !== 0 && this.ttlAutopurge) {
+        const t = setTimeout(() => {
+          if (this.isStale(index)) {
+            this.delete(this.keyList[index])
+          }
+        }, ttl + 1)
+        /* istanbul ignore else - unref() not supported on all platforms */
+        if (t.unref) {
+          t.unref()
+        }
+      }
     }
     this.updateItemAge = (index) => {
       this.starts[index] = this.ttls[index] !== 0 ? perf.now() : 0
     }
+    // debounce calls to perf.now() to 1s so we're not hitting
+    // that costly call repeatedly.
+    let cachedNow = 0
+    const getNow = () => {
+      const n = perf.now()
+      if (this.ttlResolution > 0) {
+        cachedNow = n
+        const t = setTimeout(() => cachedNow = 0, this.ttlResolution)
+        /* istanbul ignore else - not available on all platforms */
+        if (t.unref) {
+          t.unref()
+        }
+      }
+      return n
+    }
     this.isStale = (index) => {
       return this.ttls[index] !== 0 && this.starts[index] !== 0 &&
-        (perf.now() - this.starts[index] > this.ttls[index])
+        ((cachedNow || getNow()) - this.starts[index] > this.ttls[index])
     }
   }
   updateItemAge (index) {}

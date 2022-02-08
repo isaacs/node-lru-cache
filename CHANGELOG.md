@@ -1,5 +1,10 @@
 # cringe lorg
 
+### 7.1.0 - 2022-02
+
+* Add `ttlResolution` option
+* Add `ttlAutopurge` option
+
 ## v7 - 2022-02
 
 This library changed to a different algorithm and internal data structure

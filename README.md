@@ -60,9 +60,9 @@ const options = {
   },
 
   // max time to live for items before they are considered stale
-  // note that stale items are NOT preemptively removed, and MAY
-  // live in the cache, contributing to its LRU max, long after they
-  // have expired.
+  // note that stale items are NOT preemptively removed by default,
+  // and MAY live in the cache, contributing to its LRU max, long after
+  // they have expired.
   // Also, as this cache is optimized for LRU/MRU operations, some of
   // the staleness/TTL checks will reduce performance, as they will incur
   // overhead by deleting items.
@@ -153,8 +153,9 @@ If you put more stuff in it, then items will fall out.
     Boolean, default `false`.  Only relevant if `dispose` option is set.
 
 * `ttl` - max time to live for items before they are considered stale.
-  Note that stale items are NOT preemptively removed, and MAY live in the
-  cache, contributing to its LRU max, long after they have expired.
+  Note that stale items are NOT preemptively removed by default, and MAY
+  live in the cache, contributing to its LRU max, long after they have
+  expired.
 
     Also, as this cache is optimized for LRU/MRU operations, some of
     the staleness/TTL checks will reduce performance, as they will incur
@@ -172,9 +173,33 @@ If you put more stuff in it, then items will fall out.
 
     Deprecated alias: `maxAge`
 
+* `ttlResolution` - Minimum amount of time in ms in which to check for
+  staleness.  Defaults to `1`, which means that the current time is checked
+  at most once per millisecond.
+
+    Set to `0` to check the current time every time staleness is tested.
+
+    Note that setting this to a higher value _will_ improve performance
+    somewhat while using ttl tracking, albeit at the expense of keeping
+    stale items around a bit longer than intended.
+
+* `ttlAutopurge` - Preemptively remove stale items from the cache.
+
+    Note that this may _significantly_ degrade performance, especially if
+    the cache is storing a large number of items.  It is almost always best
+    to just leave the stale items in the cache, and let them fall out as
+    new items are added.
+
+    Note that this means that `allowStale` is a bit pointless, as stale
+    items will be deleted almost as soon as they expire.
+
+    Use with caution!
+
+    Boolean, default `false`
+
 * `allowStale` - By default, if you set `ttl`, it'll only delete stale
   items from the cache when you `get(key)`.  That is, it's not
-  pre-emptively pruning items.
+  preemptively pruning items.
 
     If you set `allowStale:true`, it'll return the stale value as well as
     deleting it.  If you don't set this, then it'll return `undefined` when
