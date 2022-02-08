@@ -41,9 +41,17 @@ const runTests = (LRU, t) => {
     // now we have 9 items
     // get an expired item from old set
     clock.advance(11)
+    t.equal(c.peek(4), undefined)
     t.equal(c.has(4), false)
     t.equal(c.get(4), undefined)
 
+    // set an item WITHOUT a ttl on it
+    c.set('immortal', true, { ttl: 0 })
+    clock.advance(100)
+    t.equal(c.get('immortal'), true)
+    c.get('immortal', { updateAgeOnGet: true })
+    clock.advance(100)
+    t.equal(c.get('immortal'), true)
     t.end()
   })
 
@@ -154,6 +162,26 @@ const runTests = (LRU, t) => {
     t.equal(c.has(4), false)
     t.equal(c.get(4), undefined)
 
+    t.end()
+  })
+
+  t.test('purge stale items', t => {
+    const c = new LRU({ max: 10 })
+    for (let i = 0; i < 10; i++) {
+      c.set(i, i, { ttl: i + 1 })
+    }
+    clock.advance(3)
+    t.equal(c.size, 10)
+    t.equal(c.purgeStale(), true)
+    t.equal(c.size, 8)
+    t.equal(c.purgeStale(), false)
+
+    clock.advance(100)
+    t.equal(c.size, 8)
+    t.equal(c.purgeStale(), true)
+    t.equal(c.size, 0)
+    t.equal(c.purgeStale(), false)
+    t.equal(c.size, 0)
     t.end()
   })
 

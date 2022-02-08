@@ -1,6 +1,52 @@
 const perf = typeof performance === 'object' && performance &&
   typeof performance.now === 'function' ? performance : Date
 
+
+const warned = new Set()
+const deprecatedOption = (opt, msg) => {
+  const code = `LRU_CACHE_OPTION_${opt}`
+  if (shouldWarn(code)) {
+    warn(code, `The ${opt} option is deprecated. ${msg}`, LRUCache)
+  }
+}
+const deprecatedMethod = (method, msg) => {
+  const code = `LRU_CACHE_METHOD_${method}`
+  if (shouldWarn(code)) {
+    const fn = LRUCache.prototype[method]
+    warn(code, `The ${method} method is deprecated. ${msg}`)
+  }
+}
+const deprecatedProperty = (field, msg) => {
+  const code = `LRU_CACHE_PROPERTY_${field}`
+  if (shouldWarn(code)) {
+    const { prototype } = LRUCache
+    const { get } = Object.getOwnPropertyDescriptor(prototype, field)
+    warn(code, `The ${field} property is deprecated. ${msg}`, get)
+  }
+}
+const shouldWarn = (code) => !(process.noDeprecation || warned.has(code))
+const warn = (code, msg, fn) => {
+  warned.add(code)
+  process.emitWarning(msg, 'DeprecationWarning', code, fn)
+}
+
+const isPosInt = n => n && n === Math.floor(n) && n > 0 && isFinite(n)
+
+/* istanbul ignore next - This is a little bit ridiculous, tbh.
+ * The maximum array length is 2^32-1 or thereabouts on most JS impls.
+ * And well before that point, you're caching the entire world, I mean,
+ * that's ~32GB of just integers for the next/prev links, plus whatever
+ * else to hold that many keys and values.  Just filling the memory with
+ * zeroes at init time is brutal when you get that big.
+ * But why not be complete?
+ * Maybe in the future, these limits will have expanded. */
+const getUintArray = max => !isPosInt(max) ? null
+: max <= Math.pow(2, 8) ? Uint8Array
+: max <= Math.pow(2, 16) ? Uint16Array
+: max <= Math.pow(2, 32) ? Uint32Array
+: max <= Number.MAX_SAFE_INTEGER ? ZeroArray
+: null
+
 class ZeroArray extends Array {
   constructor (size) {
     super(size)
@@ -10,10 +56,7 @@ class ZeroArray extends Array {
 
 class Stack {
   constructor (max) {
-    const UintArray = max <= Math.pow(2, 8) ? Uint8Array
-      : max <= Math.pow(2, 16) ? Uint16Array
-      : max <= Math.pow(2, 32) ? Uint32Array
-      : Array
+    const UintArray = getUintArray(max)
     this.heap = new UintArray(max)
     this.length = 0
   }
@@ -26,25 +69,45 @@ class Stack {
 }
 
 class LRUCache {
-  constructor ({
-    max,
-    ttl,
-    updateAgeOnGet,
-    allowStale,
-    dispose,
-    noDisposeOnSet,
-    maxSize,
-    sizeCalculation,
-  }) {
-    const UintArray = max <= Math.pow(2, 8) ? Uint8Array
-      : max <= Math.pow(2, 16) ? Uint16Array
-      : max <= Math.pow(2, 32) ? Uint32Array
-      : ZeroArray
+  constructor (options = {}) {
+    const {
+      max,
+      ttl,
+      updateAgeOnGet,
+      allowStale,
+      dispose,
+      noDisposeOnSet,
+      maxSize,
+      sizeCalculation,
+    } = options
+
+    // deprecated options, don't trigger a warning for getting them if
+    // the thing being passed in is another LRUCache we're copying.
+    const {
+      length,
+      maxAge,
+      stale,
+    } = options instanceof LRUCache ? {} : options
+
+    if (!isPosInt(max)) {
+      throw new TypeError('max option must be an integer')
+    }
+
+    const UintArray = getUintArray(max)
+    if (!UintArray) {
+      throw new Error('invalid max value: ' + max)
+    }
+
     this.max = max
     this.maxSize = maxSize || 0
-    this.sizeCalculation = sizeCalculation
-    if (!sizeCalculation && maxSize) {
-      throw new Error('cannot set sizeCalculation without setting maxSize')
+    this.sizeCalculation = sizeCalculation || length
+    if (this.sizeCalculation) {
+      if (!this.maxSize) {
+        throw new TypeError('cannot set sizeCalculation without setting maxSize')
+      }
+      if (typeof this.sizeCalculation !== 'function') {
+        throw new TypeError('sizeCalculating set to non-function')
+      }
     }
     this.keyMap = new Map()
     this.keyList = new Array(max).fill(null)
@@ -62,14 +125,30 @@ class LRUCache {
     this.noDisposeOnSet = !!noDisposeOnSet
 
     if (this.maxSize) {
+      if (!isPosInt(this.maxSize)) {
+        throw new TypeError('maxSize must be a positive integer if specified')
+      }
       this.initializeSizeTracking()
     }
 
-    this.allowStale = !!allowStale
+    this.allowStale = !!allowStale || !!stale
     this.updateAgeOnGet = !!updateAgeOnGet
-    this.ttl = ttl || 0
-    if (ttl) {
+    this.ttl = ttl || maxAge || 0
+    if (this.ttl) {
+      if (!isPosInt(this.ttl)) {
+        throw new TypeError('ttl must be a positive integer if specified')
+      }
       this.initializeTTLTracking()
+    }
+
+    if (stale) {
+      deprecatedOption('stale', 'please use options.allowStale instead')
+    }
+    if (maxAge) {
+      deprecatedOption('maxAge', 'please use options.ttl instead')
+    }
+    if (length) {
+      deprecatedOption('length', 'please use options.sizeCalculation instead')
     }
   }
 
@@ -97,10 +176,13 @@ class LRUCache {
     this.sizes = new ZeroArray(this.max)
     this.removeItemSize = index => this.calculatedSize -= this.sizes[index]
     this.addItemSize = (index, v, k, size, sizeCalculation) => {
-      this.sizes[index] = size || sizeCalculation(v, k)
-      while (this.calculatedSize > this.maxSize) {
+      const s = size || (sizeCalculation ? sizeCalculation(v, k) : 0)
+      this.sizes[index] = isPosInt(s) ? s : 0
+      const maxSize = this.maxSize - this.sizes[index]
+      while (this.calculatedSize > maxSize) {
         this.evict()
       }
+      this.calculatedSize += this.sizes[index]
     }
     this.delete = k => {
       if (this.size !== 0) {
@@ -110,10 +192,6 @@ class LRUCache {
         }
       }
       return LRUCache.prototype.delete.call(this, k)
-    }
-    this.clear = () => {
-      this.calculatedSize = 0
-      return LRUCache.prototype.clear.call(this)
     }
   }
   removeItemSize (index) {}
@@ -131,24 +209,29 @@ class LRUCache {
       }
     }
   }
+
   *entries () {
     for (const i of this.indexes()) {
       yield [this.keyList[i], this.valList[i]]
     }
   }
+
   *keys () {
     for (const i of this.indexes()) {
       yield this.keyList[i]
     }
   }
+
   *values () {
     for (const i of this.indexes()) {
       yield this.valList[i]
     }
   }
+
   [Symbol.iterator] () {
     return this.entries()
   }
+
   find (fn, getOptions = {}) {
     for (const i of this.indexes()) {
       if (fn(this.valList[i], this.keyList[i], this)) {
@@ -156,9 +239,51 @@ class LRUCache {
       }
     }
   }
-  forEach (fn) {
+
+  forEach (fn, thisp = this) {
     for (const i of this.indexes()) {
-      fn(this.valList[i], this.keyList[i])
+      fn.call(thisp, this.valList[i], this.keyList[i], this)
+    }
+  }
+
+  purgeStale () {
+    let deleted = false
+    if (this.size) {
+      for (let i = this.head; true; i = this.next[i]) {
+        const b = i === this.tail
+        if (this.isStale(i)) {
+          this.delete(this.keyList[i])
+          deleted = true
+        }
+        if (b) {
+          break
+        }
+      }
+    }
+    return deleted
+  }
+
+  dump () {
+    const arr = []
+    for (const i of this.indexes()) {
+      const key = this.keyList[i]
+      const value = this.valList[i]
+      const entry = { value }
+      if (this.ttls) {
+        entry.ttl = this.ttls[i]
+      }
+      if (this.sizes) {
+        entry.size = this.sizes[i]
+      }
+      arr.unshift([key, entry])
+    }
+    return arr
+  }
+
+  load (arr) {
+    this.clear()
+    for (const [key, entry] of arr) {
+      this.set(key, entry.value, entry)
     }
   }
 
@@ -181,6 +306,7 @@ class LRUCache {
       this.prev[index] = this.tail
       this.tail = index
       this.size ++
+      this.addItemSize(index, v, k, size, sizeCalculation)
     } else {
       // update
       const oldVal = this.valList[index]
@@ -190,6 +316,7 @@ class LRUCache {
         }
         this.removeItemSize(index)
         this.valList[index] = v
+        this.addItemSize(index, v, k, size, sizeCalculation)
       }
       this.moveToTail(index)
     }
@@ -197,7 +324,6 @@ class LRUCache {
       this.initializeTTLTracking()
     }
     this.setItemTTL(index, ttl)
-    this.addItemSize(index, v, k, size, sizeCalculation)
   }
 
   newIndex () {
@@ -313,10 +439,27 @@ class LRUCache {
     this.keyMap.clear()
     this.valList.fill(null)
     this.keyList.fill(null)
+    if (this.ttls) {
+      this.ttls.fill(0)
+      this.starts.fill(0)
+    }
+    if (this.sizes) {
+      this.sizes.fill(0)
+    }
     this.head = 0
     this.tail = 0
     this.free.length = 0
+    this.calculatedSize = 0
     this.size = 0
+  }
+  reset () {
+    deprecatedMethod('reset', 'Please use cache.clear() instead.')
+    return this.clear()
+  }
+
+  get length () {
+    deprecatedProperty('length', 'Please use cache.size instead.')
+    return this.size
   }
 }
 

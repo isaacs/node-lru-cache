@@ -1,19 +1,19 @@
 const t = require('tap')
 const LRU = require('../')
 
-t.plan(0, 'update with changed implementation')
-process.exit(0)
-
 t.test('disposal', t => {
   const disposed = []
   const c = new LRU({max:5, dispose: (k,v) => disposed.push([k,v])})
   for (let i = 0; i < 9; i++) {
     c.set(i, i)
   }
-  t.strictSame(disposed, [])
-  t.equal(c.size, 9)
-  t.equal(c.oldSize, 5)
-  t.equal(c.currentSize, 4)
+  t.strictSame(disposed, [
+    [0, 0],
+    [1, 1],
+    [2, 2],
+    [3, 3],
+  ])
+  t.equal(c.size, 5)
 
   c.set(9, 9)
   t.strictSame(disposed, [
@@ -27,19 +27,19 @@ t.test('disposal', t => {
   disposed.length = 0
   c.set('asdf', 'foo')
   c.set('asdf', 'asdf')
-  t.strictSame(disposed, [['foo', 'asdf']])
+  t.strictSame(disposed, [[5,5], ['foo', 'asdf']])
 
   disposed.length = 0
   for (let i = 0; i < 5; i++) {
     c.set(i, i)
   }
-  t.strictSame(disposed, [[5, 5], [6, 6], [7, 7], [8, 8], [9, 9]])
+  t.strictSame(disposed, [[6, 6], [7, 7], [8, 8], [9, 9], ['asdf', 'asdf']])
 
   // dispose both old and current
   disposed.length = 0
   c.set('asdf', 'foo')
   c.delete('asdf')
-  t.strictSame(disposed, [['asdf', 'asdf'], ['foo', 'asdf']])
+  t.strictSame(disposed, [[0, 0], ['foo', 'asdf']])
 
   // delete non-existing key, no disposal
   disposed.length = 0
@@ -58,7 +58,7 @@ t.test('disposal', t => {
   t.strictSame(disposed, [[3, 3]])
 
   // disposed because of being overwritten
-  c.reset()
+  c.clear()
   disposed.length = 0
   for (let i = 0; i < 5; i++) {
     c.set(i, i)
@@ -71,7 +71,7 @@ t.test('disposal', t => {
   t.strictSame(disposed, [[2, 2]])
 
   c.noDisposeOnSet = true
-  c.reset()
+  c.clear()
   disposed.length = 0
   for (let i = 0; i < 5; i++) {
     c.set(i, i)

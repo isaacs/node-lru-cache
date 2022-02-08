@@ -1,0 +1,41 @@
+/* IMPORTANT
+ * This snapshot file is auto-generated, but designed for humans.
+ * It should be checked into source control and tracked carefully.
+ * Re-generate by setting TAP_SNAPSHOT=1 and running tests.
+ * Make sure to inspect the output below.  Do not ignore changes!
+ */
+'use strict'
+exports[`test/deprecations.js TAP > must match snapshot 1`] = `
+Array [
+  Array [
+    "The stale option is deprecated. please use options.allowStale instead",
+    "DeprecationWarning",
+    "LRU_CACHE_OPTION_stale",
+    Function LRUCache(classLRUCache),
+  ],
+  Array [
+    "The maxAge option is deprecated. please use options.ttl instead",
+    "DeprecationWarning",
+    "LRU_CACHE_OPTION_maxAge",
+    Function LRUCache(classLRUCache),
+  ],
+  Array [
+    "The length option is deprecated. please use options.sizeCalculation instead",
+    "DeprecationWarning",
+    "LRU_CACHE_OPTION_length",
+    Function LRUCache(classLRUCache),
+  ],
+  Array [
+    "The reset method is deprecated. Please use cache.clear() instead.",
+    "DeprecationWarning",
+    "LRU_CACHE_METHOD_reset",
+    undefined,
+  ],
+  Array [
+    "The length property is deprecated. Please use cache.size instead.",
+    "DeprecationWarning",
+    "LRU_CACHE_PROPERTY_length",
+    Function get length(),
+  ],
+]
+`

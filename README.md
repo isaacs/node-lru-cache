@@ -31,17 +31,17 @@ const LRU = require('lru-cache')
 // required if certain other fields are set.
 const options = {
   // the number of most recently used items to keep.
-  // note that we may store fewer items than this if sizeMax is hit.
+  // note that we may store fewer items than this if maxSize is hit.
   max: 500,
 
-  // if you wish to track item size, you must provide a sizeMax
+  // if you wish to track item size, you must provide a maxSize
   // note that we still will only keep up to max *actual items*,
   // so size tracking may cause fewer than max items to be stored.
-  // At the extreme, a single item of sizeMax size will cause everything
+  // At the extreme, a single item of maxSize size will cause everything
   // else in the cache to be dropped when it is added.  Use with caution!
   // Note also that size tracking can negatively impact performance,
   // though for most cases, only minimally.
-  sizeMax: 5000,
+  maxSize: 5000,
 
   // function to calculate size of items.  useful if storing strings or
   // buffers or other items where memory size depends on the object itself.
@@ -49,7 +49,7 @@ const options = {
   // the cache, though they will cause faster turnover in the storage.
   sizeCalculation: (value, key) => {
     // return an positive integer which is the size of the item,
-    // if a positive integer is not returned, will use 1 as the size.
+    // if a positive integer is not returned, will use 0 as the size.
     return 1
   },
 
@@ -112,30 +112,12 @@ If you put more stuff in it, then items will fall out.
 
 * `max` - The maximum number (or size) of items that remain in the cache
   (assuming no TTL pruning or explicit deletions).  Note that fewer items
-  may be stored if size calculation is used, and `sizeMax` is exceeded.
+  may be stored if size calculation is used, and `maxSize` is exceeded.
   This must be a positive finite intger.
 
-* `sizeMax` - Set to a positive integer to track the sizes of items added
+* `maxSize` - Set to a positive integer to track the sizes of items added
   to the cache, and automatically evict items in order to stay below this
   size.  Note that this may result in fewer than `max` items being stored.
-
-* `mode` - Either `'map'`, `'object'`, or `'auto'`.  Determines the data
-  structure to use to associate keys with indexes.
-
-    In `'auto'` mode, it will use an object, and only switch to using a
-    `Map` when a key is used that is not a `Symbol` or a string less than
-    length of 256.
-
-    Note that the switch does incur some performance penalty, as does the
-    ongoing type checking and string-length checking on each set operation.
-    If you are 100% confident that you will never use a key that is costly
-    or unsafe to store in an object, then `mode: 'object'` will _generally_
-    yield better performance.  (See "Performance" below.)
-
-    Likewise, if you are reasonably confident that you will eventually need
-    to store a mix of key types, or keys that cannot be used as object
-    keys, then you will get slightly better performance using `mode:
-    'map'`.
 
 * `sizeCalculation` - Function used to calculate the size of stored
   items.  If you're storing strings or buffers, then you probably want to
@@ -144,7 +126,7 @@ If you put more stuff in it, then items will fall out.
 
     This may be overridden by passing an options object to `cache.set()`.
 
-    Requires `sizeMax` to be set.
+    Requires `maxSize` to be set.
 
     Deprecated alias: `length`
 
@@ -219,42 +201,6 @@ If you put more stuff in it, then items will fall out.
 
     Boolean, default false, only relevant if `ttl` is set.
 
-* `updateAgeOnHas` - When using time-expiring entries with `ttl`, setting
-  this to `true` will make each item's age reset to 0 whenever it is
-  checked for existence in the cache with `has()`, causing it to not
-  expire.  (It can still fall out of cache based on recency of use, of
-  course.)
-
-    Note that using this option means that `cache.has()` is no longer
-    idempotent, as it can change a cache entry's staleness.
-
-    This may be overridden by passing an options object to `cache.has()`.
-
-    Boolean, default false, only relevant if `ttl` is set.
-
-* `updateRecencyOnHas` - Update the recency of a cache entry when calling
-  `cache.has()`.  By default, cache entry recency is only updated when
-  calling `cache.get()` or `cache.set()`.
-
-    Note that using this option means that `cache.has()` is no longer
-    idempotent, as it can change a cache entry's recency of use.
-
-    This may be overridden by passing an options object to `cache.has()`.
-
-    Boolean, default false.
-
-* `updateRecencyOnGet` - If set to false, do _not_ update the recency of an
-  item when `cache.get()` retrieves it from the cache.
-
-    Setting this option to `false` is only useful in rare scenarios.  It
-    significantly changes the behavior of this library, by no longer
-    tracking "use" of cache entries.  However, note that less recently
-    _added_ items will still be dropped from cache as new items are added.
-
-    This may be overridden by passing an options object to `cache.get()`.
-
-    Boolean, default true, only disabled if explicitly set to `false`.
-
 ## API
 
 * `new LRUCache(options)`
@@ -277,7 +223,7 @@ If you put more stuff in it, then items will fall out.
 
     The total size of items in cache when using size tracking.
 
-* `set(key, value, [{size, sizeCalculation, ttl, noDisposeOnSet }])`
+* `set(key, value, [{ size, sizeCalculation, ttl, noDisposeOnSet }])`
 
     Add a value to the cache.
 
