@@ -457,20 +457,4 @@ some subtle changes as a result.
 If you were relying on the internals of LRUCache in version 6 or before, it
 probably will not work in version 7 and above.
 
-### Specific API Changes
-
-For the most part, the feature set has been maintained as much as possible.
-
-However, some other cleanup and refactoring changes were made in v7 as
-well.
-
-* The `set()`, `get()`, and `has()` functions take options objects
-  instead of positional booleans/integers for optional parameters.
-* `size` can be set explicitly on `set()`.
-* `cache.length` was renamed to the more fitting `cache.size`.
-* Option name deprecations:
-  * `stale` -> `allowStale`
-  * `length` -> `sizeCalculation`
-  * `maxAge` -> `ttl`
-* The objects used by `cache.load()` and `cache.dump()` are incompatible
-  with previous versions.
+For more info, see the [change log](CHANGELOG.md).
