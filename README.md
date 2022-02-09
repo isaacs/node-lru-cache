@@ -32,7 +32,8 @@ const LRU = require('lru-cache')
 const options = {
   // the number of most recently used items to keep.
   // note that we may store fewer items than this if maxSize is hit.
-  max: 500,
+
+  max: 500, // <-- mandatory, you must give a maximum capacity
 
   // if you wish to track item size, you must provide a maxSize
   // note that we still will only keep up to max *actual items*,
@@ -115,9 +116,14 @@ If you put more stuff in it, then items will fall out.
   may be stored if size calculation is used, and `maxSize` is exceeded.
   This must be a positive finite intger.
 
+    This option is required, and must be a positive integer.
+
 * `maxSize` - Set to a positive integer to track the sizes of items added
   to the cache, and automatically evict items in order to stay below this
   size.  Note that this may result in fewer than `max` items being stored.
+
+    Optional, must be a positive integer if provided.  Required if other
+    size tracking features are used.
 
 * `sizeCalculation` - Function used to calculate the size of stored
   items.  If you're storing strings or buffers, then you probably want to
@@ -169,7 +175,8 @@ If you put more stuff in it, then items will fall out.
 
     This may be overridden by passing an options object to `cache.set()`.
 
-    Boolean, default `false`.  Only relevant if `dispose` option is set.
+    Boolean, default `false`.  Only relevant if `dispose` or `disposeAfter`
+    options are set.
 
 * `ttl` - max time to live for items before they are considered stale.
   Note that stale items are NOT preemptively removed by default, and MAY
