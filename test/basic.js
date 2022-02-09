@@ -8,7 +8,7 @@ const LRU = require('../')
 t.test('basic operation', t => {
   const c = new LRU({ max: 10 })
   for (let i = 0; i < 5; i++) {
-    c.set(i, i)
+    t.equal(c.set(i, i), c)
   }
   for (let i = 0; i < 5; i++) {
     t.equal(c.get(i), i)
@@ -54,7 +54,8 @@ t.test('basic operation', t => {
     c.set(i, i)
   }
   t.equal(c.size, 10)
-  c.delete(19)
+  t.equal(c.delete(19), true)
+  t.equal(c.delete(19), false)
   t.equal(c.size, 9)
   c.set(10, 10)
   t.equal(c.size, 10)

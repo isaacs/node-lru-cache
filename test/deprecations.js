@@ -16,6 +16,7 @@ c.reset()
 t.equal(c.length, 0)
 t.equal(c.prune, c.purgeStale)
 t.equal(c.reset, c.clear)
+t.equal(c.del, c.delete)
 
 t.matchSnapshot(warnings)
 

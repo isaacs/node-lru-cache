@@ -283,6 +283,8 @@ If you put more stuff in it, then items will fall out.
 
     Will update the recency of the entry.
 
+    Returns the cache object.
+
 * `get(key, { updateAgeOnGet, allowStale } = {}) => value`
 
     Return a value from the cache.
@@ -311,6 +313,8 @@ If you put more stuff in it, then items will fall out.
 * `delete(key)`
 
     Deletes a key out of the cache.
+
+    Returns `true` if the key was deleted, `false` otherwise.
 
 * `clear()`
 

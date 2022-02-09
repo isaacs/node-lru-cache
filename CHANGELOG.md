@@ -1,5 +1,11 @@
 # cringe lorg
 
+## 7.3.0
+
+* Add `disposeAfter()`
+* `set()` returns the cache object
+* `delete()` returns boolean indicating whether anything was deleted
+
 ## 7.2.0
 
 * Add reason to dispose() calls.

@@ -43,5 +43,11 @@ Array [
     "LRU_CACHE_METHOD_prune",
     Function get prune(),
   ],
+  Array [
+    "The del method is deprecated. Please use cache.delete() instead.",
+    "DeprecationWarning",
+    "LRU_CACHE_METHOD_del",
+    Function get del(),
+  ],
 ]
 `
