@@ -139,3 +139,48 @@ t.test('noDisposeOnSet with delete()', t => {
 
   t.end()
 })
+
+t.test('disposeAfter', t => {
+  const c = new LRU({
+    max: 5,
+    disposeAfter: (v, k, r) => {
+      if (k === 2) {
+        // increment it every time it gets disposed, but only one time
+        c.set(k, v + 1, { noDisposeOnSet: true })
+      }
+    },
+  })
+
+  for (let i = 0; i < 100; i++) {
+    c.set(i, i)
+  }
+  t.same([...c.entries()], [
+    [ 99, 99 ],
+    [ 98, 98 ],
+    [ 2, 21 ],
+    [ 97, 97 ],
+    [ 96, 96 ],
+  ])
+  c.delete(2)
+  t.same([...c.entries()], [
+    [ 2, 22 ],
+    [ 99, 99 ],
+    [ 98, 98 ],
+    [ 97, 97 ],
+    [ 96, 96 ],
+  ])
+  for (let i = 96; i < 100; i++) {
+    c.set(i, i+1)
+  }
+  t.same([...c.entries()], [
+    [ 99, 100 ],
+    [ 98, 99 ],
+    [ 97, 98 ],
+    [ 96, 97 ],
+    [ 2, 22 ],
+  ])
+  c.clear()
+  t.same([...c.entries()], [[2, 23]])
+
+  t.end()
+})

@@ -157,6 +157,13 @@ If you put more stuff in it, then items will fall out.
 
     Optional, must be a function.
 
+* `disposeAfter` The same as `dispose`, but called _after_ the entry is
+  completely removed and the cache is once again in a clean state.
+
+    It is safe to add an item right back into the cache at this point.
+    However, note that it is _very_ easy to inadvertently create infinite
+    recursion in this way.
+
 * `noDisposeOnSet` Set to `true` to suppress calling the `dispose()`
   function if the entry key is still accessible within the cache.
 

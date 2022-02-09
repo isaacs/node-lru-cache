@@ -78,6 +78,7 @@ class LRUCache {
       updateAgeOnGet,
       allowStale,
       dispose,
+      disposeAfter,
       noDisposeOnSet,
       maxSize,
       sizeCalculation,
@@ -123,6 +124,13 @@ class LRUCache {
 
     if (typeof dispose === 'function') {
       this.dispose = dispose
+    }
+    if (typeof disposeAfter === 'function') {
+      this.disposeAfter = disposeAfter
+      this.disposed = []
+    } else {
+      this.disposeAfter = null
+      this.disposed = null
     }
     this.noDisposeOnSet = !!noDisposeOnSet
 
@@ -367,6 +375,9 @@ class LRUCache {
       if (v !== oldVal) {
         if (!noDisposeOnSet) {
           this.dispose(oldVal, k, 'set')
+          if (this.disposeAfter) {
+            this.disposed.push([oldVal, k, 'set'])
+          }
         }
         this.removeItemSize(index)
         this.valList[index] = v
@@ -378,6 +389,12 @@ class LRUCache {
       this.initializeTTLTracking()
     }
     this.setItemTTL(index, ttl)
+    if (this.disposeAfter) {
+      while (this.disposed.length) {
+        this.disposeAfter(...this.disposed.shift())
+      }
+    }
+    return this
   }
 
   newIndex () {
@@ -407,6 +424,9 @@ class LRUCache {
     const k = this.keyList[head]
     const v = this.valList[head]
     this.dispose(v, k, 'evict')
+    if (this.disposeAfter) {
+      this.disposed.push([v, k, 'evict'])
+    }
     this.removeItemSize(head)
     this.head = this.next[head]
     this.keyMap.delete(k)
@@ -471,15 +491,24 @@ class LRUCache {
     }
   }
 
+  get del () {
+    deprecatedMethod('del', 'Please use cache.delete() instead.')
+    return this.delete
+  }
   delete (k) {
+    let deleted = false
     if (this.size !== 0) {
       const index = this.keyMap.get(k)
       if (index !== undefined) {
+        deleted = true
         if (this.size === 1) {
           this.clear()
         } else {
           this.removeItemSize(index)
           this.dispose(this.valList[index], k, 'delete')
+          if (this.disposeAfter) {
+            this.disposed.push([this.valList[index], k, 'delete'])
+          }
           this.keyMap.delete(k)
           this.keyList[index] = null
           this.valList[index] = null
@@ -496,12 +525,23 @@ class LRUCache {
         }
       }
     }
+    if (this.disposed) {
+      while (this.disposed.length) {
+        this.disposeAfter(...this.disposed.shift())
+      }
+    }
+    return deleted
   }
 
   clear () {
     if (this.dispose !== LRUCache.prototype.dispose) {
       for (const index of this.rindexes()) {
         this.dispose(this.valList[index], this.keyList[index], 'delete')
+      }
+    }
+    if (this.disposeAfter) {
+      for (const index of this.rindexes()) {
+        this.disposed.push([this.valList[index], this.keyList[index], 'delete'])
       }
     }
     this.keyMap.clear()
@@ -519,6 +559,11 @@ class LRUCache {
     this.free.length = 0
     this.calculatedSize = 0
     this.size = 0
+    if (this.disposed) {
+      while (this.disposed.length) {
+        this.disposeAfter(...this.disposed.shift())
+      }
+    }
   }
   get reset () {
     deprecatedMethod('reset', 'Please use cache.clear() instead.')
