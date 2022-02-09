@@ -88,6 +88,7 @@ class LRUCache {
       noUpdateTTL,
       maxSize = 0,
       sizeCalculation,
+      fetchMethod,
     } = options
 
     // deprecated options, don't trigger a warning for getting them if
@@ -118,6 +119,13 @@ class LRUCache {
         throw new TypeError('sizeCalculating set to non-function')
       }
     }
+
+    this.fetchMethod = fetchMethod || null
+    if (this.fetchMethod && typeof this.fetchMethod !== 'function') {
+      throw new TypeError('fetchMethod must be a function if specified')
+    }
+
+
     this.keyMap = new Map()
     this.keyList = new Array(max).fill(null)
     this.valList = new Array(max).fill(null)
@@ -510,22 +518,95 @@ class LRUCache {
     }
   }
 
+  backgroundFetch (k, index) {
+    const v = index === undefined ? undefined : this.valList[index]
+    if (this.isBackgroundFetch(v)) {
+      return v
+    }
+    const p = Promise.resolve(this.fetchMethod(k, v)).then(v => {
+      if (this.keyMap.get(k) === index && p === this.valList[index]) {
+        this.set(k, v)
+      }
+      return v
+    })
+    p.__staleWhileFetching = v
+    if (index === undefined) {
+      this.set(k, p)
+      index = this.keyMap.get(k)
+    } else {
+      this.valList[index] = p
+    }
+    return p
+  }
+
+  isBackgroundFetch (p) {
+    return p && typeof p === 'object' && typeof p.then === 'function' &&
+      Object.prototype.hasOwnProperty.call(p, '__staleWhileFetching')
+  }
+
+  async fetch (k, {
+    allowStale = this.allowStale,
+    updateAgeOnGet = this.updateAgeOnGet,
+  } = {}) {
+    if (!this.fetchMethod) {
+      return this.get(k, {allowStale, updateAgeOnGet})
+    }
+
+    let index = this.keyMap.get(k)
+    if (index === undefined) {
+      return this.backgroundFetch(k, index)
+    } else {
+      // in cache, maybe already fetching
+      const v = this.valList[index]
+      if (this.isBackgroundFetch(v)) {
+        return allowStale && v.__staleWhileFetching !== undefined
+          ? v.__staleWhileFetching : v
+      }
+
+      if (!this.isStale(index)) {
+        this.moveToTail(index)
+        if (updateAgeOnGet) {
+          this.updateItemAge(index)
+        }
+        return v
+      }
+
+      // ok, it is stale, and not already fetching
+      // refresh the cache.
+      const p = this.backgroundFetch(k, index)
+      return allowStale && p.__staleWhileFetching !== undefined
+        ? p.__staleWhileFetching : p
+    }
+  }
+
   get (k, {
     allowStale = this.allowStale,
     updateAgeOnGet = this.updateAgeOnGet,
   } = {}) {
     const index = this.keyMap.get(k)
     if (index !== undefined) {
+      const value = this.valList[index]
+      const fetching = this.isBackgroundFetch(value)
       if (this.isStale(index)) {
-        const value = allowStale ? this.valList[index] : undefined
-        this.delete(k)
-        return value
+        // delete only if not an in-flight background fetch
+        if (!fetching) {
+          this.delete(k)
+          return allowStale ? value : undefined
+        } else {
+          return allowStale ? value.__staleWhileFetching : undefined
+        }
       } else {
+        // if we're currently fetching it, we don't actually have it yet
+        // it's not stale, which means this isn't a staleWhileRefetching,
+        // so we just return undefined
+        if (fetching) {
+          return undefined
+        }
         this.moveToTail(index)
         if (updateAgeOnGet) {
           this.updateItemAge(index)
         }
-        return this.valList[index]
+        return value
       }
     }
   }

@@ -143,6 +143,13 @@ If you put more stuff in it, then items will fall out.
 
     Deprecated alias: `length`
 
+* `fetchMethod` Function that is used to make background asynchronous
+  fetches.  Called with `fetchMethod(key, staleValue)`.  May return a
+  Promise.
+
+    If `fetchMethod` is not provided, then `cache.fetch(key)` is equivalent
+    to `Promise.resolve(cache.get(key))`.
+
 * `dispose` Function that is called on items when they are dropped
   from the cache, as `this.dispose(value, key, reason)`.
 
@@ -329,6 +336,25 @@ If you put more stuff in it, then items will fall out.
     confusing when setting values specifically to `undefined`, as in
     `cache.set(key, undefined)`.  Use `cache.has()` to determine whether a
     key is present in the cache at all.
+
+* `async fetch(key, { updateAgeOnGet, allowStale } = {}) => Promise`
+
+    If the value is in the cache and not stale, then the returned Promise
+    resolves to the value.
+
+    If not in the cache, or beyond its TTL staleness, then
+    `fetchMethod(key, staleValue)` is called, and the value returned will
+    be added to the cache once resolved.
+
+    If called with `allowStale`, and an asynchronous fetch is currently in
+    progress to reload a stale value, then the former stale value will be
+    returned.
+
+    Multiple fetches for the same `key` will only call `fetchMethod` a
+    single time, and all will be resolved when the value is resolved.
+
+    If `fetchMethod` is not specified, then this is an alias for
+    `Promise.resolve(cache.get(key))`.
 
 * `peek(key, { allowStale } = {}) => value`
 
