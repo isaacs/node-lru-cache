@@ -126,3 +126,14 @@ t.test('peek does not disturb order', t => {
   t.strictSame([...c.values()], [4, 3, 2, 1, 0])
   t.end()
 })
+
+t.test('re-use key before initial fill completed', t => {
+  const c = new LRU({ max: 5 })
+  c.set(0, 0)
+  c.set(1, 1)
+  c.set(2, 2)
+  c.set(1, 2)
+  c.set(3, 3)
+  t.same([...c.entries()], [ [ 3, 3 ], [ 1, 2 ], [ 2, 2 ], [ 0, 0 ] ])
+  t.end()
+})

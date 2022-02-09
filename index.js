@@ -117,6 +117,7 @@ class LRUCache {
     this.head = 0
     this.tail = 0
     this.free = new Stack(max)
+    this.initialFill = 1
     this.size = 0
 
     if (typeof dispose === 'function') {
@@ -337,7 +338,7 @@ class LRUCache {
       return this.free.pop()
     }
     // initial fill, just keep writing down the list
-    return this.tail + 1
+    return this.initialFill++
   }
 
   evict () {
@@ -448,6 +449,7 @@ class LRUCache {
     }
     this.head = 0
     this.tail = 0
+    this.initialFill = 1
     this.free.length = 0
     this.calculatedSize = 0
     this.size = 0
