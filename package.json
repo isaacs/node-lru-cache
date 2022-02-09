@@ -1,7 +1,7 @@
 {
   "name": "lru-cache",
   "description": "A cache object that deletes the least-recently-used items.",
-  "version": "7.0.1",
+  "version": "7.0.2",
   "publishConfig": {
     "tag": "v7.0-backport"
   },
