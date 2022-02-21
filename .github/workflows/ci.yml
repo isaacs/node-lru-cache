@@ -32,11 +32,18 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: debugging
+        run: echo NODEVERSION=[${{ matrix.node-version }}] OS=[${{ matrix.platform.os }}]
+
+      # skip tests on node <16 on Windows, because npm install npm -g fails
       - name: Use latest npm
+        if: ${{ (matrix.node-version != '16.x') && (matrix.node-version != '17.x') && (matrix.platform.os != 'windows-latest') }}
         run: npm i -g npm@latest
 
       - name: Install dependencies
+        if: ${{ (matrix.node-version == '16.x') || (matrix.node-version == '17.x') || (matrix.platform.os != 'windows-latest') }}
         run: npm install
 
       - name: Run Tests
+        if: ${{ (matrix.node-version == '16.x') || (matrix.node-version == '17.x') || (matrix.platform.os != 'windows-latest') }}
         run: npm test -- -c -t0
