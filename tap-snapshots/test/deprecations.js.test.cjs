@@ -8,19 +8,19 @@
 exports[`test/deprecations.js TAP > must match snapshot 1`] = `
 Array [
   Array [
-    "The stale option is deprecated. please use options.allowStale instead",
+    "The stale option is deprecated. Please use options.allowStale instead.",
     "DeprecationWarning",
     "LRU_CACHE_OPTION_stale",
     Function LRUCache(classLRUCache),
   ],
   Array [
-    "The maxAge option is deprecated. please use options.ttl instead",
+    "The maxAge option is deprecated. Please use options.ttl instead.",
     "DeprecationWarning",
     "LRU_CACHE_OPTION_maxAge",
     Function LRUCache(classLRUCache),
   ],
   Array [
-    "The length option is deprecated. please use options.sizeCalculation instead",
+    "The length option is deprecated. Please use options.sizeCalculation instead.",
     "DeprecationWarning",
     "LRU_CACHE_OPTION_length",
     Function LRUCache(classLRUCache),

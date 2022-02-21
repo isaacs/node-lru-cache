@@ -2,32 +2,32 @@ const perf = typeof performance === 'object' && performance &&
   typeof performance.now === 'function' ? performance : Date
 
 const warned = new Set()
-const deprecatedOption = (opt, msg) => {
+const deprecatedOption = (opt, instead) => {
   const code = `LRU_CACHE_OPTION_${opt}`
   if (shouldWarn(code)) {
-    warn(code, `The ${opt} option is deprecated. ${msg}`, LRUCache)
+    warn(code, `${opt} option`, `options.${instead}`, LRUCache)
   }
 }
-const deprecatedMethod = (method, msg) => {
+const deprecatedMethod = (method, instead) => {
   const code = `LRU_CACHE_METHOD_${method}`
   if (shouldWarn(code)) {
     const { prototype } = LRUCache
     const { get } = Object.getOwnPropertyDescriptor(prototype, method)
-    warn(code, `The ${method} method is deprecated. ${msg}`, get)
+    warn(code, `${method} method`, `cache.${instead}()`, get)
   }
 }
-const deprecatedProperty = (field, msg) => {
+const deprecatedProperty = (field, instead) => {
   const code = `LRU_CACHE_PROPERTY_${field}`
   if (shouldWarn(code)) {
     const { prototype } = LRUCache
     const { get } = Object.getOwnPropertyDescriptor(prototype, field)
-    warn(code, `The ${field} property is deprecated. ${msg}`, get)
+    warn(code, `${field} property`, `cache.${instead}`, get)
   }
 }
 const shouldWarn = (code) => !(process.noDeprecation || warned.has(code))
-const warn = (code, msg, fn) => {
+const warn = (code, what, instead, fn) => {
   warned.add(code)
-  process.emitWarning(msg, 'DeprecationWarning', code, fn)
+  process.emitWarning(`The ${what} is deprecated. Please use ${instead} instead.`, 'DeprecationWarning', code, fn)
 }
 
 const isPosInt = n => n && n === Math.floor(n) && n > 0 && isFinite(n)
@@ -156,13 +156,13 @@ class LRUCache {
     }
 
     if (stale) {
-      deprecatedOption('stale', 'please use options.allowStale instead')
+      deprecatedOption('stale', 'allowStale')
     }
     if (maxAge) {
-      deprecatedOption('maxAge', 'please use options.ttl instead')
+      deprecatedOption('maxAge', 'ttl')
     }
     if (length) {
-      deprecatedOption('length', 'please use options.sizeCalculation instead')
+      deprecatedOption('length', 'sizeCalculation')
     }
   }
 
@@ -305,7 +305,7 @@ class LRUCache {
   }
 
   get prune () {
-    deprecatedMethod('prune', 'Please use cache.purgeStale() instead.')
+    deprecatedMethod('prune', 'purgeStale')
     return this.purgeStale
   }
 
@@ -493,7 +493,7 @@ class LRUCache {
   }
 
   get del () {
-    deprecatedMethod('del', 'Please use cache.delete() instead.')
+    deprecatedMethod('del', 'delete')
     return this.delete
   }
   delete (k) {
@@ -568,12 +568,12 @@ class LRUCache {
     }
   }
   get reset () {
-    deprecatedMethod('reset', 'Please use cache.clear() instead.')
+    deprecatedMethod('reset', 'clear')
     return this.clear
   }
 
   get length () {
-    deprecatedProperty('length', 'Please use cache.size instead.')
+    deprecatedProperty('length', 'size')
     return this.size
   }
 }
