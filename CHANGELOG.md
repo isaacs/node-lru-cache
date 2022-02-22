@@ -1,5 +1,11 @@
 # cringe lorg
 
+## 7.4.0
+
+* Add browser optimized webpack bundle, exposed as `'lru-cache/browser'`
+* Track size of compiled bundle in CI ([@SuperOleg39](https://github.com/SuperOleg39))
+* Add `noUpdateTTL` option for `set()`
+
 ## 7.3.0
 
 * Add `disposeAfter()`
