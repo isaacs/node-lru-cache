@@ -1,4 +1,5 @@
 /node_modules
-.nyc_output
-nyc_output
-coverage
+/.nyc_output
+/nyc_output
+/coverage
+/bundle
