@@ -9,7 +9,7 @@
     "cache"
   ],
   "scripts": {
-    "prepare": "webpack-cli -o bundle ./index.js",
+    "prepare": "webpack-cli -o bundle ./index.js --node-env production",
     "build": "npm run prepare",
     "presize": "npm run prepare",
     "test": "tap",
@@ -21,6 +21,10 @@
   },
   "main": "index.js",
   "browser": "./bundle/main.js",
+  "exports": {
+    ".": "./index.js",
+    "./browser": "./bundle/main.js"
+  },
   "repository": "git://github.com/isaacs/node-lru-cache.git",
   "devDependencies": {
     "@size-limit/preset-small-lib": "^7.0.8",
