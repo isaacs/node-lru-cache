@@ -269,6 +269,31 @@ const runTests = (LRU, t) => {
     t.end()
   })
 
+  t.test('no update ttl', t => {
+    const c = new LRU({ max: 10, ttlResolution: 0, noUpdateTTL: true, ttl: 10 })
+    for (let i = 0; i < 3; i++) {
+      c.set(i, i)
+    }
+    clock.advance(9)
+    // set, but do not update ttl.  this will fall out.
+    c.set(0, 0)
+
+    // set, but update the TTL
+    c.set(1, 1, { noUpdateTTL: false })
+    clock.advance(9)
+    c.purgeStale()
+
+    t.equal(c.get(2), undefined, 'fell out of cache normally')
+    t.equal(c.get(1), 1, 'still in cache, ttl updated')
+    t.equal(c.get(0), undefined, 'fell out of cache, despite update')
+
+    clock.advance(9)
+    c.purgeStale()
+    t.equal(c.get(1), undefined, 'fell out of cache after ttl update')
+
+    t.end()
+  })
+
   t.end()
 }
 

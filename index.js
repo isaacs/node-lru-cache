@@ -80,6 +80,7 @@ class LRUCache {
       dispose,
       disposeAfter,
       noDisposeOnSet,
+      noUpdateTTL,
       maxSize,
       sizeCalculation,
     } = options
@@ -134,6 +135,7 @@ class LRUCache {
       this.disposed = null
     }
     this.noDisposeOnSet = !!noDisposeOnSet
+    this.noUpdateTTL = !!noUpdateTTL
 
     if (this.maxSize) {
       if (!isPosInt(this.maxSize)) {
@@ -357,6 +359,7 @@ class LRUCache {
     noDisposeOnSet = this.noDisposeOnSet,
     size = 0,
     sizeCalculation = this.sizeCalculation,
+    noUpdateTTL = this.noUpdateTTL,
   } = {}) {
     let index = this.size === 0 ? undefined : this.keyMap.get(k)
     if (index === undefined) {
@@ -370,6 +373,7 @@ class LRUCache {
       this.tail = index
       this.size ++
       this.addItemSize(index, v, k, size, sizeCalculation)
+      noUpdateTTL = false
     } else {
       // update
       const oldVal = this.valList[index]
@@ -389,7 +393,9 @@ class LRUCache {
     if (ttl !== 0 && this.ttl === 0 && !this.ttls) {
       this.initializeTTLTracking()
     }
-    this.setItemTTL(index, ttl)
+    if (!noUpdateTTL) {
+      this.setItemTTL(index, ttl)
+    }
     if (this.disposeAfter) {
       while (this.disposed.length) {
         this.disposeAfter(...this.disposed.shift())
