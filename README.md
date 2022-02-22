@@ -199,6 +199,15 @@ If you put more stuff in it, then items will fall out.
 
     Deprecated alias: `maxAge`
 
+* `noUpdateTTL` - Boolean flag to tell the cache to not update the TTL when
+  setting a new value for an existing key (ie, when updating a value rather
+  than inserting a new value).  Note that the TTL value is _always_ set
+  (if provided) when adding a new entry into the cache.
+
+    This may be passed as an option to `cache.set()`.
+
+    Boolean, default false.
+
 * `ttlResolution` - Minimum amount of time in ms in which to check for
   staleness.  Defaults to `1`, which means that the current time is checked
   at most once per millisecond.
