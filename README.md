@@ -81,10 +81,6 @@ const options = {
   // update the age of items on cache.has(), renewing their TTL
   // boolean, default false
   updateAgeOnHas: false,
-
-  // update the "recently-used"-ness of items on cache.has()
-  // boolean, default false
-  updateRecencyOnHas: false,
 }
 
 const cache = new LRU(options)
