@@ -1,5 +1,5 @@
-import LRUCache from "../types";
-import { Options } from "../types";
+import LRUCache from "../";
+import type { DisposeReason, Options } from "../";
 import { expectType, expectError, expectDeprecated } from "tsd";
 
 const user1 = { id: 1, name: "John Smith" };
@@ -45,15 +45,15 @@ expectError((userCache.allowStale = false));
 expectType<boolean>(userCache.noDisposeOnSet);
 expectError((userCache.noDisposeOnSet = false));
 
-expectType<(value: any, key: any, cache: any) => number>(userCache.sizeCalculation);
+expectType<(value: TRecord, key: string) => number>(userCache.sizeCalculation);
 expectError((userCache.sizeCalculation = () => 0));
 
-expectType<(k: any, value: any, cache: any) => void>(userCache.dispose);
+expectType<(value: TRecord, k: string, reason: DisposeReason) => void>(userCache.dispose);
 
 expectType<number>(userCache.size);
 expectError((userCache.size = 1));
 
-expectType<number | undefined>(userCache.ttl);
+expectType<number>(userCache.ttl);
 expectError((userCache.ttl = 1));
 
 expectType<LRUCache<string, TRecord>>(userCache.set("foo", user1, { ttl: 5, noDisposeOnSet: true, size: 12 }));

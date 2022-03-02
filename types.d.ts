@@ -287,7 +287,7 @@ export default CacheImplementation;
  */
 export type LRUCache = CacheImplementation;
 
-type DisposeReason = "evict" | "set" | "delete";
+export type DisposeReason = "evict" | "set" | "delete";
 
 /**
  * Export commonly used internal types
