@@ -1,0 +1,8 @@
+{
+  "files": ["./types.d.ts"],
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true
+  }
+}
