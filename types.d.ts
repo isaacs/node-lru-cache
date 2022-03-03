@@ -28,14 +28,14 @@ declare class CacheImplementation<Key = unknown, Value = unknown> {
    *  - `sizeCalculation`
    *  - `noDisposeOnSet`: prevent calling a dispose function in the case of overwrites.
    */
-  public set(key: Key, value: Value, options?: OptionsForSet<Key, Value> | undefined): this;
+  public set(key: Key, value: Value, options?: SetOptions<Key, Value> | undefined): this;
 
   /**
    * Return a value from the cache. Will update the recency of the cache entry found.
    * If the key is not found, get() will return undefined. This can be confusing when setting values specifically to undefined, as in cache.set(key, undefined).
    * Use cache.has() to determine whether a key is present in the cache at all.
    */
-  public get<T = Value>(key: Key): T | undefined;
+  public get<T = Value>(key: Key, ops?: GetOptions): T | undefined;
 
   /**
    * Like get() but doesn't update recency or delete stale items.
@@ -43,7 +43,7 @@ declare class CacheImplementation<Key = unknown, Value = unknown> {
    *
    * (If you find yourself using this a lot, you might be using the wrong sort of data structure, but there are some use cases where it's handy.)
    */
-  public peek<T = Value>(key: Key): T | undefined;
+  public peek<T = Value>(key: Key, ops?: PeekOptions): T | undefined;
 
   /**
    * Check if a key is in the cache, without updating the recent-ness
@@ -152,20 +152,20 @@ export interface Options<K = any, V = unknown> {
    * If you're storing strings or buffers, then you probably want to do something like `n => n.length`.
    * The item is passed as the first argument, and the key is passed as the second argument.
    */
-  sizeCalculation?(value: V, key: K): number;
+  sizeCalculation?: SizeCalculator<K, V>;
 
   /**
    * function to call when the item is removed from the cache
    * Note that using this can negatively impact performance.
    */
-  dispose?(value: V, key: K, reason: DisposeReason): void;
+  dispose?: Disposer<K, V>;
 
   /**
    * The same as dispose, but called after the entry is completely removed and the cache is once again in a clean state.
    * It is safe to add an item right back into the cache at this point. However, note that it is very easy to inadvertently create infinite recursion in this way.
    * @since 7.3.0
    */
-  disposeAfter?(value: V, key: K, reason: DisposeReason): void;
+  disposeAfter?: Disposer<K, V>;
 
   /**
    * By default, if you set a `dispose()` method, then it'll be called whenever
@@ -276,6 +276,15 @@ export interface Options<K = any, V = unknown> {
   stale?: boolean | undefined;
 }
 
+export interface GetOptions {
+  allowStale?: boolean;
+  updateAgeOnGet?: boolean;
+}
+
+export interface PeekOptions {
+  allowStale?: boolean;
+}
+
 /**
  * The deafult export is the main LRU Cache class
  */
@@ -288,11 +297,13 @@ export default CacheImplementation;
 export type LRUCache = CacheImplementation;
 
 export type DisposeReason = "evict" | "set" | "delete";
+export type SizeCalculator<K, V> = (value: V, key: K) => number;
+export type Disposer<K, V> = (value: V, key: K, reason: DisposeReason) => void;
 
 /**
  * Export commonly used internal types
  */
-export interface OptionsForSet<K = unknown, V = unknown> {
+export interface SetOptions<K = unknown, V = unknown> {
   ttl?: number;
   noDisposeOnSet?: boolean;
   /**
@@ -309,7 +320,7 @@ export interface OptionsForSet<K = unknown, V = unknown> {
   noUpdateTTL?: boolean;
 }
 
-interface Entry<V> {
+export interface Entry<V> {
   value: V;
   ttl?: number;
   size?: number;

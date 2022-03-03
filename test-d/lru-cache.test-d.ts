@@ -45,6 +45,9 @@ expectError((userCache.allowStale = false));
 expectType<boolean>(userCache.noDisposeOnSet);
 expectError((userCache.noDisposeOnSet = false));
 
+expectType<boolean>(userCache.updateAgeOnGet);
+expectError((userCache.updateAgeOnGet = false));
+
 expectType<(value: TRecord, key: string) => number>(userCache.sizeCalculation);
 expectError((userCache.sizeCalculation = () => 0));
 
