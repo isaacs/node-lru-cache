@@ -12,7 +12,7 @@
     "prepare": "webpack-cli -o bundle ./index.js --node-env production",
     "build": "npm run prepare",
     "presize": "npm run prepare",
-    "test": "tap && tsd",
+    "test": "tap",
     "snap": "tap",
     "size": "size-limit",
     "preversion": "npm test",

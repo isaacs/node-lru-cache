@@ -260,6 +260,8 @@ export interface Options<K = any, V = unknown> {
    * is `function(){return 1}`, which is fine if you want to store
    * `max` like-sized things. The item is passed as the first argument,
    * and the key is passed as the second argument.
+   * @deprecated
+   * @see this.sizeCalculation
    */
   length?(value: V, key?: K): number;
 

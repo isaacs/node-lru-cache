@@ -95,9 +95,30 @@ userCache.forEach((value, key, cache) => {
 expectDeprecated(userCache.reset);
 expectDeprecated(userCache.prune);
 expectDeprecated(ops.maxAge);
+expectDeprecated(ops.stale);
+expectDeprecated(ops.length);
 
 /**
  * Validate dump/load
  */
 expectType<Array<[string, { value: TRecord; size?: number; ttl?: number }]>>(userCache.dump());
 expectError(userCache.load([["key", "value"]]));
+
+/**
+ * Check find*
+ * To reduce the surface area of bugs, we want the predictate function to return booleans (or nothing)
+ */
+// It's ok to return undefined
+expectType<TRecord|undefined>(userCache.find((val,key,cache)=>{
+    let didMatch;
+    if(Math.random()<0.5) didMatch = true;
+    return didMatch;
+}));
+
+// It's ok to return bool or nothing
+expectType<TRecord|undefined>(userCache.find((val,key,cache)=>{
+    if(Math.random()<0.5) return false;
+}));
+
+// It's not OK to retun types other than Boolean because this can lead to unexpected bugs
+expectError(userCache.find((val,key,cache)=>0 || NaN));
