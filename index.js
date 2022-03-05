@@ -239,10 +239,10 @@ class LRUCache {
   removeItemSize (index) {}
   addItemSize (index, v, k, size, sizeCalculation) {}
 
-  *indexes () {
+  *indexes ({ allowStale = this.allowStale } = {}) {
     if (this.size) {
       for (let i = this.tail; true; i = this.prev[i]) {
-        if (!this.isStale(i)) {
+        if (allowStale || !this.isStale(i)) {
           yield i
         }
         if (i === this.head) {
@@ -251,10 +251,10 @@ class LRUCache {
       }
     }
   }
-  *rindexes () {
+  *rindexes ({ allowStale = this.allowStale } = {}) {
     if (this.size) {
       for (let i = this.head; true; i = this.next[i]) {
-        if (!this.isStale(i)) {
+        if (allowStale || !this.isStale(i)) {
           yield i
         }
         if (i === this.tail) {
@@ -313,16 +313,10 @@ class LRUCache {
 
   purgeStale () {
     let deleted = false
-    if (this.size) {
-      for (let i = this.head; true; i = this.next[i]) {
-        const b = i === this.tail
-        if (this.isStale(i)) {
-          this.delete(this.keyList[i])
-          deleted = true
-        }
-        if (b) {
-          break
-        }
+    for (const i of this.rindexes({ allowStale: true })) {
+      if (this.isStale(i)) {
+        this.delete(this.keyList[i])
+        deleted = true
       }
     }
     return deleted
@@ -542,12 +536,12 @@ class LRUCache {
 
   clear () {
     if (this.dispose !== LRUCache.prototype.dispose) {
-      for (const index of this.rindexes()) {
+      for (const index of this.rindexes({ allowStale: true })) {
         this.dispose(this.valList[index], this.keyList[index], 'delete')
       }
     }
     if (this.disposeAfter) {
-      for (const index of this.rindexes()) {
+      for (const index of this.rindexes({ allowStale: true })) {
         this.disposed.push([this.valList[index], this.keyList[index], 'delete'])
       }
     }

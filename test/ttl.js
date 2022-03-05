@@ -294,6 +294,71 @@ const runTests = (LRU, t) => {
     t.end()
   })
 
+  // https://github.com/isaacs/node-lru-cache/issues/203
+  t.test('indexes/rindexes can walk over stale entries', t => {
+    const c = new LRU({ max: 10, ttl: 10 })
+    for (let i = 0; i < 3; i++) {
+      c.set(i, i)
+    }
+    clock.advance(9)
+    for (let i = 3; i < 10; i++) {
+      c.set(i, i)
+    }
+    c.get(1)
+    c.get(3)
+    clock.advance(9)
+    const indexes = [...c.indexes()]
+    const indexesStale = [...c.indexes({ allowStale: true })]
+    const rindexes = [...c.rindexes()]
+    const rindexesStale = [...c.rindexes({ allowStale: true })]
+    t.same({
+      indexes,
+      indexesStale,
+      rindexes,
+      rindexesStale,
+    }, {
+      indexes: [
+        3, 9, 8, 7,
+        6, 5, 4
+      ],
+      indexesStale: [
+        3, 1, 9, 8, 7,
+        6, 5, 4, 2, 0
+      ],
+      rindexes: [
+        4, 5, 6, 7,
+        8, 9, 3
+      ],
+      rindexesStale: [
+        0, 2, 4, 5, 6,
+        7, 8, 9, 1, 3
+      ]
+    })
+    t.end()
+  })
+
+  // https://github.com/isaacs/node-lru-cache/issues/203
+  t.test('clear() disposes stale entries', t => {
+    const disposed = []
+    const disposedAfter = []
+    const c = new LRU({
+      max: 3,
+      ttl: 10,
+      dispose: (v, k) => disposed.push([v, k]),
+      disposeAfter: (v, k) => disposedAfter.push([v, k]),
+    })
+    for (let i = 0; i < 4; i++) {
+      c.set(i, i)
+    }
+    t.same(disposed, [[0, 0]])
+    t.same(disposedAfter, [[0, 0]])
+    clock.advance(20)
+    c.clear()
+    t.same(disposed, [[0, 0], [1, 1], [2, 2], [3, 3]])
+    t.same(disposedAfter, [[0, 0], [1, 1], [2, 2], [3, 3]])
+    t.end()
+  })
+
   t.end()
 }
 
