@@ -24,7 +24,9 @@ const deprecatedProperty = (field, instead) => {
     warn(code, `${field} property`, `cache.${instead}`, get)
   }
 }
-const shouldWarn = (code) => !(process.noDeprecation || warned.has(code))
+const shouldWarn = (code) => typeof process === 'object' &&
+  process &&
+  !(process.noDeprecation || warned.has(code))
 const warn = (code, what, instead, fn) => {
   warned.add(code)
   process.emitWarning(`The ${what} is deprecated. Please use ${instead} instead.`, 'DeprecationWarning', code, fn)

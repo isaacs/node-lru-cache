@@ -5,7 +5,7 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
-exports[`test/deprecations.js TAP > must match snapshot 1`] = `
+exports[`test/deprecations.js TAP warns exactly once for a given deprecation > must match snapshot 1`] = `
 Array [
   Array [
     "The stale option is deprecated. Please use options.allowStale instead.",
