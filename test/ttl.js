@@ -67,7 +67,7 @@ const runTests = (LRU, t) => {
   })
 
   t.test('ttl tests with ttlResolution=100', t => {
-    const c = new LRU({ max: 5, ttl: 10, ttlResolution: 100 })
+    const c = new LRU({ ttl: 10, ttlResolution: 100, max: 10 })
     c.set(1, 1)
     t.equal(c.get(1), 1, '1 get not stale', { now: clock._now })
     clock.advance(5)
@@ -99,7 +99,7 @@ const runTests = (LRU, t) => {
   t.test('ttlResolution only respected if non-negative integer', t => {
     const invalids = [ -1, null, undefined, 'banana', {} ]
     for (const i of invalids) {
-      const c = new LRU({ max: 5, ttlResolution: i })
+      const c = new LRU({ ttl: 5, ttlResolution: i, max: 5 })
       t.not(c.ttlResolution, i)
       t.equal(c.ttlResolution, Math.floor(c.ttlResolution))
       t.ok(c.ttlResolution >= 0)
@@ -108,7 +108,7 @@ const runTests = (LRU, t) => {
   })
 
   t.test('ttlAutopurge', t => {
-    const c = new LRU({ max: 2, ttl: 10, ttlAutopurge: true, ttlResolution: 0 })
+    const c = new LRU({ ttl: 10, ttlAutopurge: true, ttlResolution: 0 })
     c.set(1, 1)
     c.set(2, 2)
     t.equal(c.size, 2)

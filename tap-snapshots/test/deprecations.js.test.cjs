@@ -49,5 +49,11 @@ Array [
     "LRU_CACHE_METHOD_del",
     Function get del(),
   ],
+  Array [
+    "TTL caching without ttlAutopurge, max, or maxSize can result in unbounded memory consumption.",
+    "UnboundedCacheWarning",
+    "LRU_CACHE_UNBOUNDED",
+    Function LRUCache(classLRUCache),
+  ],
 ]
 `

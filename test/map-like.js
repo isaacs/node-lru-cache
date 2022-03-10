@@ -5,7 +5,7 @@ if (typeof performance === 'undefined') {
 const t = require('tap')
 const LRU = require('../')
 
-const c = new LRU({ max: 5, maxSize: 5 })
+const c = new LRU({ max: 5, maxSize: 5, sizeCalculation: () => 1 })
 
 t.matchSnapshot(c.keys(), 'empty, keys')
 t.matchSnapshot(c.values(), 'empty, values')

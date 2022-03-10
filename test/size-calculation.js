@@ -42,14 +42,9 @@ t.test('store strings, size = length', t => {
   t.end()
 })
 
-t.test('bad size calculation fn returns 0', t => {
+t.test('bad size calculation fn throws on set()', t => {
   const c = new LRU({ max: 5, maxSize: 5, sizeCalculation: () => 'asdf' })
-  c.set(1, '1'.repeat(100))
-  t.equal(c.size, 1)
-  t.equal(c.calculatedSize, 0)
-  c.set(2, '2'.repeat(100), { sizeCalculation: () => 'foobar' })
-  t.equal(c.size, 2)
-  t.equal(c.calculatedSize, 0)
+  t.throws(() => c.set(1, '1'.repeat(100)), TypeError)
   t.end()
 })
 

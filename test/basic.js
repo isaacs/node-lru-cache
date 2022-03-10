@@ -86,6 +86,27 @@ t.test('bad max values', t => {
   t.throws(() => new LRU({ max: 2.5 }))
   t.throws(() => new LRU({ max: Infinity }))
   t.throws(() => new LRU({ max: Number.MAX_SAFE_INTEGER * 2 }))
+
+  // ok to have a max of 0 if maxSize or ttl are set
+  const sizeOnly = new LRU({ maxSize: 100 })
+
+  // setting the size to invalid values
+  t.throws(() => sizeOnly.set('foo', 'bar'), TypeError)
+  t.throws(() => sizeOnly.set('foo', 'bar', { size: 0 }), TypeError)
+  t.throws(() => sizeOnly.set('foo', 'bar', { size: -1 }), TypeError)
+  t.throws(() => sizeOnly.set('foo', 'bar', {
+    sizeCalculation: () => -1,
+  }), TypeError)
+  t.throws(() => sizeOnly.set('foo', 'bar', {
+    sizeCalculation: () => 0,
+  }), TypeError)
+
+  const ttlOnly = new LRU({ ttl: 1000, ttlAutopurge: true })
+  // cannot set size when not tracking size
+  t.throws(() => ttlOnly.set('foo', 'bar', { size: 1 }), TypeError)
+  t.throws(() => ttlOnly.set('foo', 'bar', { size: 1 }), TypeError)
+
+  const sizeTTL = new LRU({ maxSize: 100, ttl: 1000 })
   t.end()
 })
 
