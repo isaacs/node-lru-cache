@@ -343,11 +343,15 @@ class LRUCache {
 
   purgeStale () {
     let deleted = false
+    const toDelete = []
     for (const i of this.rindexes({ allowStale: true })) {
       if (this.isStale(i)) {
-        this.delete(this.keyList[i])
+        toDelete.push(this.keyList[i])
         deleted = true
       }
+    }
+    for (const k of toDelete) {
+      this.delete(k)
     }
     return deleted
   }
