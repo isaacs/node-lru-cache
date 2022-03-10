@@ -359,6 +359,23 @@ const runTests = (LRU, t) => {
     t.end()
   })
 
+  t.test('purgeStale() lockup', t => {
+    const c = new LRU({
+      max: 3,
+      ttl: 10,
+      updateAgeOnGet: true,
+    })
+    c.set(1, 1)
+    c.set(2, 2)
+    c.set(3, 3)
+    clock.advance(5)
+    c.get(2)
+    clock.advance(15)
+    c.purgeStale()
+    t.pass('did not get locked up')
+    t.end()
+  })
+
   t.end()
 }
 
