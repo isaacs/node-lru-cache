@@ -9,9 +9,7 @@
     "cache"
   ],
   "scripts": {
-    "prepare": "webpack-cli -o bundle ./index.js --node-env production",
-    "build": "npm run prepare",
-    "presize": "npm run prepare",
+    "build": "",
     "test": "tap",
     "snap": "tap",
     "size": "size-limit",
@@ -20,23 +18,16 @@
     "prepublishOnly": "git push origin --follow-tags"
   },
   "main": "index.js",
-  "browser": "./bundle/main.js",
-  "exports": {
-    ".": "./index.js",
-    "./browser": "./bundle/main.js"
-  },
   "repository": "git://github.com/isaacs/node-lru-cache.git",
   "devDependencies": {
     "@size-limit/preset-small-lib": "^7.0.8",
     "benchmark": "^2.1.4",
     "size-limit": "^7.0.8",
-    "tap": "^15.1.6",
-    "webpack-cli": "^4.9.2"
+    "tap": "^15.1.6"
   },
   "license": "ISC",
   "files": [
-    "index.js",
-    "bundle"
+    "index.js"
   ],
   "engines": {
     "node": ">=12"
@@ -46,7 +37,7 @@
   },
   "size-limit": [
     {
-      "path": "./bundle/main.js"
+      "path": "./index.js"
     }
   ]
 }
