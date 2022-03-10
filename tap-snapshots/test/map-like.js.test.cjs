@@ -10,35 +10,35 @@ Array [
   Array [
     3,
     Object {
-      "size": 0,
+      "size": 1,
       "value": "3",
     },
   ],
   Array [
     4,
     Object {
-      "size": 0,
+      "size": 1,
       "value": "4",
     },
   ],
   Array [
     5,
     Object {
-      "size": 0,
+      "size": 1,
       "value": "5",
     },
   ],
   Array [
     6,
     Object {
-      "size": 0,
+      "size": 1,
       "value": "6",
     },
   ],
   Array [
     7,
     Object {
-      "size": 0,
+      "size": 1,
       "value": "7",
     },
   ],
@@ -50,7 +50,7 @@ Array [
   Array [
     3,
     Object {
-      "size": 0,
+      "size": 1,
       "ttl": 0,
       "value": "3",
     },
@@ -58,7 +58,7 @@ Array [
   Array [
     5,
     Object {
-      "size": 0,
+      "size": 1,
       "ttl": 0,
       "value": "5",
     },
@@ -66,7 +66,7 @@ Array [
   Array [
     6,
     Object {
-      "size": 0,
+      "size": 1,
       "ttl": 0,
       "value": "6",
     },
@@ -74,7 +74,7 @@ Array [
   Array [
     4,
     Object {
-      "size": 0,
+      "size": 1,
       "ttl": 0,
       "value": "new value 4",
     },
@@ -87,35 +87,35 @@ Array [
   Array [
     3,
     Object {
-      "size": 0,
+      "size": 1,
       "value": "3",
     },
   ],
   Array [
     5,
     Object {
-      "size": 0,
+      "size": 1,
       "value": "5",
     },
   ],
   Array [
     6,
     Object {
-      "size": 0,
+      "size": 1,
       "value": "6",
     },
   ],
   Array [
     7,
     Object {
-      "size": 0,
+      "size": 1,
       "value": "7",
     },
   ],
   Array [
     4,
     Object {
-      "size": 0,
+      "size": 1,
       "value": "new value 4",
     },
   ],

@@ -33,7 +33,7 @@ const options = {
   // the number of most recently used items to keep.
   // note that we may store fewer items than this if maxSize is hit.
 
-  max: 500, // <-- mandatory, you must give a maximum capacity
+  max: 500, // <-- Technically optional, but see "Storage Bounds Safety" below
 
   // if you wish to track item size, you must provide a maxSize
   // note that we still will only keep up to max *actual items*,
@@ -112,7 +112,11 @@ If you put more stuff in it, then items will fall out.
   may be stored if size calculation is used, and `maxSize` is exceeded.
   This must be a positive finite intger.
 
-    This option is required, and must be a positive integer.
+    At least one of `max`, `maxSize`, or `TTL` is required.  This must be a
+    positive integer if set.
+
+    **It is strongly recommended to set a `max` to prevent unbounded growth
+    of the cache.**  See "Storage Bounds Safety" below.
 
 * `maxSize` - Set to a positive integer to track the sizes of items added
   to the cache, and automatically evict items in order to stay below this
@@ -120,6 +124,13 @@ If you put more stuff in it, then items will fall out.
 
     Optional, must be a positive integer if provided.  Required if other
     size tracking features are used.
+
+    At least one of `max`, `maxSize`, or `TTL` is required.  This must be a
+    positive integer if set.
+
+    Even if size tracking is enabled, **it is strongly recommended to set a
+    `max` to prevent unbounded growth of the cache.**  See "Storage Bounds
+    Safety" below.
 
 * `sizeCalculation` - Function used to calculate the size of stored
   items.  If you're storing strings or buffers, then you probably want to
@@ -192,6 +203,17 @@ If you put more stuff in it, then items will fall out.
     Optional, but must be a positive integer in ms if specified.
 
     This may be overridden by passing an options object to `cache.set()`.
+
+    At least one of `max`, `maxSize`, or `TTL` is required.  This must be a
+    positive integer if set.
+
+    Even if ttl tracking is enabled, **it is strongly recommended to set a
+    `max` to prevent unbounded growth of the cache.**  See "Storage Bounds
+    Safety" below.
+
+    If ttl tracking is enabled, and `max` and `maxSize` are not set, and
+    `ttlAutopurge` is not set, then a warning will be emitted cautioning
+    about the potential for unbounded memory consumption.
 
     Deprecated alias: `maxAge`
 
@@ -448,6 +470,70 @@ ignored.
 * `head` Internal ID of least recently used item
 * `tail` Internal ID of most recently used item
 * `free` Stack of deleted internal IDs
+
+## Storage Bounds Safety
+
+This implementation aims to be as flexible as possible, within the limits
+of safe memory consumption and optimal performance.
+
+At initial object creation, storage is allocated for `max` items.  If `max`
+is set to zero, then some performance is lost, and item count is unbounded.
+Either `maxSize` or `ttl` _must_ be set if `max` is not specified.
+
+If `maxSize` is set, then this creates a safe limit on the maximum storage
+consumed, but without the performance benefits of pre-allocation.  When
+`maxSize` is set, every item _must_ provide a size, either via the
+`sizeCalculation` method provided to the constructor, or via a `size` or
+`sizeCalculation` option provided to `cache.set()`.  The size of every item
+_must_ be a positive integer.
+
+If neither `max` nor `maxSize` are set, then `ttl` tracking must be
+enabled.  Note that, even when tracking item `ttl`, items are _not_
+preemptively deleted when they become stale, unless `ttlAutopurge` is
+enabled.  Instead, they are only purged the next time the key is requested.
+Thus, if `ttlAutopurge`, `max`, and `maxSize` are all not set, then the
+cache will potentially grow unbounded.
+
+In this case, a warning is printed to standard error.  Future versions may
+require the use of `ttlAutopurge` if `max` and `maxSize` are not specified.
+
+If you truly wish to use a cache that is bound _only_ by TTL expiration,
+consider using a `Map` object, and calling `setTimeout` to delete entries
+when they expire.  It will perform much better than an LRU cache.
+
+Here is an implementation you may use, under the same [license](./LICENSE)
+as this package:
+
+```js
+// a storage-unbounded ttl cache that is not an lru-cache
+const cache = {
+  data: new Map(),
+  timers: new Map(),
+  set: (k, v, ttl) => {
+    if (cache.timers.has(k)) {
+      clearTimeout(cache.timers.get(k))
+    }
+    cache.timers.set(k, setTimeout(() => cache.del(k), ttl))
+    cache.data.set(k, v)
+  },
+  get: k => cache.data.get(k),
+  has: k => cache.data.has(k),
+  delete: k => {
+    if (cache.timers.has(k)) {
+      clearTimeout(cache.timers.get(k))
+    }
+    cache.timers.delete(k)
+    return cache.data.delete(k)
+  },
+  clear: () => {
+    cache.data.clear()
+    for (const v of cache.timers.values()) {
+      clearTimeout(v)
+    }
+    cache.timers.clear()
+  }
+}
+```
 
 ## Performance
 

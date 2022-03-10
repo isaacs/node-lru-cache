@@ -19,6 +19,9 @@ t.test('warns exactly once for a given deprecation', t => {
   t.equal(c.reset, c.clear)
   t.equal(c.del, c.delete)
 
+  // not technically a "deprecation" but similar
+  new LRU({ ttl: 10 })
+
   t.matchSnapshot(warnings)
 
   warnings.length = 0
@@ -34,6 +37,8 @@ t.test('warns exactly once for a given deprecation', t => {
   t.equal(d.length, 0)
   t.equal(d.prune, d.purgeStale)
   t.equal(d.reset, d.clear)
+  new LRU({ ttl: 10 })
+
   t.strictSame(warnings, [], 'only warn once')
 
   warnings.length = 0
