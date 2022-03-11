@@ -1,7 +1,6 @@
 const t = require('tap')
 const LRU = require('../')
 
-process.noDeprecation = false
 const warnings = []
 process.emitWarning = (...w) => warnings.push(w)
 
