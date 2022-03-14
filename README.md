@@ -336,15 +336,33 @@ If you put more stuff in it, then items will fall out.
 
 * `keys()`
 
-    Return a generator yielding the keys in the cache.
+    Return a generator yielding the keys in the cache, in order from most
+    recently used to least recently used.
+
+* `rkeys()`
+
+    Return a generator yielding the keys in the cache, in order from least
+    recently used to most recently used.
 
 * `values()`
 
-    Return a generator yielding the values in the cache.
+    Return a generator yielding the values in the cache, in order from most
+    recently used to least recently used.
+
+* `rvalues()`
+
+    Return a generator yielding the values in the cache, in order from
+    least recently used to most recently used.
 
 * `entries()`
 
-    Return a generator yielding `[key, value]` pairs.
+    Return a generator yielding `[key, value]` pairs, in order from most
+    recently used to least recently used.
+
+* `rentries()`
+
+    Return a generator yielding `[key, value]` pairs, in order from least
+    recently used to most recently used.
 
 * `find(fn, [getOptions])`
 

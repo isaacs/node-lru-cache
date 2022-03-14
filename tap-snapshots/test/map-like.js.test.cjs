@@ -134,6 +134,18 @@ exports[`test/map-like.js TAP > empty, keys 1`] = `
 Generator []
 `
 
+exports[`test/map-like.js TAP > empty, rentries 1`] = `
+Generator []
+`
+
+exports[`test/map-like.js TAP > empty, rkeys 1`] = `
+Generator []
+`
+
+exports[`test/map-like.js TAP > empty, rvalues 1`] = `
+Generator []
+`
+
 exports[`test/map-like.js TAP > empty, values 1`] = `
 Generator []
 `
@@ -325,6 +337,77 @@ Generator [
 ]
 `
 
+exports[`test/map-like.js TAP > rentries 1`] = `
+Generator [
+  Array [
+    3,
+    "3",
+  ],
+  Array [
+    4,
+    "4",
+  ],
+  Array [
+    5,
+    "5",
+  ],
+  Array [
+    6,
+    "6",
+  ],
+  Array [
+    7,
+    "7",
+  ],
+]
+`
+
+exports[`test/map-like.js TAP > rentries, 7 stale 1`] = `
+Generator [
+  Array [
+    3,
+    "3",
+  ],
+  Array [
+    5,
+    "5",
+  ],
+  Array [
+    6,
+    "6",
+  ],
+  Array [
+    4,
+    "new value 4",
+  ],
+]
+`
+
+exports[`test/map-like.js TAP > rentries, new value 4 1`] = `
+Generator [
+  Array [
+    3,
+    "3",
+  ],
+  Array [
+    5,
+    "5",
+  ],
+  Array [
+    6,
+    "6",
+  ],
+  Array [
+    7,
+    "7",
+  ],
+  Array [
+    4,
+    "new value 4",
+  ],
+]
+`
+
 exports[`test/map-like.js TAP > rforEach, no thisp 1`] = `
 Array [
   Array [
@@ -343,6 +426,64 @@ Array [
     "new value 4",
     4,
   ],
+]
+`
+
+exports[`test/map-like.js TAP > rkeys 1`] = `
+Generator [
+  3,
+  4,
+  5,
+  6,
+  7,
+]
+`
+
+exports[`test/map-like.js TAP > rkeys, 7 stale 1`] = `
+Generator [
+  3,
+  5,
+  6,
+  4,
+]
+`
+
+exports[`test/map-like.js TAP > rkeys, new value 4 1`] = `
+Generator [
+  3,
+  5,
+  6,
+  7,
+  4,
+]
+`
+
+exports[`test/map-like.js TAP > rvalues 1`] = `
+Generator [
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+]
+`
+
+exports[`test/map-like.js TAP > rvalues, 7 stale 1`] = `
+Generator [
+  "3",
+  "5",
+  "6",
+  "new value 4",
+]
+`
+
+exports[`test/map-like.js TAP > rvalues, new value 4 1`] = `
+Generator [
+  "3",
+  "5",
+  "6",
+  "7",
+  "new value 4",
 ]
 `
 

@@ -243,24 +243,29 @@ class LRUCache {
 
   *indexes ({ allowStale = this.allowStale } = {}) {
     if (this.size) {
-      for (let i = this.tail; true; i = this.prev[i]) {
+      for (let i = this.tail, j; true; ) {
         if (allowStale || !this.isStale(i)) {
           yield i
         }
         if (i === this.head) {
           break
+        } else {
+          i = this.prev[i]
         }
       }
     }
   }
+
   *rindexes ({ allowStale = this.allowStale } = {}) {
     if (this.size) {
-      for (let i = this.head; true; i = this.next[i]) {
+      for (let i = this.head, j; true; ) {
         if (allowStale || !this.isStale(i)) {
           yield i
         }
         if (i === this.tail) {
           break
+        } else {
+          i = this.next[i]
         }
       }
     }
@@ -271,15 +276,30 @@ class LRUCache {
       yield [this.keyList[i], this.valList[i]]
     }
   }
+  *rentries () {
+    for (const i of this.rindexes()) {
+      yield [this.keyList[i], this.valList[i]]
+    }
+  }
 
   *keys () {
     for (const i of this.indexes()) {
       yield this.keyList[i]
     }
   }
+  *rkeys () {
+    for (const i of this.rindexes()) {
+      yield this.keyList[i]
+    }
+  }
 
   *values () {
     for (const i of this.indexes()) {
+      yield this.valList[i]
+    }
+  }
+  *rvalues () {
+    for (const i of this.rindexes()) {
       yield this.valList[i]
     }
   }

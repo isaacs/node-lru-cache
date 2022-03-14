@@ -10,6 +10,9 @@ const c = new LRU({ max: 5, maxSize: 5 })
 t.matchSnapshot(c.keys(), 'empty, keys')
 t.matchSnapshot(c.values(), 'empty, values')
 t.matchSnapshot(c.entries(), 'empty, entries')
+t.matchSnapshot(c.rkeys(), 'empty, rkeys')
+t.matchSnapshot(c.rvalues(), 'empty, rvalues')
+t.matchSnapshot(c.rentries(), 'empty, rentries')
 t.matchSnapshot(c.dump(), 'empty, dump')
 
 for (let i = 0; i < 8; i++) {
@@ -29,12 +32,18 @@ const e = i => ({
 t.matchSnapshot(c.keys(), 'keys')
 t.matchSnapshot(c.values(), 'values')
 t.matchSnapshot(c.entries(), 'entries')
+t.matchSnapshot(c.rkeys(), 'rkeys')
+t.matchSnapshot(c.rvalues(), 'rvalues')
+t.matchSnapshot(c.rentries(), 'rentries')
 t.matchSnapshot(c.dump(), 'dump')
 
 c.set(4, 'new value 4')
 t.matchSnapshot(c.keys(), 'keys, new value 4')
 t.matchSnapshot(c.values(), 'values, new value 4')
 t.matchSnapshot(c.entries(), 'entries, new value 4')
+t.matchSnapshot(c.rkeys(), 'rkeys, new value 4')
+t.matchSnapshot(c.rvalues(), 'rvalues, new value 4')
+t.matchSnapshot(c.rentries(), 'rentries, new value 4')
 t.matchSnapshot(c.dump(), 'dump, new value 4')
 
 // pretend an entry is stale for some reason
@@ -59,6 +68,9 @@ for (const i of c.rindexes()) {
 t.matchSnapshot(c.keys(), 'keys, 7 stale')
 t.matchSnapshot(c.values(), 'values, 7 stale')
 t.matchSnapshot(c.entries(), 'entries, 7 stale')
+t.matchSnapshot(c.rkeys(), 'rkeys, 7 stale')
+t.matchSnapshot(c.rvalues(), 'rvalues, 7 stale')
+t.matchSnapshot(c.rentries(), 'rentries, 7 stale')
 t.matchSnapshot(c.dump(), 'dump, 7 stale')
 
 const feArr = []
