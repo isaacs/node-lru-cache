@@ -244,12 +244,14 @@ class LRUCache {
   *indexes ({ allowStale = this.allowStale } = {}) {
     if (this.size) {
       for (let i = this.tail, j; true; ) {
+        if (!this.isValidIndex(i)) {
+          break
+        }
         j = i === this.head
         if (allowStale || !this.isStale(i)) {
           yield i
         }
-        // either head now, or WAS head and head was deleted
-        if (i === this.head || j && !this.isValidIndex(i)) {
+        if (i === this.head) {
           break
         } else {
           i = this.prev[i]
@@ -261,12 +263,14 @@ class LRUCache {
   *rindexes ({ allowStale = this.allowStale } = {}) {
     if (this.size) {
       for (let i = this.head, j; true; ) {
-        j = i === this.tail
+        if (!this.isValidIndex(i)) {
+          break
+        }
         if (allowStale || !this.isStale(i)) {
           yield i
         }
         // either the tail now, or WAS the tail, and deleted
-        if (i === this.tail || j && !this.isValidIndex(i)) {
+        if (i === this.tail) {
           break
         } else {
           i = this.next[i]

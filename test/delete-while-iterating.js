@@ -66,3 +66,35 @@ t.test('rdelete odds', t => {
   t.same([...c.keys()], [4, 2, 0])
   t.end()
 })
+
+t.test('delete two of them', t => {
+  const c = t.context
+  t.same([...c.keys()], [4, 3, 2, 1, 0])
+  for (const k of c.keys()) {
+    if (k === 3) {
+      c.delete(3)
+      c.delete(4)
+    } else if (k === 1) {
+      c.delete(1)
+      c.delete(0)
+    }
+  }
+  t.same([...c.keys()], [2])
+  t.end()
+})
+
+t.test('rdelete two of them', t => {
+  const c = t.context
+  t.same([...c.keys()], [4, 3, 2, 1, 0])
+  for (const k of c.rkeys()) {
+    if (k === 3) {
+      c.delete(3)
+      c.delete(4)
+    } else if (k === 1) {
+      c.delete(1)
+      c.delete(0)
+    }
+  }
+  t.same([...c.keys()], [2])
+  t.end()
+})
