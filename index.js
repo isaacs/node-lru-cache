@@ -244,10 +244,12 @@ class LRUCache {
   *indexes ({ allowStale = this.allowStale } = {}) {
     if (this.size) {
       for (let i = this.tail, j; true; ) {
+        j = i === this.head
         if (allowStale || !this.isStale(i)) {
           yield i
         }
-        if (i === this.head) {
+        // either head now, or WAS head and head was deleted
+        if (i === this.head || j && !this.isValidIndex(i)) {
           break
         } else {
           i = this.prev[i]
@@ -259,16 +261,22 @@ class LRUCache {
   *rindexes ({ allowStale = this.allowStale } = {}) {
     if (this.size) {
       for (let i = this.head, j; true; ) {
+        j = i === this.tail
         if (allowStale || !this.isStale(i)) {
           yield i
         }
-        if (i === this.tail) {
+        // either the tail now, or WAS the tail, and deleted
+        if (i === this.tail || j && !this.isValidIndex(i)) {
           break
         } else {
           i = this.next[i]
         }
       }
     }
+  }
+
+  isValidIndex (index) {
+    return this.keyMap.get(this.keyList[index]) === index
   }
 
   *entries () {
@@ -335,15 +343,11 @@ class LRUCache {
 
   purgeStale () {
     let deleted = false
-    const toDelete = []
     for (const i of this.rindexes({ allowStale: true })) {
       if (this.isStale(i)) {
-        toDelete.push(this.keyList[i])
+        this.delete(this.keyList[i])
         deleted = true
       }
-    }
-    for (const k of toDelete) {
-      this.delete(k)
     }
     return deleted
   }
