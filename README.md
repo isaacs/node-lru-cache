@@ -144,11 +144,23 @@ If you put more stuff in it, then items will fall out.
     Deprecated alias: `length`
 
 * `fetchMethod` Function that is used to make background asynchronous
-  fetches.  Called with `fetchMethod(key, staleValue)`.  May return a
-  Promise.
+  fetches.  Called with `fetchMethod(key, staleValue, { signal, options })`.
+  May return a Promise.
 
     If `fetchMethod` is not provided, then `cache.fetch(key)` is equivalent
     to `Promise.resolve(cache.get(key))`.
+
+    The `signal` object is an `AbortSignal`.  If at any time,
+    `signal.aborted` is set to `true`, then that means that the fetch
+    should be abandoned.  This may be passed along to async functions aware
+    of AbortController/AbortSignal behavior.
+
+    The `options` object is a union of the options that may be provided to
+    `set()` and `get()`.  If they are modified, then that will result in
+    modifying the settings to `cache.set()` when the value is resolved.
+    For example, a DNS cache may update the TTL based on the value returned
+    from a remote DNS server by changing `options.ttl` in the
+    `fetchMethod`.
 
 * `dispose` Function that is called on items when they are dropped
   from the cache, as `this.dispose(value, key, reason)`.
@@ -175,6 +187,11 @@ If you put more stuff in it, then items will fall out.
     * `delete` Item was removed by explicit `cache.delete(key)` or by
       calling `cache.clear()`, which deletes everything.
 
+    The `dispose()` method is _not_ called for canceled calls to
+    `fetchMethod()`.  If you wish to handle evictions, overwrites, and
+    deletes of in-flight asynchronous fetches, you must use the
+    `AbortSignal` provided.
+
     Optional, must be a function.
 
 * `disposeAfter` The same as `dispose`, but called _after_ the entry is
@@ -183,6 +200,11 @@ If you put more stuff in it, then items will fall out.
     It is safe to add an item right back into the cache at this point.
     However, note that it is _very_ easy to inadvertently create infinite
     recursion in this way.
+
+    The `disposeAfter()` method is _not_ called for canceled calls to
+    `fetchMethod()`.  If you wish to handle evictions, overwrites, and
+    deletes of in-flight asynchronous fetches, you must use the
+    `AbortSignal` provided.
 
 * `noDisposeOnSet` Set to `true` to suppress calling the `dispose()`
   function if the entry key is still accessible within the cache.
@@ -337,24 +359,29 @@ If you put more stuff in it, then items will fall out.
     `cache.set(key, undefined)`.  Use `cache.has()` to determine whether a
     key is present in the cache at all.
 
-* `async fetch(key, { updateAgeOnGet, allowStale } = {}) => Promise`
+* `async fetch(key, { updateAgeOnGet, allowStale, size, sizeCalculation, ttl, noDisposeOnSet  } = {}) => Promise`
 
     If the value is in the cache and not stale, then the returned Promise
     resolves to the value.
 
     If not in the cache, or beyond its TTL staleness, then
-    `fetchMethod(key, staleValue)` is called, and the value returned will
-    be added to the cache once resolved.
+    `fetchMethod(key, staleValue, options)` is called, and the value
+    returned will be added to the cache once resolved.
 
     If called with `allowStale`, and an asynchronous fetch is currently in
     progress to reload a stale value, then the former stale value will be
     returned.
 
     Multiple fetches for the same `key` will only call `fetchMethod` a
-    single time, and all will be resolved when the value is resolved.
+    single time, and all will be resolved when the value is resolved, even
+    if different options are used.
 
-    If `fetchMethod` is not specified, then this is an alias for
-    `Promise.resolve(cache.get(key))`.
+    If `fetchMethod` is not specified, then this is effectively an alias
+    for `Promise.resolve(cache.get(key))`.
+
+    When the fetch method resolves to a value, if the fetch has not been
+    aborted due to deletion, eviction, or being overwritten, then it is
+    added to the cache using the options provided.
 
 * `peek(key, { allowStale } = {}) => value`
 

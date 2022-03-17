@@ -1,6 +1,17 @@
 const perf = typeof performance === 'object' && performance &&
   typeof performance.now === 'function' ? performance : Date
 
+const hasAbortController = typeof AbortController !== undefined
+
+/* istanbul ignore next - minimal backwards compatibility polyfill */
+const AC = hasAbortController ? AbortController : Object.assign(
+  class AbortController {
+    constructor () { this.signal = new AC.AbortSignal }
+    abort () { this.signal.aborted = true }
+  },
+  { AbortSignal: class AbortSignal { constructor () { this.aborted = false }}}
+)
+
 const warned = new Set()
 const deprecatedOption = (opt, instead) => {
   const code = `LRU_CACHE_OPTION_${opt}`
@@ -460,10 +471,14 @@ class LRUCache {
       // update
       const oldVal = this.valList[index]
       if (v !== oldVal) {
-        if (!noDisposeOnSet) {
-          this.dispose(oldVal, k, 'set')
-          if (this.disposeAfter) {
-            this.disposed.push([oldVal, k, 'set'])
+        if (this.isBackgroundFetch(oldVal)) {
+          oldVal.__abortController.abort()
+        } else {
+          if (!noDisposeOnSet) {
+            this.dispose(oldVal, k, 'set')
+            if (this.disposeAfter) {
+              this.disposed.push([oldVal, k, 'set'])
+            }
           }
         }
         this.removeItemSize(index)
@@ -512,9 +527,13 @@ class LRUCache {
     const head = this.head
     const k = this.keyList[head]
     const v = this.valList[head]
-    this.dispose(v, k, 'evict')
-    if (this.disposeAfter) {
-      this.disposed.push([v, k, 'evict'])
+    if (this.isBackgroundFetch(v)) {
+      v.__abortController.abort()
+    } else {
+      this.dispose(v, k, 'evict')
+      if (this.disposeAfter) {
+        this.disposed.push([v, k, 'evict'])
+      }
     }
     this.removeItemSize(head)
     this.head = this.next[head]
@@ -535,20 +554,26 @@ class LRUCache {
     }
   }
 
-  backgroundFetch (k, index) {
+  backgroundFetch (k, index, options) {
     const v = index === undefined ? undefined : this.valList[index]
     if (this.isBackgroundFetch(v)) {
       return v
     }
-    const p = Promise.resolve(this.fetchMethod(k, v)).then(v => {
-      if (this.keyMap.get(k) === index && p === this.valList[index]) {
-        this.set(k, v)
+    const ac = new AbortController()
+    const fetchOpts = {
+      signal: ac.signal,
+      options,
+    }
+    const p = Promise.resolve(this.fetchMethod(k, v, fetchOpts)).then(v => {
+      if (!ac.signal.aborted) {
+        this.set(k, v, fetchOpts.options)
       }
       return v
     })
+    p.__abortController = ac
     p.__staleWhileFetching = v
     if (index === undefined) {
-      this.set(k, p)
+      this.set(k, p, fetchOpts.options)
       index = this.keyMap.get(k)
     } else {
       this.valList[index] = p
@@ -561,17 +586,33 @@ class LRUCache {
       Object.prototype.hasOwnProperty.call(p, '__staleWhileFetching')
   }
 
+  // this takes the union of get() and set() opts, because it does both
   async fetch (k, {
     allowStale = this.allowStale,
     updateAgeOnGet = this.updateAgeOnGet,
+    ttl = this.ttl,
+    noDisposeOnSet = this.noDisposeOnSet,
+    size = 0,
+    sizeCalculation = this.sizeCalculation,
+    noUpdateTTL = this.noUpdateTTL,
   } = {}) {
     if (!this.fetchMethod) {
       return this.get(k, {allowStale, updateAgeOnGet})
     }
 
+    const options = {
+      allowStale,
+      updateAgeOnGet,
+      ttl,
+      noDisposeOnSet,
+      size,
+      sizeCalculation,
+      noUpdateTTL,
+    }
+
     let index = this.keyMap.get(k)
     if (index === undefined) {
-      return this.backgroundFetch(k, index)
+      return this.backgroundFetch(k, index, options)
     } else {
       // in cache, maybe already fetching
       const v = this.valList[index]
@@ -590,7 +631,7 @@ class LRUCache {
 
       // ok, it is stale, and not already fetching
       // refresh the cache.
-      const p = this.backgroundFetch(k, index)
+      const p = this.backgroundFetch(k, index, options)
       return allowStale && p.__staleWhileFetching !== undefined
         ? p.__staleWhileFetching : p
     }
@@ -667,9 +708,14 @@ class LRUCache {
           this.clear()
         } else {
           this.removeItemSize(index)
-          this.dispose(this.valList[index], k, 'delete')
-          if (this.disposeAfter) {
-            this.disposed.push([this.valList[index], k, 'delete'])
+          const v = this.valList[index]
+          if (this.isBackgroundFetch(v)) {
+            v.__abortController.abort()
+          } else {
+            this.dispose(v, k, 'delete')
+            if (this.disposeAfter) {
+              this.disposed.push([v, k, 'delete'])
+            }
           }
           this.keyMap.delete(k)
           this.keyList[index] = null
@@ -696,16 +742,19 @@ class LRUCache {
   }
 
   clear () {
-    if (this.dispose !== LRUCache.prototype.dispose) {
-      for (const index of this.rindexes({ allowStale: true })) {
-        this.dispose(this.valList[index], this.keyList[index], 'delete')
+    for (const index of this.rindexes({ allowStale: true })) {
+      const v = this.valList[index]
+      if (this.isBackgroundFetch(v)) {
+        v.__abortController.abort()
+      } else {
+        const k = this.keyList[index]
+        this.dispose(v, k, 'delete')
+        if (this.disposeAfter) {
+          this.disposed.push([v, k, 'delete'])
+        }
       }
     }
-    if (this.disposeAfter) {
-      for (const index of this.rindexes({ allowStale: true })) {
-        this.disposed.push([this.valList[index], this.keyList[index], 'delete'])
-      }
-    }
+
     this.keyMap.clear()
     this.valList.fill(null)
     this.keyList.fill(null)
