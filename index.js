@@ -195,9 +195,14 @@ class LRUCache {
     }
   }
 
+  getRemainingTTL (key) {
+    return this.has(key) ? Infinity : 0
+  }
+
   initializeTTLTracking () {
     this.ttls = new ZeroArray(this.max)
     this.starts = new ZeroArray(this.max)
+
     this.setItemTTL = (index, ttl) => {
       this.starts[index] = ttl !== 0 ? perf.now() : 0
       this.ttls[index] = ttl
@@ -213,9 +218,11 @@ class LRUCache {
         }
       }
     }
+
     this.updateItemAge = (index) => {
       this.starts[index] = this.ttls[index] !== 0 ? perf.now() : 0
     }
+
     // debounce calls to perf.now() to 1s so we're not hitting
     // that costly call repeatedly.
     let cachedNow = 0
@@ -231,6 +238,16 @@ class LRUCache {
       }
       return n
     }
+
+    this.getRemainingTTL = (key) => {
+      const index = this.keyMap.get(key)
+      if (index === undefined) {
+        return 0
+      }
+      return this.ttls[index] === 0 || this.starts[index] === 0 ? Infinity
+        : ((this.starts[index] + this.ttls[index]) - (cachedNow || getNow()))
+    }
+
     this.isStale = (index) => {
       return this.ttls[index] !== 0 && this.starts[index] !== 0 &&
         ((cachedNow || getNow()) - this.starts[index] > this.ttls[index])

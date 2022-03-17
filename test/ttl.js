@@ -24,9 +24,15 @@ const runTests = (LRU, t) => {
     t.equal(c.get(1), 1, '1 get not stale', { now: clock._now })
     clock.advance(5)
     t.equal(c.get(1), 1, '1 get not stale', { now: clock._now })
+    t.equal(c.getRemainingTTL(1), 5, '5ms left to live')
+    t.equal(c.getRemainingTTL('not in cache'), 0, 'thing doesnt exist')
     clock.advance(5)
     t.equal(c.get(1), 1, '1 get not stale', { now: clock._now })
+    t.equal(c.getRemainingTTL(1), 0, 'almost stale')
     clock.advance(1)
+    t.equal(c.getRemainingTTL(1), -1, 'gone stale')
+    clock.advance(1)
+    t.equal(c.getRemainingTTL(1), -2, 'even more stale')
     t.equal(c.has(1), false, '1 has stale', {
       now: clock._now,
       ttls: c.ttls,
@@ -59,6 +65,7 @@ const runTests = (LRU, t) => {
     // set an item WITHOUT a ttl on it
     c.set('immortal', true, { ttl: 0 })
     clock.advance(100)
+    t.equal(c.getRemainingTTL('immortal'), Infinity)
     t.equal(c.get('immortal'), true)
     c.get('immortal', { updateAgeOnGet: true })
     clock.advance(100)

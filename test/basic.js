@@ -15,6 +15,8 @@ t.test('basic operation', t => {
   }
   t.equal(c.size, 5)
   t.matchSnapshot(c.entries())
+  t.equal(c.getRemainingTTL(1), Infinity, 'no ttl, so returns Infinity')
+  t.equal(c.getRemainingTTL('not in cache'), 0, 'not in cache, no ttl')
 
   for (let i = 5; i < 10; i++) {
     c.set(i, i)

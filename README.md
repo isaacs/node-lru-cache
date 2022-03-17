@@ -443,6 +443,12 @@ If you put more stuff in it, then items will fall out.
 
     Deprecated alias: `prune`
 
+* `getRemainingTTL(key)`
+
+    Return the number of ms left in the item's TTL.  If item is not in
+    cache, returns `0`.  Returns `Infinity` if item is in cache without a
+    defined TTL.
+
 * `forEach(fn, [thisp])`
 
     Call the `fn` function with each set of `fn(value, key, cache)` in the
