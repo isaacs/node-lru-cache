@@ -3,41 +3,22 @@ if (typeof performance === 'undefined') {
 }
 
 const t = require('tap')
-
-const clock = {
-  now: () => clock._now,
-  _now: 1,
-  advance: n => {
-    const start = clock._now
-    clock._now += n
-    for (const [w, fns] of Object.entries(clock.timers)) {
-      if (w <= clock._now) {
-        delete clock.timers[w]
-        fns.forEach(f => f())
-      }
-    }
-  },
-  timers: {},
-  setTimeout: (fn, n = 0) => {
-    const w = n + clock._now
-    clock.timers[w] = clock.timers[w] || []
-    clock.timers[w].push(fn)
-    return {
-      unref: () => {},
-      clear: () =>
-        clock.timers[w] = (clock.timers[w] || []).filter(f => f !== fn),
-    }
-  },
-  clearTimeout: k => k && k.clear && k.clear(),
-}
+const Clock = require('clock-mock')
+const clock = new Clock()
 
 const runTests = (LRU, t) => {
   const { setTimeout, clearTimeout } = global
   t.teardown(() => Object.assign(global, { setTimeout, clearTimeout }))
-  global.setTimeout = clock.setTimeout
-  global.clearTimeout = clock.clearTimeout
+  global.setTimeout = clock.setTimeout.bind(clock)
+  global.clearTimeout = clock.clearTimeout.bind(clock)
 
   t.test('ttl tests defaults', t => {
+    // have to advance it 1 so we don't start with 0
+    // NB: this module will misbehave if you create an entry at a
+    // clock time of 0, for example if you are filling an LRU cache
+    // in a node lacking perf_hooks, at midnight UTC on 1970-01-01.
+    // This is a known bug that I am ok with.
+    clock.advance(1)
     const c = new LRU({ max: 5, ttl: 10, ttlResolution: 0 })
     c.set(1, 1)
     t.equal(c.get(1), 1, '1 get not stale', { now: clock._now })
@@ -454,11 +435,9 @@ t.test('tests with perf_hooks.performance.now()', t => {
 })
 
 t.test('tests using Date.now()', t => {
-  const { now } = Date
-  const { performance } = global
-  t.teardown(() => global.performance = performance)
-  t.teardown(() => Date.now = now)
-  Date.now = () => clock.now()
+  const { performance, Date } = global
+  t.teardown(() => Object.assign(global, { performance, Date }))
+  global.Date = clock.Date
   global.performance = null
   const LRU = t.mock('../')
   runTests(LRU, t)
