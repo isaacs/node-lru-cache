@@ -1,5 +1,17 @@
 # cringe lorg
 
+## 7.6.0
+
+* add cache.getRemainingTTL(key)
+* Add async cache.fetch() method, fetchMethod option
+* Allow unbounded storage if maxSize or ttl set
+
+## 7.5.0
+
+* defend against mutation while iterating
+* Add rentries, rkeys, rvalues
+* remove bundler and unnecessary package.json fields
+
 ## 7.4.0
 
 * Add browser optimized webpack bundle, exposed as `'lru-cache/browser'`
