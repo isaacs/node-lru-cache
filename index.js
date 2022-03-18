@@ -559,7 +559,7 @@ class LRUCache {
     if (this.isBackgroundFetch(v)) {
       return v
     }
-    const ac = new AbortController()
+    const ac = new AC()
     const fetchOpts = {
       signal: ac.signal,
       options,
