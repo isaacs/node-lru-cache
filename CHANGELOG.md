@@ -1,5 +1,9 @@
 # cringe lorg
 
+## 7.7.0
+
+* fetch: provide options and abort signal
+
 ## 7.6.0
 
 * add cache.getRemainingTTL(key)
