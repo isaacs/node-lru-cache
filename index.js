@@ -1,7 +1,7 @@
 const perf = typeof performance === 'object' && performance &&
   typeof performance.now === 'function' ? performance : Date
 
-const hasAbortController = typeof AbortController !== undefined
+const hasAbortController = typeof AbortController !== 'undefined'
 
 /* istanbul ignore next - minimal backwards compatibility polyfill */
 const AC = hasAbortController ? AbortController : Object.assign(
