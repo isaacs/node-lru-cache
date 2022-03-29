@@ -44,7 +44,12 @@ t.test('store strings, size = length', t => {
 
 t.test('bad size calculation fn throws on set()', t => {
   const c = new LRU({ max: 5, maxSize: 5, sizeCalculation: () => 'asdf' })
-  t.throws(() => c.set(1, '1'.repeat(100)), TypeError)
+  t.throws(() => c.set(1, '1'.repeat(100)),
+    new TypeError('sizeCalculation return invalid (expect positive integer)'))
+  t.throws(() => c.set(1, '1', { size: 'asdf', sizeCalculation: null }),
+    new TypeError('invalid size value (must be positive integer)'))
+  t.throws(() => c.set(1, '1', { sizeCalculation: 'asdf' }),
+    new TypeError('sizeCalculation must be a function'))
   t.end()
 })
 

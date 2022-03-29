@@ -273,11 +273,18 @@ class LRUCache {
     this.sizes = new ZeroArray(this.max)
     this.removeItemSize = index => this.calculatedSize -= this.sizes[index]
     this.requireSize = (k, v, size, sizeCalculation) => {
-      if (sizeCalculation && !size) {
-        size = sizeCalculation(v, k)
-      }
       if (!isPosInt(size)) {
-        throw new TypeError('size must be positive integer')
+        if (sizeCalculation) {
+          if (typeof sizeCalculation !== 'function') {
+            throw new TypeError('sizeCalculation must be a function')
+          }
+          size = sizeCalculation(v, k)
+          if (!isPosInt(size)) {
+            throw new TypeError('sizeCalculation return invalid (expect positive integer)')
+          }
+        } else {
+          throw new TypeError('invalid size value (must be positive integer)')
+        }
       }
       return size
     }
