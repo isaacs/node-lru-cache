@@ -127,7 +127,7 @@ class LRUCache {
         throw new TypeError('cannot set sizeCalculation without setting maxSize')
       }
       if (typeof this.sizeCalculation !== 'function') {
-        throw new TypeError('sizeCalculating set to non-function')
+        throw new TypeError('sizeCalculation set to non-function')
       }
     }
 
