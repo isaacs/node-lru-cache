@@ -157,3 +157,69 @@ t.test('fetch options, signal', async t => {
   const v5 = await c.fetch(2, { ttl: 1 })
   t.equal(c.getRemainingTTL(2), 25, 'overridden ttl in fetchMethod')
 })
+
+t.test('fetch options, signal, with polyfill', async t => {
+  const {AbortController} = global
+  t.teardown(() => global.AbortController = AbortController)
+  global.AbortController = undefined
+  const LRU = t.mock('../')
+  let aborted = false
+  const disposed = []
+  const disposedAfter = []
+  const c = new LRU({
+    max: 3,
+    ttl: 100,
+    fetchMethod: async (k, oldVal, { signal, options }) => {
+      // do something async
+      await new Promise(res => setImmediate(res))
+      if (signal.aborted) {
+        aborted = true
+        return
+      }
+      if (k === 2) {
+        options.ttl = 25
+      }
+      return (oldVal || 0) + 1
+    },
+    dispose: (v, k, reason) => {
+      disposed.push([v, k, reason])
+    },
+    disposeAfter: (v, k, reason) => {
+      disposedAfter.push([v, k, reason])
+    },
+  })
+
+  const v1 = c.fetch(2)
+  c.delete(2)
+  t.equal(await v1, undefined, 'no value returned, aborted by delete')
+  t.equal(aborted, true)
+  t.same(disposed, [], 'no disposals for aborted promises')
+  t.same(disposedAfter, [], 'no disposals for aborted promises')
+
+  aborted = false
+  const v2 = c.fetch(2)
+  c.set(2, 2)
+  t.equal(await v2, undefined, 'no value returned, aborted by set')
+  t.equal(aborted, true)
+  t.same(disposed, [], 'no disposals for aborted promises')
+  t.same(disposedAfter, [], 'no disposals for aborted promises')
+  c.delete(2)
+  disposed.length = 0
+  disposedAfter.length = 0
+
+  aborted = false
+  const v3 = c.fetch(2)
+  c.set(3, 3)
+  c.set(4, 4)
+  c.set(5, 5)
+  t.equal(await v3, undefined, 'no value returned, aborted by evict')
+  t.equal(aborted, true)
+  t.same(disposed, [], 'no disposals for aborted promises')
+  t.same(disposedAfter, [], 'no disposals for aborted promises')
+
+  aborted = false
+  const v4 = await c.fetch(6, { ttl: 1000 })
+  t.equal(c.getRemainingTTL(6), 1000, 'overridden ttl in fetch() opts')
+  const v5 = await c.fetch(2, { ttl: 1 })
+  t.equal(c.getRemainingTTL(2), 25, 'overridden ttl in fetchMethod')
+})

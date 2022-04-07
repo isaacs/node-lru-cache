@@ -3,7 +3,7 @@ const perf = typeof performance === 'object' && performance &&
 
 const hasAbortController = typeof AbortController !== 'undefined'
 
-/* istanbul ignore next - minimal backwards compatibility polyfill */
+// minimal backwards-compatibility polyfill
 const AC = hasAbortController ? AbortController : Object.assign(
   class AbortController {
     constructor () { this.signal = new AC.AbortSignal }
