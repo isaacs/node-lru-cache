@@ -36,14 +36,20 @@ const deprecatedProperty = (field, instead) => {
   }
 }
 
-const shouldWarn = code => typeof process === 'object' &&
-  process &&
-  !warned.has(code)
+const emitWarning = (...a) => {
+  typeof process === 'object' &&
+    process &&
+    typeof process.emitWarning === 'function'
+  ? process.emitWarning(...a)
+  : console.error(...a)
+}
+
+const shouldWarn = code => !warned.has(code)
 
 const warn = (code, what, instead, fn) => {
   warned.add(code)
   const msg = `The ${what} is deprecated. Please use ${instead} instead.`
-  process.emitWarning(msg, 'DeprecationWarning', code, fn)
+  emitWarning(msg, 'DeprecationWarning', code, fn)
 }
 
 const isPosInt = n => n && n === Math.floor(n) && n > 0 && isFinite(n)
@@ -191,7 +197,7 @@ class LRUCache {
         warned.add(code)
         const msg = 'TTL caching without ttlAutopurge, max, or maxSize can ' +
           'result in unbounded memory consumption.'
-        process.emitWarning(msg, 'UnboundedCacheWarning', code, LRUCache)
+        emitWarning(msg, 'UnboundedCacheWarning', code, LRUCache)
       }
     }
 

@@ -47,9 +47,15 @@ t.test('warns exactly once for a given deprecation', t => {
 t.test('does not do deprecation warning without process object', t => {
   // set process to null (emulate a browser)
   const proc = process
-  t.teardown(() => global.process = proc)
+  const {error} = console
+  t.teardown(() => {
+    global.process = proc
+    console.error = error
+  })
+  const consoleErrors = []
+  console.error = (...a) => consoleErrors.push(a)
   global.process = null
-
+  const LRU = t.mock('../')
   const c = new LRU({
     max: 100,
     maxSize: 100,
@@ -64,6 +70,7 @@ t.test('does not do deprecation warning without process object', t => {
   t.equal(c.del, c.delete)
 
   t.strictSame(warnings, [], 'no process exists')
+  t.matchSnapshot(consoleErrors, 'warnings sent to console.error')
 
   t.end()
 })
