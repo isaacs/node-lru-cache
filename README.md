@@ -6,9 +6,11 @@ Specify a max number of the most recently used items that you want to keep,
 and this cache will keep that many of the most recently accessed items.
 
 This is not primarily a TTL cache, and does not make strong TTL guarantees.
-There is no preemptive pruning of expired items, but you _may_ set a TTL
-on the cache or on a single `set`.  If you do so, it will treat expired
-items as missing, and delete them when fetched.
+There is no preemptive pruning of expired items by default, but you _may_
+set a TTL on the cache or on a single `set`.  If you do so, it will treat
+expired items as missing, and delete them when fetched.  If you are more
+interested in TTL caching than LRU caching, check out
+[@isaacs/ttlcache](http://npm.im/@isaacs/ttlcache).
 
 As of version 7, this is one of the most performant LRU implementations
 available in JavaScript, and supports a wide diversity of use cases.
