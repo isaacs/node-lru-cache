@@ -98,6 +98,7 @@ class LRUCache {
       ttlResolution = 1,
       ttlAutopurge,
       updateAgeOnGet,
+      updateAgeOnHas,
       allowStale,
       dispose,
       disposeAfter,
@@ -176,6 +177,7 @@ class LRUCache {
 
     this.allowStale = !!allowStale || !!stale
     this.updateAgeOnGet = !!updateAgeOnGet
+    this.updateAgeOnHas = !!updateAgeOnHas
     this.ttlResolution = isPosInt(ttlResolution) || ttlResolution === 0
       ? ttlResolution : 1
     this.ttlAutopurge = !!ttlAutopurge
@@ -213,7 +215,7 @@ class LRUCache {
   }
 
   getRemainingTTL (key) {
-    return this.has(key) ? Infinity : 0
+    return this.has(key, { updateAgeOnHas: false }) ? Infinity : 0
   }
 
   initializeTTLTracking () {
@@ -555,8 +557,17 @@ class LRUCache {
     return head
   }
 
-  has (k) {
-    return this.keyMap.has(k) && !this.isStale(this.keyMap.get(k))
+  has (k, { updateAgeOnHas = this.updateAgeOnHas } = {}) {
+    const index = this.keyMap.get(k)
+    if (index !== undefined) {
+      if (!this.isStale(index)) {
+        if (updateAgeOnHas) {
+          this.updateItemAge(index)
+        }
+        return true
+      }
+    }
+    return false
   }
 
   // like get(), but without any LRU updating or TTL expiration

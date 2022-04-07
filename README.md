@@ -310,6 +310,15 @@ If you put more stuff in it, then items will fall out.
 
     Boolean, default false, only relevant if `ttl` is set.
 
+* `updateAgeOnHas` - When using time-expiring entries with `ttl`, setting
+  this to `true` will make each item's age reset to 0 whenever its presence
+  in the cache is checked with `has()`, causing it to not expire.  (It can
+  still fall out of cache based on recency of use, of course.)
+
+    This may be overridden by passing an options object to `cache.has()`.
+
+    Boolean, default false, only relevant if `ttl` is set.
+
 ## API
 
 * `new LRUCache(options)`
@@ -319,7 +328,7 @@ If you put more stuff in it, then items will fall out.
 
 * `cache.max`, `cache.maxSize`, `cache.allowStale`, `cache.noDisposeOnSet`,
   `cache.sizeCalculation`, `cache.dispose`, `cache.maxSize`, `cache.ttl`,
-  `cache.updateAgeOnGet`
+  `cache.updateAgeOnGet`, `cache.updateAgeOnHas`
 
     All option names are exposed as public members on the cache object.
 
@@ -392,9 +401,11 @@ If you put more stuff in it, then items will fall out.
     Returns `undefined` if the item is stale, unless `allowStale` is set
     either on the cache or in the options object.
 
-* `has(key)`
+* `has(key, { updateAgeOnHas } = {}) => Boolean`
 
-    Check if a key is in the cache, without updating the recency or age.
+    Check if a key is in the cache, without updating the recency of use.
+    Age is updated if `updateAgeOnHas` is set to `true` in either the
+    options or the constructor.
 
     Will return `false` if the item is stale, even though it is technically
     in the cache.

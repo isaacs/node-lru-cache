@@ -198,16 +198,24 @@ const runTests = (LRU, t) => {
     t.end()
   })
 
-  t.test('ttl with updateAgeOnGet', t => {
-    const c = new LRU({ max: 5, ttl: 10, updateAgeOnGet: true, ttlResolution: 0 })
+  t.test('ttl with updateAgeOnGet/updateAgeOnHas', t => {
+    const c = new LRU({
+      max: 5,
+      ttl: 10,
+      updateAgeOnGet: true,
+      updateAgeOnHas: true,
+      ttlResolution: 0,
+    })
     c.set(1, 1)
     t.equal(c.get(1), 1)
     clock.advance(5)
-    t.equal(c.get(1), 1)
+    t.equal(c.has(1), true)
     clock.advance(5)
     t.equal(c.get(1), 1)
     clock.advance(1)
+    t.equal(c.getRemainingTTL(1), 9)
     t.equal(c.has(1), true)
+    t.equal(c.getRemainingTTL(1), 10)
     t.equal(c.get(1), 1)
     t.equal(c.size, 1)
     c.clear()
