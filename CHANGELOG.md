@@ -66,6 +66,9 @@ well.
   * `reset()` method -> `clear()`
 * The objects used by `cache.load()` and `cache.dump()` are incompatible
   with previous versions.
+* `max` and `maxSize` are now two separate options.  (Previously, they were
+  a single `max` option, which would be based on either count or computed
+  size.)
 
 ## v6 - 2020-07
 
