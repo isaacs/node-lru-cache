@@ -27,8 +27,12 @@ npm install lru-cache --save
 ```js
 const LRU = require('lru-cache')
 
-// only 'max' is required, the others are optional, but MAY be
-// required if certain other fields are set.
+// At least one size bound must be provided in order to prevent an unsafe,
+// unbounded cache size.
+// * `max`
+// * `maxSize` (with optional `sizeCalculation`)
+// * `ttl` (with optional `noUpdateTTL`, `ttlResolution`, `ttlAutopurge`,
+//     `allowStale`, `updateAgeOnGet`).
 const options = {
   // the number of most recently used items to keep.
   // note that we may store fewer items than this if maxSize is hit.
