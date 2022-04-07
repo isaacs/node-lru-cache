@@ -1,5 +1,10 @@
 # cringe lorg
 
+## 7.8.0
+
+* add `updateAgeOnHas` option
+* warnings sent to `console.error` if `process.emitWarning` unavailable
+
 ## 7.7.0
 
 * fetch: provide options and abort signal
