@@ -22,7 +22,8 @@
   "repository": "git://github.com/isaacs/node-lru-cache.git",
   "devDependencies": {
     "benchmark": "^2.1.4",
-    "tap": "^15.1.6"
+    "heapdump": "^0.3.15",
+    "tap": "^16.0.1"
   },
   "license": "ISC",
   "files": [
@@ -32,6 +33,9 @@
     "node": ">=12"
   },
   "tap": {
-    "coverage-map": "map.js"
+    "coverage-map": "map.js",
+    "node-arg": [
+      "--expose-gc"
+    ]
   }
 }
