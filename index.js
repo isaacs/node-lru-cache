@@ -72,7 +72,10 @@ class ZeroArray extends Array {
 
 class Stack {
   constructor (max) {
-    const UintArray = max ? getUintArray(max) : Array
+    if (max === 0) {
+      return []
+    }
+    const UintArray = getUintArray(max)
     this.heap = new UintArray(max)
     this.length = 0
   }
@@ -135,7 +138,6 @@ class LRUCache {
     if (this.fetchMethod && typeof this.fetchMethod !== 'function') {
       throw new TypeError('fetchMethod must be a function if specified')
     }
-
 
     this.keyMap = new Map()
     this.keyList = new Array(max).fill(null)
@@ -292,7 +294,7 @@ class LRUCache {
       this.sizes[index] = size
       const maxSize = this.maxSize - this.sizes[index]
       while (this.calculatedSize > maxSize) {
-        this.evict()
+        this.evict(true)
       }
       this.calculatedSize += this.sizes[index]
     }
@@ -512,8 +514,8 @@ class LRUCache {
     if (this.size === 0) {
       return this.tail
     }
-    if (this.size === this.max) {
-      return this.evict()
+    if (this.size === this.max && this.max !== 0) {
+      return this.evict(false)
     }
     if (this.free.length !== 0) {
       return this.free.pop()
@@ -525,12 +527,12 @@ class LRUCache {
   pop () {
     if (this.size) {
       const val = this.valList[this.head]
-      this.evict()
+      this.evict(true)
       return val
     }
   }
 
-  evict () {
+  evict (free) {
     const head = this.head
     const k = this.keyList[head]
     const v = this.valList[head]
@@ -543,6 +545,12 @@ class LRUCache {
       }
     }
     this.removeItemSize(head)
+    // if we aren't about to use the index, then null these out
+    if (free) {
+      this.keyList[head] = null
+      this.valList[head] = null
+      this.free.push(head)
+    }
     this.head = this.next[head]
     this.keyMap.delete(k)
     this.size --
