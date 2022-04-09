@@ -109,6 +109,7 @@ class LRUCache {
         throw new TypeError('sizeCalculating set to non-function')
       }
     }
+
     this.keyMap = new Map()
     this.keyList = new Array(max).fill(null)
     this.valList = new Array(max).fill(null)
@@ -181,7 +182,7 @@ class LRUCache {
       this.sizes[index] = isPosInt(s) ? s : 0
       const maxSize = this.maxSize - this.sizes[index]
       while (this.calculatedSize > maxSize) {
-        this.evict()
+        this.evict(true)
       }
       this.calculatedSize += this.sizes[index]
     }
@@ -336,7 +337,7 @@ class LRUCache {
       return this.tail
     }
     if (this.size === this.max) {
-      return this.evict()
+      return this.evict(false)
     }
     if (this.free.length !== 0) {
       return this.free.pop()
@@ -345,11 +346,17 @@ class LRUCache {
     return this.initialFill++
   }
 
-  evict () {
+  evict (free) {
     const head = this.head
     const k = this.keyList[head]
     this.dispose(this.valList[head], k)
     this.removeItemSize(head)
+    // if we aren't about to use the index, then null these out
+    if (free) {
+      this.keyList[head] = null
+      this.valList[head] = null
+      this.free.push(head)
+    }
     this.head = this.next[head]
     this.keyMap.delete(k)
     this.size --
