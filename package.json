@@ -1,7 +1,7 @@
 {
   "name": "lru-cache",
   "description": "A cache object that deletes the least-recently-used items.",
-  "version": "7.7.3",
+  "version": "7.7.4",
   "publishConfig": {
     "tag": "v7.7-backport"
   },
@@ -39,7 +39,9 @@
   },
   "tap": {
     "coverage-map": "map.js",
-    "node-arg": ["--expose-gc"]
+    "node-arg": [
+      "--expose-gc"
+    ]
   },
   "size-limit": [
     {
