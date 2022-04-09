@@ -25,9 +25,10 @@
   "devDependencies": {
     "@size-limit/preset-small-lib": "^7.0.8",
     "benchmark": "^2.1.4",
-    "clock-mock": "^1.0.3",
+    "clock-mock": "^1.0.4",
+    "heapdump": "^0.3.15",
     "size-limit": "^7.0.8",
-    "tap": "^15.1.6"
+    "tap": "^16.0.1"
   },
   "license": "ISC",
   "files": [
@@ -37,7 +38,10 @@
     "node": ">=12"
   },
   "tap": {
-    "coverage-map": "map.js"
+    "coverage-map": "map.js",
+    "node-arg": [
+      "--expose-gc"
+    ]
   },
   "size-limit": [
     {
