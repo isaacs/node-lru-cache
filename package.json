@@ -1,7 +1,7 @@
 {
   "name": "lru-cache",
   "description": "A cache object that deletes the least-recently-used items.",
-  "version": "7.8.0",
+  "version": "7.8.1",
   "author": "Isaac Z. Schlueter <i@izs.me>",
   "keywords": [
     "mru",
@@ -36,7 +36,9 @@
   },
   "tap": {
     "coverage-map": "map.js",
-    "node-arg": ["--expose-gc"]
+    "node-arg": [
+      "--expose-gc"
+    ]
   },
   "size-limit": [
     {
