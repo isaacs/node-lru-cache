@@ -2,6 +2,9 @@
   "name": "lru-cache",
   "description": "A cache object that deletes the least-recently-used items.",
   "version": "7.7.3",
+  "publishConfig": {
+    "tag": "v7.7-backport"
+  },
   "author": "Isaac Z. Schlueter <i@izs.me>",
   "keywords": [
     "mru",
