@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "heapdump": "^0.3.15"
+  }
+}
