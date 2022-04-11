@@ -23,7 +23,6 @@
     "@size-limit/preset-small-lib": "^7.0.8",
     "benchmark": "^2.1.4",
     "clock-mock": "^1.0.4",
-    "heapdump": "^0.3.15",
     "size-limit": "^7.0.8",
     "tap": "^15.1.6"
   },

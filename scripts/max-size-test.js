@@ -6,7 +6,14 @@ if (typeof gc !== 'function') {
   throw new Error('run with --expose-gc')
 }
 
-const heapdump = require('heapdump')
+let heapdump
+try {
+  heapdump = require('heapdump')
+} catch (e) {
+  const {spawnSync} = require('child_process')
+  spawnSync('npm', ['install'], { cwd: __dirname, stdio: 'inherit' })
+  heapdump = require('heapdump')
+}
 
 const LRU = require('../')
 const maxSize = 1_000_000
