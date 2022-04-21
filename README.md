@@ -111,406 +111,415 @@ If you put more stuff in it, then items will fall out.
 
 ## Options
 
-* `max` - The maximum number (or size) of items that remain in the cache
-  (assuming no TTL pruning or explicit deletions).  Note that fewer items
-  may be stored if size calculation is used, and `maxSize` is exceeded.
-  This must be a positive finite intger.
+### `max`
 
-    At least one of `max`, `maxSize`, or `TTL` is required.  This must be a
-    positive integer if set.
+The maximum number (or size) of items that remain in the cache (assuming no TTL
+pruning or explicit deletions).  Note that fewer items may be stored if size
+calculation is used, and `maxSize` is exceeded.  This must be a positive finite
+intger.
 
-    **It is strongly recommended to set a `max` to prevent unbounded growth
-    of the cache.**  See "Storage Bounds Safety" below.
+At least one of `max`, `maxSize`, or `TTL` is required.  This must be a
+positive integer if set.
 
-* `maxSize` - Set to a positive integer to track the sizes of items added
-  to the cache, and automatically evict items in order to stay below this
-  size.  Note that this may result in fewer than `max` items being stored.
+**It is strongly recommended to set a `max` to prevent unbounded growth of the
+cache.**  See "Storage Bounds Safety" below.
 
-    Optional, must be a positive integer if provided.  Required if other
-    size tracking features are used.
+### `maxSize`
 
-    At least one of `max`, `maxSize`, or `TTL` is required.  This must be a
-    positive integer if set.
+Set to a positive integer to track the sizes of items added to the cache, and
+automatically evict items in order to stay below this size.  Note that this may
+result in fewer than `max` items being stored.
 
-    Even if size tracking is enabled, **it is strongly recommended to set a
-    `max` to prevent unbounded growth of the cache.**  See "Storage Bounds
-    Safety" below.
+Optional, must be a positive integer if provided.  Required if other size
+tracking features are used.
 
-* `sizeCalculation` - Function used to calculate the size of stored
-  items.  If you're storing strings or buffers, then you probably want to
-  do something like `n => n.length`.  The item is passed as the first
-  argument, and the key is passed as the second argument.
+At least one of `max`, `maxSize`, or `TTL` is required.  This must be a
+positive integer if set.
 
-    This may be overridden by passing an options object to `cache.set()`.
+Even if size tracking is enabled, **it is strongly recommended to set a `max`
+to prevent unbounded growth of the cache.**  See "Storage Bounds Safety" below.
 
-    Requires `maxSize` to be set.
+### `sizeCalculation`
 
-    Deprecated alias: `length`
+Function used to calculate the size of stored items.  If you're storing strings
+or buffers, then you probably want to do something like `n => n.length`.  The
+item is passed as the first argument, and the key is passed as the second
+argument.
 
-* `fetchMethod` Function that is used to make background asynchronous
-  fetches.  Called with `fetchMethod(key, staleValue, { signal, options })`.
-  May return a Promise.
+This may be overridden by passing an options object to `cache.set()`.
 
-    If `fetchMethod` is not provided, then `cache.fetch(key)` is equivalent
-    to `Promise.resolve(cache.get(key))`.
+Requires `maxSize` to be set.
 
-    The `signal` object is an `AbortSignal`.  If at any time,
-    `signal.aborted` is set to `true`, then that means that the fetch
-    should be abandoned.  This may be passed along to async functions aware
-    of AbortController/AbortSignal behavior.
+Deprecated alias: `length`
 
-    The `options` object is a union of the options that may be provided to
-    `set()` and `get()`.  If they are modified, then that will result in
-    modifying the settings to `cache.set()` when the value is resolved.
-    For example, a DNS cache may update the TTL based on the value returned
-    from a remote DNS server by changing `options.ttl` in the
-    `fetchMethod`.
+### `fetchMethod`
 
-* `dispose` Function that is called on items when they are dropped
-  from the cache, as `this.dispose(value, key, reason)`.
+Function that is used to make background asynchronous fetches.  Called with
+`fetchMethod(key, staleValue, { signal, options })`.  May return a Promise.
 
-    This can be handy if you want to close file descriptors or do other
-    cleanup tasks when items are no longer stored in the cache.
+If `fetchMethod` is not provided, then `cache.fetch(key)` is equivalent to
+`Promise.resolve(cache.get(key))`.
 
-    **NOTE**: It is called *before* the item has been fully removed from
-    the cache, so if you want to put it right back in, you need to wait
-    until the next tick.  If you try to add it back in during the
-    `dispose()` function call, it will break things in subtle and weird
-    ways.
+The `signal` object is an `AbortSignal`.  If at any time, `signal.aborted` is
+set to `true`, then that means that the fetch should be abandoned.  This may be
+passed along to async functions aware of AbortController/AbortSignal behavior.
 
-    Unlike several other options, this may _not_ be overridden by passing
-    an option to `set()`, for performance reasons.  If disposal functions
-    may vary between cache entries, then the entire list must be scanned
-    on every cache swap, even if no disposal function is in use.
+The `options` object is a union of the options that may be provided to `set()`
+and `get()`.  If they are modified, then that will result in modifying the
+settings to `cache.set()` when the value is resolved.  For example, a DNS cache
+may update the TTL based on the value returned from a remote DNS server by
+changing `options.ttl` in the `fetchMethod`.
 
-    The `reason` will be one of the following strings, corresponding to the
-    reason for the item's deletion:
+### `dispose`
 
-    * `evict` Item was evicted to make space for a new addition
-    * `set` Item was overwritten by a new value
-    * `delete` Item was removed by explicit `cache.delete(key)` or by
-      calling `cache.clear()`, which deletes everything.
+Function that is called on items when they are dropped from the cache, as
+`this.dispose(value, key, reason)`.
 
-    The `dispose()` method is _not_ called for canceled calls to
-    `fetchMethod()`.  If you wish to handle evictions, overwrites, and
-    deletes of in-flight asynchronous fetches, you must use the
-    `AbortSignal` provided.
+This can be handy if you want to close file descriptors or do other cleanup
+tasks when items are no longer stored in the cache.
 
-    Optional, must be a function.
+**NOTE**: It is called *before* the item has been fully removed from the cache,
+so if you want to put it right back in, you need to wait until the next tick.
+If you try to add it back in during the `dispose()` function call, it will
+break things in subtle and weird ways.
 
-* `disposeAfter` The same as `dispose`, but called _after_ the entry is
-  completely removed and the cache is once again in a clean state.
+Unlike several other options, this may _not_ be overridden by passing an option
+to `set()`, for performance reasons.  If disposal functions may vary between
+cache entries, then the entire list must be scanned on every cache swap, even
+if no disposal function is in use.
 
-    It is safe to add an item right back into the cache at this point.
-    However, note that it is _very_ easy to inadvertently create infinite
-    recursion in this way.
+The `reason` will be one of the following strings, corresponding to the reason
+for the item's deletion:
 
-    The `disposeAfter()` method is _not_ called for canceled calls to
-    `fetchMethod()`.  If you wish to handle evictions, overwrites, and
-    deletes of in-flight asynchronous fetches, you must use the
-    `AbortSignal` provided.
+* `evict` Item was evicted to make space for a new addition
+* `set` Item was overwritten by a new value
+* `delete` Item was removed by explicit `cache.delete(key)` or by calling
+  `cache.clear()`, which deletes everything.
 
-* `noDisposeOnSet` Set to `true` to suppress calling the `dispose()`
-  function if the entry key is still accessible within the cache.
+The `dispose()` method is _not_ called for canceled calls to `fetchMethod()`.
+If you wish to handle evictions, overwrites, and deletes of in-flight
+asynchronous fetches, you must use the `AbortSignal` provided.
 
-    This may be overridden by passing an options object to `cache.set()`.
+Optional, must be a function.
 
-    Boolean, default `false`.  Only relevant if `dispose` or `disposeAfter`
-    options are set.
+### `disposeAfter`
 
-* `ttl` - max time to live for items before they are considered stale.
-  Note that stale items are NOT preemptively removed by default, and MAY
-  live in the cache, contributing to its LRU max, long after they have
-  expired.
+The same as `dispose`, but called _after_ the entry is completely removed and
+the cache is once again in a clean state.
 
-    Also, as this cache is optimized for LRU/MRU operations, some of
-    the staleness/TTL checks will reduce performance, as they will incur
-    overhead by deleting from Map objects rather than simply throwing old
-    Map objects away.
+It is safe to add an item right back into the cache at this point.  However,
+note that it is _very_ easy to inadvertently create infinite recursion in this
+way.
 
-    This is not primarily a TTL cache, and does not make strong TTL
-    guarantees.  There is no pre-emptive pruning of expired items, but you
-    _may_ set a TTL on the cache, and it will treat expired items as missing
-    when they are fetched, and delete them.
+The `disposeAfter()` method is _not_ called for canceled calls to
+`fetchMethod()`.  If you wish to handle evictions, overwrites, and deletes of
+in-flight asynchronous fetches, you must use the `AbortSignal` provided.
 
-    Optional, but must be a positive integer in ms if specified.
+### `noDisposeOnSet`
 
-    This may be overridden by passing an options object to `cache.set()`.
+Set to `true` to suppress calling the `dispose()` function if the entry key is
+still accessible within the cache.
 
-    At least one of `max`, `maxSize`, or `TTL` is required.  This must be a
-    positive integer if set.
+This may be overridden by passing an options object to `cache.set()`.
 
-    Even if ttl tracking is enabled, **it is strongly recommended to set a
-    `max` to prevent unbounded growth of the cache.**  See "Storage Bounds
-    Safety" below.
+Boolean, default `false`.  Only relevant if `dispose` or `disposeAfter` options
+are set.
 
-    If ttl tracking is enabled, and `max` and `maxSize` are not set, and
-    `ttlAutopurge` is not set, then a warning will be emitted cautioning
-    about the potential for unbounded memory consumption.
+### `ttl`
 
-    Deprecated alias: `maxAge`
+Max time to live for items before they are considered stale.  Note that stale
+items are NOT preemptively removed by default, and MAY live in the cache,
+contributing to its LRU max, long after they have expired.
 
-* `noUpdateTTL` - Boolean flag to tell the cache to not update the TTL when
-  setting a new value for an existing key (ie, when updating a value rather
-  than inserting a new value).  Note that the TTL value is _always_ set
-  (if provided) when adding a new entry into the cache.
+Also, as this cache is optimized for LRU/MRU operations, some of the
+staleness/TTL checks will reduce performance, as they will incur overhead by
+deleting from Map objects rather than simply throwing old Map objects away.
 
-    This may be passed as an option to `cache.set()`.
+This is not primarily a TTL cache, and does not make strong TTL guarantees.
+There is no pre-emptive pruning of expired items, but you _may_ set a TTL on
+the cache, and it will treat expired items as missing when they are fetched,
+and delete them.
 
-    Boolean, default false.
+Optional, but must be a positive integer in ms if specified.
 
-* `ttlResolution` - Minimum amount of time in ms in which to check for
-  staleness.  Defaults to `1`, which means that the current time is checked
-  at most once per millisecond.
+This may be overridden by passing an options object to `cache.set()`.
 
-    Set to `0` to check the current time every time staleness is tested.
+At least one of `max`, `maxSize`, or `TTL` is required.  This must be a
+positive integer if set.
 
-    Note that setting this to a higher value _will_ improve performance
-    somewhat while using ttl tracking, albeit at the expense of keeping
-    stale items around a bit longer than intended.
+Even if ttl tracking is enabled, **it is strongly recommended to set a `max` to
+prevent unbounded growth of the cache.**  See "Storage Bounds Safety" below.
 
-* `ttlAutopurge` - Preemptively remove stale items from the cache.
+If ttl tracking is enabled, and `max` and `maxSize` are not set, and
+`ttlAutopurge` is not set, then a warning will be emitted cautioning about the
+potential for unbounded memory consumption.
 
-    Note that this may _significantly_ degrade performance, especially if
-    the cache is storing a large number of items.  It is almost always best
-    to just leave the stale items in the cache, and let them fall out as
-    new items are added.
+Deprecated alias: `maxAge`
 
-    Note that this means that `allowStale` is a bit pointless, as stale
-    items will be deleted almost as soon as they expire.
+### `noUpdateTTL`
 
-    Use with caution!
+Boolean flag to tell the cache to not update the TTL when setting a new value
+for an existing key (ie, when updating a value rather than inserting a new
+value).  Note that the TTL value is _always_ set (if provided) when adding a
+new entry into the cache.
 
-    Boolean, default `false`
+This may be passed as an option to `cache.set()`.
 
-* `allowStale` - By default, if you set `ttl`, it'll only delete stale
-  items from the cache when you `get(key)`.  That is, it's not
-  preemptively pruning items.
+Boolean, default false.
 
-    If you set `allowStale:true`, it'll return the stale value as well as
-    deleting it.  If you don't set this, then it'll return `undefined` when
-    you try to get a stale entry.
+### `ttlResolution`
 
-    Note that when a stale entry is fetched, _even if it is returned due to
-    `allowStale` being set_, it is removed from the cache immediately.  You
-    can immediately put it back in the cache if you wish, thus resetting the
-    TTL.
+Minimum amount of time in ms in which to check for staleness.  Defaults to `1`,
+which means that the current time is checked at most once per millisecond.
 
-    This may be overridden by passing an options object to `cache.get()`.
-    The `cache.has()` method will always return `false` for stale items.
+Set to `0` to check the current time every time staleness is tested.
 
-    Boolean, default false, only relevant if `ttl` is set.
+Note that setting this to a higher value _will_ improve performance somewhat
+while using ttl tracking, albeit at the expense of keeping stale items around a
+bit longer than intended.
 
-    Deprecated alias: `stale`
+### `ttlAutopurge`
 
-* `updateAgeOnGet` - When using time-expiring entries with `ttl`, setting
-  this to `true` will make each item's age reset to 0 whenever it is
-  retrieved from cache with `get()`, causing it to not expire.  (It can
-  still fall out of cache based on recency of use, of course.)
+Preemptively remove stale items from the cache.
 
-    This may be overridden by passing an options object to `cache.get()`.
+Note that this may _significantly_ degrade performance, especially if the cache
+is storing a large number of items.  It is almost always best to just leave the
+stale items in the cache, and let them fall out as new items are added.
 
-    Boolean, default false, only relevant if `ttl` is set.
+Note that this means that `allowStale` is a bit pointless, as stale items will
+be deleted almost as soon as they expire.
 
-* `updateAgeOnHas` - When using time-expiring entries with `ttl`, setting
-  this to `true` will make each item's age reset to 0 whenever its presence
-  in the cache is checked with `has()`, causing it to not expire.  (It can
-  still fall out of cache based on recency of use, of course.)
+Use with caution!
 
-    This may be overridden by passing an options object to `cache.has()`.
+Boolean, default `false`
 
-    Boolean, default false, only relevant if `ttl` is set.
+### `allowStale`
+
+By default, if you set `ttl`, it'll only delete stale items from the cache when
+you `get(key)`.  That is, it's not preemptively pruning items.
+
+If you set `allowStale:true`, it'll return the stale value as well as deleting
+it.  If you don't set this, then it'll return `undefined` when you try to get a
+stale entry.
+
+Note that when a stale entry is fetched, _even if it is returned due to
+`allowStale` being set_, it is removed from the cache immediately.  You can
+immediately put it back in the cache if you wish, thus resetting the TTL.
+
+This may be overridden by passing an options object to `cache.get()`.  The
+`cache.has()` method will always return `false` for stale items.
+
+Boolean, default false, only relevant if `ttl` is set.
+
+Deprecated alias: `stale`
+
+### `updateAgeOnGet`
+
+When using time-expiring entries with `ttl`, setting this to `true` will make
+each item's age reset to 0 whenever it is retrieved from cache with `get()`,
+causing it to not expire.  (It can still fall out of cache based on recency of
+use, of course.)
+
+This may be overridden by passing an options object to `cache.get()`.
+
+Boolean, default false, only relevant if `ttl` is set.
+
+### `updateAgeOnHas`
+
+When using time-expiring entries with `ttl`, setting this to `true` will make
+each item's age reset to 0 whenever its presence in the cache is checked with
+`has()`, causing it to not expire.  (It can still fall out of cache based on
+recency of use, of course.)
+
+This may be overridden by passing an options object to `cache.has()`.
+
+Boolean, default false, only relevant if `ttl` is set.
 
 ## API
 
-* `new LRUCache(options)`
+### `new LRUCache(options)`
 
-    Create a new LRUCache.  All options are documented above, and are on
-    the cache as public members.
+Create a new LRUCache.  All options are documented above, and are on the cache
+as public members.
 
-* `cache.max`, `cache.maxSize`, `cache.allowStale`, `cache.noDisposeOnSet`,
-  `cache.sizeCalculation`, `cache.dispose`, `cache.maxSize`, `cache.ttl`,
-  `cache.updateAgeOnGet`, `cache.updateAgeOnHas`
+### `cache.max`, `cache.maxSize`, `cache.allowStale`, `cache.noDisposeOnSet`, `cache.sizeCalculation`, `cache.dispose`, `cache.maxSize`, `cache.ttl`, `cache.updateAgeOnGet`, `cache.updateAgeOnHas`
 
-    All option names are exposed as public members on the cache object.
+All option names are exposed as public members on the cache object.
 
-    These are intended for read access only.  Changing them during program
-    operation can cause undefined behavior.
+These are intended for read access only.  Changing them during program
+operation can cause undefined behavior.
 
-* `cache.size`
+### `cache.size`
 
-    The total number of items held in the cache at the current moment.
+The total number of items held in the cache at the current moment.
 
-* `cache.calculatedSize`
+### `cache.calculatedSize`
 
-    The total size of items in cache when using size tracking.
+The total size of items in cache when using size tracking.
 
-* `set(key, value, [{ size, sizeCalculation, ttl, noDisposeOnSet }])`
+### `set(key, value, [{ size, sizeCalculation, ttl, noDisposeOnSet }])`
 
-    Add a value to the cache.
+Add a value to the cache.
 
-    Optional options object may contain `ttl` and `sizeCalculation` as
-    described above, which default to the settings on the cache object.
+Optional options object may contain `ttl` and `sizeCalculation` as described
+above, which default to the settings on the cache object.
 
-    Options object my also include `size`, which will prevent calling the
-    `sizeCalculation` function and just use the specified number if it is a
-    positive integer, and `noDisposeOnSet` which will prevent calling a
-    `dispose` function in the case of overwrites.
+Options object my also include `size`, which will prevent calling the
+`sizeCalculation` function and just use the specified number if it is a
+positive integer, and `noDisposeOnSet` which will prevent calling a `dispose`
+function in the case of overwrites.
 
-    Will update the recency of the entry.
+Will update the recency of the entry.
 
-    Returns the cache object.
+Returns the cache object.
 
-* `get(key, { updateAgeOnGet, allowStale } = {}) => value`
+### `get(key, { updateAgeOnGet, allowStale } = {}) => value`
 
-    Return a value from the cache.
+Return a value from the cache.
 
-    Will update the recency of the cache entry found.
+Will update the recency of the cache entry found.
 
-    If the key is not found, `get()` will return `undefined`.  This can be
-    confusing when setting values specifically to `undefined`, as in
-    `cache.set(key, undefined)`.  Use `cache.has()` to determine whether a
-    key is present in the cache at all.
+If the key is not found, `get()` will return `undefined`.  This can be
+confusing when setting values specifically to `undefined`, as in
+`cache.set(key, undefined)`.  Use `cache.has()` to determine whether a key is
+present in the cache at all.
 
-* `async fetch(key, { updateAgeOnGet, allowStale, size, sizeCalculation, ttl, noDisposeOnSet  } = {}) => Promise`
+### `async fetch(key, { updateAgeOnGet, allowStale, size, sizeCalculation, ttl, noDisposeOnSet  } = {}) => Promise`
 
-    If the value is in the cache and not stale, then the returned Promise
-    resolves to the value.
+If the value is in the cache and not stale, then the returned Promise resolves
+to the value.
 
-    If not in the cache, or beyond its TTL staleness, then
-    `fetchMethod(key, staleValue, options)` is called, and the value
-    returned will be added to the cache once resolved.
+If not in the cache, or beyond its TTL staleness, then
+`fetchMethod(key, staleValue, options)` is called, and the value
+returned will be added to the cache once resolved.
 
-    If called with `allowStale`, and an asynchronous fetch is currently in
-    progress to reload a stale value, then the former stale value will be
-    returned.
+If called with `allowStale`, and an asynchronous fetch is currently in progress
+to reload a stale value, then the former stale value will be returned.
 
-    Multiple fetches for the same `key` will only call `fetchMethod` a
-    single time, and all will be resolved when the value is resolved, even
-    if different options are used.
+Multiple fetches for the same `key` will only call `fetchMethod` a single time,
+and all will be resolved when the value is resolved, even if different options
+are used.
 
-    If `fetchMethod` is not specified, then this is effectively an alias
-    for `Promise.resolve(cache.get(key))`.
+If `fetchMethod` is not specified, then this is effectively an alias for
+`Promise.resolve(cache.get(key))`.
 
-    When the fetch method resolves to a value, if the fetch has not been
-    aborted due to deletion, eviction, or being overwritten, then it is
-    added to the cache using the options provided.
+When the fetch method resolves to a value, if the fetch has not been aborted
+due to deletion, eviction, or being overwritten, then it is added to the cache
+using the options provided.
 
-* `peek(key, { allowStale } = {}) => value`
+### `peek(key, { allowStale } = {}) => value`
 
-    Like `get()` but doesn't update recency or delete stale items.
+Like `get()` but doesn't update recency or delete stale items.
 
-    Returns `undefined` if the item is stale, unless `allowStale` is set
-    either on the cache or in the options object.
+Returns `undefined` if the item is stale, unless `allowStale` is set either on
+the cache or in the options object.
 
-* `has(key, { updateAgeOnHas } = {}) => Boolean`
+### `has(key, { updateAgeOnHas } = {}) => Boolean`
 
-    Check if a key is in the cache, without updating the recency of use.
-    Age is updated if `updateAgeOnHas` is set to `true` in either the
-    options or the constructor.
+Check if a key is in the cache, without updating the recency of use.  Age is
+updated if `updateAgeOnHas` is set to `true` in either the options or the
+constructor.
 
-    Will return `false` if the item is stale, even though it is technically
-    in the cache.
+Will return `false` if the item is stale, even though it is technically in the
+cache.
 
-* `delete(key)`
+### `delete(key)`
 
-    Deletes a key out of the cache.
+Deletes a key out of the cache.
 
-    Returns `true` if the key was deleted, `false` otherwise.
+Returns `true` if the key was deleted, `false` otherwise.
 
-* `clear()`
+### `clear()`
 
-    Clear the cache entirely, throwing away all values.
+Clear the cache entirely, throwing away all values.
 
-    Deprecated alias: `reset()`
+Deprecated alias: `reset()`
 
-* `keys()`
+### `keys()`
 
-    Return a generator yielding the keys in the cache, in order from most
-    recently used to least recently used.
+Return a generator yielding the keys in the cache, in order from most recently
+used to least recently used.
 
-* `rkeys()`
+### `rkeys()`
 
-    Return a generator yielding the keys in the cache, in order from least
-    recently used to most recently used.
+Return a generator yielding the keys in the cache, in order from least recently
+used to most recently used.
 
-* `values()`
+### `values()`
 
-    Return a generator yielding the values in the cache, in order from most
-    recently used to least recently used.
+Return a generator yielding the values in the cache, in order from most
+recently used to least recently used.
 
-* `rvalues()`
+### `rvalues()`
 
-    Return a generator yielding the values in the cache, in order from
-    least recently used to most recently used.
+Return a generator yielding the values in the cache, in order from least
+recently used to most recently used.
 
-* `entries()`
+### `entries()`
 
-    Return a generator yielding `[key, value]` pairs, in order from most
-    recently used to least recently used.
+Return a generator yielding `[key, value]` pairs, in order from most recently
+used to least recently used.
 
-* `rentries()`
+### `rentries()`
 
-    Return a generator yielding `[key, value]` pairs, in order from least
-    recently used to most recently used.
+Return a generator yielding `[key, value]` pairs, in order from least recently
+used to most recently used.
 
-* `find(fn, [getOptions])`
+### `find(fn, [getOptions])`
 
-    Find a value for which the supplied `fn` method returns a truthy value,
-    similar to `Array.find()`.
+Find a value for which the supplied `fn` method returns a truthy value, similar
+to `Array.find()`.
 
-    `fn` is called as `fn(value, key, cache)`.
+`fn` is called as `fn(value, key, cache)`.
 
-    The optional `getOptions` are applied to the resulting `get()` of the
-    item found.
+The optional `getOptions` are applied to the resulting `get()` of the item
+found.
 
-* `dump()`
+### `dump()`
 
-    Return an array of `[key, entry]` objects which can be passed to
-    `cache.load()`
+Return an array of `[key, entry]` objects which can be passed to `cache.load()`
 
-    Note: this returns an actual array, not a generator, so it can be more
-    easily passed around.
+Note: this returns an actual array, not a generator, so it can be more easily
+passed around.
 
-* `load(entries)`
+### `load(entries)`
 
-    Reset the cache and load in the items in `entries` in the order listed.
-    Note that the shape of the resulting cache may be different if the same
-    options are not used in both caches.
+Reset the cache and load in the items in `entries` in the order listed.  Note
+that the shape of the resulting cache may be different if the same options are
+not used in both caches.
 
-* `purgeStale()`
+### `purgeStale()`
 
-    Delete any stale entries.  Returns `true` if anything was removed,
-    `false` otherwise.
+Delete any stale entries.  Returns `true` if anything was removed, `false`
+otherwise.
 
-    Deprecated alias: `prune`
+Deprecated alias: `prune`
 
-* `getRemainingTTL(key)`
+### `getRemainingTTL(key)`
 
-    Return the number of ms left in the item's TTL.  If item is not in
-    cache, returns `0`.  Returns `Infinity` if item is in cache without a
-    defined TTL.
+Return the number of ms left in the item's TTL.  If item is not in cache,
+returns `0`.  Returns `Infinity` if item is in cache without a defined TTL.
 
-* `forEach(fn, [thisp])`
+### `forEach(fn, [thisp])`
 
-    Call the `fn` function with each set of `fn(value, key, cache)` in the
-    LRU cache, from most recent to least recently used.
+Call the `fn` function with each set of `fn(value, key, cache)` in the LRU
+cache, from most recent to least recently used.
 
-    Does not affect recency of use.
+Does not affect recency of use.
 
-    If `thisp` is provided, function will be called in the `this`-context
-    of the provided object.
+If `thisp` is provided, function will be called in the `this`-context of the
+provided object.
 
-* `rforEach(fn, [thisp])`
+### `rforEach(fn, [thisp])`
 
-    Same as `cache.forEach(fn, thisp)`, but in order from least recently
-    used to most recently used.
+Same as `cache.forEach(fn, thisp)`, but in order from least recently used to
+most recently used.
 
-* `pop()`
+### `pop()`
 
-    Evict the least recently used item, returning its value.
+Evict the least recently used item, returning its value.
 
-    Returns `undefined` if cache is empty.
+Returns `undefined` if cache is empty.
 
 ### Internal Methods and Properties
 
@@ -519,8 +528,8 @@ methods are exposed on the object as normal properties, rather than being
 accessed via Symbols, private members, or closure variables.
 
 **Do not use or rely on these.**  They will change or be removed without
-notice.  They will cause undefined behavior if used inappropriately.  There
-is no need or reason to ever call them directly.
+notice.  They will cause undefined behavior if used inappropriately.  There is
+no need or reason to ever call them directly.
 
 This documentation is here so that it is especially clear that this not
 "undocumented" because someone forgot; it _is_ documented, and the
