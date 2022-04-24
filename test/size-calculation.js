@@ -8,6 +8,18 @@ t.test('store strings, size = length', t => {
     maxSize: 100,
     sizeCalculation: n => n.length,
   })
+
+  c.set(5, 'x'.repeat(5))
+  c.set(10, 'x'.repeat(10))
+  c.set(20, 'x'.repeat(20))
+  t.equal(c.calculatedSize, 35)
+  c.delete(20)
+  t.equal(c.calculatedSize, 15)
+  c.delete(5)
+  t.equal(c.calculatedSize, 10)
+  c.clear()
+  t.equal(c.calculatedSize, 0)
+
   const s = 'x'.repeat(10)
   for (let i = 0; i < 5; i++) {
     c.set(i, s)
