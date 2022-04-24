@@ -306,15 +306,6 @@ class LRUCache {
       }
       this.calculatedSize += this.sizes[index]
     }
-    this.delete = k => {
-      if (this.size !== 0) {
-        const index = this.keyMap.get(k)
-        if (index !== undefined) {
-          this.calculatedSize -= this.sizes[index]
-        }
-      }
-      return LRUCache.prototype.delete.call(this, k)
-    }
   }
   removeItemSize (index) {}
   addItemSize (index, v, k, size) {}
