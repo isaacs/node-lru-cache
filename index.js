@@ -7,9 +7,39 @@ const hasAbortController = typeof AbortController !== 'undefined'
 const AC = hasAbortController ? AbortController : Object.assign(
   class AbortController {
     constructor () { this.signal = new AC.AbortSignal }
-    abort () { this.signal.aborted = true }
+    abort () {
+      this.signal.dispatchEvent('abort')
+    }
   },
-  { AbortSignal: class AbortSignal { constructor () { this.aborted = false }}}
+  {
+    AbortSignal: class AbortSignal {
+      constructor () {
+        this.aborted = false
+        this._listeners = []
+      }
+      dispatchEvent (type) {
+        if (type === 'abort') {
+          this.aborted = true
+          const e = { type, target: this }
+          if (typeof this.onabort === 'function') {
+            this.onabort(e)
+          }
+          this._listeners.forEach(f => f(e), this)
+        }
+      }
+      onabort () {}
+      addEventListener (ev, fn) {
+        if (ev === 'abort') {
+          this._listeners.push(fn)
+        }
+      }
+      removeEventListener (ev, fn) {
+        if (ev === 'abort') {
+          this._listeners = this._listeners.filter(f => f !== fn)
+        }
+      }
+    }
+  }
 )
 
 const warned = new Set()
