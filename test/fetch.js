@@ -7,17 +7,12 @@ const clock = new Clock()
 t.teardown(clock.enter())
 clock.advance(1)
 
+const LRU = require('../')
+
 // if we're on a version that *doesn't* have a native AbortController,
 // put the polyfill in there to start with, so LRU covers both cases.
-global.AbortController = global.AbortController || Object.assign(
-  class AbortController {
-    constructor () { this.signal = new global.AbortController.AbortSignal }
-    abort () { this.signal.aborted = true }
-  },
-  { AbortSignal: class AbortSignal { constructor () { this.aborted = false }}}
-)
+global.AbortController = LRU.AbortController
 
-const LRU = require('../')
 const c = new LRU({
   fetchMethod: fn,
   max: 5,

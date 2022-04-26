@@ -140,9 +140,15 @@ Function that is used to make background asynchronous fetches.  Called with
 If `fetchMethod` is not provided, then `cache.fetch(key)` is equivalent to
 `Promise.resolve(cache.get(key))`.
 
-The `signal` object is an `AbortSignal`.  If at any time, `signal.aborted` is
-set to `true`, then that means that the fetch should be abandoned.  This may be
-passed along to async functions aware of AbortController/AbortSignal behavior.
+The `signal` object is an `AbortSignal` if that's available in
+the global object, otherwise it's a pretty close polyfill.
+
+If at any time, `signal.aborted` is set to `true`, or if the
+`signal.onabort` method is called, or if it emits an `'abort'`
+event which you can listen to with `addEventListener`, then that
+means that the fetch should be abandoned.  This may be passed
+along to async functions aware of AbortController/AbortSignal
+behavior.
 
 The `options` object is a union of the options that may be provided to `set()`
 and `get()`.  If they are modified, then that will result in modifying the
