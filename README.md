@@ -31,60 +31,40 @@ const LRU = require('lru-cache')
 
 // At least one of 'max', 'ttl', or 'maxSize' is required, to prevent
 // unsafe unbounded storage.
+//
 // In most cases, it's best to specify a max for performance, so all
 // the required memory allocation is done up-front.
+//
+// All the other options are optional, see the sections below for
+// documentation on what each one does.  Most of them can be
+// overridden for specific items in get()/set()
 const options = {
-  // the number of most recently used items to keep.
-  // note that we may store fewer items than this if maxSize is hit.
+  max: 500,
 
-  max: 500, // <-- Technically optional, but see "Storage Bounds Safety" below
-
-  // if you wish to track item size, you must provide a maxSize
-  // note that we still will only keep up to max *actual items*,
-  // so size tracking may cause fewer than max items to be stored.
-  // At the extreme, a single item of maxSize size will cause everything
-  // else in the cache to be dropped when it is added.  Use with caution!
-  // Note also that size tracking can negatively impact performance,
-  // though for most cases, only minimally.
+  // for use with tracking overall storage size
   maxSize: 5000,
-
-  // function to calculate size of items.  useful if storing strings or
-  // buffers or other items where memory size depends on the object itself.
-  // also note that oversized items do NOT immediately get dropped from
-  // the cache, though they will cause faster turnover in the storage.
   sizeCalculation: (value, key) => {
-    // return an positive integer which is the size of the item,
-    // if a positive integer is not returned, will use 0 as the size.
     return 1
   },
 
-  // function to call when the item is removed from the cache
-  // Note that using this can negatively impact performance.
+  // for use when you need to clean up something when objects
+  // are evicted from the cache
   dispose: (value, key) => {
     freeFromMemoryOrWhatever(value)
   },
 
-  // max time to live for items before they are considered stale
-  // note that stale items are NOT preemptively removed by default,
-  // and MAY live in the cache, contributing to its LRU max, long after
-  // they have expired.
-  // Also, as this cache is optimized for LRU/MRU operations, some of
-  // the staleness/TTL checks will reduce performance, as they will incur
-  // overhead by deleting items.
-  // Must be a positive integer in ms, defaults to 0, which means "no TTL"
+  // how long to live in ms
   ttl: 1000 * 60 * 5,
 
-  // return stale items from cache.get() before disposing of them
-  // boolean, default false
+  // return stale items before removing from cache?
   allowStale: false,
 
-  // update the age of items on cache.get(), renewing their TTL
-  // boolean, default false
   updateAgeOnGet: false,
-
-  // update the age of items on cache.has(), renewing their TTL
-  // boolean, default false
   updateAgeOnHas: false,
+
+  // async method to use for cache.fetch(), for
+  // stale-while-revalidate type of behavior
+  fetch: async (key, staleValue, { options, signal }) => {}
 }
 
 const cache = new LRU(options)
