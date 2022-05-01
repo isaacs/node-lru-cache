@@ -1,5 +1,10 @@
 # cringe lorg
 
+## 7.9.0
+
+* Better AbortController polyfill, supporting
+  `signal.addEventListener('abort')` and `signal.onabort`.
+
 ## 7.8.0
 
 * add `updateAgeOnHas` option
