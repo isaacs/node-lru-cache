@@ -164,6 +164,23 @@ value is resolved.  For example, a DNS cache may update the TTL
 based on the value returned from a remote DNS server by changing
 `options.ttl` in the `fetchMethod`.
 
+### `noDeleteOnFetchRejection`
+
+If a `fetchMethod` throws an error or returns a rejected promise,
+then by default, any existing stale value will be removed from
+the cache.
+
+If `noDeleteOnFetchRejection` is set to `true`, then this
+behavior is suppressed, and the stale value remains in the cache
+in the case of a rejected `fetchMethod`.
+
+This is important in cases where a `fetchMethod` is _only_ called
+as a background update while the stale value is returned, when
+`allowStale` is used.
+
+This may be set in calls to `fetch()`, or defaulted on the
+constructor.
+
 ### `dispose`
 
 Function that is called on items when they are dropped from the

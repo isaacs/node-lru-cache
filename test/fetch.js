@@ -276,3 +276,63 @@ t.test('fetchMethod throws', async t => {
   t.equal(cache.get('a'), 99, 'did not delete new value')
   t.rejects(cache.fetch('b'), { message: 'fetch failure' })
 })
+
+t.test('fetchMethod throws, noDeleteOnFetchRejection option', async t => {
+  // make sure that even if there's no one to sit around and wait for it,
+  // the background fetch throwing doesn't blow anything up.
+  let fetchFail = true
+  const cache = new LRU({
+    max: 10,
+    ttl: 10,
+    allowStale: true,
+    noDeleteOnFetchRejection: true,
+    fetchMethod: async k => {
+      if (fetchFail) {
+        throw new Error('fetch failure')
+      } else {
+        return true
+      }
+    },
+  })
+  // seed the cache, and make the values stale.
+  // this simulates the case where the fetch() DID work,
+  // and replaced the promise with the resolution, but
+  // then they got stale.
+  cache.set('a', 1)
+  cache.set('b', 2)
+  clock.advance(20)
+  await Promise.resolve().then(() => {})
+  const a = await Promise.all([
+    cache.fetch('a'),
+    cache.fetch('a'),
+    cache.fetch('a'),
+  ])
+  t.strictSame(a, [1, 1, 1])
+  // clock advances, promise rejects
+  clock.advance(20)
+  await Promise.resolve().then(() => {})
+  t.equal(cache.valList[cache.keyMap.get('a')], 1,
+    'promise replaced with stale value')
+  const b = await Promise.all([
+    cache.fetch('b'),
+    cache.fetch('b'),
+    cache.fetch('b'),
+  ])
+  t.strictSame(b, [2, 2, 2])
+  clock.advance(20)
+  await Promise.resolve().then(() => {})
+  t.equal(cache.valList[cache.keyMap.get('b')], 2,
+    'promise replaced with stale value')
+  cache.delete('a')
+  cache.delete('b')
+
+  // even though we don't noDeleteOnFetchRejection,
+  // if there's no stale, we still remove the *promise*.
+  const ap = cache.fetch('a')
+  cache.set('a', 99)
+  await t.rejects(ap, { message: 'fetch failure' })
+  t.equal(cache.get('a'), 99, 'did not delete, was replaced')
+  await t.rejects(cache.fetch('b'), { message: 'fetch failure' })
+  t.equal(cache.keyMap.get('b'), undefined, 'not in cache')
+  t.equal(cache.valList[1], null, 'not in cache')
+})

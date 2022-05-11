@@ -141,6 +141,7 @@ class LRUCache {
       maxSize = 0,
       sizeCalculation,
       fetchMethod,
+      noDeleteOnFetchRejection,
     } = options
 
     // deprecated options, don't trigger a warning for getting them if
@@ -200,6 +201,7 @@ class LRUCache {
     }
     this.noDisposeOnSet = !!noDisposeOnSet
     this.noUpdateTTL = !!noUpdateTTL
+    this.noDeleteOnFetchRejection = !!noDeleteOnFetchRejection
 
     if (this.maxSize !== 0) {
       if (!isPosInt(this.maxSize)) {
@@ -626,7 +628,15 @@ class LRUCache {
     }
     const eb = er => {
       if (this.valList[index] === p) {
-        this.delete(k)
+        const del = !options.noDeleteOnFetchRejection ||
+          p.__staleWhileFetching === undefined
+        if (del) {
+          this.delete(k)
+        } else {
+          // still replace the *promise* with the stale value,
+          // since we are done with the promise at this point.
+          this.valList[index] = p.__staleWhileFetching
+        }
       }
       if (p.__returned === p) {
         throw er
@@ -662,6 +672,7 @@ class LRUCache {
     size = 0,
     sizeCalculation = this.sizeCalculation,
     noUpdateTTL = this.noUpdateTTL,
+    noDeleteOnFetchRejection = this.noDeleteOnFetchRejection,
   } = {}) {
     if (!this.fetchMethod) {
       return this.get(k, {allowStale, updateAgeOnGet})
@@ -675,6 +686,7 @@ class LRUCache {
       size,
       sizeCalculation,
       noUpdateTTL,
+      noDeleteOnFetchRejection,
     }
 
     let index = this.keyMap.get(k)

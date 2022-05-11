@@ -1,5 +1,10 @@
 # cringe lorg
 
+## 7.10.0
+
+* Add `noDeleteOnFetchRejection` option, to suppress behavior
+  where a failed `fetch` will delete a previous stale value.
+
 ## 7.9.0
 
 * Better AbortController polyfill, supporting
