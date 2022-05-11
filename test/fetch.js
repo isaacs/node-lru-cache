@@ -228,3 +228,48 @@ t.test('fetch options, signal, with polyfill', async t => {
   const v5 = await c.fetch(2, { ttl: 1 })
   t.equal(c.getRemainingTTL(2), 25, 'overridden ttl in fetchMethod')
 })
+
+t.test('fetchMethod throws', async t => {
+  // make sure that even if there's no one to sit around and wait for it,
+  // the background fetch throwing doesn't blow anything up.
+  const cache = new LRU({
+    max: 10,
+    ttl: 10,
+    allowStale: true,
+    fetchMethod: async () => {
+      throw new Error('fetch failure')
+    },
+  })
+  // seed the cache, and make the values stale.
+  // this simulates the case where the fetch() DID work,
+  // and replaced the promise with the resolution, but
+  // then they got stale.
+  cache.set('a', 1)
+  cache.set('b', 2)
+  clock.advance(20)
+  await Promise.resolve().then(() => {})
+  const a = await Promise.all([
+    cache.fetch('a'),
+    cache.fetch('a'),
+    cache.fetch('a'),
+  ])
+  t.strictSame(a, [1, 1, 1])
+  // clock advances, promise rejects
+  clock.advance(20)
+  await Promise.resolve().then(() => {})
+  t.equal(cache.get('a'), undefined, 'removed from cache')
+  const b = await Promise.all([
+    cache.fetch('b'),
+    cache.fetch('b'),
+    cache.fetch('b'),
+  ])
+  t.strictSame(b, [2, 2, 2])
+  clock.advance(20)
+  await Promise.resolve().then(() => {})
+  t.equal(cache.get('b'), undefined, 'removed from cache')
+  const ap = cache.fetch('a')
+  cache.set('a', 99)
+  await t.rejects(ap, { message: 'fetch failure' })
+  t.equal(cache.get('a'), 99, 'did not delete new value')
+  t.rejects(cache.fetch('b'), { message: 'fetch failure' })
+})

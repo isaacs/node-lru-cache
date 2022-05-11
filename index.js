@@ -618,14 +618,25 @@ class LRUCache {
       signal: ac.signal,
       options,
     }
-    const p = Promise.resolve(this.fetchMethod(k, v, fetchOpts)).then(v => {
+    const cb = v => {
       if (!ac.signal.aborted) {
         this.set(k, v, fetchOpts.options)
       }
       return v
-    })
+    }
+    const eb = er => {
+      if (this.valList[index] === p) {
+        this.delete(k)
+      }
+      if (p.__returned === p) {
+        throw er
+      }
+    }
+    const pcall = res => res(this.fetchMethod(k, v, fetchOpts))
+    const p = new Promise(pcall).then(cb, eb)
     p.__abortController = ac
     p.__staleWhileFetching = v
+    p.__returned = null
     if (index === undefined) {
       this.set(k, p, fetchOpts.options)
       index = this.keyMap.get(k)
@@ -637,7 +648,9 @@ class LRUCache {
 
   isBackgroundFetch (p) {
     return p && typeof p === 'object' && typeof p.then === 'function' &&
-      Object.prototype.hasOwnProperty.call(p, '__staleWhileFetching')
+      Object.prototype.hasOwnProperty.call(p, '__staleWhileFetching') &&
+      Object.prototype.hasOwnProperty.call(p, '__returned') &&
+      (p.__returned === p || p.__returned === null)
   }
 
   // this takes the union of get() and set() opts, because it does both
@@ -666,13 +679,14 @@ class LRUCache {
 
     let index = this.keyMap.get(k)
     if (index === undefined) {
-      return this.backgroundFetch(k, index, options)
+      const p = this.backgroundFetch(k, index, options)
+      return (p.__returned = p)
     } else {
       // in cache, maybe already fetching
       const v = this.valList[index]
       if (this.isBackgroundFetch(v)) {
         return allowStale && v.__staleWhileFetching !== undefined
-          ? v.__staleWhileFetching : v
+          ? v.__staleWhileFetching : (v.__returned = v)
       }
 
       if (!this.isStale(index)) {
@@ -687,7 +701,7 @@ class LRUCache {
       // refresh the cache.
       const p = this.backgroundFetch(k, index, options)
       return allowStale && p.__staleWhileFetching !== undefined
-        ? p.__staleWhileFetching : p
+        ? p.__staleWhileFetching : (p.__returned = p)
     }
   }
 
