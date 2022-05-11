@@ -262,7 +262,7 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
   // tslint:disable-next-line:no-unnecessary-generics
   public fetch<ExpectedValue = V>(
     key: K,
-    options?: LRUCache.FetchOptions
+    options?: LRUCache.FetchOptions<K, V>
   ): Promise<ExpectedValue | undefined>
 
   /**
@@ -300,7 +300,7 @@ declare namespace LRUCache {
      *
      * @deprecated since 7.0 use options.sizeCalculation instead
      */
-    length?: SizeCalculator
+    length?: SizeCalculator<K, V>
 
     /**
      * alias for allowStale
