@@ -2,8 +2,9 @@ if (typeof performance === 'undefined') {
   global.performance = require('perf_hooks').performance
 }
 
-const t = require('tap')
-const LRU = require('../')
+import t from 'tap'
+import LRU from '../'
+import { expose } from './fixtures/expose'
 
 t.test('basic operation', t => {
   const c = new LRU({ max: 10 })
@@ -15,8 +16,16 @@ t.test('basic operation', t => {
   }
   t.equal(c.size, 5)
   t.matchSnapshot(c.entries())
-  t.equal(c.getRemainingTTL(1), Infinity, 'no ttl, so returns Infinity')
-  t.equal(c.getRemainingTTL('not in cache'), 0, 'not in cache, no ttl')
+  t.equal(
+    c.getRemainingTTL(1),
+    Infinity,
+    'no ttl, so returns Infinity'
+  )
+  t.equal(
+    c.getRemainingTTL('not in cache'),
+    0,
+    'not in cache, no ttl'
+  )
 
   for (let i = 5; i < 10; i++) {
     c.set(i, i)
@@ -80,8 +89,11 @@ t.test('basic operation', t => {
 })
 
 t.test('bad max values', t => {
+  // @ts-expect-error
   t.throws(() => new LRU())
+  // @ts-expect-error
   t.throws(() => new LRU(123))
+  // @ts-expect-error
   t.throws(() => new LRU(null))
   t.throws(() => new LRU({ max: -123 }))
   t.throws(() => new LRU({ max: 0 }))
@@ -96,12 +108,20 @@ t.test('bad max values', t => {
   t.throws(() => sizeOnly.set('foo', 'bar'), TypeError)
   t.throws(() => sizeOnly.set('foo', 'bar', { size: 0 }), TypeError)
   t.throws(() => sizeOnly.set('foo', 'bar', { size: -1 }), TypeError)
-  t.throws(() => sizeOnly.set('foo', 'bar', {
-    sizeCalculation: () => -1,
-  }), TypeError)
-  t.throws(() => sizeOnly.set('foo', 'bar', {
-    sizeCalculation: () => 0,
-  }), TypeError)
+  t.throws(
+    () =>
+      sizeOnly.set('foo', 'bar', {
+        sizeCalculation: () => -1,
+      }),
+    TypeError
+  )
+  t.throws(
+    () =>
+      sizeOnly.set('foo', 'bar', {
+        sizeCalculation: () => 0,
+      }),
+    TypeError
+  )
 
   const ttlOnly = new LRU({ ttl: 1000, ttlAutopurge: true })
   // cannot set size when not tracking size
@@ -109,12 +129,14 @@ t.test('bad max values', t => {
   t.throws(() => ttlOnly.set('foo', 'bar', { size: 1 }), TypeError)
 
   const sizeTTL = new LRU({ maxSize: 100, ttl: 1000 })
+  t.type(sizeTTL, LRU)
   t.end()
 })
 
 t.test('setting ttl with non-integer values', t => {
   t.throws(() => new LRU({ max: 10, ttl: 10.5 }), TypeError)
   t.throws(() => new LRU({ max: 10, ttl: -10 }), TypeError)
+  // @ts-expect-error
   t.throws(() => new LRU({ max: 10, ttl: 'banana' }), TypeError)
   t.throws(() => new LRU({ max: 10, ttl: Infinity }), TypeError)
   t.end()
@@ -123,14 +145,21 @@ t.test('setting ttl with non-integer values', t => {
 t.test('setting maxSize with non-integer values', t => {
   t.throws(() => new LRU({ max: 10, maxSize: 10.5 }), TypeError)
   t.throws(() => new LRU({ max: 10, maxSize: -10 }), TypeError)
+  // @ts-expect-error
   t.throws(() => new LRU({ max: 10, maxSize: 'banana' }), TypeError)
   t.throws(() => new LRU({ max: 10, maxSize: Infinity }), TypeError)
   t.end()
 })
 
 t.test('bad sizeCalculation', t => {
-  t.throws(() => new LRU({ max: 1, sizeCalculation: true }), TypeError)
-  t.throws(() => new LRU({ max: 1, maxSize: 1, sizeCalculation: true }), TypeError)
+  t.throws(() => {
+    // @ts-expect-error
+    new LRU({ max: 1, sizeCalculation: true })
+  }, TypeError)
+  t.throws(() => {
+    // @ts-expect-error
+    new LRU({ max: 1, maxSize: 1, sizeCalculation: true })
+  }, TypeError)
   t.end()
 })
 
@@ -141,7 +170,7 @@ t.test('delete from middle, reuses that index', t => {
   }
   c.delete(2)
   c.set(5, 5)
-  t.strictSame(c.valList, [0, 1, 5, 3, 4])
+  t.strictSame(expose(c).valList, [0, 1, 5, 3, 4])
   t.end()
 })
 
@@ -162,6 +191,14 @@ t.test('re-use key before initial fill completed', t => {
   c.set(2, 2)
   c.set(1, 2)
   c.set(3, 3)
-  t.same([...c.entries()], [ [ 3, 3 ], [ 1, 2 ], [ 2, 2 ], [ 0, 0 ] ])
+  t.same(
+    [...c.entries()],
+    [
+      [3, 3],
+      [1, 2],
+      [2, 2],
+      [0, 0],
+    ]
+  )
   t.end()
 })

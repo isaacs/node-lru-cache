@@ -1,7 +1,7 @@
-const t = require('tap')
-const LRU = require('../')
+import t from 'tap'
+import LRU from '../'
 
-const warnings = []
+const warnings:any[] = []
 process.emitWarning = (...w) => warnings.push(w)
 
 t.test('warns exactly once for a given deprecation', t => {
@@ -10,7 +10,7 @@ t.test('warns exactly once for a given deprecation', t => {
     maxSize: 100,
     maxAge: 1000,
     stale: true,
-    length: n => 1,
+    length: () => 1,
   })
   c.reset()
   t.equal(c.length, 0)
@@ -29,7 +29,7 @@ t.test('warns exactly once for a given deprecation', t => {
     maxSize: 100,
     maxAge: 1000,
     stale: true,
-    length: n => 1,
+    length: () => 1,
   })
   d.reset()
 
@@ -46,28 +46,34 @@ t.test('warns exactly once for a given deprecation', t => {
 
 t.test('does not do deprecation warning without process object', t => {
   // set process to null (emulate a browser)
-  const proc = process
+  const proc = global.process
   const {error} = console
   t.teardown(() => {
     global.process = proc
     console.error = error
   })
-  const consoleErrors = []
+  const consoleErrors:any[] = []
   console.error = (...a) => consoleErrors.push(a)
-  global.process = null
-  const LRU = t.mock('../')
+  // @ts-ignore
+  global.process = {
+    ...proc,
+    // @ts-ignore
+    emitWarning: null,
+  }
+  const LRU = t.mock('../', {})
   const c = new LRU({
     max: 100,
     maxSize: 100,
     maxAge: 1000,
     stale: true,
-    length: n => 1,
+    length: () => 1,
   })
   c.reset()
   t.equal(c.length, 0)
   t.equal(c.prune, c.purgeStale)
   t.equal(c.reset, c.clear)
   t.equal(c.del, c.delete)
+  global.process = proc
 
   t.strictSame(warnings, [], 'no process exists')
   t.matchSnapshot(consoleErrors, 'warnings sent to console.error')

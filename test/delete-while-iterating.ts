@@ -1,5 +1,5 @@
-const t = require('tap')
-const LRU = require('../')
+import t from 'tap'
+import LRU from '../'
 
 t.beforeEach(t => {
   const c = new LRU({ max: 5 })

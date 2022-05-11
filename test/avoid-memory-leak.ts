@@ -2,7 +2,8 @@
 
 // https://github.com/isaacs/node-lru-cache/issues/227
 
-const t = require('tap')
+import t from 'tap'
+import { expose } from './fixtures/expose'
 
 const maxSize = 100_000
 const itemSize = 1_000
@@ -14,7 +15,7 @@ if (typeof gc !== 'function') {
   process.exit(0)
 }
 
-const tryReq = mod => {
+const tryReq = (mod: string) => {
   try {
     return require(mod)
   } catch (er) {
@@ -25,7 +26,7 @@ const tryReq = mod => {
 
 const v8 = tryReq('v8')
 
-const LRUCache = require('../')
+import LRUCache from '../'
 const expectItemCount = Math.ceil(maxSize / itemSize)
 const max = expectItemCount + 1
 const keyRange = expectItemCount * 2
@@ -33,22 +34,21 @@ const keyRange = expectItemCount * 2
 // fine to alloc unsafe, we don't ever look at the data
 const makeItem = () => Buffer.allocUnsafe(itemSize)
 
-let cache = new LRUCache({ maxSize, sizeCalculation: s => s.length })
-
-const prof = (i, cache) => {
+const prof = (i: number, cache: LRUCache<number, any>) => {
   // run gc so that we know if we're actually leaking memory, or just
   // that the gc is being lazy and not responding until there's memory
   // pressure.
+  // @ts-ignore
   gc()
   return {
     i,
     ...v8.getHeapStatistics(),
-    valListLength: cache.valList.length,
-    freeLength: cache.free.length,
+    valListLength: expose(cache).valList.length,
+    freeLength: expose(cache).free.length,
   }
 }
 
-const runTest = async (t, cache) => {
+const runTest = async (t: Tap.Test, cache: LRUCache<any, any>) => {
   // first, fill to expected size
   for (let i = 0; i < expectItemCount; i++) {
     cache.set(i, makeItem())
@@ -57,20 +57,28 @@ const runTest = async (t, cache) => {
   // now start the setting and profiling
   const profiles = []
   for (let i = 0; i < n; i++) {
-    if ((i % profEvery) === 0) {
+    if (i % profEvery === 0) {
       const profile = prof(i, cache)
       t.ok(
         profile.valListLength <= max,
         `expect valList to have fewer than ${max} items`,
-        { found: profile.valListLength },
+        { found: profile.valListLength }
       )
       t.ok(
         profile.freeLength <= 1,
         'expect free stack to have <= 1 item',
-        { found: profile.freeLength },
+        { found: profile.freeLength }
       )
-      t.equal(profile.number_of_native_contexts, 1, '1 native context')
-      t.equal(profile.number_of_detached_contexts, 0, '0 native context')
+      t.equal(
+        profile.number_of_native_contexts,
+        1,
+        '1 native context'
+      )
+      t.equal(
+        profile.number_of_detached_contexts,
+        0,
+        '0 native context'
+      )
       profiles.push(profile)
     }
 
@@ -105,17 +113,24 @@ const runTest = async (t, cache) => {
 }
 
 t.test('both max and maxSize', t =>
-  runTest(t, new LRUCache({
-    maxSize,
-    sizeCalculation: s => s.length,
-    max,
-  })))
+  runTest(
+    t,
+    new LRUCache({
+      maxSize,
+      sizeCalculation: s => s.length,
+      max,
+    })
+  )
+)
 
 t.test('no max, only maxSize', t =>
-  runTest(t, new LRUCache({
-    maxSize,
-    sizeCalculation: s => s.length,
-  })))
+  runTest(
+    t,
+    new LRUCache({
+      maxSize,
+      sizeCalculation: s => s.length,
+    })
+  )
+)
 
-t.test('only max, no maxSize', t =>
-  runTest(t, new LRUCache({ max })))
+t.test('only max, no maxSize', t => runTest(t, new LRUCache({ max })))

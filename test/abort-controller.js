@@ -5,22 +5,24 @@
 // javascripty thing to do, right?  but it would mean that
 // this is no longer a zero-deps module, so meh.  it's fine.
 global.AbortController = null
+global.AbortSignal = null
 
 const t = require('tap')
 
 const LRUCache = require('../')
-const { AbortController } = LRUCache
+const { AbortController, AbortSignal } = LRUCache
 
 t.type(AbortController, 'function')
-t.type(AbortController.AbortSignal, 'function')
+t.type(AbortSignal, 'function')
 
 t.test('onabort method', t => {
   const ac = new AbortController()
-  t.type(ac.signal, AbortController.AbortSignal)
+  t.type(ac.signal, AbortSignal)
 
   let calledOnAbort = false
-  ac.signal.onabort = () => calledOnAbort = true
+  ac.signal.onabort = () => (calledOnAbort = true)
   ac.abort()
+  t.equal(calledOnAbort, true, 'called onabort method')
 
   t.end()
 })
@@ -28,8 +30,10 @@ t.test('onabort method', t => {
 t.test('add/remove event listener', t => {
   const ac = new AbortController()
   let receivedEvent = null
-  ac.signal.addEventListener('abort', e => receivedEvent = e)
-  const nope = () => { throw 'nope' }
+  ac.signal.addEventListener('abort', e => (receivedEvent = e))
+  const nope = () => {
+    throw 'nope'
+  }
   ac.signal.addEventListener('abort', nope)
   ac.signal.removeEventListener('abort', nope)
   ac.signal.addEventListener('foo', nope)

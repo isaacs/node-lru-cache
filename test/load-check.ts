@@ -1,10 +1,12 @@
 process.env.TAP_BAIL = '1'
-const t = require('tap')
-const LRU = require('../')
-const max = 10000
-const cache = new LRU({ max })
+import t from 'tap'
+import LRU from '../'
+import { expose } from './fixtures/expose'
 
-const crypto = require('crypto')
+const max = 10000
+const cache = new LRU<string, number[]>({ max })
+
+import crypto from 'node:crypto'
 const getVal = () => [
   crypto.randomBytes(12).toString('hex'),
   crypto.randomBytes(12).toString('hex'),
@@ -23,9 +25,10 @@ t.pass('generated seed data')
 const verifyCache = () => {
   // walk down the internal list ensuring that every key is the key to that
   // index in the keyMap, and the value matches.
-  for (const [k, i] of (cache.map || cache.keyMap).entries()) {
-    const v = cache.valList[i]
-    const key = cache.keyList[i]
+  const e = expose(cache)
+  for (const [k, i] of e.keyMap.entries()) {
+    const v = e.valList[i]
+    const key = e.keyList[i]
     if (k !== key) {
       t.equal(k, key, 'key at proper index', { k, i })
     }
@@ -44,7 +47,10 @@ while (cycles < max * 5) {
   if (v === undefined) {
     cache.set(seed[0], seed[1])
   } else {
-    t.equal(v.join(':'), seed[0], 'correct get ' + cycles, { seed, v })
+    t.equal(v.join(':'), seed[0], 'correct get ' + cycles, {
+      seed,
+      v,
+    })
   }
   if (++cycles % cycleLength === 0) {
     verifyCache()

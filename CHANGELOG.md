@@ -4,6 +4,8 @@
 
 * Add `noDeleteOnFetchRejection` option, to suppress behavior
   where a failed `fetch` will delete a previous stale value.
+* Ship types along with the package, rather than relying on
+  out of date types coming from DefinitelyTyped.
 
 ## 7.9.0
 

@@ -1,5 +1,6 @@
-const t = require('tap')
-const LRU = require('../')
+import t from 'tap'
+import LRU from '../'
+
 const cache = new LRU({ max: 5 })
 for (let i = 0; i < 5; i++) {
   cache.set(i, i)

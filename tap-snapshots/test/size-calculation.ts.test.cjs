@@ -5,7 +5,7 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
-exports[`test/size-calculation.js TAP store strings, size = length > dump 1`] = `
+exports[`test/size-calculation.ts TAP store strings, size = length > dump 1`] = `
 Array [
   Array [
     "repeated",

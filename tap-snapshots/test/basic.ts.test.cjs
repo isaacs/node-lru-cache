@@ -5,7 +5,7 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
-exports[`test/basic.js TAP basic operation > must match snapshot 1`] = `
+exports[`test/basic.ts TAP basic operation > must match snapshot 1`] = `
 Generator [
   Array [
     4,
@@ -30,7 +30,7 @@ Generator [
 ]
 `
 
-exports[`test/basic.js TAP basic operation > must match snapshot 2`] = `
+exports[`test/basic.ts TAP basic operation > must match snapshot 2`] = `
 Generator [
   Array [
     9,
@@ -75,7 +75,7 @@ Generator [
 ]
 `
 
-exports[`test/basic.js TAP basic operation > must match snapshot 3`] = `
+exports[`test/basic.ts TAP basic operation > must match snapshot 3`] = `
 Generator [
   Array [
     4,
@@ -120,7 +120,7 @@ Generator [
 ]
 `
 
-exports[`test/basic.js TAP basic operation > must match snapshot 4`] = `
+exports[`test/basic.ts TAP basic operation > must match snapshot 4`] = `
 Generator [
   Array [
     14,
@@ -165,7 +165,7 @@ Generator [
 ]
 `
 
-exports[`test/basic.js TAP basic operation > must match snapshot 5`] = `
+exports[`test/basic.ts TAP basic operation > must match snapshot 5`] = `
 Generator [
   Array [
     19,
@@ -210,7 +210,7 @@ Generator [
 ]
 `
 
-exports[`test/basic.js TAP basic operation > must match snapshot 6`] = `
+exports[`test/basic.ts TAP basic operation > must match snapshot 6`] = `
 Generator [
   Array [
     19,

@@ -1,14 +1,18 @@
 if (typeof performance === 'undefined') {
   global.performance = require('perf_hooks').performance
 }
+import t from 'tap'
+const { LRUCache } = require('../index.js')
 
-const t = require('tap')
 const Clock = require('clock-mock')
 const clock = new Clock()
 
-const runTests = (LRU, t) => {
+const runTests = (LRU: typeof LRUCache, t: Tap.Test) => {
   const { setTimeout, clearTimeout } = global
-  t.teardown(() => Object.assign(global, { setTimeout, clearTimeout }))
+  t.teardown(() =>
+    // @ts-ignore
+    Object.assign(global, { setTimeout, clearTimeout })
+  )
   global.setTimeout = clock.setTimeout.bind(clock)
   global.clearTimeout = clock.clearTimeout.bind(clock)
 
@@ -25,7 +29,11 @@ const runTests = (LRU, t) => {
     clock.advance(5)
     t.equal(c.get(1), 1, '1 get not stale', { now: clock._now })
     t.equal(c.getRemainingTTL(1), 5, '5ms left to live')
-    t.equal(c.getRemainingTTL('not in cache'), 0, 'thing doesnt exist')
+    t.equal(
+      c.getRemainingTTL('not in cache'),
+      0,
+      'thing doesnt exist'
+    )
     clock.advance(5)
     t.equal(c.get(1), 1, '1 get not stale', { now: clock._now })
     t.equal(c.getRemainingTTL(1), 0, 'almost stale')
@@ -103,19 +111,26 @@ const runTests = (LRU, t) => {
     t.end()
   })
 
-  t.test('ttlResolution only respected if non-negative integer', t => {
-    const invalids = [ -1, null, undefined, 'banana', {} ]
-    for (const i of invalids) {
-      const c = new LRU({ ttl: 5, ttlResolution: i, max: 5 })
-      t.not(c.ttlResolution, i)
-      t.equal(c.ttlResolution, Math.floor(c.ttlResolution))
-      t.ok(c.ttlResolution >= 0)
+  t.test(
+    'ttlResolution only respected if non-negative integer',
+    t => {
+      const invalids = [-1, null, undefined, 'banana', {}]
+      for (const i of invalids) {
+        const c = new LRU({ ttl: 5, ttlResolution: i, max: 5 })
+        t.not(c.ttlResolution, i)
+        t.equal(c.ttlResolution, Math.floor(c.ttlResolution))
+        t.ok(c.ttlResolution >= 0)
+      }
+      t.end()
     }
-    t.end()
-  })
+  )
 
   t.test('ttlAutopurge', t => {
-    const c = new LRU({ ttl: 10, ttlAutopurge: true, ttlResolution: 0 })
+    const c = new LRU({
+      ttl: 10,
+      ttlAutopurge: true,
+      ttlResolution: 0,
+    })
     c.set(1, 1)
     c.set(2, 2)
     t.equal(c.size, 2)
@@ -162,7 +177,12 @@ const runTests = (LRU, t) => {
   })
 
   t.test('ttl with allowStale', t => {
-    const c = new LRU({ max: 5, ttl: 10, allowStale: true, ttlResolution: 0 })
+    const c = new LRU({
+      max: 5,
+      ttl: 10,
+      allowStale: true,
+      ttlResolution: 0,
+    })
     c.set(1, 1)
     t.equal(c.get(1), 1)
     clock.advance(5)
@@ -266,7 +286,12 @@ const runTests = (LRU, t) => {
   })
 
   t.test('no update ttl', t => {
-    const c = new LRU({ max: 10, ttlResolution: 0, noUpdateTTL: true, ttl: 10 })
+    const c = new LRU({
+      max: 10,
+      ttlResolution: 0,
+      noUpdateTTL: true,
+      ttl: 10,
+    })
     for (let i = 0; i < 3; i++) {
       c.set(i, i)
     }
@@ -307,41 +332,32 @@ const runTests = (LRU, t) => {
     const indexesStale = [...c.indexes({ allowStale: true })]
     const rindexes = [...c.rindexes()]
     const rindexesStale = [...c.rindexes({ allowStale: true })]
-    t.same({
-      indexes,
-      indexesStale,
-      rindexes,
-      rindexesStale,
-    }, {
-      indexes: [
-        3, 9, 8, 7,
-        6, 5, 4
-      ],
-      indexesStale: [
-        3, 1, 9, 8, 7,
-        6, 5, 4, 2, 0
-      ],
-      rindexes: [
-        4, 5, 6, 7,
-        8, 9, 3
-      ],
-      rindexesStale: [
-        0, 2, 4, 5, 6,
-        7, 8, 9, 1, 3
-      ]
-    })
+    t.same(
+      {
+        indexes,
+        indexesStale,
+        rindexes,
+        rindexesStale,
+      },
+      {
+        indexes: [3, 9, 8, 7, 6, 5, 4],
+        indexesStale: [3, 1, 9, 8, 7, 6, 5, 4, 2, 0],
+        rindexes: [4, 5, 6, 7, 8, 9, 3],
+        rindexesStale: [0, 2, 4, 5, 6, 7, 8, 9, 1, 3],
+      }
+    )
     t.end()
   })
 
   // https://github.com/isaacs/node-lru-cache/issues/203
   t.test('clear() disposes stale entries', t => {
-    const disposed = []
-    const disposedAfter = []
+    const disposed: any[] = []
+    const disposedAfter: any[] = []
     const c = new LRU({
       max: 3,
       ttl: 10,
-      dispose: (v, k) => disposed.push([v, k]),
-      disposeAfter: (v, k) => disposedAfter.push([v, k]),
+      dispose: (v: any, k: any) => disposed.push([v, k]),
+      disposeAfter: (v: any, k: any) => disposedAfter.push([v, k]),
     })
     for (let i = 0; i < 4; i++) {
       c.set(i, i)
@@ -350,8 +366,18 @@ const runTests = (LRU, t) => {
     t.same(disposedAfter, [[0, 0]])
     clock.advance(20)
     c.clear()
-    t.same(disposed, [[0, 0], [1, 1], [2, 2], [3, 3]])
-    t.same(disposedAfter, [[0, 0], [1, 1], [2, 2], [3, 3]])
+    t.same(disposed, [
+      [0, 0],
+      [1, 1],
+      [2, 2],
+      [3, 3],
+    ])
+    t.same(disposedAfter, [
+      [0, 0],
+      [1, 1],
+      [2, 2],
+      [3, 3],
+    ])
     t.end()
   })
 
@@ -377,17 +403,20 @@ const runTests = (LRU, t) => {
 
 t.test('tests with perf_hooks.performance.now()', t => {
   const { performance } = global
-  t.teardown(() => global.performance = performance)
+  // @ts-ignore
+  t.teardown(() => (global.performance = performance))
   global.performance = clock
-  const LRU = t.mock('../')
+  const LRU = t.mock('../', {})
   runTests(LRU, t)
 })
 
 t.test('tests using Date.now()', t => {
   const { performance, Date } = global
+  // @ts-ignore
   t.teardown(() => Object.assign(global, { performance, Date }))
   global.Date = clock.Date
+  // @ts-ignore
   global.performance = null
-  const LRU = t.mock('../')
+  const LRU = t.mock('../', {})
   runTests(LRU, t)
 })

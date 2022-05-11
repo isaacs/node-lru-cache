@@ -1,9 +1,8 @@
-const t = require('tap')
-
-const LRU = require('../')
+import t from 'tap'
+import LRU from '../'
 
 t.test('store strings, size = length', t => {
-  const c = new LRU({
+  const c = new LRU<any, string>({
     max: 100,
     maxSize: 100,
     sizeCalculation: n => n.length,
@@ -55,13 +54,28 @@ t.test('store strings, size = length', t => {
 })
 
 t.test('bad size calculation fn throws on set()', t => {
-  const c = new LRU({ max: 5, maxSize: 5, sizeCalculation: () => 'asdf' })
-  t.throws(() => c.set(1, '1'.repeat(100)),
-    new TypeError('sizeCalculation return invalid (expect positive integer)'))
-  t.throws(() => c.set(1, '1', { size: 'asdf', sizeCalculation: null }),
-    new TypeError('invalid size value (must be positive integer)'))
-  t.throws(() => c.set(1, '1', { sizeCalculation: 'asdf' }),
-    new TypeError('sizeCalculation must be a function'))
+  const c = new LRU({
+    max: 5,
+    maxSize: 5,
+    // @ts-expect-error
+    sizeCalculation: () => {
+      return 'asdf'
+    },
+  })
+  t.throws(
+    () => c.set(1, '1'.repeat(100)),
+    new TypeError(
+      'sizeCalculation return invalid (expect positive integer)'
+    )
+  )
+  t.throws(() => {
+    // @ts-expect-error
+    c.set(1, '1', { size: 'asdf', sizeCalculation: null })
+  }, new TypeError('invalid size value (must be positive integer)'))
+  t.throws(() => {
+    // @ts-expect-error
+    c.set(1, '1', { sizeCalculation: 'asdf' })
+  }, new TypeError('sizeCalculation must be a function'))
   t.end()
 })
 

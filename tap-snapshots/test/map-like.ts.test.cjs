@@ -5,7 +5,7 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
-exports[`test/map-like.js TAP > dump 1`] = `
+exports[`test/map-like.ts TAP > dump 1`] = `
 Array [
   Array [
     3,
@@ -45,7 +45,7 @@ Array [
 ]
 `
 
-exports[`test/map-like.js TAP > dump, 7 stale 1`] = `
+exports[`test/map-like.ts TAP > dump, 7 stale 1`] = `
 Array [
   Array [
     3,
@@ -82,7 +82,7 @@ Array [
 ]
 `
 
-exports[`test/map-like.js TAP > dump, new value 4 1`] = `
+exports[`test/map-like.ts TAP > dump, new value 4 1`] = `
 Array [
   Array [
     3,
@@ -122,35 +122,35 @@ Array [
 ]
 `
 
-exports[`test/map-like.js TAP > empty, dump 1`] = `
+exports[`test/map-like.ts TAP > empty, dump 1`] = `
 Array []
 `
 
-exports[`test/map-like.js TAP > empty, entries 1`] = `
+exports[`test/map-like.ts TAP > empty, entries 1`] = `
 Generator []
 `
 
-exports[`test/map-like.js TAP > empty, keys 1`] = `
+exports[`test/map-like.ts TAP > empty, keys 1`] = `
 Generator []
 `
 
-exports[`test/map-like.js TAP > empty, rentries 1`] = `
+exports[`test/map-like.ts TAP > empty, rentries 1`] = `
 Generator []
 `
 
-exports[`test/map-like.js TAP > empty, rkeys 1`] = `
+exports[`test/map-like.ts TAP > empty, rkeys 1`] = `
 Generator []
 `
 
-exports[`test/map-like.js TAP > empty, rvalues 1`] = `
+exports[`test/map-like.ts TAP > empty, rvalues 1`] = `
 Generator []
 `
 
-exports[`test/map-like.js TAP > empty, values 1`] = `
+exports[`test/map-like.ts TAP > empty, values 1`] = `
 Generator []
 `
 
-exports[`test/map-like.js TAP > entries 1`] = `
+exports[`test/map-like.ts TAP > entries 1`] = `
 Generator [
   Array [
     7,
@@ -175,7 +175,7 @@ Generator [
 ]
 `
 
-exports[`test/map-like.js TAP > entries, 7 stale 1`] = `
+exports[`test/map-like.ts TAP > entries, 7 stale 1`] = `
 Generator [
   Array [
     4,
@@ -196,7 +196,7 @@ Generator [
 ]
 `
 
-exports[`test/map-like.js TAP > entries, new value 4 1`] = `
+exports[`test/map-like.ts TAP > entries, new value 4 1`] = `
 Generator [
   Array [
     4,
@@ -221,7 +221,7 @@ Generator [
 ]
 `
 
-exports[`test/map-like.js TAP > forEach, no thisp 1`] = `
+exports[`test/map-like.ts TAP > forEach, no thisp 1`] = `
 Array [
   Array [
     "new value 4",
@@ -242,7 +242,7 @@ Array [
 ]
 `
 
-exports[`test/map-like.js TAP > forEach, with thisp 1`] = `
+exports[`test/map-like.ts TAP > forEach, with thisp 1`] = `
 Array [
   Array [
     "new value 4",
@@ -275,7 +275,7 @@ Array [
 ]
 `
 
-exports[`test/map-like.js TAP > forEach, with thisp 2`] = `
+exports[`test/map-like.ts TAP > forEach, with thisp 2`] = `
 Array [
   Array [
     "3",
@@ -308,7 +308,7 @@ Array [
 ]
 `
 
-exports[`test/map-like.js TAP > keys 1`] = `
+exports[`test/map-like.ts TAP > keys 1`] = `
 Generator [
   7,
   6,
@@ -318,7 +318,7 @@ Generator [
 ]
 `
 
-exports[`test/map-like.js TAP > keys, 7 stale 1`] = `
+exports[`test/map-like.ts TAP > keys, 7 stale 1`] = `
 Generator [
   4,
   6,
@@ -327,7 +327,7 @@ Generator [
 ]
 `
 
-exports[`test/map-like.js TAP > keys, new value 4 1`] = `
+exports[`test/map-like.ts TAP > keys, new value 4 1`] = `
 Generator [
   4,
   7,
@@ -337,7 +337,7 @@ Generator [
 ]
 `
 
-exports[`test/map-like.js TAP > rentries 1`] = `
+exports[`test/map-like.ts TAP > rentries 1`] = `
 Generator [
   Array [
     3,
@@ -362,7 +362,7 @@ Generator [
 ]
 `
 
-exports[`test/map-like.js TAP > rentries, 7 stale 1`] = `
+exports[`test/map-like.ts TAP > rentries, 7 stale 1`] = `
 Generator [
   Array [
     3,
@@ -383,7 +383,7 @@ Generator [
 ]
 `
 
-exports[`test/map-like.js TAP > rentries, new value 4 1`] = `
+exports[`test/map-like.ts TAP > rentries, new value 4 1`] = `
 Generator [
   Array [
     3,
@@ -408,7 +408,7 @@ Generator [
 ]
 `
 
-exports[`test/map-like.js TAP > rforEach, no thisp 1`] = `
+exports[`test/map-like.ts TAP > rforEach, no thisp 1`] = `
 Array [
   Array [
     "3",
@@ -429,7 +429,7 @@ Array [
 ]
 `
 
-exports[`test/map-like.js TAP > rkeys 1`] = `
+exports[`test/map-like.ts TAP > rkeys 1`] = `
 Generator [
   3,
   4,
@@ -439,7 +439,7 @@ Generator [
 ]
 `
 
-exports[`test/map-like.js TAP > rkeys, 7 stale 1`] = `
+exports[`test/map-like.ts TAP > rkeys, 7 stale 1`] = `
 Generator [
   3,
   5,
@@ -448,7 +448,7 @@ Generator [
 ]
 `
 
-exports[`test/map-like.js TAP > rkeys, new value 4 1`] = `
+exports[`test/map-like.ts TAP > rkeys, new value 4 1`] = `
 Generator [
   3,
   5,
@@ -458,7 +458,7 @@ Generator [
 ]
 `
 
-exports[`test/map-like.js TAP > rvalues 1`] = `
+exports[`test/map-like.ts TAP > rvalues 1`] = `
 Generator [
   "3",
   "4",
@@ -468,7 +468,7 @@ Generator [
 ]
 `
 
-exports[`test/map-like.js TAP > rvalues, 7 stale 1`] = `
+exports[`test/map-like.ts TAP > rvalues, 7 stale 1`] = `
 Generator [
   "3",
   "5",
@@ -477,7 +477,7 @@ Generator [
 ]
 `
 
-exports[`test/map-like.js TAP > rvalues, new value 4 1`] = `
+exports[`test/map-like.ts TAP > rvalues, new value 4 1`] = `
 Generator [
   "3",
   "5",
@@ -487,7 +487,7 @@ Generator [
 ]
 `
 
-exports[`test/map-like.js TAP > values 1`] = `
+exports[`test/map-like.ts TAP > values 1`] = `
 Generator [
   "7",
   "6",
@@ -497,7 +497,7 @@ Generator [
 ]
 `
 
-exports[`test/map-like.js TAP > values, 7 stale 1`] = `
+exports[`test/map-like.ts TAP > values, 7 stale 1`] = `
 Generator [
   "new value 4",
   "6",
@@ -506,7 +506,7 @@ Generator [
 ]
 `
 
-exports[`test/map-like.js TAP > values, new value 4 1`] = `
+exports[`test/map-like.ts TAP > values, new value 4 1`] = `
 Generator [
   "new value 4",
   "7",

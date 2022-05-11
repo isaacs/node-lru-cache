@@ -2,21 +2,30 @@ if (typeof performance === 'undefined') {
   global.performance = require('perf_hooks').performance
 }
 
-const t = require('tap')
+import t from 'tap'
+import LRU from '../'
+import { expose } from './fixtures/expose'
+
 const Clock = require('clock-mock')
 const clock = new Clock()
 clock.advance(1)
 
-const boolOpts = n => {
+const boolOpts = (n: number): number[][] => {
   const mask = Math.pow(2, n)
-  const arr = []
+  const arr: number[][] = []
   for (let i = 0; i < mask; i++) {
-    arr.push((mask + i).toString(2).slice(1).split('').map(n => +n))
+    arr.push(
+      (mask + i)
+        .toString(2)
+        .slice(1)
+        .split('')
+        .map(n => +n)
+    )
   }
   return arr
 }
 
-const permute = arr => {
+const permute = (arr: number[] | number): number[][] => {
   if (typeof arr === 'number') {
     return permute(Object.keys(new Array(arr).fill('')).map(n => +n))
   }
@@ -28,25 +37,35 @@ const permute = arr => {
   for (let i = 0; i < arr.length; i++) {
     const items = arr.slice(0)
     const item = items.splice(i, 1)
-    permutations.push(...permute(items).map(perm => item.concat(perm)))
+    permutations.push(
+      ...permute(items).map(perm => item.concat(perm))
+    )
   }
   return permutations
 }
 
-const runTestStep = ({order, stales = -1, len}) => {
+const runTestStep = ({
+  order,
+  stales = -1,
+  len,
+}: {
+  order: number[]
+  stales?: number[] | -1
+  len: number
+}) => {
   // generate stales at this level because it's faster that way,
   // fewer tap pieces to prop it all up.
   if (stales === -1) {
     for (const stales of boolOpts(len)) {
-      runTestStep({order, stales, len})
+      runTestStep({ order, stales, len })
     }
     return true
   }
 
   clock.enter()
   const assert = require('assert')
-  const LRU = require('../')
   const c = new LRU({ max: len, ttl: 100 })
+  const e = expose(c)
   // fill the array with index matching k/v
   for (let i = 0; i < len; i++) {
     if (stales[i]) {
@@ -61,16 +80,19 @@ const runTestStep = ({order, stales = -1, len}) => {
     c.get(index)
   }
 
-  assert.deepEqual([...c.rindexes()], order, 'got expected ordering')
+  assert.deepEqual([...e.rindexes()], order, 'got expected ordering')
 
   // advance clock so masked go stale
   clock.advance(10)
   c.purgeStale()
-  assert.deepEqual([...c.rindexes()], [...c.rindexes({ allowStale: true })])
+  assert.deepEqual(
+    [...e.rindexes()],
+    [...e.rindexes({ allowStale: true })]
+  )
   // make all go stale
   clock.advance(100)
   c.purgeStale()
-  assert.deepEqual([...c.rindexes({ allowStale: true })], [])
+  assert.deepEqual([...e.rindexes({ allowStale: true })], [])
   clock.exit()
   return true
 }
@@ -85,7 +107,7 @@ t.test('exhaustive tests', t => {
     const name = `order=${order.join('')}`
     t.test(name, t => {
       t.plan(1)
-      runTestStep({order, len})
+      runTestStep({ order, len })
       t.pass('no problems')
     })
   }

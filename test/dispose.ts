@@ -1,9 +1,12 @@
-const t = require('tap')
-const LRU = require('../')
+import t from 'tap'
+import LRU from '../'
 
 t.test('disposal', t => {
-  const disposed = []
-  const c = new LRU({max:5, dispose: (k,v,r) => disposed.push([k,v,r])})
+  const disposed: any[] = []
+  const c = new LRU({
+    max: 5,
+    dispose: (k, v, r) => disposed.push([k, v, r]),
+  })
   for (let i = 0; i < 9; i++) {
     c.set(i, i)
   }
@@ -27,7 +30,10 @@ t.test('disposal', t => {
   disposed.length = 0
   c.set('asdf', 'foo')
   c.set('asdf', 'asdf')
-  t.strictSame(disposed, [[5,5,'evict'], ['foo', 'asdf', 'set']])
+  t.strictSame(disposed, [
+    [5, 5, 'evict'],
+    ['foo', 'asdf', 'set'],
+  ])
 
   disposed.length = 0
   for (let i = 0; i < 5; i++) {
@@ -45,7 +51,10 @@ t.test('disposal', t => {
   disposed.length = 0
   c.set('asdf', 'foo')
   c.delete('asdf')
-  t.strictSame(disposed, [[0, 0, 'evict'], ['foo', 'asdf', 'delete']])
+  t.strictSame(disposed, [
+    [0, 0, 'evict'],
+    ['foo', 'asdf', 'delete'],
+  ])
 
   // delete non-existing key, no disposal
   disposed.length = 0
@@ -81,6 +90,7 @@ t.test('disposal', t => {
   }
   t.strictSame(disposed, [[2, 2, 'set']])
 
+  // @ts-expect-error
   c.noDisposeOnSet = true
   c.clear()
   disposed.length = 0
@@ -97,8 +107,8 @@ t.test('disposal', t => {
 })
 
 t.test('noDisposeOnSet with delete()', t => {
-  const disposed = []
-  const dispose = (v, k) => disposed.push([v, k])
+  const disposed: [any, any][] = []
+  const dispose = (v: any, k: any) => disposed.push([v, k])
 
   const c = new LRU({ max: 5, dispose, noDisposeOnSet: true })
   for (let i = 0; i < 5; i++) {
@@ -110,7 +120,10 @@ t.test('noDisposeOnSet with delete()', t => {
   t.strictSame(disposed, [])
   c.delete(0)
   c.delete(4)
-  t.strictSame(disposed, [['new 0', 0], [4, 4]])
+  t.strictSame(disposed, [
+    ['new 0', 0],
+    [4, 4],
+  ])
   disposed.length = 0
 
   const d = new LRU({ max: 5, dispose })
@@ -143,10 +156,10 @@ t.test('noDisposeOnSet with delete()', t => {
 t.test('disposeAfter', t => {
   const c = new LRU({
     max: 5,
-    disposeAfter: (v, k, r) => {
+    disposeAfter: (v, k) => {
       if (k === 2) {
         // increment it every time it gets disposed, but only one time
-        c.set(k, v + 1, { noDisposeOnSet: true })
+        c.set(k, (v as number) + 1, { noDisposeOnSet: true })
       }
     },
   })
@@ -154,31 +167,40 @@ t.test('disposeAfter', t => {
   for (let i = 0; i < 100; i++) {
     c.set(i, i)
   }
-  t.same([...c.entries()], [
-    [ 99, 99 ],
-    [ 98, 98 ],
-    [ 2, 21 ],
-    [ 97, 97 ],
-    [ 96, 96 ],
-  ])
+  t.same(
+    [...c.entries()],
+    [
+      [99, 99],
+      [98, 98],
+      [2, 21],
+      [97, 97],
+      [96, 96],
+    ]
+  )
   c.delete(2)
-  t.same([...c.entries()], [
-    [ 2, 22 ],
-    [ 99, 99 ],
-    [ 98, 98 ],
-    [ 97, 97 ],
-    [ 96, 96 ],
-  ])
+  t.same(
+    [...c.entries()],
+    [
+      [2, 22],
+      [99, 99],
+      [98, 98],
+      [97, 97],
+      [96, 96],
+    ]
+  )
   for (let i = 96; i < 100; i++) {
-    c.set(i, i+1)
+    c.set(i, i + 1)
   }
-  t.same([...c.entries()], [
-    [ 99, 100 ],
-    [ 98, 99 ],
-    [ 97, 98 ],
-    [ 96, 97 ],
-    [ 2, 22 ],
-  ])
+  t.same(
+    [...c.entries()],
+    [
+      [99, 100],
+      [98, 99],
+      [97, 98],
+      [96, 97],
+      [2, 22],
+    ]
+  )
   c.clear()
   t.same([...c.entries()], [[2, 23]])
 
