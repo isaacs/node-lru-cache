@@ -55,6 +55,9 @@
     "endOfLine": "lf"
   },
   "tap": {
+    "nyc-arg": [
+      "--include=index.js"
+    ],
     "node-arg": [
       "--expose-gc",
       "--require",
