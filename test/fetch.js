@@ -7,11 +7,14 @@ const clock = new Clock()
 t.teardown(clock.enter())
 clock.advance(1)
 
-const LRU = require('../')
+let LRU = require('../')
 
 // if we're on a version that *doesn't* have a native AbortController,
 // put the polyfill in there to start with, so LRU covers both cases.
-global.AbortController = LRU.AbortController
+if (!global.AbortController) {
+  global.AbortController = LRU.AbortController
+  LRU = t.mock('../')
+}
 
 const c = new LRU({
   fetchMethod: fn,
