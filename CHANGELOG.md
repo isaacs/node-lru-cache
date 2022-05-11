@@ -4,6 +4,9 @@
 
 * Better AbortController polyfill, supporting
   `signal.addEventListener('abort')` and `signal.onabort`.
+* (7.9.1) Drop item from cache instead of crashing with an
+  `unhandledRejection` when the `fetchMethod` throws an error or
+  returns a rejected Promise.
 
 ## 7.8.0
 
