@@ -6,7 +6,7 @@ import { expose } from './fixtures/expose'
 const max = 10000
 const cache = new LRU<string, number[]>({ max })
 
-import crypto from 'node:crypto'
+import crypto from 'crypto'
 const getVal = () => [
   crypto.randomBytes(12).toString('hex'),
   crypto.randomBytes(12).toString('hex'),
