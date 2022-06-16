@@ -89,6 +89,9 @@ well.
 * `max` and `maxSize` are now two separate options.  (Previously, they were
   a single `max` option, which would be based on either count or computed
   size.)
+* The function assigned to the `dispose` option is now expected to have signature
+  `(value, key, reason)` rather than `(key, value)`, reversing the order of
+  `value` and `key`.
 
 ## v6 - 2020-07
 
