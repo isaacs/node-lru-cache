@@ -17,7 +17,7 @@ let LRU = LRUCache
 
 // if we're on a version that *doesn't* have a native AbortController,
 // put the polyfill in there to start with, so LRU covers both cases.
-if (!global.AbortController) {
+if (!global.AbortController || !global.AbortSignal) {
   global.AbortController = exposeStatics(LRU).AbortController
   global.AbortSignal = exposeStatics(LRU).AbortSignal
   LRU = t.mock('../', {}) as typeof LRUCache
@@ -201,11 +201,90 @@ t.test('fetch options, signal', async t => {
 })
 
 t.test('fetch options, signal, with polyfill', async t => {
-  const { AbortController } = global
+  const { AbortController, AbortSignal } = global
   // @ts-expect-error
-  t.teardown(() => (global.AbortController = AbortController))
+  t.teardown(() => Object.assign(global, { AbortController, AbortSignal }))
   // @ts-expect-error
   global.AbortController = undefined
+  // @ts-expect-error
+  global.AbortSignal = undefined
+  const LRU = t.mock('../', {}) as typeof LRUCache
+  let aborted = false
+  const disposed: any[] = []
+  const disposedAfter: any[] = []
+  const c = new LRU<number, number>({
+    max: 3,
+    ttl: 100,
+    fetchMethod: async (k, oldVal, { signal, options }) => {
+      // do something async
+      await new Promise(res => setImmediate(res))
+      if (signal.aborted) {
+        aborted = true
+        return
+      }
+      if (k === 2) {
+        options.ttl = 25
+      }
+      return (oldVal || 0) + 1
+    },
+    dispose: (v, k, reason) => {
+      disposed.push([v, k, reason])
+    },
+    disposeAfter: (v, k, reason) => {
+      disposedAfter.push([v, k, reason])
+    },
+  })
+
+  const v1 = c.fetch(2)
+  c.delete(2)
+  t.equal(await v1, undefined, 'no value returned, aborted by delete')
+  t.equal(aborted, true)
+  t.same(disposed, [], 'no disposals for aborted promises')
+  t.same(disposedAfter, [], 'no disposals for aborted promises')
+
+  aborted = false
+  const v2 = c.fetch(2)
+  c.set(2, 2)
+  t.equal(await v2, undefined, 'no value returned, aborted by set')
+  t.equal(aborted, true)
+  t.same(disposed, [], 'no disposals for aborted promises')
+  t.same(disposedAfter, [], 'no disposals for aborted promises')
+  c.delete(2)
+  disposed.length = 0
+  disposedAfter.length = 0
+
+  aborted = false
+  const v3 = c.fetch(2)
+  c.set(3, 3)
+  c.set(4, 4)
+  c.set(5, 5)
+  t.equal(await v3, undefined, 'no value returned, aborted by evict')
+  t.equal(aborted, true)
+  t.same(disposed, [], 'no disposals for aborted promises')
+  t.same(disposedAfter, [], 'no disposals for aborted promises')
+
+  aborted = false
+  await c.fetch(6, { ttl: 1000 })
+  t.equal(
+    c.getRemainingTTL(6),
+    1000,
+    'overridden ttl in fetch() opts'
+  )
+  await c.fetch(2, { ttl: 1 })
+  t.equal(c.getRemainingTTL(2), 25, 'overridden ttl in fetchMethod')
+})
+
+t.test('fetch options, signal, with half polyfill', async t => {
+  const { AbortController, AbortSignal } = global
+  t.teardown(() => {
+    global.AbortSignal = AbortSignal
+    //@ts-expect-error
+    delete AbortController.AbortSignal
+  })
+  // @ts-expect-error
+  global.AbortController.AbortSignal = AbortSignal
+  // @ts-expect-error
+  global.AbortSignal = undefined
   const LRU = t.mock('../', {}) as typeof LRUCache
   let aborted = false
   const disposed: any[] = []

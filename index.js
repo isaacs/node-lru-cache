@@ -22,8 +22,13 @@ const AC = hasAbortController
       }
     }
 
-const AS = hasAbortController
+const hasAbortSignal = typeof AbortSignal === 'function'
+// Some polyfills put this on the AC class, not global
+const hasACAbortSignal = typeof AC.AbortSignal === 'function'
+const AS = hasAbortSignal
   ? AbortSignal
+  : hasACAbortSignal
+  ? AC.AbortController
   : class AbortSignal {
       constructor() {
         this.aborted = false
