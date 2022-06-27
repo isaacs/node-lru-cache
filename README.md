@@ -67,7 +67,7 @@ const options = {
 
   // async method to use for cache.fetch(), for
   // stale-while-revalidate type of behavior
-  fetch: async (key, staleValue, { options, signal }) => {}
+  fetchMethod: async (key, staleValue, { options, signal }) => {}
 }
 
 const cache = new LRU(options)
