@@ -422,6 +422,22 @@ const runTests = (LRU: typeof LRUCache, t: Tap.Test) => {
     t.end()
   })
 
+  t.test('no delete on stale get', t => {
+    const c = new LRU({
+      noDeleteOnStaleGet: true,
+      ttl: 10,
+      max: 3,
+    })
+    c.set(1, 1)
+    clock.advance(11)
+    t.equal(c.has(1), false)
+    t.equal(c.get(1), undefined)
+    t.equal(c.get(1, { allowStale: true }), 1)
+    t.equal(c.get(1, { allowStale: true, noDeleteOnStaleGet: false }), 1)
+    t.equal(c.get(1, { allowStale: true }), undefined)
+    t.end()
+  })
+
   t.end()
 }
 

@@ -62,6 +62,10 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
   public readonly allowStale: boolean
   public readonly updateAgeOnGet: boolean
   /**
+   * @since 7.11.0
+   */
+  public readonly noDeleteOnStaleGet: boolean
+  /**
    * @since 7.6.0
    */
   public readonly fetchMethod: LRUCache.Fetcher<K, V> | null
@@ -417,6 +421,16 @@ declare namespace LRUCache {
     updateAgeOnGet?: boolean
 
     /**
+     * Do not delete stale items when they are retrieved with cache.get()
+     * Note that the get() return value will still be `undefined` unless
+     * allowStale is true.
+     *
+     * @default false
+     * @since 7.11.0
+     */
+    noDeleteOnStaleGet?: boolean
+
+    /**
      * Update the age of items on cache.has(), renewing their TTL
      *
      * @default false
@@ -520,6 +534,7 @@ declare namespace LRUCache {
   interface GetOptions {
     allowStale?: boolean
     updateAgeOnGet?: boolean
+    noDeleteOnStaleGet?: boolean
   }
 
   /**
@@ -539,6 +554,7 @@ declare namespace LRUCache {
   interface FetchOptions<K, V> {
     allowStale?: boolean
     updateAgeOnGet?: boolean
+    noDeleteOnStaleGet?: boolean
     size?: number
     sizeCalculation?: SizeCalculator<K, V>
     ttl?: number

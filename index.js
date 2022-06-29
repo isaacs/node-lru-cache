@@ -160,6 +160,7 @@ class LRUCache {
       sizeCalculation,
       fetchMethod,
       noDeleteOnFetchRejection,
+      noDeleteOnStaleGet,
     } = options
 
     // deprecated options, don't trigger a warning for getting them if
@@ -232,6 +233,7 @@ class LRUCache {
     }
 
     this.allowStale = !!allowStale || !!stale
+    this.noDeleteOnStaleGet = !!noDeleteOnStaleGet
     this.updateAgeOnGet = !!updateAgeOnGet
     this.updateAgeOnHas = !!updateAgeOnHas
     this.ttlResolution =
@@ -742,6 +744,7 @@ class LRUCache {
       // get options
       allowStale = this.allowStale,
       updateAgeOnGet = this.updateAgeOnGet,
+      noDeleteOnStaleGet = this.noDeleteOnStaleGet,
       // set options
       ttl = this.ttl,
       noDisposeOnSet = this.noDisposeOnSet,
@@ -753,12 +756,13 @@ class LRUCache {
     } = {}
   ) {
     if (!this.fetchMethod) {
-      return this.get(k, { allowStale, updateAgeOnGet })
+      return this.get(k, { allowStale, updateAgeOnGet, noDeleteOnStaleGet })
     }
 
     const options = {
       allowStale,
       updateAgeOnGet,
+      noDeleteOnStaleGet,
       ttl,
       noDisposeOnSet,
       size,
@@ -802,6 +806,7 @@ class LRUCache {
     {
       allowStale = this.allowStale,
       updateAgeOnGet = this.updateAgeOnGet,
+      noDeleteOnStaleGet = this.noDeleteOnStaleGet,
     } = {}
   ) {
     const index = this.keyMap.get(k)
@@ -811,7 +816,9 @@ class LRUCache {
       if (this.isStale(index)) {
         // delete only if not an in-flight background fetch
         if (!fetching) {
-          this.delete(k)
+          if (!noDeleteOnStaleGet) {
+            this.delete(k)
+          }
           return allowStale ? value : undefined
         } else {
           return allowStale ? value.__staleWhileFetching : undefined

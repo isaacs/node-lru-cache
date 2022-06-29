@@ -339,6 +339,22 @@ Boolean, default false, only relevant if `ttl` is set.
 
 Deprecated alias: `stale`
 
+### `noDeleteOnStaleGet`
+
+When using time-expiring entries with `ttl`, by default stale
+items will be removed from the cache when the key is accessed
+with `cache.get()`.
+
+Setting `noDeleteOnStaleGet` to `true` will cause stale items to
+remain in the cache, until they are explicitly deleted with
+`cache.delete(key)`, or retrieved with `noDeleteOnStaleGet` set
+to `false`.
+
+This may be overridden by passing an options object to
+`cache.get()`.
+
+Boolean, default false, only relevant if `ttl` is set.
+
 ### `updateAgeOnGet`
 
 When using time-expiring entries with `ttl`, setting this to
