@@ -135,6 +135,10 @@ t.test('fetchMethod must be a function', async t => {
   t.throws(() => new LRU({ fetchMethod: true, max: 2 }))
 })
 
+t.test('no fetchContext without fetchMethod', async t => {
+  t.throws(() => new LRU({ fetchContext: true, max: 2 }))
+})
+
 t.test('fetch without fetch method', async t => {
   const c = new LRU({ max: 3 })
   c.set(0, 0)
@@ -468,3 +472,26 @@ t.test(
     t.equal(e.valList[1], null, 'not in cache')
   }
 )
+
+t.test('fetchContext', async t => {
+  const cache = new LRU<string, [string, any]>({
+    max: 10,
+    ttl: 10,
+    allowStale: true,
+    noDeleteOnFetchRejection: true,
+    fetchContext: 'default context',
+    fetchMethod: async (k, _, { context, options }) => {
+      //@ts-expect-error
+      t.equal(options.fetchContext, undefined)
+      t.equal(context, expectContext)
+      return [k, context]
+    },
+  })
+
+  let expectContext = 'default context'
+  t.strictSame(await cache.fetch('x'), ['x', 'default context'])
+  expectContext = 'overridden'
+  t.strictSame(await cache.fetch('y', { fetchContext: 'overridden' }), ['y', 'overridden'])
+  // if still in cache, doesn't call fetchMethod again
+  t.strictSame(await cache.fetch('x', { fetchContext: 'ignored' }), ['x', 'default context'])
+})

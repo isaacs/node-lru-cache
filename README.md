@@ -141,8 +141,8 @@ Deprecated alias: `length`
 ### `fetchMethod`
 
 Function that is used to make background asynchronous fetches.
-Called with `fetchMethod(key, staleValue, { signal, options })`.
-May return a Promise.
+Called with `fetchMethod(key, staleValue, { signal, options,
+context })`. May return a Promise.
 
 If `fetchMethod` is not provided, then `cache.fetch(key)` is
 equivalent to `Promise.resolve(cache.get(key))`.
@@ -163,6 +163,18 @@ will result in modifying the settings to `cache.set()` when the
 value is resolved.  For example, a DNS cache may update the TTL
 based on the value returned from a remote DNS server by changing
 `options.ttl` in the `fetchMethod`.
+
+### `fetchContext`
+
+Arbitrary data that can be passed to the `fetchMethod` as the
+`context` option.
+
+Note that this will only be relevant when the `cache.fetch()`
+call needs to call `fetchMethod()`.  Thus, any data which will
+meaningfully vary the fetch response needs to be present in the
+key.  This is primarily intended for including `x-request-id`
+headers and the like for debugging purposes, which do not affect
+the `fetchMethod()` response.
 
 ### `noDeleteOnFetchRejection`
 

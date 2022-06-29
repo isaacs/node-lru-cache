@@ -496,6 +496,15 @@ declare namespace LRUCache {
      * @since 7.10.0
      */
     noDeleteOnFetchRejection?: boolean
+
+    /**
+     * Set to any value in the constructor or fetch() options to
+     * pass arbitrary data to the fetch() method in the options.context
+     * field.
+     *
+     * @since 7.12.0
+     */
+    fetchContext?: any
   }
 
   type Options<K, V> = SharedOptions<K, V> &
@@ -545,13 +554,7 @@ declare namespace LRUCache {
     allowStale?: boolean
   }
 
-  /**
-   * options which override the options set in the LRUCache constructor
-   * when making `cache.fetch()` calls.
-   * This is the union of GetOptions and SetOptions, plus the
-   * `noDeleteOnFetchRejection` boolean.
-   */
-  interface FetchOptions<K, V> {
+  interface FetcherFetchOptions<K, V> {
     allowStale?: boolean
     updateAgeOnGet?: boolean
     noDeleteOnStaleGet?: boolean
@@ -563,9 +566,20 @@ declare namespace LRUCache {
     noDeleteOnFetchRejection?: boolean
   }
 
+  /**
+   * options which override the options set in the LRUCache constructor
+   * when making `cache.fetch()` calls.
+   * This is the union of GetOptions and SetOptions, plus the
+   * `noDeleteOnFetchRejection` and `fetchContext` fields.
+   */
+  interface FetchOptions<K, V> extends FetcherFetchOptions<K, V> {
+    fetchContext?: any
+  }
+
   interface FetcherOptions<K, V> {
     signal: AbortSignal
-    options: FetchOptions<K, V>
+    options: FetcherFetchOptions<K, V>
+    context: any
   }
 
   interface Entry<V> {

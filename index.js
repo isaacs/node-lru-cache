@@ -159,6 +159,7 @@ class LRUCache {
       maxSize = 0,
       sizeCalculation,
       fetchMethod,
+      fetchContext,
       noDeleteOnFetchRejection,
       noDeleteOnStaleGet,
     } = options
@@ -195,6 +196,13 @@ class LRUCache {
     if (this.fetchMethod && typeof this.fetchMethod !== 'function') {
       throw new TypeError(
         'fetchMethod must be a function if specified'
+      )
+    }
+
+    this.fetchContext = fetchContext
+    if (!this.fetchMethod && fetchContext !== undefined) {
+      throw new TypeError(
+        'cannot set fetchContext without fetchMethod'
       )
     }
 
@@ -676,7 +684,7 @@ class LRUCache {
     }
   }
 
-  backgroundFetch(k, index, options) {
+  backgroundFetch(k, index, options, context) {
     const v = index === undefined ? undefined : this.valList[index]
     if (this.isBackgroundFetch(v)) {
       return v
@@ -685,6 +693,7 @@ class LRUCache {
     const fetchOpts = {
       signal: ac.signal,
       options,
+      context,
     }
     const cb = v => {
       if (!ac.signal.aborted) {
@@ -753,6 +762,7 @@ class LRUCache {
       noUpdateTTL = this.noUpdateTTL,
       // fetch exclusive options
       noDeleteOnFetchRejection = this.noDeleteOnFetchRejection,
+      fetchContext = this.fetchContext,
     } = {}
   ) {
     if (!this.fetchMethod) {
@@ -773,7 +783,7 @@ class LRUCache {
 
     let index = this.keyMap.get(k)
     if (index === undefined) {
-      const p = this.backgroundFetch(k, index, options)
+      const p = this.backgroundFetch(k, index, options, fetchContext)
       return (p.__returned = p)
     } else {
       // in cache, maybe already fetching
@@ -794,7 +804,7 @@ class LRUCache {
 
       // ok, it is stale, and not already fetching
       // refresh the cache.
-      const p = this.backgroundFetch(k, index, options)
+      const p = this.backgroundFetch(k, index, options, fetchContext)
       return allowStale && p.__staleWhileFetching !== undefined
         ? p.__staleWhileFetching
         : (p.__returned = p)
