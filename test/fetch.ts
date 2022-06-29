@@ -59,6 +59,14 @@ t.test('asynchronous fetching', async t => {
   )
   const e = expose(c)
   const v = e.valList[0]
+
+  // should not have any promises or cycles in the dump
+  const dump = c.dump()
+  for (const [_, entry] of dump) {
+    t.type(entry.value, 'number')
+  }
+  t.matchSnapshot(JSON.stringify(dump), 'safe to stringify dump')
+
   t.equal(e.isBackgroundFetch(v), true)
   t.equal(e.backgroundFetch('key', 0), v)
   await v

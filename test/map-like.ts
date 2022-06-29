@@ -1,7 +1,15 @@
-if (typeof performance === 'undefined') {
+if (typeof global.performance === 'undefined') {
   global.performance = require('perf_hooks').performance
 }
 import t from 'tap'
+const Clock = require('clock-mock')
+const clock = new Clock()
+const { performance, Date } = global
+// @ts-ignore
+t.teardown(() => Object.assign(global, { performance, Date }))
+global.Date = clock.Date
+global.performance = clock
+
 import LRU from '../'
 import { expose } from './fixtures/expose'
 
@@ -40,7 +48,7 @@ t.matchSnapshot(c.dump(), 'dump, new value 4')
 c.set(7, 'stale', { ttl: 1, size: 1 })
 const e = expose(c)
 const idx = e.keyMap.get(7)
-e.starts[idx as number] = performance.now() - 10000
+e.starts[idx as number] = clock.now() - 10000
 const seen: number[] = []
 for (const i of e.indexes()) {
   seen[i] = seen[i] || 0

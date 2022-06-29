@@ -51,6 +51,7 @@ Array [
     3,
     Object {
       "size": 1,
+      "start": 0,
       "ttl": 0,
       "value": "3",
     },
@@ -59,6 +60,7 @@ Array [
     5,
     Object {
       "size": 1,
+      "start": 0,
       "ttl": 0,
       "value": "5",
     },
@@ -67,6 +69,7 @@ Array [
     6,
     Object {
       "size": 1,
+      "start": 0,
       "ttl": 0,
       "value": "6",
     },
@@ -75,8 +78,18 @@ Array [
     4,
     Object {
       "size": 1,
+      "start": 0,
       "ttl": 0,
       "value": "new value 4",
+    },
+  ],
+  Array [
+    7,
+    Object {
+      "size": 1,
+      "start": -10000,
+      "ttl": 1,
+      "value": "stale",
     },
   ],
 ]

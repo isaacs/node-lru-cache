@@ -391,14 +391,18 @@ moment.
 
 The total size of items in cache when using size tracking.
 
-### `set(key, value, [{ size, sizeCalculation, ttl,
-noDisposeOnSet }])`
+### `set(key, value, [{ size, sizeCalculation, ttl, noDisposeOnSet, start }])`
 
 Add a value to the cache.
 
 Optional options object may contain `ttl` and `sizeCalculation`
 as described above, which default to the settings on the cache
 object.
+
+If `start` is provided, then that will set the effective start
+time for the TTL calculation.  Note that this must be a previous
+value of `performance.now()` if supported, or a previous value of
+`Date.now()` if not.
 
 Options object my also include `size`, which will prevent calling
 the `sizeCalculation` function and just use the specified number
@@ -518,6 +522,12 @@ the item found.
 Return an array of `[key, entry]` objects which can be passed to
 `cache.load()`
 
+The `start` fields are calculated relative to a portable
+`Date.now()` timestamp, even if `performance.now()` is available.
+
+Stale entries are always included in the `dump`, even if
+`allowStale` is false.
+
 Note: this returns an actual array, not a generator, so it can be
 more easily passed around.
 
@@ -526,6 +536,10 @@ more easily passed around.
 Reset the cache and load in the items in `entries` in the order
 listed.  Note that the shape of the resulting cache may be
 different if the same options are not used in both caches.
+
+The `start` fields are assumed to be calculated relative to a
+portable `Date.now()` timestamp, even if `performance.now()` is
+available.
 
 ### `purgeStale()`
 

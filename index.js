@@ -285,8 +285,8 @@ class LRUCache {
     this.ttls = new ZeroArray(this.max)
     this.starts = new ZeroArray(this.max)
 
-    this.setItemTTL = (index, ttl) => {
-      this.starts[index] = ttl !== 0 ? perf.now() : 0
+    this.setItemTTL = (index, ttl, start = perf.now()) => {
+      this.starts[index] = ttl !== 0 ? start : 0
       this.ttls[index] = ttl
       if (ttl !== 0 && this.ttlAutopurge) {
         const t = setTimeout(() => {
@@ -346,7 +346,7 @@ class LRUCache {
     }
   }
   updateItemAge(index) {}
-  setItemTTL(index, ttl) {}
+  setItemTTL(index, ttl, start) {}
   isStale(index) {
     return false
   }
@@ -510,12 +510,17 @@ class LRUCache {
 
   dump() {
     const arr = []
-    for (const i of this.indexes()) {
+    for (const i of this.indexes({ allowStale: true })) {
       const key = this.keyList[i]
-      const value = this.valList[i]
+      const v = this.valList[i]
+      const value = this.isBackgroundFetch(v) ? v.__staleWhileFetching : v
       const entry = { value }
       if (this.ttls) {
         entry.ttl = this.ttls[i]
+        // always dump the start relative to a portable timestamp
+        // it's ok for this to be a bit slow, it's a rare operation.
+        const age = perf.now() - this.starts[i]
+        entry.start = Math.floor(Date.now() - age)
       }
       if (this.sizes) {
         entry.size = this.sizes[i]
@@ -528,6 +533,13 @@ class LRUCache {
   load(arr) {
     this.clear()
     for (const [key, entry] of arr) {
+      if (entry.start) {
+        // entry.start is a portable timestamp, but we may be using
+        // node's performance.now(), so calculate the offset.
+        // it's ok for this to be a bit slow, it's a rare operation.
+        const age = Date.now() - entry.start
+        entry.start = perf.now() - age
+      }
       this.set(key, entry.value, entry)
     }
   }
@@ -539,6 +551,7 @@ class LRUCache {
     v,
     {
       ttl = this.ttl,
+      start,
       noDisposeOnSet = this.noDisposeOnSet,
       size = 0,
       sizeCalculation = this.sizeCalculation,
@@ -583,7 +596,7 @@ class LRUCache {
       this.initializeTTLTracking()
     }
     if (!noUpdateTTL) {
-      this.setItemTTL(index, ttl)
+      this.setItemTTL(index, ttl, start)
     }
     if (this.disposeAfter) {
       while (this.disposed.length) {

@@ -500,6 +500,7 @@ declare namespace LRUCache {
     size?: number
     sizeCalculation?: SizeCalculator<K, V>
     ttl?: number
+    start?: number
     noDisposeOnSet?: boolean
     noUpdateTTL?: boolean
   }
@@ -555,6 +556,7 @@ declare namespace LRUCache {
     value: V
     ttl?: number
     size?: number
+    start?: number
   }
 }
 

@@ -398,13 +398,38 @@ const runTests = (LRU: typeof LRUCache, t: Tap.Test) => {
     t.end()
   })
 
+  t.test('set item pre-stale', t => {
+    const c = new LRU({
+      max: 3,
+      ttl: 10,
+      allowStale: true,
+    })
+    c.set(1, 1)
+    t.equal(c.has(1), true)
+    t.equal(c.get(1), 1)
+    c.set(2, 2, { start: clock.now() - 11 })
+    t.equal(c.has(2), false)
+    t.equal(c.get(2), 2)
+    t.equal(c.get(2), undefined)
+    c.set(2, 2, { start: clock.now() - 11 })
+    const dump = c.dump()
+    t.matchSnapshot(dump, 'dump with stale values')
+    const d = new LRU({ max: 3, ttl: 10, allowStale: true })
+    d.load(dump)
+    t.equal(d.has(2), false)
+    t.equal(d.get(2), 2)
+    t.equal(d.get(2), undefined)
+    t.end()
+  })
+
   t.end()
 }
 
 t.test('tests with perf_hooks.performance.now()', t => {
-  const { performance } = global
+  const { performance, Date } = global
   // @ts-ignore
-  t.teardown(() => (global.performance = performance))
+  t.teardown(() => Object.assign(global, { performance, Date }))
+  global.Date = clock.Date
   global.performance = clock
   const LRU = t.mock('../', {})
   runTests(LRU, t)
