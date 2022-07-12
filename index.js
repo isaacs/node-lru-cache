@@ -364,8 +364,10 @@ class LRUCache {
   initializeSizeTracking() {
     this.calculatedSize = 0
     this.sizes = new ZeroArray(this.max)
-    this.removeItemSize = index =>
-      (this.calculatedSize -= this.sizes[index])
+    this.removeItemSize = index => {
+      this.calculatedSize -= this.sizes[index]
+      this.sizes[index] = 0
+    }
     this.requireSize = (k, v, size, sizeCalculation) => {
       if (!isPosInt(size)) {
         if (sizeCalculation) {
@@ -386,7 +388,7 @@ class LRUCache {
       }
       return size
     }
-    this.addItemSize = (index, v, k, size) => {
+    this.addItemSize = (index, size) => {
       this.sizes[index] = size
       const maxSize = this.maxSize - this.sizes[index]
       while (this.calculatedSize > maxSize) {
@@ -396,7 +398,7 @@ class LRUCache {
     }
   }
   removeItemSize(index) {}
-  addItemSize(index, v, k, size) {}
+  addItemSize(index, size) {}
   requireSize(k, v, size, sizeCalculation) {
     if (size || sizeCalculation) {
       throw new TypeError(
@@ -569,6 +571,10 @@ class LRUCache {
     } = {}
   ) {
     size = this.requireSize(k, v, size, sizeCalculation)
+    // if the item doesn't fit, don't do anything
+    if (this.maxSize && size > this.maxSize) {
+      return this
+    }
     let index = this.size === 0 ? undefined : this.keyMap.get(k)
     if (index === undefined) {
       // addition
@@ -580,7 +586,7 @@ class LRUCache {
       this.prev[index] = this.tail
       this.tail = index
       this.size++
-      this.addItemSize(index, v, k, size)
+      this.addItemSize(index, size)
       noUpdateTTL = false
     } else {
       // update
@@ -598,7 +604,7 @@ class LRUCache {
         }
         this.removeItemSize(index)
         this.valList[index] = v
-        this.addItemSize(index, v, k, size)
+        this.addItemSize(index, size)
       }
       this.moveToTail(index)
     }

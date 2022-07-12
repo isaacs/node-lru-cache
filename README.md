@@ -114,6 +114,10 @@ the cache, and automatically evict items in order to stay below
 this size.  Note that this may result in fewer than `max` items
 being stored.
 
+Attempting to add an item to the cache whose calculated size is
+greater that this amount will be a no-op.  The item will not be
+cached, and no other items will be evicted.
+
 Optional, must be a positive integer if provided.  Required if
 other size tracking features are used.
 
@@ -134,7 +138,9 @@ argument, and the key is passed as the second argument.
 This may be overridden by passing an options object to
 `cache.set()`.
 
-Requires `maxSize` to be set.
+Requires `maxSize` to be set.  If the resulting calculated size
+is greater than `maxSize`, then the item will not be added to the
+cache.
 
 Deprecated alias: `length`
 
@@ -436,6 +442,9 @@ Options object my also include `size`, which will prevent calling
 the `sizeCalculation` function and just use the specified number
 if it is a positive integer, and `noDisposeOnSet` which will
 prevent calling a `dispose` function in the case of overwrites.
+
+If the `size` (or return value of `sizeCalculation`) is greater
+than `maxSize`, then the item will not be added to the cache.
 
 Will update the recency of the entry.
 
