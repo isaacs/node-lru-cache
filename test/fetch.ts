@@ -495,3 +495,31 @@ t.test('fetchContext', async t => {
   // if still in cache, doesn't call fetchMethod again
   t.strictSame(await cache.fetch('x', { fetchContext: 'ignored' }), ['x', 'default context'])
 })
+
+t.test('forceRefresh', async t => {
+  const cache = new LRU<number, number>({
+    max: 10,
+    allowStale: true,
+    ttl: 100,
+    fetchMethod: async (k, _, { options }) => {
+      //@ts-expect-error
+      t.equal(options.forceRefresh, undefined, 'do not expose forceRefresh')
+      return k
+    }
+  })
+
+  // put in some values that don't match what fetchMethod returns
+  cache.set(1, 100)
+  cache.set(2, 200)
+  t.equal(await cache.fetch(1), 100)
+  // still there, because we're allowing stale, and it's not stale
+  t.equal(await cache.fetch(1, { forceRefresh: true }), 100)
+  t.equal(await cache.fetch(1, { forceRefresh: true }), 100)
+  // if we don't allow stale though, then that means that we wait
+  // for the background fetch to complete, so we get the updated value.
+  t.equal(await cache.fetch(1, { allowStale: false }), 1)
+
+  cache.set(1, 100)
+  t.equal(await cache.fetch(1, { allowStale: false }), 100)
+  t.equal(await cache.fetch(1, { forceRefresh: true, allowStale: false }), 1)
+})

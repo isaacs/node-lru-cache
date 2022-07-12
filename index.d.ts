@@ -569,10 +569,11 @@ declare namespace LRUCache {
   /**
    * options which override the options set in the LRUCache constructor
    * when making `cache.fetch()` calls.
-   * This is the union of GetOptions and SetOptions, plus the
-   * `noDeleteOnFetchRejection` and `fetchContext` fields.
+   * This is the union of GetOptions and SetOptions, plus
+   * `noDeleteOnFetchRejection`, `forceRefresh`, and `fetchContext`
    */
   interface FetchOptions<K, V> extends FetcherFetchOptions<K, V> {
+    forceRefresh?: boolean
     fetchContext?: any
   }
 

@@ -525,7 +525,9 @@ class LRUCache {
     for (const i of this.indexes({ allowStale: true })) {
       const key = this.keyList[i]
       const v = this.valList[i]
-      const value = this.isBackgroundFetch(v) ? v.__staleWhileFetching : v
+      const value = this.isBackgroundFetch(v)
+        ? v.__staleWhileFetching
+        : v
       const entry = { value }
       if (this.ttls) {
         entry.ttl = this.ttls[i]
@@ -769,10 +771,15 @@ class LRUCache {
       // fetch exclusive options
       noDeleteOnFetchRejection = this.noDeleteOnFetchRejection,
       fetchContext = this.fetchContext,
+      forceRefresh = false,
     } = {}
   ) {
     if (!this.fetchMethod) {
-      return this.get(k, { allowStale, updateAgeOnGet, noDeleteOnStaleGet })
+      return this.get(k, {
+        allowStale,
+        updateAgeOnGet,
+        noDeleteOnStaleGet,
+      })
     }
 
     const options = {
@@ -800,7 +807,9 @@ class LRUCache {
           : (v.__returned = v)
       }
 
-      if (!this.isStale(index)) {
+      // if we force a refresh, that means do NOT serve the cached value,
+      // unless we are already in the process of refreshing the cache.
+      if (!forceRefresh && !this.isStale(index)) {
         this.moveToTail(index)
         if (updateAgeOnGet) {
           this.updateItemAge(index)
@@ -808,7 +817,7 @@ class LRUCache {
         return v
       }
 
-      // ok, it is stale, and not already fetching
+      // ok, it is stale or a forced refresh, and not already fetching.
       // refresh the cache.
       const p = this.backgroundFetch(k, index, options, fetchContext)
       return allowStale && p.__staleWhileFetching !== undefined

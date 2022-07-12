@@ -462,7 +462,7 @@ as in `cache.set(key, undefined)`.  Use `cache.has()` to
 determine whether a key is present in the cache at all.
 
 ### `async fetch(key, { updateAgeOnGet, allowStale, size,
-sizeCalculation, ttl, noDisposeOnSet  } = {}) => Promise`
+sizeCalculation, ttl, noDisposeOnSet, forceRefresh } = {}) => Promise`
 
 If the value is in the cache and not stale, then the returned
 Promise resolves to the value.
@@ -474,6 +474,13 @@ returned will be added to the cache once resolved.
 If called with `allowStale`, and an asynchronous fetch is
 currently in progress to reload a stale value, then the former
 stale value will be returned.
+
+If called with `forceRefresh`, then the cached item will be
+re-fetched, even if it is not stale.  However, if `allowStale` is
+set, then the old value will still be returned.  This is useful
+in cases where you want to force a reload of a cached value.  If
+a background fetch is already in progress, then `forceRefresh`
+has no effect.
 
 Multiple fetches for the same `key` will only call `fetchMethod`
 a single time, and all will be resolved when the value is
