@@ -1,5 +1,23 @@
 # cringe lorg
 
+## 7.13.0
+
+* Add `forceRefresh` option to trigger a call to the
+  `fetchMethod` even if the item is found in cache, and not
+  older than its `ttl`.
+
+## 7.12.0
+
+* Add `fetchContext` option to provide additional information to
+  the `fetchMethod`
+* 7.12.1: Fix bug where adding an item with size greater than
+  `maxSize` would cause bizarre behavior.
+
+## 7.11.0
+
+* Add 'noDeleteOnStaleGet' option, to suppress behavior where a
+  `get()` of a stale item would remove it from the cache.
+
 ## 7.10.0
 
 * Add `noDeleteOnFetchRejection` option, to suppress behavior
