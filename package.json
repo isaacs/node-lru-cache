@@ -8,6 +8,7 @@
     "lru",
     "cache"
   ],
+  "sideEffects": false,
   "scripts": {
     "build": "",
     "size": "size-limit",
