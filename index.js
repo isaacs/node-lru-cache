@@ -688,7 +688,9 @@ class LRUCache {
   peek(k, { allowStale = this.allowStale } = {}) {
     const index = this.keyMap.get(k)
     if (index !== undefined && (allowStale || !this.isStale(index))) {
-      return this.valList[index]
+      const v = this.valList[index]
+      // either stale and allowed, or forcing a refresh of non-stale value
+      return this.isBackgroundFetch(v) ? v.__staleWhileFetching : v
     }
   }
 

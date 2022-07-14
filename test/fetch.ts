@@ -515,6 +515,7 @@ t.test('forceRefresh', async t => {
   // still there, because we're allowing stale, and it's not stale
   t.equal(await cache.fetch(1, { forceRefresh: true }), 100)
   t.equal(await cache.fetch(1, { forceRefresh: true }), 100)
+  t.equal(cache.peek(1), 100)
   // if we don't allow stale though, then that means that we wait
   // for the background fetch to complete, so we get the updated value.
   t.equal(await cache.fetch(1, { allowStale: false }), 1)
