@@ -8,7 +8,7 @@ const fn: Fetcher<any, any> = async (_, v) =>
     setImmediate(() => res(v === undefined ? 0 : v + 1))
   )
 
-const Clock = require('clock-mock')
+import Clock from 'clock-mock'
 const clock = new Clock()
 t.teardown(clock.enter())
 clock.advance(1)
