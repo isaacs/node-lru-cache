@@ -4,6 +4,8 @@
 // pull it in as a dep or something.  that would be the
 // javascripty thing to do, right?  but it would mean that
 // this is no longer a zero-deps module, so meh.  it's fine.
+// This is a JS test rather than TS, because we have to do some
+// improper things with types in order to make the polyfill load.
 global.AbortController = null
 global.AbortSignal = null
 
