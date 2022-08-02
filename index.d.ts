@@ -32,7 +32,6 @@
 // Changes by Isaac Z. Schlueter released under the terms found in the
 // LICENSE file within this project.
 
-/// <reference lib="DOM" />
 //tslint:disable:member-access
 declare class LRUCache<K, V> implements Iterable<[K, V]> {
   constructor(options: LRUCache.Options<K, V>)
