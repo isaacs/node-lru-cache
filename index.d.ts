@@ -1,4 +1,3 @@
-// Type definitions for lru-cache 7.10.0
 // Project: https://github.com/isaacs/node-lru-cache
 // Based initially on @types/lru-cache
 // https://github.com/DefinitelyTyped/DefinitelyTyped
