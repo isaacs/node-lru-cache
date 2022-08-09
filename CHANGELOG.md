@@ -100,6 +100,7 @@ well.
   * `maxAge` option -> `ttl`
   * `length` option -> `sizeCalculation`
   * `length` property -> `size`
+  * `del()` method -> `delete()`
   * `prune()` method -> `purgeStale()`
   * `reset()` method -> `clear()`
 * The objects used by `cache.load()` and `cache.dump()` are incompatible
