@@ -474,8 +474,7 @@ can be confusing when setting values specifically to `undefined`,
 as in `cache.set(key, undefined)`.  Use `cache.has()` to
 determine whether a key is present in the cache at all.
 
-### `async fetch(key, { updateAgeOnGet, allowStale, size,
-sizeCalculation, ttl, noDisposeOnSet, forceRefresh } = {}) => Promise`
+### `async fetch(key, { updateAgeOnGet, allowStale, size, sizeCalculation, ttl, noDisposeOnSet, forceRefresh } = {}) => Promise`
 
 If the value is in the cache and not stale, then the returned
 Promise resolves to the value.
