@@ -118,8 +118,10 @@ Attempting to add an item to the cache whose calculated size is
 greater that this amount will be a no-op.  The item will not be
 cached, and no other items will be evicted.
 
-Optional, must be a positive integer if provided.  Required if
-other size tracking features are used.
+Optional, must be a positive integer if provided.
+
+Sets `maxItemSize` to the same value, unless a different value is
+provided for `maxItemSize`.
 
 At least one of `max`, `maxSize`, or `TTL` is required.  This
 must be a positive integer if set.
@@ -127,6 +129,17 @@ must be a positive integer if set.
 Even if size tracking is enabled, **it is strongly recommended to
 set a `max` to prevent unbounded growth of the cache.**  See
 "Storage Bounds Safety" below.
+
+### `maxEntrySize`
+
+Set to a positive integer to track the sizes of items added to
+the cache, and prevent caching any item over a given size.
+Attempting to add an item whose calculated size is greater than
+this amount will be a no-op.  The item will not be cached, and no
+other items will be evicted.
+
+Optional, must be a positive integer if provided.  Defaults to
+the value of `maxSize` if provided.
 
 ### `sizeCalculation`
 

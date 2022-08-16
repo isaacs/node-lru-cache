@@ -1,5 +1,10 @@
 # cringe lorg
 
+## 7.14.0
+
+* Add `maxEntrySize` option to prevent caching items above a
+  given calculated size.
+
 ## 7.13.0
 
 * Add `forceRefresh` option to trigger a call to the

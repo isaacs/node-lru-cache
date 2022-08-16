@@ -157,6 +157,7 @@ class LRUCache {
       noDisposeOnSet,
       noUpdateTTL,
       maxSize = 0,
+      maxEntrySize = 0,
       sizeCalculation,
       fetchMethod,
       fetchContext,
@@ -180,11 +181,12 @@ class LRUCache {
 
     this.max = max
     this.maxSize = maxSize
+    this.maxEntrySize = maxEntrySize || this.maxSize
     this.sizeCalculation = sizeCalculation || length
     if (this.sizeCalculation) {
-      if (!this.maxSize) {
+      if (!this.maxSize && !this.maxEntrySize) {
         throw new TypeError(
-          'cannot set sizeCalculation without setting maxSize'
+          'cannot set sizeCalculation without setting maxSize or maxEntrySize'
         )
       }
       if (typeof this.sizeCalculation !== 'function') {
@@ -231,10 +233,18 @@ class LRUCache {
     this.noUpdateTTL = !!noUpdateTTL
     this.noDeleteOnFetchRejection = !!noDeleteOnFetchRejection
 
-    if (this.maxSize !== 0) {
-      if (!isPosInt(this.maxSize)) {
+    // NB: maxEntrySize is set to maxSize if it's set
+    if (this.maxEntrySize !== 0) {
+      if (this.maxSize !== 0) {
+        if (!isPosInt(this.maxSize)) {
+          throw new TypeError(
+            'maxSize must be a positive integer if specified'
+          )
+        }
+      }
+      if (!isPosInt(this.maxEntrySize)) {
         throw new TypeError(
-          'maxSize must be a positive integer if specified'
+          'maxEntrySize must be a positive integer if specified'
         )
       }
       this.initializeSizeTracking()
@@ -402,7 +412,7 @@ class LRUCache {
   requireSize(k, v, size, sizeCalculation) {
     if (size || sizeCalculation) {
       throw new TypeError(
-        'cannot set size without setting maxSize on cache'
+        'cannot set size without setting maxSize or maxEntrySize on cache'
       )
     }
   }
@@ -574,7 +584,8 @@ class LRUCache {
   ) {
     size = this.requireSize(k, v, size, sizeCalculation)
     // if the item doesn't fit, don't do anything
-    if (this.maxSize && size > this.maxSize) {
+    // NB: maxEntrySize set to maxSize by default
+    if (this.maxEntrySize && size > this.maxEntrySize) {
       return this
     }
     let index = this.size === 0 ? undefined : this.keyMap.get(k)

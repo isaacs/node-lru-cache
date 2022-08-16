@@ -196,3 +196,49 @@ t.test('large item falls out of cache, sizes are kept correct', t => {
 
   t.end()
 })
+
+t.test('large item falls out of cache because maxEntrySize', t => {
+  const c = new LRU<number, number>({
+    maxSize: 1000,
+    maxEntrySize: 10,
+    sizeCalculation: () => 100,
+  })
+  const sizes:number[] = (c as unknown as { sizes: number[] }).sizes
+
+  checkSize(c)
+  t.equal(c.size, 0)
+  t.equal(c.calculatedSize, 0)
+  t.same(sizes, [])
+
+  c.set(2, 2, { size: 2 })
+  checkSize(c)
+  t.equal(c.size, 1)
+  t.equal(c.calculatedSize, 2)
+  t.same(sizes, [2])
+
+  c.delete(2)
+  checkSize(c)
+  t.equal(c.size, 0)
+  t.equal(c.calculatedSize, 0)
+  t.same(sizes, [0])
+
+  c.set(1, 1)
+  checkSize(c)
+  t.equal(c.size, 0)
+  t.equal(c.calculatedSize, 0)
+  t.same(sizes, [0])
+
+  c.set(3, 3, { size: 3 })
+  checkSize(c)
+  t.equal(c.size, 1)
+  t.equal(c.calculatedSize, 3)
+  t.same(sizes, [3])
+
+  c.set(4, 4)
+  checkSize(c)
+  t.equal(c.size, 1)
+  t.equal(c.calculatedSize, 3)
+  t.same(sizes, [3])
+
+  t.end()
+})
