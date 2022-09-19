@@ -96,10 +96,10 @@ If you put more stuff in it, then items will fall out.
 
 ### `max`
 
-The maximum number (or size) of items that remain in the cache
-(assuming no TTL pruning or explicit deletions).  Note that fewer
-items may be stored if size calculation is used, and `maxSize` is
-exceeded.  This must be a positive finite intger.
+The maximum number of items that remain in the cache (assuming no
+TTL pruning or explicit deletions).  Note that fewer items may be
+stored if size calculation is used, and `maxSize` is exceeded.
+This must be a positive finite intger.
 
 At least one of `max`, `maxSize`, or `TTL` is required.  This
 must be a positive integer if set.
@@ -280,9 +280,7 @@ and MAY live in the cache, contributing to its LRU max, long
 after they have expired.
 
 Also, as this cache is optimized for LRU/MRU operations, some of
-the staleness/TTL checks will reduce performance, as they will
-incur overhead by deleting from Map objects rather than simply
-throwing old Map objects away.
+the staleness/TTL checks will reduce performance.
 
 This is not primarily a TTL cache, and does not make strong TTL
 guarantees.  There is no pre-emptive pruning of expired items,
