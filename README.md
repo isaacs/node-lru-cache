@@ -733,7 +733,7 @@ const cache = {
     if (cache.timers.has(k)) {
       clearTimeout(cache.timers.get(k))
     }
-    cache.timers.set(k, setTimeout(() => cache.del(k), ttl))
+    cache.timers.set(k, setTimeout(() => cache.delete(k), ttl))
     cache.data.set(k, v)
   },
   get: k => cache.data.get(k),
