@@ -400,9 +400,11 @@ class LRUCache {
     }
     this.addItemSize = (index, size) => {
       this.sizes[index] = size
-      const maxSize = this.maxSize - this.sizes[index]
-      while (this.calculatedSize > maxSize) {
-        this.evict(true)
+      if (this.maxSize) {
+        const maxSize = this.maxSize - this.sizes[index]
+        while (this.calculatedSize > maxSize) {
+          this.evict(true)
+        }
       }
       this.calculatedSize += this.sizes[index]
     }
