@@ -242,3 +242,19 @@ t.test('large item falls out of cache because maxEntrySize', t => {
 
   t.end()
 })
+
+t.test('maxEntrySize, no maxSize', async t => {
+  const c = new LRU<number, string>({
+    max: 10,
+    maxEntrySize: 10,
+    sizeCalculation: s => s.length,
+    fetchMethod: async n => 'x'.repeat(n),
+  })
+  t.equal(await c.fetch(2), 'xx')
+  t.equal(c.size, 1)
+  t.equal(await c.fetch(3), 'xxx')
+  t.equal(c.size, 2)
+  t.equal(await c.fetch(11), 'x'.repeat(11))
+  t.equal(c.size, 2)
+  t.equal(c.has(11), false)
+})

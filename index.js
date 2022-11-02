@@ -379,6 +379,11 @@ class LRUCache {
       this.sizes[index] = 0
     }
     this.requireSize = (k, v, size, sizeCalculation) => {
+      // provisionally accept background fetches.
+      // actual value size will be checked when they return.
+      if (this.isBackgroundFetch(v)) {
+        return 0
+      }
       if (!isPosInt(size)) {
         if (sizeCalculation) {
           if (typeof sizeCalculation !== 'function') {
@@ -588,6 +593,9 @@ class LRUCache {
     // if the item doesn't fit, don't do anything
     // NB: maxEntrySize set to maxSize by default
     if (this.maxEntrySize && size > this.maxEntrySize) {
+      // have to delete, in case a background fetch is there already.
+      // in non-async cases, this is a no-op
+      this.delete(k)
       return this
     }
     let index = this.size === 0 ? undefined : this.keyMap.get(k)
