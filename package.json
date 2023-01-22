@@ -10,7 +10,8 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "build": "",
+    "pretest": "node ./scripts/transpile-to-esm.mjs",
+    "presnap": "node ./scripts/transpile-to-esm.mjs",
     "size": "size-limit",
     "test": "tap",
     "snap": "tap",
@@ -20,7 +21,23 @@
     "format": "prettier --write .",
     "typedoc": "typedoc ./index.d.ts"
   },
-  "main": "index.js",
+  "type": "commonjs",
+  "main": "./index.js",
+  "module": "./index.mjs",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./index.d.ts",
+        "default": "./index.mjs"
+      },
+      "require": {
+        "types": "./index.d.ts",
+        "default": "./index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
   "repository": "git://github.com/isaacs/node-lru-cache.git",
   "devDependencies": {
     "@size-limit/preset-small-lib": "^7.0.8",
@@ -41,6 +58,7 @@
   "license": "ISC",
   "files": [
     "index.js",
+    "index.mjs",
     "index.d.ts"
   ],
   "engines": {

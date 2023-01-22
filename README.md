@@ -30,7 +30,10 @@ npm install lru-cache --save
 ## Usage
 
 ```js
-const LRU = require('lru-cache')
+// hybrid module, either works
+import LRUCache from 'lru-cache'
+// or:
+const LRUCache = require('lru-cache')
 
 // At least one of 'max', 'ttl', or 'maxSize' is required, to prevent
 // unsafe unbounded storage.
@@ -70,7 +73,7 @@ const options = {
   fetchMethod: async (key, staleValue, { options, signal }) => {}
 }
 
-const cache = new LRU(options)
+const cache = new LRUCache(options)
 
 cache.set("key", "value")
 cache.get("key") // "value"
