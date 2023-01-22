@@ -10,17 +10,20 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "build": "",
+    "build": "node ./scripts/transpile-to-esm.mjs",
     "size": "size-limit",
     "test": "tap",
     "snap": "tap",
     "preversion": "npm test",
     "postversion": "npm publish",
-    "prepublishOnly": "git push origin --follow-tags",
+    "prepublishOnly": "npm run build && git push origin --follow-tags",
     "format": "prettier --write .",
     "typedoc": "typedoc ./index.d.ts"
   },
-  "main": "index.js",
+  "type": "commonjs",
+  "main": "./index.js",
+  "module": "./index.mjs",
+  "types": "./index.d.ts",
   "repository": "git://github.com/isaacs/node-lru-cache.git",
   "devDependencies": {
     "@size-limit/preset-small-lib": "^7.0.8",
@@ -41,6 +44,7 @@
   "license": "ISC",
   "files": [
     "index.js",
+    "index.mjs",
     "index.d.ts"
   ],
   "engines": {
@@ -72,5 +76,12 @@
     {
       "path": "./index.js"
     }
-  ]
+  ],
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "require": "./index.js"
+    },
+    "./package.json": "./package.json"
+  }
 }
