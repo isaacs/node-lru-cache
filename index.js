@@ -584,7 +584,7 @@ class LRUCache {
       ttl = this.ttl,
       start,
       noDisposeOnSet = this.noDisposeOnSet,
-      size = 0,
+      size = this.size,
       sizeCalculation = this.sizeCalculation,
       noUpdateTTL = this.noUpdateTTL,
     } = {}
