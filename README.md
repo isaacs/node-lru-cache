@@ -693,15 +693,15 @@ the limits of safe memory consumption and optimal performance.
 
 At initial object creation, storage is allocated for `max` items.
 If `max` is set to zero, then some performance is lost, and item
-count is unbounded.  Either `maxSize` or `ttl` _must_ be set if
+count is unbounded. Either `maxSize` or `ttl` _must_ be set if
 `max` is not specified.
 
 If `maxSize` is set, then this creates a safe limit on the
 maximum storage consumed, but without the performance benefits of
-pre-allocation.  When `maxSize` is set, every item _must_ provide
-a size, either via the `sizeCalculation` method provided to the
-constructor, or via a `size` or `sizeCalculation` option provided
-to `cache.set()`.  The size of every item _must_ be a positive
+pre-allocation. When maxSize is set, every item must provide a 
+size, either via a size or sizeCalculation method provided to the 
+constructor, or via a size or sizeCalculation option provided to 
+cache.set(). The size of every item _must_ be a positive
 integer.
 
 If neither `max` nor `maxSize` are set, then `ttl` tracking must
