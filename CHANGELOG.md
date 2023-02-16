@@ -1,5 +1,9 @@
 # cringe lorg
 
+## 7.15.0
+
+* Provide both ESM and CommonJS exports
+
 ## 7.14.0
 
 * Add `maxEntrySize` option to prevent caching items above a
