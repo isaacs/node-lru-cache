@@ -1,5 +1,9 @@
 # cringe lorg
 
+## 7.16.0
+
+* Add `allowStaleOnFetchRejection` option
+
 ## 7.15.0
 
 * Provide both ESM and CommonJS exports
