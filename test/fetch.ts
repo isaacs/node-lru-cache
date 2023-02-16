@@ -1,7 +1,7 @@
 import t from 'tap'
-import LRUCache from '../'
 import type { Fetcher } from '../'
-import { exposeStatics, expose } from './fixtures/expose'
+import LRUCache from '../'
+import { expose, exposeStatics } from './fixtures/expose'
 
 const fn: Fetcher<any, any> = async (_, v) =>
   new Promise(res =>
@@ -214,8 +214,9 @@ t.test('fetch options, signal', async t => {
 
 t.test('fetch options, signal, with polyfill', async t => {
   const { AbortController, AbortSignal } = global
-  // @ts-expect-error
-  t.teardown(() => Object.assign(global, { AbortController, AbortSignal }))
+  t.teardown(() => {
+    Object.assign(global, { AbortController, AbortSignal })
+  })
   // @ts-expect-error
   global.AbortController = undefined
   // @ts-expect-error
@@ -491,9 +492,15 @@ t.test('fetchContext', async t => {
   let expectContext = 'default context'
   t.strictSame(await cache.fetch('x'), ['x', 'default context'])
   expectContext = 'overridden'
-  t.strictSame(await cache.fetch('y', { fetchContext: 'overridden' }), ['y', 'overridden'])
+  t.strictSame(
+    await cache.fetch('y', { fetchContext: 'overridden' }),
+    ['y', 'overridden']
+  )
   // if still in cache, doesn't call fetchMethod again
-  t.strictSame(await cache.fetch('x', { fetchContext: 'ignored' }), ['x', 'default context'])
+  t.strictSame(await cache.fetch('x', { fetchContext: 'ignored' }), [
+    'x',
+    'default context',
+  ])
 })
 
 t.test('forceRefresh', async t => {
@@ -502,10 +509,14 @@ t.test('forceRefresh', async t => {
     allowStale: true,
     ttl: 100,
     fetchMethod: async (k, _, { options }) => {
-      //@ts-expect-error
-      t.equal(options.forceRefresh, undefined, 'do not expose forceRefresh')
+      t.equal(
+        //@ts-expect-error
+        options.forceRefresh,
+        undefined,
+        'do not expose forceRefresh'
+      )
       return k
-    }
+    },
   })
 
   // put in some values that don't match what fetchMethod returns
@@ -522,7 +533,10 @@ t.test('forceRefresh', async t => {
 
   cache.set(1, 100)
   t.equal(await cache.fetch(1, { allowStale: false }), 100)
-  t.equal(await cache.fetch(1, { forceRefresh: true, allowStale: false }), 1)
+  t.equal(
+    await cache.fetch(1, { forceRefresh: true, allowStale: false }),
+    1
+  )
 })
 
 t.test('allowStaleOnFetchRejection', async t => {
@@ -534,7 +548,7 @@ t.test('allowStaleOnFetchRejection', async t => {
     fetchMethod: async k => {
       if (fetchFail) throw new Error('fetch rejection')
       return k
-    }
+    },
   })
   t.equal(await c.fetch(1), 1)
   clock.advance(11)

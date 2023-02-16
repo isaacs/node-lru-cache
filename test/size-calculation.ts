@@ -1,12 +1,12 @@
 import t from 'tap'
 import LRU from '../'
 
-const checkSize = (c:LRU<any,any>) => {
+const checkSize = (c: LRU<any, any>) => {
   const sizes = (c as unknown as { sizes: number[] }).sizes
-  const {calculatedSize, maxSize} = c
+  const { calculatedSize, maxSize } = c
   const sum = [...sizes].reduce((a, b) => a + b, 0)
   if (sum !== calculatedSize) {
-    console.error({sum, calculatedSize, sizes})
+    console.error({ sum, calculatedSize, sizes })
     throw new Error('calculatedSize does not equal sum of sizes')
   }
   if (calculatedSize > maxSize) {
@@ -157,7 +157,7 @@ t.test('large item falls out of cache, sizes are kept correct', t => {
     maxSize: 10,
     sizeCalculation: () => 100,
   })
-  const sizes:number[] = (c as unknown as { sizes: number[] }).sizes
+  const sizes: number[] = (c as unknown as { sizes: number[] }).sizes
 
   checkSize(c)
   t.equal(c.size, 0)
@@ -203,7 +203,7 @@ t.test('large item falls out of cache because maxEntrySize', t => {
     maxEntrySize: 10,
     sizeCalculation: () => 100,
   })
-  const sizes:number[] = (c as unknown as { sizes: number[] }).sizes
+  const sizes: number[] = (c as unknown as { sizes: number[] }).sizes
 
   checkSize(c)
   t.equal(c.size, 0)

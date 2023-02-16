@@ -147,9 +147,15 @@ t.test('setting maxSize with non-integer values', t => {
   t.throws(() => new LRU({ max: 10, maxSize: -10 }), TypeError)
   t.throws(() => new LRU({ max: 10, maxEntrySize: 10.5 }), TypeError)
   t.throws(() => new LRU({ max: 10, maxEntrySize: -10 }), TypeError)
-  // @ts-expect-error
-  t.throws(() => new LRU({ max: 10, maxEntrySize: 'banana' }), TypeError)
-  t.throws(() => new LRU({ max: 10, maxEntrySize: Infinity }), TypeError)
+  t.throws(
+    // @ts-expect-error
+    () => new LRU({ max: 10, maxEntrySize: 'banana' }),
+    TypeError
+  )
+  t.throws(
+    () => new LRU({ max: 10, maxEntrySize: Infinity }),
+    TypeError
+  )
   // @ts-expect-error
   t.throws(() => new LRU({ max: 10, maxSize: 'banana' }), TypeError)
   t.throws(() => new LRU({ max: 10, maxSize: Infinity }), TypeError)

@@ -433,7 +433,10 @@ const runTests = (LRU: typeof LRUCache, t: Tap.Test) => {
     t.equal(c.has(1), false)
     t.equal(c.get(1), undefined)
     t.equal(c.get(1, { allowStale: true }), 1)
-    t.equal(c.get(1, { allowStale: true, noDeleteOnStaleGet: false }), 1)
+    t.equal(
+      c.get(1, { allowStale: true, noDeleteOnStaleGet: false }),
+      1
+    )
     t.equal(c.get(1, { allowStale: true }), undefined)
     t.end()
   })
