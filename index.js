@@ -616,6 +616,7 @@ class LRUCache {
       noUpdateTTL = false
     } else {
       // update
+      this.moveToTail(index)
       const oldVal = this.valList[index]
       if (v !== oldVal) {
         if (this.isBackgroundFetch(oldVal)) {
@@ -632,7 +633,6 @@ class LRUCache {
         this.valList[index] = v
         this.addItemSize(index, size)
       }
-      this.moveToTail(index)
     }
     if (ttl !== 0 && this.ttl === 0 && !this.ttls) {
       this.initializeTTLTracking()

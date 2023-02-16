@@ -560,3 +560,32 @@ t.test('allowStaleOnFetchRejection', async t => {
   // that also deletes from the cache
   t.equal(c.get(1), undefined)
 })
+
+t.test('placeholder promise is not removed when resolving', async t => {
+  const resolves: Record<number, () => void> = {}
+  const c = new LRU<number, number>({
+    maxSize: 10,
+    sizeCalculation(v, k) {
+      return k
+    },
+    fetchMethod: k => {
+      return new Promise(resolve => resolves[k] = resolve)
+    },
+  })
+  const p3 = c.fetch(3)
+
+  const p4 = c.fetch(4)
+  const p5 = c.fetch(5)
+
+  resolves[4]()
+  resolves[5]()
+  await p4
+  await p5
+
+  resolves[3]()
+
+  await p3
+
+  t.equal(c.size, 2)
+  t.equal([...c].length, 2)
+})
