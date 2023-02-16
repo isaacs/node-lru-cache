@@ -399,7 +399,9 @@ class LRUCache {
           }
         } else {
           throw new TypeError(
-            'invalid size value (must be positive integer)'
+            'invalid size value (must be positive integer). ' +
+              'When maxSize or maxEntrySize is used, sizeCalculation or size ' +
+              'must be set.'
           )
         }
       }

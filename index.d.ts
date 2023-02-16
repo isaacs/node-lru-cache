@@ -345,8 +345,12 @@ declare namespace LRUCache {
     /**
      * Function to calculate size of items.  Useful if storing strings or
      * buffers or other items where memory size depends on the object itself.
-     * Also note that oversized items do NOT immediately get dropped from
-     * the cache, though they will cause faster turnover in the storage.
+     *
+     * Items larger than {@link maxEntrySize} will not be stored in the cache.
+     *
+     * Note that when `maxSize` or `maxEntrySize` are set, every item added
+     * MUST have a size specified, either via a `sizeCalculation` in the
+     * constructor, or `sizeCalculation` or `size` options to {@link set}.
      */
     sizeCalculation?: SizeCalculator<K, V>
   }
@@ -542,8 +546,23 @@ declare namespace LRUCache {
     /**
      * A value for the size of the entry, prevents calls to
      * {@link sizeCalculation}.
+     *
+     * Items larger than {@link maxEntrySize} will not be stored in the cache.
+     *
+     * Note that when `maxSize` or `maxEntrySize` are set, every item added
+     * MUST have a size specified, either via a `sizeCalculation` in the
+     * constructor, or `sizeCalculation` or `size` options to {@link set}.
      */
     size?: number
+    /**
+     * Overrides the {@link sizeCalculation} method set in the constructor.
+     *
+     * Items larger than {@link maxEntrySize} will not be stored in the cache.
+     *
+     * Note that when `maxSize` or `maxEntrySize` are set, every item added
+     * MUST have a size specified, either via a `sizeCalculation` in the
+     * constructor, or `sizeCalculation` or `size` options to {@link set}.
+     */
     sizeCalculation?: SizeCalculator<K, V>
     ttl?: number
     start?: number

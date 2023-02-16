@@ -123,8 +123,8 @@ cached, and no other items will be evicted.
 
 Optional, must be a positive integer if provided.
 
-Sets `maxItemSize` to the same value, unless a different value is
-provided for `maxItemSize`.
+Sets `maxEntrySize` to the same value, unless a different value
+is provided for `maxEntrySize`.
 
 At least one of `max`, `maxSize`, or `TTL` is required. This
 must be a positive integer if set.
@@ -157,9 +157,8 @@ This may be overridden by passing an options object to
 Requires `maxSize` to be set.
 
 If the `size` (or return value of `sizeCalculation`) for a given
-entry is greater than `maxEntrySize`, or if the resulting size of
-the entire cache would be greater than `maxSize`, then the item
-will not be added to the cache.
+entry is greater than `maxEntrySize`, then the item will not be
+added to the cache.
 
 Deprecated alias: `length`
 
@@ -184,7 +183,7 @@ behavior.
 
 The `fetchMethod` should **only** return `undefined` or a Promise
 resolving to `undefined` if the AbortController signaled an
-`abort` event.  In all other cases, it should return or resolve
+`abort` event. In all other cases, it should return or resolve
 to a value suitable for adding to the cache.
 
 The `options` object is a union of the options that may be
@@ -491,9 +490,8 @@ will prevent calling a `dispose` function in the case of
 overwrites.
 
 If the `size` (or return value of `sizeCalculation`) for a given
-entry is greater than `maxEntrySize`, or if the resulting size of
-the entire cache would be greater than `maxSize`, then the item
-will not be added to the cache.
+entry is greater than `maxEntrySize`, then the item will not be
+added to the cache.
 
 Will update the recency of the entry.
 
