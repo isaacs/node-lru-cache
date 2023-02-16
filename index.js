@@ -163,6 +163,7 @@ class LRUCache {
       fetchContext,
       noDeleteOnFetchRejection,
       noDeleteOnStaleGet,
+      allowStaleOnFetchRejection,
     } = options
 
     // deprecated options, don't trigger a warning for getting them if
@@ -232,6 +233,7 @@ class LRUCache {
     this.noDisposeOnSet = !!noDisposeOnSet
     this.noUpdateTTL = !!noUpdateTTL
     this.noDeleteOnFetchRejection = !!noDeleteOnFetchRejection
+    this.allowStaleOnFetchRejection = !!allowStaleOnFetchRejection
 
     // NB: maxEntrySize is set to maxSize if it's set
     if (this.maxEntrySize !== 0) {
@@ -734,9 +736,12 @@ class LRUCache {
     }
     const eb = er => {
       if (this.valList[index] === p) {
-        const del =
-          !options.noDeleteOnFetchRejection ||
-          p.__staleWhileFetching === undefined
+        // if we allow stale on fetch rejections, then we need to ensure that
+        // the stale value is not removed from the cache when the fetch fails.
+        const noDelete =
+          options.noDeleteOnFetchRejection ||
+          options.allowStaleOnFetchRejection
+        const del = !noDelete || p.__staleWhileFetching === undefined
         if (del) {
           this.delete(k)
         } else {
@@ -745,7 +750,9 @@ class LRUCache {
           this.valList[index] = p.__staleWhileFetching
         }
       }
-      if (p.__returned === p) {
+      if (options.allowStaleOnFetchRejection) {
+        return p.__staleWhileFetching
+      } else if (p.__returned === p) {
         throw er
       }
     }
@@ -793,6 +800,7 @@ class LRUCache {
       noUpdateTTL = this.noUpdateTTL,
       // fetch exclusive options
       noDeleteOnFetchRejection = this.noDeleteOnFetchRejection,
+      allowStaleOnFetchRejection = this.allowStaleOnFetchRejection,
       fetchContext = this.fetchContext,
       forceRefresh = false,
     } = {}
@@ -815,6 +823,7 @@ class LRUCache {
       sizeCalculation,
       noUpdateTTL,
       noDeleteOnFetchRejection,
+      allowStaleOnFetchRejection,
     }
 
     let index = this.keyMap.get(k)

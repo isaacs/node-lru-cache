@@ -524,3 +524,25 @@ t.test('forceRefresh', async t => {
   t.equal(await cache.fetch(1, { allowStale: false }), 100)
   t.equal(await cache.fetch(1, { forceRefresh: true, allowStale: false }), 1)
 })
+
+t.test('allowStaleOnFetchRejection', async t => {
+  let fetchFail = false
+  const c = new LRU<number, number>({
+    ttl: 10,
+    max: 10,
+    allowStaleOnFetchRejection: true,
+    fetchMethod: async k => {
+      if (fetchFail) throw new Error('fetch rejection')
+      return k
+    }
+  })
+  t.equal(await c.fetch(1), 1)
+  clock.advance(11)
+  fetchFail = true
+  t.equal(await c.fetch(1), 1)
+  t.equal(await c.fetch(1), 1)
+  // if we override it, no go
+  await t.rejects(c.fetch(1, { allowStaleOnFetchRejection: false }))
+  // that also deletes from the cache
+  t.equal(c.get(1), undefined)
+})

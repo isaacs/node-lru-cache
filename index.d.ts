@@ -37,9 +37,9 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
 
   /**
    * Number of items in the cache.
-   * Alias for `cache.size`
+   * Alias for {@link size}
    *
-   * @deprecated since 7.0 use `cache.size` instead
+   * @deprecated since 7.0 use {@link size} instead
    */
   public readonly length: number
 
@@ -89,36 +89,30 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
   ): this
 
   /**
-   * Return a value from the cache.
-   * Will update the recency of the cache entry found.
-   * If the key is not found, `get()` will return `undefined`.
-   * This can be confusing when setting values specifically to `undefined`,
-   * as in `cache.set(key, undefined)`. Use `cache.has()` to determine
-   * whether a key is present in the cache at all.
+   * Return a value from the cache. Will update the recency of the cache entry
+   * found.
+   *
+   * If the key is not found, {@link get} will return `undefined`. This can be
+   * confusing when setting values specifically to `undefined`, as in
+   * `cache.set(key, undefined)`. Use {@link has} to determine whether a key is
+   * present in the cache at all.
    */
-  // tslint:disable-next-line:no-unnecessary-generics
-  public get<T = V>(
-    key: K,
-    options?: LRUCache.GetOptions
-  ): T | undefined
+  public get(key: K, options?: LRUCache.GetOptions): V | undefined
 
   /**
-   * Like `get()` but doesn't update recency or delete stale items.
-   * Returns `undefined` if the item is stale, unless `allowStale` is set
+   * Like {@link get} but doesn't update recency or delete stale items.
+   * Returns `undefined` if the item is stale, unless {@link allowStale} is set
    * either on the cache or in the options object.
    */
-  // tslint:disable-next-line:no-unnecessary-generics
-  public peek<T = V>(
-    key: K,
-    options?: LRUCache.PeekOptions
-  ): T | undefined
+  public peek(key: K, options?: LRUCache.PeekOptions): V | undefined
 
   /**
    * Check if a key is in the cache, without updating the recency of use.
    * Will return false if the item is stale, even though it is technically
    * in the cache.
-   * Will not update item age unless `updateAgeOnHas` is set in the options
-   * or constructor.
+   *
+   * Will not update item age unless {@link updateAgeOnHas} is set in the
+   * options or constructor.
    */
   public has(key: K, options?: LRUCache.HasOptions): boolean
 
@@ -143,15 +137,14 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
    * Find a value for which the supplied fn method returns a truthy value,
    * similar to Array.find().  fn is called as fn(value, key, cache).
    */
-  // tslint:disable-next-line:no-unnecessary-generics
-  public find<T = V>(
+  public find(
     callbackFn: (
       value: V,
       key: K,
       cache: this
     ) => boolean | undefined | void,
     options?: LRUCache.GetOptions
-  ): T
+  ): V | undefined
 
   /**
    * Call the supplied function on each item in the cache, in order from
@@ -164,7 +157,7 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
   ): void
 
   /**
-   * The same as `cache.forEach(...)` but items are iterated over in reverse
+   * The same as {@link forEach} but items are iterated over in reverse
    * order.  (ie, less recently used items are iterated over first.)
    */
   public rforEach<T = this>(
@@ -179,7 +172,8 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
   public keys(): Generator<K>
 
   /**
-   * Inverse order version of `cache.keys()`
+   * Inverse order version of {@link keys}
+   *
    * Return a generator yielding the keys in the cache,
    * in order from least recently used to most recently used.
    */
@@ -192,7 +186,8 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
   public values(): Generator<V>
 
   /**
-   * Inverse order version of `cache.values()`
+   * Inverse order version of {@link values}
+   *
    * Return a generator yielding the values in the cache,
    * in order from least recently used to most recently used.
    */
@@ -205,7 +200,8 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
   public entries(): Generator<[K, V]>
 
   /**
-   * Inverse order version of `cache.entries()`
+   * Inverse order version of {@link entries}
+   *
    * Return a generator yielding `[key, value]` pairs,
    * in order from least recently used to most recently used.
    */
@@ -213,7 +209,7 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
 
   /**
    * Iterating over the cache itself yields the same results as
-   * `cache.entries()`
+   * {@link entries}
    */
   public [Symbol.iterator](): Iterator<[K, V]>
 
@@ -262,11 +258,10 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
   /**
    * since: 7.6.0
    */
-  // tslint:disable-next-line:no-unnecessary-generics
-  public fetch<ExpectedValue = V>(
+  public fetch(
     key: K,
     options?: LRUCache.FetchOptions<K, V>
-  ): Promise<ExpectedValue | undefined>
+  ): Promise<V>
 
   /**
    * since: 7.6.0
@@ -286,7 +281,7 @@ declare namespace LRUCache {
   ) => void
   type Fetcher<K, V> = (
     key: K,
-    staleValue: V,
+    staleValue: V | undefined,
     options: FetcherOptions<K, V>
   ) => Promise<V | void | undefined> | V | void | undefined
 
@@ -299,9 +294,9 @@ declare namespace LRUCache {
     maxAge?: number
 
     /**
-     * alias for sizeCalculation
+     * alias for {@link sizeCalculation}
      *
-     * @deprecated since 7.0 use options.sizeCalculation instead
+     * @deprecated since 7.0 use {@link sizeCalculation} instead
      */
     length?: SizeCalculator<K, V>
 
@@ -323,6 +318,12 @@ declare namespace LRUCache {
 
   type MaybeMaxEntrySizeLimit<K, V> =
     | {
+        /**
+         * The maximum allowed size for any single item in the cache.
+         *
+         * If a larger item is passed to {@link set} or returned by a
+         * {@link fetchMethod}, then it will not be stored in the cache.
+         */
         maxEntrySize: number
         sizeCalculation?: SizeCalculator<K, V>
       }
@@ -386,7 +387,7 @@ declare namespace LRUCache {
      *
      * Setting this to a higher value will improve performance somewhat
      * while using ttl tracking, albeit at the expense of keeping stale
-     * items around a bit longer than intended.
+     * items around a bit longer than their TTLs would indicate.
      *
      * @default 1
      * @since 7.1.0
@@ -400,7 +401,7 @@ declare namespace LRUCache {
      * It is almost always best to just leave the stale items in
      * the cache, and let them fall out as new items are added.
      *
-     * Note that this means that allowStale is a bit pointless,
+     * Note that this means that {@link allowStale} is a bit pointless,
      * as stale items will be deleted almost as soon as they expire.
      *
      * Use with caution!
@@ -411,24 +412,24 @@ declare namespace LRUCache {
     ttlAutopurge?: boolean
 
     /**
-     * Return stale items from cache.get() before disposing of them.
-     * Return stale values from cache.fetch() while performing a call
-     * to the `fetchMethod` in the background.
+     * Return stale items from {@link get} before disposing of them.
+     * Return stale values from {@link fetch} while performing a call
+     * to the {@link fetchMethod} in the background.
      *
      * @default false
      */
     allowStale?: boolean
 
     /**
-     * Update the age of items on cache.get(), renewing their TTL
+     * Update the age of items on {@link get}, renewing their TTL
      *
      * @default false
      */
     updateAgeOnGet?: boolean
 
     /**
-     * Do not delete stale items when they are retrieved with cache.get()
-     * Note that the get() return value will still be `undefined` unless
+     * Do not delete stale items when they are retrieved with {@link get}.
+     * Note that the {@link get} return value will still be `undefined` unless
      * allowStale is true.
      *
      * @default false
@@ -437,7 +438,7 @@ declare namespace LRUCache {
     noDeleteOnStaleGet?: boolean
 
     /**
-     * Update the age of items on cache.has(), renewing their TTL
+     * Update the age of items on {@link has}, renewing their TTL
      *
      * @default false
      */
@@ -457,8 +458,8 @@ declare namespace LRUCache {
      * cleanup tasks when items are no longer accessible. Called with `key,
      * value`.  It's called before actually removing the item from the
      * internal cache, so it is *NOT* safe to re-add them.
-     * Use `disposeAfter` if you wish to dispose items after they have been
-     * full removed, when it is safe to add them back to the cache.
+     * Use {@link disposeAfter} if you wish to dispose items after they have
+     * been full removed, when it is safe to add them back to the cache.
      */
     dispose?: Disposer<K, V>
 
@@ -476,19 +477,22 @@ declare namespace LRUCache {
     /**
      * Set to true to suppress calling the dispose() function if the entry
      * key is still accessible within the cache.
-     * This may be overridden by passing an options object to cache.set().
+     * This may be overridden by passing an options object to {@link set}.
      *
      * @default false
      */
     noDisposeOnSet?: boolean
 
     /**
-     * `fetchMethod` Function that is used to make background asynchronous
-     * fetches.  Called with `fetchMethod(key, staleValue)`.  May return a
-     * Promise.
+     * Function that is used to make background asynchronous fetches.  Called
+     * with `fetchMethod(key, staleValue, { signal, options, context })`.
      *
-     * If `fetchMethod` is not provided, then `cache.fetch(key)` is
+     * If `fetchMethod` is not provided, then {@link fetch} is
      * equivalent to `Promise.resolve(cache.get(key))`.
+     *
+     * Note that the `fetchMethod` should ONLY return `undefined` in cases
+     * where either the abort controller has sent an abort signal, or the
+     * item should be removed from the cache.
      *
      * @since 7.6.0
      */
@@ -496,7 +500,7 @@ declare namespace LRUCache {
 
     /**
      * Set to true to suppress the deletion of stale data when a
-     * `fetchMethod` throws an error or returns a rejected promise
+     * {@link fetchMethod} throws an error or returns a rejected promise
      *
      * @default false
      * @since 7.10.0
@@ -504,9 +508,21 @@ declare namespace LRUCache {
     noDeleteOnFetchRejection?: boolean
 
     /**
-     * Set to any value in the constructor or fetch() options to
-     * pass arbitrary data to the fetch() method in the options.context
-     * field.
+     * Set to true to allow returning stale data when a {@link fetchMethod}
+     * throws an error or returns a rejected promise. Note that this
+     * differs from using {@link allowStale} in that stale data will
+     * ONLY be returned in the case that the fetch fails, not any other
+     * times.
+     *
+     * @default false
+     * @since 7.16.0
+     */
+    allowStaleOnFetchRejection?: boolean
+
+    /**
+     * Set to any value in the constructor or {@link fetch} options to
+     * pass arbitrary data to the {@link fetchMethod} in the {@link context}
+     * options field.
      *
      * @since 7.12.0
      */
@@ -520,12 +536,12 @@ declare namespace LRUCache {
 
   /**
    * options which override the options set in the LRUCache constructor
-   * when making `cache.set()` calls.
+   * when making calling {@link set}.
    */
   interface SetOptions<K, V> {
     /**
      * A value for the size of the entry, prevents calls to
-     * `sizeCalculation` function.
+     * {@link sizeCalculation}.
      */
     size?: number
     sizeCalculation?: SizeCalculator<K, V>
@@ -537,7 +553,7 @@ declare namespace LRUCache {
 
   /**
    * options which override the options set in the LRUCAche constructor
-   * when making `cache.has()` calls.
+   * when calling {@link has}.
    */
   interface HasOptions {
     updateAgeOnHas?: boolean
@@ -545,7 +561,7 @@ declare namespace LRUCache {
 
   /**
    * options which override the options set in the LRUCache constructor
-   * when making `cache.get()` calls.
+   * when calling {@link get}.
    */
   interface GetOptions {
     allowStale?: boolean
@@ -555,12 +571,20 @@ declare namespace LRUCache {
 
   /**
    * options which override the options set in the LRUCache constructor
-   * when making `cache.peek()` calls.
+   * when calling {@link peek}.
    */
   interface PeekOptions {
     allowStale?: boolean
   }
 
+  /**
+   * Options object passed to the {@link fetchMethod}
+   *
+   * May be mutated by the {@link fetchMethod} to affect the behavior of the
+   * resulting {@link set} operation on resolution, or in the case of
+   * {@link noDeleteOnFetchRejection} and {@link allowStaleOnFetchRejection},
+   * the handling of failure.
+   */
   interface FetcherFetchOptions<K, V> {
     allowStale?: boolean
     updateAgeOnGet?: boolean
@@ -571,13 +595,16 @@ declare namespace LRUCache {
     noDisposeOnSet?: boolean
     noUpdateTTL?: boolean
     noDeleteOnFetchRejection?: boolean
+    allowStaleOnFetchRejection?: boolean
   }
 
   /**
    * options which override the options set in the LRUCache constructor
-   * when making `cache.fetch()` calls.
+   * when calling {@link fetch}.
+   *
    * This is the union of GetOptions and SetOptions, plus
-   * `noDeleteOnFetchRejection`, `forceRefresh`, and `fetchContext`
+   * {@link noDeleteOnFetchRejection}, {@link allowStaleOnFetchRejection},
+   * {@link forceRefresh}, and {@link fetchContext}
    */
   interface FetchOptions<K, V> extends FetcherFetchOptions<K, V> {
     forceRefresh?: boolean
@@ -587,6 +614,9 @@ declare namespace LRUCache {
   interface FetcherOptions<K, V> {
     signal: AbortSignal
     options: FetcherFetchOptions<K, V>
+    /**
+     * Object provided in the {@link fetchContext} option
+     */
     context: any
   }
 
