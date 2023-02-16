@@ -18,7 +18,7 @@ const AC = hasAbortController
         this.signal = new AS()
       }
       abort() {
-        this.signal.dispatchEvent('abort')
+        this.signal.dispatchEvent({ type: 'abort', target: this.signal })
       }
     }
 
@@ -34,10 +34,9 @@ const AS = hasAbortSignal
         this.aborted = false
         this._listeners = []
       }
-      dispatchEvent(type) {
-        if (type === 'abort') {
+      dispatchEvent(e) {
+        if (e.type === 'abort') {
           this.aborted = true
-          const e = { type, target: this }
           this.onabort(e)
           this._listeners.forEach(f => f(e), this)
         }
