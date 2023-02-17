@@ -18,7 +18,10 @@ const AC = hasAbortController
         this.signal = new AS()
       }
       abort() {
-        this.signal.dispatchEvent({ type: 'abort', target: this.signal })
+        this.signal.dispatchEvent({
+          type: 'abort',
+          target: this.signal,
+        })
       }
     }
 
@@ -469,34 +472,46 @@ class LRUCache {
 
   *entries() {
     for (const i of this.indexes()) {
-      yield [this.keyList[i], this.valList[i]]
+      if (!this.isBackgroundFetch(this.valList[i])) {
+        yield [this.keyList[i], this.valList[i]]
+      }
     }
   }
   *rentries() {
     for (const i of this.rindexes()) {
-      yield [this.keyList[i], this.valList[i]]
+      if (!this.isBackgroundFetch(this.valList[i])) {
+        yield [this.keyList[i], this.valList[i]]
+      }
     }
   }
 
   *keys() {
     for (const i of this.indexes()) {
-      yield this.keyList[i]
+      if (!this.isBackgroundFetch(this.valList[i])) {
+        yield this.keyList[i]
+      }
     }
   }
   *rkeys() {
     for (const i of this.rindexes()) {
-      yield this.keyList[i]
+      if (!this.isBackgroundFetch(this.valList[i])) {
+        yield this.keyList[i]
+      }
     }
   }
 
   *values() {
     for (const i of this.indexes()) {
-      yield this.valList[i]
+      if (!this.isBackgroundFetch(this.valList[i])) {
+        yield this.valList[i]
+      }
     }
   }
   *rvalues() {
     for (const i of this.rindexes()) {
-      yield this.valList[i]
+      if (!this.isBackgroundFetch(this.valList[i])) {
+        yield this.valList[i]
+      }
     }
   }
 
@@ -548,6 +563,7 @@ class LRUCache {
       const value = this.isBackgroundFetch(v)
         ? v.__staleWhileFetching
         : v
+      if (value === undefined) continue
       const entry = { value }
       if (this.ttls) {
         entry.ttl = this.ttls[i]

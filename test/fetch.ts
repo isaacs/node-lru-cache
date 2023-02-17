@@ -581,15 +581,12 @@ t.test('placeholder promise is not removed when resolving', async t => {
   // XXX(@isaacs) these promises should not be exposed
   t.match([...c], [
     [4, 4],
-    [5, Promise],
-    [3, Promise],
   ])
   resolves[5](5)
   await p5
   t.match([...c], [
     [5, 5],
     [4, 4],
-    [3, Promise],
   ])
 
   resolves[3](3)
