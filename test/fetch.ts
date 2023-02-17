@@ -562,29 +562,42 @@ t.test('allowStaleOnFetchRejection', async t => {
 })
 
 t.test('placeholder promise is not removed when resolving', async t => {
-  const resolves: Record<number, () => void> = {}
+  const resolves: Record<number, (v: number) => void> = {}
   const c = new LRU<number, number>({
     maxSize: 10,
-    sizeCalculation(v, k) {
-      return k
+    sizeCalculation(v) {
+      return v
     },
     fetchMethod: k => {
       return new Promise(resolve => resolves[k] = resolve)
     },
   })
   const p3 = c.fetch(3)
-
   const p4 = c.fetch(4)
   const p5 = c.fetch(5)
 
-  resolves[4]()
-  resolves[5]()
+  resolves[4](4)
   await p4
+  // XXX(@isaacs) these promises should not be exposed
+  t.match([...c], [
+    [4, 4],
+    [5, Promise],
+    [3, Promise],
+  ])
+  resolves[5](5)
   await p5
+  t.match([...c], [
+    [5, 5],
+    [4, 4],
+    [3, Promise],
+  ])
 
-  resolves[3]()
-
+  resolves[3](3)
   await p3
+  t.same([...c], [
+    [3, 3],
+    [5, 5],
+  ])
 
   t.equal(c.size, 2)
   t.equal([...c].length, 2)
