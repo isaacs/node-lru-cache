@@ -10,8 +10,10 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "pretest": "node ./scripts/transpile-to-esm.mjs",
-    "presnap": "node ./scripts/transpile-to-esm.mjs",
+    "build": "npm run prepare",
+    "pretest": "npm run prepare",
+    "presnap": "npm run prepare",
+    "prepare": "node ./scripts/transpile-to-esm.mjs",
     "size": "size-limit",
     "test": "tap",
     "snap": "tap",
