@@ -31,7 +31,22 @@
 // Changes by Isaac Z. Schlueter released under the terms found in the
 // LICENSE file within this project.
 
-//tslint:disable:member-access
+/**
+ * Integer greater than 0, representing some number of milliseconds, or the
+ * time at which a TTL started counting from.
+ */
+declare type LRUMilliseconds = number
+
+/**
+ * An integer greater than 0, reflecting the calculated size of items
+ */
+declare type LRUSize = number
+
+/**
+ * An integer greater than 0, reflecting a number of items
+ */
+declare type LRUCount = number
+
 declare class LRUCache<K, V> implements Iterable<[K, V]> {
   constructor(options: LRUCache.Options<K, V>)
 
@@ -41,11 +56,11 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
    *
    * @deprecated since 7.0 use {@link size} instead
    */
-  public readonly length: number
+  public readonly length: LRUCount
 
-  public readonly max: number
-  public readonly maxSize: number
-  public readonly maxEntrySize: number
+  public readonly max: LRUCount
+  public readonly maxSize: LRUSize
+  public readonly maxEntrySize: LRUSize
   public readonly sizeCalculation:
     | LRUCache.SizeCalculator<K, V>
     | undefined
@@ -55,8 +70,8 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
    */
   public readonly disposeAfter: LRUCache.Disposer<K, V> | null
   public readonly noDisposeOnSet: boolean
-  public readonly ttl: number
-  public readonly ttlResolution: number
+  public readonly ttl: LRUMilliseconds
+  public readonly ttlResolution: LRUMilliseconds
   public readonly ttlAutopurge: boolean
   public readonly allowStale: boolean
   public readonly updateAgeOnGet: boolean
@@ -72,12 +87,12 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
   /**
    * The total number of items held in the cache at the current moment.
    */
-  public readonly size: number
+  public readonly size: LRUCount
 
   /**
    * The total size of items in cache when using size tracking.
    */
-  public readonly calculatedSize: number
+  public readonly calculatedSize: LRUSize
 
   /**
    * Add a value to the cache.
@@ -169,7 +184,7 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
    * Return a generator yielding the keys in the cache,
    * in order from most recently used to least recently used.
    */
-  public keys(): Generator<K>
+  public keys(): Generator<K, void, void>
 
   /**
    * Inverse order version of {@link keys}
@@ -177,13 +192,13 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
    * Return a generator yielding the keys in the cache,
    * in order from least recently used to most recently used.
    */
-  public rkeys(): Generator<K>
+  public rkeys(): Generator<K, void, void>
 
   /**
    * Return a generator yielding the values in the cache,
    * in order from most recently used to least recently used.
    */
-  public values(): Generator<V>
+  public values(): Generator<V, void, void>
 
   /**
    * Inverse order version of {@link values}
@@ -191,13 +206,13 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
    * Return a generator yielding the values in the cache,
    * in order from least recently used to most recently used.
    */
-  public rvalues(): Generator<V>
+  public rvalues(): Generator<V, void, void>
 
   /**
    * Return a generator yielding `[key, value]` pairs,
    * in order from most recently used to least recently used.
    */
-  public entries(): Generator<[K, V]>
+  public entries(): Generator<[K, V], void, void>
 
   /**
    * Inverse order version of {@link entries}
@@ -205,13 +220,13 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
    * Return a generator yielding `[key, value]` pairs,
    * in order from least recently used to most recently used.
    */
-  public rentries(): Generator<[K, V]>
+  public rentries(): Generator<[K, V], void, void>
 
   /**
    * Iterating over the cache itself yields the same results as
    * {@link entries}
    */
-  public [Symbol.iterator](): Iterator<[K, V]>
+  public [Symbol.iterator](): Generator<[K, V], void, void>
 
   /**
    * Return an array of [key, entry] objects which can be passed to
@@ -266,14 +281,13 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
   /**
    * since: 7.6.0
    */
-  public getRemainingTTL(key: K): number
+  public getRemainingTTL(key: K): LRUMilliseconds
 }
 
 declare namespace LRUCache {
-  type LRUMilliseconds = number
   type DisposeReason = 'evict' | 'set' | 'delete'
 
-  type SizeCalculator<K, V> = (value: V, key: K) => number
+  type SizeCalculator<K, V> = (value: V, key: K) => LRUSize
   type Disposer<K, V> = (
     value: V,
     key: K,
@@ -291,7 +305,7 @@ declare namespace LRUCache {
      *
      * @deprecated since 7.0 use options.ttl instead
      */
-    maxAge?: number
+    maxAge?: LRUMilliseconds
 
     /**
      * alias for {@link sizeCalculation}
@@ -313,7 +327,7 @@ declare namespace LRUCache {
      * The number of most recently used items to keep.
      * Note that we may store fewer items than this if maxSize is hit.
      */
-    max: number
+    max: LRUCount
   }
 
   type MaybeMaxEntrySizeLimit<K, V> =
@@ -324,7 +338,7 @@ declare namespace LRUCache {
          * If a larger item is passed to {@link set} or returned by a
          * {@link fetchMethod}, then it will not be stored in the cache.
          */
-        maxEntrySize: number
+        maxEntrySize: LRUSize
         sizeCalculation?: SizeCalculator<K, V>
       }
     | {}
@@ -337,10 +351,11 @@ declare namespace LRUCache {
      * to be stored.  At the extreme, a single item of maxSize size
      * will cause everything else in the cache to be dropped when it
      * is added.  Use with caution!
+     *
      * Note also that size tracking can negatively impact performance,
      * though for most cases, only minimally.
      */
-    maxSize: number
+    maxSize: LRUSize
 
     /**
      * Function to calculate size of items.  Useful if storing strings or
@@ -348,9 +363,10 @@ declare namespace LRUCache {
      *
      * Items larger than {@link maxEntrySize} will not be stored in the cache.
      *
-     * Note that when `maxSize` or `maxEntrySize` are set, every item added
-     * MUST have a size specified, either via a `sizeCalculation` in the
-     * constructor, or `sizeCalculation` or `size` options to {@link set}.
+     * Note that when {@link maxSize} or {@link maxEntrySize} are set, every
+     * item added MUST have a size specified, either via a `sizeCalculation` in
+     * the constructor, or `sizeCalculation` or {@link size} options to
+     * {@link set}.
      */
     sizeCalculation?: SizeCalculator<K, V>
   }
@@ -368,7 +384,7 @@ declare namespace LRUCache {
      *
      * Must be an integer number of ms, defaults to 0, which means "no TTL"
      */
-    ttl: number
+    ttl: LRUMilliseconds
 
     /**
      * Boolean flag to tell the cache to not update the TTL when
@@ -396,7 +412,7 @@ declare namespace LRUCache {
      * @default 1
      * @since 7.1.0
      */
-    ttlResolution?: number
+    ttlResolution?: LRUMilliseconds
 
     /**
      * Preemptively remove stale items from the cache.
@@ -549,23 +565,25 @@ declare namespace LRUCache {
      *
      * Items larger than {@link maxEntrySize} will not be stored in the cache.
      *
-     * Note that when `maxSize` or `maxEntrySize` are set, every item added
-     * MUST have a size specified, either via a `sizeCalculation` in the
-     * constructor, or `sizeCalculation` or `size` options to {@link set}.
+     * Note that when {@link maxSize} or {@link maxEntrySize} are set, every
+     * item added MUST have a size specified, either via a `sizeCalculation` in
+     * the constructor, or {@link sizeCalculation} or `size` options to
+     * {@link set}.
      */
-    size?: number
+    size?: LRUSize
     /**
      * Overrides the {@link sizeCalculation} method set in the constructor.
      *
      * Items larger than {@link maxEntrySize} will not be stored in the cache.
      *
-     * Note that when `maxSize` or `maxEntrySize` are set, every item added
-     * MUST have a size specified, either via a `sizeCalculation` in the
-     * constructor, or `sizeCalculation` or `size` options to {@link set}.
+     * Note that when {@link maxSize} or {@link maxEntrySize} are set, every
+     * item added MUST have a size specified, either via a `sizeCalculation` in
+     * the constructor, or `sizeCalculation` or {@link size} options to
+     * {@link set}.
      */
     sizeCalculation?: SizeCalculator<K, V>
-    ttl?: number
-    start?: number
+    ttl?: LRUMilliseconds
+    start?: LRUMilliseconds
     noDisposeOnSet?: boolean
     noUpdateTTL?: boolean
   }
@@ -608,9 +626,9 @@ declare namespace LRUCache {
     allowStale?: boolean
     updateAgeOnGet?: boolean
     noDeleteOnStaleGet?: boolean
-    size?: number
+    size?: LRUSize
     sizeCalculation?: SizeCalculator<K, V>
-    ttl?: number
+    ttl?: LRUMilliseconds
     noDisposeOnSet?: boolean
     noUpdateTTL?: boolean
     noDeleteOnFetchRejection?: boolean
@@ -641,9 +659,9 @@ declare namespace LRUCache {
 
   interface Entry<V> {
     value: V
-    ttl?: number
-    size?: number
-    start?: number
+    ttl?: LRUMilliseconds
+    size?: LRUSize
+    start?: LRUMilliseconds
   }
 }
 
