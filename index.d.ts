@@ -271,6 +271,20 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
   public prune(): boolean
 
   /**
+   * Make an asynchronous cached fetch using the {@link fetchMethod} function.
+   *
+   * If multiple fetches for the same key are issued, then they will all be
+   * coalesced into a single call to fetchMethod.
+   *
+   * Note that this means that handling options such as
+   * {@link allowStaleOnFetchAbort}, {@link signal}, and
+   * {@link allowStaleOnFetchRejection} will be determined by the FIRST fetch()
+   * call for a given key.
+   *
+   * This is a known (fixable) shortcoming which will be addresed on when
+   * someone complains about it, as the fix would involve added complexity and
+   * may not be worth the costs for this edge case.
+   *
    * since: 7.6.0
    */
   public fetch(
@@ -635,6 +649,7 @@ declare namespace LRUCache {
     start?: LRUMilliseconds
     noDisposeOnSet?: boolean
     noUpdateTTL?: boolean
+    status?: Status<V>
   }
 
   /**
@@ -643,6 +658,7 @@ declare namespace LRUCache {
    */
   interface HasOptions {
     updateAgeOnHas?: boolean
+    status: Status<V>
   }
 
   /**
@@ -653,6 +669,7 @@ declare namespace LRUCache {
     allowStale?: boolean
     updateAgeOnGet?: boolean
     noDeleteOnStaleGet?: boolean
+    status?: Status<V>
   }
 
   /**
@@ -684,6 +701,142 @@ declare namespace LRUCache {
     allowStaleOnFetchRejection?: boolean
     ignoreFetchAbort?: boolean
     allowStaleOnFetchAbort?: boolean
+    status?: Status<V>
+  }
+
+  /**
+   * Status object that may be passed to {@link fetch}, {@link get},
+   * {@link set}, and {@link has}.
+   */
+  interface Status<V> {
+    /**
+     * The status of a set() operation.
+     *
+     * - add: the item was not found in the cache, and was added
+     * - update: the item was in the cache, with the same value provided
+     * - replace: the item was in the cache, and replaced
+     * - miss: the item was not added to the cache for some reason
+     */
+    set?: 'add' | 'update' | 'replace' | 'miss'
+
+    /**
+     * the ttl stored for the item, or undefined if ttls are not used.
+     */
+    ttl?: LRUMilliseconds
+
+    /**
+     * the start time for the item, or undefined if ttls are not used.
+     */
+    start?: LRUMilliseconds
+
+    /**
+     * The timestamp used for TTL calculation
+     */
+    now?: LRUMilliseconds
+
+    /**
+     * the remaining ttl for the item, or undefined if ttls are not used.
+     */
+    remainingTTL?: LRUMilliseconds
+
+    /**
+     * The calculated size for the item, if sizes are used.
+     */
+    size?: LRUSize
+
+    /**
+     * A flag indicating that the item was not stored, due to exceeding the
+     * {@link maxEntrySize}
+     */
+    maxEntrySizeExceeded?: true
+
+    /**
+     * The old value, specified in the case of `set:'update'` or
+     * `set:'replace'`
+     */
+    oldValue?: V
+
+    /**
+     * The results of a {@link has} operation
+     *
+     * - hit: the item was found in the cache
+     * - stale: the item was found in the cache, but is stale
+     * - miss: the item was not found in the cache
+     */
+    has?: 'hit' | 'stale' | 'miss'
+
+    /**
+     * The status of a {@link fetch} operation.
+     * Note that this can change as the underlying fetch() moves through
+     * various states.
+     *
+     * - inflight: there is another fetch() for this key which is in process
+     * - get: there is no fetchMethod, so {@link get} was called.
+     * - miss: the item is not in cache, and will be fetched.
+     * - hit: the item is in the cache, and was resolved immediately.
+     * - stale: the item is in the cache, but stale.
+     * - refresh: the item is in the cache, and not stale, but
+     *   {@link forceRefresh} was specified.
+     */
+    fetch?: 'get' | 'inflight' | 'miss' | 'hit' | 'stale' | 'refresh'
+
+    /**
+     * The {@link fetchMethod} was called
+     */
+    fetchDispatched?: true
+
+    /**
+     * The cached value was updated after a successful call to fetchMethod
+     */
+    fetchUpdated?: true
+
+    /**
+     * The reason for a fetch() rejection.  Either the error raised by the
+     * {@link fetchMethod}, or the reason for an AbortSignal.
+     */
+    fetchError?: Error
+
+    /**
+     * The fetch received an abort signal
+     */
+    fetchAborted?: true
+
+    /**
+     * The abort signal received was ignored, and the fetch was allowed to
+     * continue.
+     */
+    fetchAbortIgnored?: true
+
+    /**
+     * The fetchMethod promise resolved successfully
+     */
+    fetchResolved?: true
+
+    /**
+     * The results of the fetchMethod promise were stored in the cache
+     */
+    fetchUpdated?: true
+
+    /**
+     * The fetchMethod promise was rejected
+     */
+    fetchRejected?: true
+
+    /**
+     * The status of a {@link get} operation.
+     *
+     * - fetching: The item is currently being fetched.  If a previous value is
+     *   present and allowed, that will be returned.
+     * - stale: The item is in the cache, and is stale.
+     * - hit: the item is in the cache
+     * - miss: the item is not in the cache
+     */
+    get?: 'stale' | 'hit' | 'miss'
+
+    /**
+     * A fetch or get operation returned a stale value.
+     */
+    returnedStale?: true
   }
 
   /**
@@ -698,6 +851,7 @@ declare namespace LRUCache {
     forceRefresh?: boolean
     fetchContext?: any
     signal?: AbortSignal
+    status?: Status<V>
   }
 
   interface FetcherOptions<K, V> {

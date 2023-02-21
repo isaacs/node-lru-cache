@@ -526,7 +526,7 @@ moment.
 
 The total size of items in cache when using size tracking.
 
-### `set(key, value, [{ size, sizeCalculation, ttl, noDisposeOnSet, start }])`
+### `set(key, value, [{ size, sizeCalculation, ttl, noDisposeOnSet, start, status }])`
 
 Add a value to the cache.
 
@@ -553,7 +553,10 @@ Will update the recency of the entry.
 
 Returns the cache object.
 
-### `get(key, { updateAgeOnGet, allowStale } = {}) => value`
+For the usage of the `status` option, see **Status Tracking**
+below.
+
+### `get(key, { updateAgeOnGet, allowStale, status } = {}) => value`
 
 Return a value from the cache.
 
@@ -564,19 +567,27 @@ can be confusing when setting values specifically to `undefined`,
 as in `cache.set(key, undefined)`. Use `cache.has()` to
 determine whether a key is present in the cache at all.
 
+For the usage of the `status` option, see **Status Tracking**
+below.
+
 ### `async fetch(key, options = {}) => Promise`
 
 The following options are supported:
 
-* `updateAgeOnGet`
-* `allowStale`
-* `size`
-* `sizeCalculation`
-* `ttl`
-* `noDisposeOnSet`
-* `forceRefresh`
-* `signal` - AbortSignal can be used to cancel the `fetch()`
-* `fetchContext` - sets the `context` option passed to the
+- `updateAgeOnGet`
+- `allowStale`
+- `size`
+- `sizeCalculation`
+- `ttl`
+- `noDisposeOnSet`
+- `forceRefresh`
+- `status` - See **Status Tracking** below.
+- `signal` - AbortSignal can be used to cancel the `fetch()`.
+  Note that the `signal` option provided to the `fetchMethod` is
+  a different object, because it must also respond to internal
+  cache state changes, but aborting this signal will abort the
+  one passed to `fetchMethod` as well.
+- `fetchContext` - sets the `context` option passed to the
   underlying `fetchMethod`.
 
 If the value is in the cache and not stale, then the returned
@@ -625,14 +636,19 @@ Like `get()` but doesn't update recency or delete stale items.
 Returns `undefined` if the item is stale, unless `allowStale` is
 set either on the cache or in the options object.
 
-### `has(key, { updateAgeOnHas } = {}) => Boolean`
+### `has(key, { updateAgeOnHas, status } = {}) => Boolean`
 
 Check if a key is in the cache, without updating the recency of
 use. Age is updated if `updateAgeOnHas` is set to `true` in
 either the options or the constructor.
 
 Will return `false` if the item is stale, even though it is
-technically in the cache.
+technically in the cache.  The difference can be determined (if
+it matters) by using a `status` argument, and inspecting the
+`has` field.
+
+For the usage of the `status` option, see **Status Tracking**
+below.
 
 ### `delete(key)`
 
@@ -800,6 +816,150 @@ They will be ignored.
 - `head` Internal ID of least recently used item
 - `tail` Internal ID of most recently used item
 - `free` Stack of deleted internal IDs
+
+## Status Tracking
+
+Occasionally, it may be useful to track the internal behavior of
+the cache, particularly for logging, debugging, or for behavior
+within the `fetchMethod`.  To do this, you can pass a `status`
+object to the `get()`, `set()`, `has()`, and `fetch()` methods.
+
+The `status` option should be a plain JavaScript object.
+
+The following fields will be set appropriately:
+
+```ts
+interface Status<V> {
+  /**
+   * The status of a set() operation.
+   *
+   * - add: the item was not found in the cache, and was added
+   * - update: the item was in the cache, with the same value provided
+   * - replace: the item was in the cache, and replaced
+   * - miss: the item was not added to the cache for some reason
+   */
+  set?: 'add' | 'update' | 'replace' | 'miss'
+
+  /**
+   * the ttl stored for the item, or undefined if ttls are not used.
+   */
+  ttl?: LRUMilliseconds
+
+  /**
+   * the start time for the item, or undefined if ttls are not used.
+   */
+  start?: LRUMilliseconds
+
+  /**
+   * The timestamp used for TTL calculation
+   */
+  now?: LRUMilliseconds
+
+  /**
+   * the remaining ttl for the item, or undefined if ttls are not used.
+   */
+  remainingTTL?: LRUMilliseconds
+
+  /**
+   * The calculated size for the item, if sizes are used.
+   */
+  size?: LRUSize
+
+  /**
+   * A flag indicating that the item was not stored, due to exceeding the
+   * {@link maxEntrySize}
+   */
+  maxEntrySizeExceeded?: true
+
+  /**
+   * The old value, specified in the case of `set:'update'` or
+   * `set:'replace'`
+   */
+  oldValue?: V
+
+  /**
+   * The results of a {@link has} operation
+   *
+   * - hit: the item was found in the cache
+   * - stale: the item was found in the cache, but is stale
+   * - miss: the item was not found in the cache
+   */
+  has?: 'hit' | 'stale' | 'miss'
+
+  /**
+   * The status of a {@link fetch} operation.
+   * Note that this can change as the underlying fetch() moves through
+   * various states.
+   *
+   * - inflight: there is another fetch() for this key which is in process
+   * - get: there is no fetchMethod, so {@link get} was called.
+   * - miss: the item is not in cache, and will be fetched.
+   * - hit: the item is in the cache, and was resolved immediately.
+   * - stale: the item is in the cache, but stale.
+   * - refresh: the item is in the cache, and not stale, but
+   *   {@link forceRefresh} was specified.
+   */
+  fetch?: 'get' | 'inflight' | 'miss' | 'hit' | 'stale' | 'refresh'
+
+  /**
+   * The {@link fetchMethod} was called
+   */
+  fetchDispatched?: true
+
+  /**
+   * The cached value was updated after a successful call to fetchMethod
+   */
+  fetchUpdated?: true
+
+  /**
+   * The reason for a fetch() rejection.  Either the error raised by the
+   * {@link fetchMethod}, or the reason for an AbortSignal.
+   */
+  fetchError?: Error
+
+  /**
+   * The fetch received an abort signal
+   */
+  fetchAborted?: true
+
+  /**
+   * The abort signal received was ignored, and the fetch was allowed to
+   * continue.
+   */
+  fetchAbortIgnored?: true
+
+  /**
+   * The fetchMethod promise resolved successfully
+   */
+  fetchResolved?: true
+
+  /**
+   * The results of the fetchMethod promise were stored in the cache
+   */
+  fetchUpdated?: true
+
+  /**
+   * The fetchMethod promise was rejected
+   */
+  fetchRejected?: true
+
+  /**
+   * The status of a {@link get} operation.
+   *
+   * - fetching: The item is currently being fetched.  If a previous value is
+   *   present and allowed, that will be returned.
+   * - stale: The item is in the cache, and is stale.
+   * - hit: the item is in the cache
+   * - miss: the item is not in the cache
+   */
+  get?: 'stale' | 'hit' | 'miss'
+
+  /**
+   * A fetch or get operation returned a stale value.
+   */
+  returnedStale?: true
+}
+```
 
 ## Storage Bounds Safety
 

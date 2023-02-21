@@ -153,6 +153,13 @@ t.test('delete while empty, or missing key, is no-op', t => {
 })
 
 t.test('large item falls out of cache, sizes are kept correct', t => {
+  const statuses:LRU.Status<number>[] = []
+  const s = ():LRU.Status<number> => {
+    const status:LRU.Status<number> = {}
+    statuses.push(status)
+    return status
+  }
+
   const c = new LRU<number, number>({
     maxSize: 10,
     sizeCalculation: () => 100,
@@ -164,7 +171,7 @@ t.test('large item falls out of cache, sizes are kept correct', t => {
   t.equal(c.calculatedSize, 0)
   t.same(sizes, [])
 
-  c.set(2, 2, { size: 2 })
+  c.set(2, 2, { size: 2, status: s() })
   checkSize(c)
   t.equal(c.size, 1)
   t.equal(c.calculatedSize, 2)
@@ -176,28 +183,36 @@ t.test('large item falls out of cache, sizes are kept correct', t => {
   t.equal(c.calculatedSize, 0)
   t.same(sizes, [0])
 
-  c.set(1, 1)
+  c.set(1, 1, { status: s() })
   checkSize(c)
   t.equal(c.size, 0)
   t.equal(c.calculatedSize, 0)
   t.same(sizes, [0])
 
-  c.set(3, 3, { size: 3 })
+  c.set(3, 3, { size: 3, status: s() })
   checkSize(c)
   t.equal(c.size, 1)
   t.equal(c.calculatedSize, 3)
   t.same(sizes, [3])
 
-  c.set(4, 4)
+  c.set(4, 4, { status: s() })
   checkSize(c)
   t.equal(c.size, 1)
   t.equal(c.calculatedSize, 3)
   t.same(sizes, [3])
 
+  t.matchSnapshot(statuses, 'status updates')
   t.end()
 })
 
 t.test('large item falls out of cache because maxEntrySize', t => {
+  const statuses:LRU.Status<number>[] = []
+  const s = ():LRU.Status<number> => {
+    const status:LRU.Status<number> = {}
+    statuses.push(status)
+    return status
+  }
+
   const c = new LRU<number, number>({
     maxSize: 1000,
     maxEntrySize: 10,
@@ -210,7 +225,7 @@ t.test('large item falls out of cache because maxEntrySize', t => {
   t.equal(c.calculatedSize, 0)
   t.same(sizes, [])
 
-  c.set(2, 2, { size: 2 })
+  c.set(2, 2, { size: 2, status: s() })
   checkSize(c)
   t.equal(c.size, 1)
   t.equal(c.calculatedSize, 2)
@@ -222,24 +237,25 @@ t.test('large item falls out of cache because maxEntrySize', t => {
   t.equal(c.calculatedSize, 0)
   t.same(sizes, [0])
 
-  c.set(1, 1)
+  c.set(1, 1, { status: s() })
   checkSize(c)
   t.equal(c.size, 0)
   t.equal(c.calculatedSize, 0)
   t.same(sizes, [0])
 
-  c.set(3, 3, { size: 3 })
+  c.set(3, 3, { size: 3, status: s() })
   checkSize(c)
   t.equal(c.size, 1)
   t.equal(c.calculatedSize, 3)
   t.same(sizes, [3])
 
-  c.set(4, 4)
+  c.set(4, 4, { status: s() })
   checkSize(c)
   t.equal(c.size, 1)
   t.equal(c.calculatedSize, 3)
   t.same(sizes, [3])
 
+  t.matchSnapshot(statuses, 'status updates')
   t.end()
 })
 

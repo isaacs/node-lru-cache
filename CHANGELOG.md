@@ -1,5 +1,10 @@
 # cringe lorg
 
+## 7.18.0
+
+* Add support for internal state investigation through the use of
+  a `status` option to `has()`, `set()`, `get()`, and `fetch()`.
+
 ## 7.17.0
 
 * Add `signal` option for `fetch` to pass a user-supplied

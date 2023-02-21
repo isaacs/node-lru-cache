@@ -254,3 +254,227 @@ Generator [
   ],
 ]
 `
+
+exports[`test/basic.ts TAP basic operation > status tracking 1`] = `
+Array [
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "get": "hit",
+  },
+  Object {
+    "get": "hit",
+  },
+  Object {
+    "get": "hit",
+  },
+  Object {
+    "get": "hit",
+  },
+  Object {
+    "get": "hit",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "update",
+  },
+  Object {
+    "set": "update",
+  },
+  Object {
+    "set": "update",
+  },
+  Object {
+    "set": "update",
+  },
+  Object {
+    "set": "update",
+  },
+  Object {
+    "get": "hit",
+  },
+  Object {
+    "get": "hit",
+  },
+  Object {
+    "get": "hit",
+  },
+  Object {
+    "get": "hit",
+  },
+  Object {
+    "get": "hit",
+  },
+  Object {
+    "get": "hit",
+  },
+  Object {
+    "get": "hit",
+  },
+  Object {
+    "get": "hit",
+  },
+  Object {
+    "get": "hit",
+  },
+  Object {
+    "get": "hit",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "get": "miss",
+  },
+  Object {
+    "get": "miss",
+  },
+  Object {
+    "get": "miss",
+  },
+  Object {
+    "get": "miss",
+  },
+  Object {
+    "get": "miss",
+  },
+  Object {
+    "get": "miss",
+  },
+  Object {
+    "get": "miss",
+  },
+  Object {
+    "get": "miss",
+  },
+  Object {
+    "get": "miss",
+  },
+  Object {
+    "get": "miss",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "has": "hit",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "has": "hit",
+  },
+  Object {
+    "get": "hit",
+  },
+  Object {
+    "has": "miss",
+  },
+]
+`
+
+exports[`test/basic.ts TAP re-use key before initial fill completed > must match snapshot 1`] = `
+Array [
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "set": "add",
+  },
+  Object {
+    "oldValue": 1,
+    "set": "replace",
+  },
+  Object {
+    "set": "add",
+  },
+]
+`

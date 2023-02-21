@@ -336,6 +336,15 @@ class LRUCache {
       this.starts[index] = this.ttls[index] !== 0 ? perf.now() : 0
     }
 
+    this.statusTTL = (status, index) => {
+      if (status) {
+        status.ttl = this.ttls[index]
+        status.start = this.starts[index]
+        status.now = cachedNow || getNow()
+        status.remainingTTL = status.now + status.ttl - status.start
+      }
+    }
+
     // debounce calls to perf.now() to 1s so we're not hitting
     // that costly call repeatedly.
     let cachedNow = 0
@@ -377,6 +386,7 @@ class LRUCache {
     }
   }
   updateItemAge(_index) {}
+  statusTTL(_status, _index) {}
   setItemTTL(_index, _ttl, _start) {}
   isStale(_index) {
     return false
@@ -416,7 +426,7 @@ class LRUCache {
       }
       return size
     }
-    this.addItemSize = (index, size) => {
+    this.addItemSize = (index, size, status) => {
       this.sizes[index] = size
       if (this.maxSize) {
         const maxSize = this.maxSize - this.sizes[index]
@@ -425,6 +435,10 @@ class LRUCache {
         }
       }
       this.calculatedSize += this.sizes[index]
+      if (status) {
+        status.entrySize = size
+        status.totalCalculatedSize = this.calculatedSize
+      }
     }
   }
   removeItemSize(_index) {}
@@ -613,12 +627,17 @@ class LRUCache {
       size = 0,
       sizeCalculation = this.sizeCalculation,
       noUpdateTTL = this.noUpdateTTL,
+      status,
     } = {}
   ) {
     size = this.requireSize(k, v, size, sizeCalculation)
     // if the item doesn't fit, don't do anything
     // NB: maxEntrySize set to maxSize by default
     if (this.maxEntrySize && size > this.maxEntrySize) {
+      if (status) {
+        status.set = 'miss'
+        status.maxEntrySizeExceeded = true
+      }
       // have to delete, in case a background fetch is there already.
       // in non-async cases, this is a no-op
       this.delete(k)
@@ -635,7 +654,10 @@ class LRUCache {
       this.prev[index] = this.tail
       this.tail = index
       this.size++
-      this.addItemSize(index, size)
+      this.addItemSize(index, size, status)
+      if (status) {
+        status.set = 'add'
+      }
       noUpdateTTL = false
     } else {
       // update
@@ -654,7 +676,17 @@ class LRUCache {
         }
         this.removeItemSize(index)
         this.valList[index] = v
-        this.addItemSize(index, size)
+        this.addItemSize(index, size, status)
+        if (status) {
+          status.set = 'replace'
+          const oldValue =
+            oldVal && this.isBackgroundFetch(oldVal)
+              ? oldVal.__staleWhileFetching
+              : oldVal
+          if (oldValue !== undefined) status.oldValue = oldValue
+        }
+      } else if (status) {
+        status.set = 'update'
       }
     }
     if (ttl !== 0 && this.ttl === 0 && !this.ttls) {
@@ -663,6 +695,7 @@ class LRUCache {
     if (!noUpdateTTL) {
       this.setItemTTL(index, ttl, start)
     }
+    this.statusTTL(status, index)
     if (this.disposeAfter) {
       while (this.disposed.length) {
         this.disposeAfter(...this.disposed.shift())
@@ -718,15 +751,22 @@ class LRUCache {
     return head
   }
 
-  has(k, { updateAgeOnHas = this.updateAgeOnHas } = {}) {
+  has(k, { updateAgeOnHas = this.updateAgeOnHas, status } = {}) {
     const index = this.keyMap.get(k)
     if (index !== undefined) {
       if (!this.isStale(index)) {
         if (updateAgeOnHas) {
           this.updateItemAge(index)
         }
+        if (status) status.has = 'hit'
+        this.statusTTL(status, index)
         return true
+      } else if (status) {
+        status.has = 'stale'
+        this.statusTTL(status, index)
       }
+    } else if (status) {
+      status.has = 'miss'
     }
     return false
   }
@@ -760,8 +800,17 @@ class LRUCache {
     const cb = (v, updateCache = false) => {
       const { aborted } = ac.signal
       const ignoreAbort = options.ignoreFetchAbort && v !== undefined
+      if (options.status) {
+        if (aborted && !updateCache) {
+          options.status.fetchAborted = true
+          options.status.fetchError = ac.signal.reason
+          if (ignoreAbort) options.status.fetchAbortIgnored = true
+        } else {
+          options.status.fetchResolved = true
+        }
+      }
       if (aborted && !ignoreAbort && !updateCache) {
-        return eb(ac.signal.reason)
+        return fetchFail(ac.signal.reason)
       }
       // either we didn't abort, and are still here, or we did, and ignored
       if (this.valList[index] === p) {
@@ -772,12 +821,20 @@ class LRUCache {
             this.delete(k)
           }
         } else {
+          if (options.status) options.status.fetchUpdated = true
           this.set(k, v, fetchOpts.options)
         }
       }
       return v
     }
     const eb = er => {
+      if (options.status) {
+        options.status.fetchRejected = true
+        options.status.fetchError = er
+      }
+      return fetchFail(er)
+    }
+    const fetchFail = er => {
       const { aborted } = ac.signal
       const allowStaleAborted =
         aborted && options.allowStaleOnFetchAbort
@@ -799,6 +856,9 @@ class LRUCache {
         }
       }
       if (allowStale) {
+        if (options.status && p.__staleWhileFetching !== undefined) {
+          options.status.returnedStale = true
+        }
         return p.__staleWhileFetching
       } else if (p.__returned === p) {
         throw er
@@ -822,12 +882,14 @@ class LRUCache {
         }
       })
     }
+    if (options.status) options.status.fetchDispatched = true
     const p = new Promise(pcall).then(cb, eb)
     p.__abortController = ac
     p.__staleWhileFetching = v
     p.__returned = null
     if (index === undefined) {
-      this.set(k, p, fetchOpts.options)
+      // internal, don't expose status.
+      this.set(k, p, { ...fetchOpts.options, status: undefined })
       index = this.keyMap.get(k)
     } else {
       this.valList[index] = p
@@ -870,14 +932,17 @@ class LRUCache {
       allowStaleOnFetchAbort = this.allowStaleOnFetchAbort,
       fetchContext = this.fetchContext,
       forceRefresh = false,
+      status,
       signal,
     } = {}
   ) {
     if (!this.fetchMethod) {
+      if (status) status.fetch = 'get'
       return this.get(k, {
         allowStale,
         updateAgeOnGet,
         noDeleteOnStaleGet,
+        status,
       })
     }
 
@@ -894,38 +959,51 @@ class LRUCache {
       allowStaleOnFetchRejection,
       allowStaleOnFetchAbort,
       ignoreFetchAbort,
+      status,
       signal,
     }
 
     let index = this.keyMap.get(k)
     if (index === undefined) {
+      if (status) status.fetch = 'miss'
       const p = this.backgroundFetch(k, index, options, fetchContext)
       return (p.__returned = p)
     } else {
       // in cache, maybe already fetching
       const v = this.valList[index]
       if (this.isBackgroundFetch(v)) {
-        return allowStale && v.__staleWhileFetching !== undefined
-          ? v.__staleWhileFetching
-          : (v.__returned = v)
+        const stale =
+          allowStale && v.__staleWhileFetching !== undefined
+        if (status) {
+          status.fetch = 'inflight'
+          if (stale) status.returnedStale = true
+        }
+        return stale ? v.__staleWhileFetching : (v.__returned = v)
       }
 
       // if we force a refresh, that means do NOT serve the cached value,
       // unless we are already in the process of refreshing the cache.
-      if (!forceRefresh && !this.isStale(index)) {
+      const isStale = this.isStale(index)
+      if (!forceRefresh && !isStale) {
+        if (status) status.fetch = 'hit'
         this.moveToTail(index)
         if (updateAgeOnGet) {
           this.updateItemAge(index)
         }
+        this.statusTTL(status, index)
         return v
       }
 
       // ok, it is stale or a forced refresh, and not already fetching.
       // refresh the cache.
       const p = this.backgroundFetch(k, index, options, fetchContext)
-      return allowStale && p.__staleWhileFetching !== undefined
-        ? p.__staleWhileFetching
-        : (p.__returned = p)
+      const hasStale = p.__staleWhileFetching !== undefined
+      const staleVal = hasStale && allowStale
+      if (status) {
+        status.fetch = hasStale && isStale ? 'stale' : 'refresh'
+        if (staleVal && isStale) status.returnedStale = true
+      }
+      return staleVal ? p.__staleWhileFetching : (p.__returned = p)
     }
   }
 
@@ -935,28 +1013,39 @@ class LRUCache {
       allowStale = this.allowStale,
       updateAgeOnGet = this.updateAgeOnGet,
       noDeleteOnStaleGet = this.noDeleteOnStaleGet,
+      status,
     } = {}
   ) {
     const index = this.keyMap.get(k)
     if (index !== undefined) {
       const value = this.valList[index]
       const fetching = this.isBackgroundFetch(value)
+      this.statusTTL(status, index)
       if (this.isStale(index)) {
+        if (status) status.get = 'stale'
         // delete only if not an in-flight background fetch
         if (!fetching) {
           if (!noDeleteOnStaleGet) {
             this.delete(k)
           }
+          if (status) status.returnedStale = allowStale
           return allowStale ? value : undefined
         } else {
+          if (status) {
+            status.returnedStale =
+              allowStale && value.__staleWhileFetching !== undefined
+          }
           return allowStale ? value.__staleWhileFetching : undefined
         }
       } else {
+        if (status) status.get = 'hit'
         // if we're currently fetching it, we don't actually have it yet
-        // it's not stale, which means this isn't a staleWhileRefetching,
-        // so we just return undefined
+        // it's not stale, which means this isn't a staleWhileRefetching.
+        // If it's not stale, and fetching, AND has a __staleWhileFetching
+        // value, then that means the user fetched with {forceRefresh:true},
+        // so it's safe to return that value.
         if (fetching) {
-          return undefined
+          return value.__staleWhileFetching
         }
         this.moveToTail(index)
         if (updateAgeOnGet) {
@@ -964,6 +1053,8 @@ class LRUCache {
         }
         return value
       }
+    } else if (status) {
+      status.get = 'miss'
     }
   }
 

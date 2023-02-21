@@ -2,7 +2,7 @@ if (typeof performance === 'undefined') {
   global.performance = require('perf_hooks').performance
 }
 import t from 'tap'
-import type { Fetcher } from '../'
+import type { Fetcher, Status } from '../'
 import LRUCache from '../'
 import { expose, exposeStatics } from './fixtures/expose'
 
@@ -26,31 +26,45 @@ if (!global.AbortController || !global.AbortSignal) {
   LRU = t.mock('../', {}) as typeof LRUCache
 }
 
-const c = new LRU({
+const c = new LRU<string, number>({
   fetchMethod: fn,
   max: 5,
   ttl: 5,
 })
 
+const getStatusObj = (): LRUCache.Status<number> => ({})
+
 t.test('asynchronous fetching', async t => {
-  const v1 = await c.fetch('key')
+  const s1 = getStatusObj()
+  const v1 = await c.fetch('key', { status: s1 })
   t.equal(v1, 0, 'first fetch, no stale data, wait for initial value')
-  const v2 = await c.fetch('key')
+  t.matchSnapshot(s1, 'status 1')
+  const s2 = getStatusObj()
+  const v2 = await c.fetch('key', { status: s2 })
   t.equal(v2, 0, 'got same cached value')
+  t.matchSnapshot(s2, 'status 2')
 
   clock.advance(10)
 
-  const v3 = await c.fetch('key', { allowStale: true })
+  const s3 = getStatusObj()
+  const v3 = await c.fetch('key', { allowStale: true, status: s3 })
   t.equal(v3, 0, 'fetch while stale, allowStale, get stale data')
+  t.matchSnapshot(s3, 'status 3')
+  const s31 = getStatusObj()
   t.equal(
-    await c.fetch('key', { allowStale: true }),
+    await c.fetch('key', { allowStale: true, status: s31 }),
     0,
     'get stale data again while re-fetching because stale previously'
   )
-  const v4 = await c.fetch('key')
+  t.matchSnapshot(s31, 'status 3.1')
+  const s4 = getStatusObj()
+  const v4 = await c.fetch('key', { status: s4 })
   t.equal(v4, 1, 'no allow stale, wait until fresh data available')
-  const v5 = await c.fetch('key')
+  t.matchSnapshot(s4, 'status 4')
+  const s5 = getStatusObj()
+  const v5 = await c.fetch('key', { status: s5 })
   t.equal(v5, 1, 'fetch while not stale, just get from cache')
+  t.matchSnapshot(s5, 'status 5')
 
   clock.advance(10)
 
@@ -122,7 +136,7 @@ t.test('asynchronous fetching', async t => {
     'get while fetching, but did not want stale data'
   )
 
-  c.fetch('key6')
+  const p6 = c.fetch('key6')
   await Promise.resolve().then(() => {})
   clock.advance(100)
   const v20 = c.get('key6', { allowStale: true })
@@ -131,6 +145,19 @@ t.test('asynchronous fetching', async t => {
     undefined,
     'get while fetching, but no stale data to return'
   )
+  t.equal(await p6, 0)
+  clock.advance(100)
+  const p7 = c.fetch('key6')
+  const status: LRUCache.Status<number> = {}
+  const v21 = c.get('key6', { allowStale: true, status })
+  t.equal(v21, 0, 'allowStale, got stale data while fetching')
+  t.equal(
+    status.returnedStale,
+    true,
+    'status reflects stale data returned'
+  )
+  clock.advance(100)
+  t.equal(await p7, 1, 'eventually updated')
 })
 
 t.test('fetchMethod must be a function', async t => {
@@ -146,10 +173,22 @@ t.test('fetch without fetch method', async t => {
   const c = new LRU({ max: 3 })
   c.set(0, 0)
   c.set(1, 1)
-  t.same(await Promise.all([c.fetch(0), c.fetch(1)]), [0, 1])
+  const status: LRUCache.Status<number> = {}
+  t.same(
+    await Promise.all([c.fetch(0, { status }), c.fetch(1)]),
+    [0, 1]
+  )
+  t.matchSnapshot(status, 'status update')
 })
 
 t.test('fetch options, signal', async t => {
+  const statuses: LRUCache.Status<number>[] = []
+  const s = (): LRUCache.Status<number> => {
+    const status: LRUCache.Status<number> = {}
+    statuses.push(status)
+    return status
+  }
+
   let aborted = false
   const disposed: any[] = []
   const disposedAfter: any[] = []
@@ -157,6 +196,7 @@ t.test('fetch options, signal', async t => {
     max: 3,
     ttl: 100,
     fetchMethod: async (k, oldVal, { signal, options }) => {
+      t.ok(options.status, 'received status object')
       // do something async
       await new Promise(res => setImmediate(res))
       if (signal.aborted) {
@@ -176,7 +216,7 @@ t.test('fetch options, signal', async t => {
     },
   })
 
-  const v1 = c.fetch(2)
+  const v1 = c.fetch(2, { status: s() })
   const testp1 = t.rejects(v1, 'aborted by clearing the cache')
   c.delete(2)
   await testp1
@@ -186,7 +226,7 @@ t.test('fetch options, signal', async t => {
   t.same(disposedAfter, [], 'no disposals for aborted promises')
 
   aborted = false
-  const v2 = c.fetch(2)
+  const v2 = c.fetch(2, { status: s() })
   const testp2 = t.rejects(v2, 'rejected, replaced')
   c.set(2, 2)
   await testp2
@@ -199,11 +239,11 @@ t.test('fetch options, signal', async t => {
   disposedAfter.length = 0
 
   aborted = false
-  const v3 = c.fetch(2)
+  const v3 = c.fetch(2, { status: s() })
   const testp3 = t.rejects(v3, 'rejected, aborted by evict')
-  c.set(3, 3)
-  c.set(4, 4)
-  c.set(5, 5)
+  c.set(3, 3, { status: s() })
+  c.set(4, 4, { status: s() })
+  c.set(5, 5, { status: s() })
   await testp3
   await new Promise(res => setImmediate(res))
   t.equal(aborted, true)
@@ -211,14 +251,15 @@ t.test('fetch options, signal', async t => {
   t.same(disposedAfter, [], 'no disposals for aborted promises')
 
   aborted = false
-  await c.fetch(6, { ttl: 1000 })
+  await c.fetch(6, { ttl: 1000, status: s() })
   t.equal(
     c.getRemainingTTL(6),
     1000,
     'overridden ttl in fetch() opts'
   )
-  await c.fetch(2, { ttl: 1 })
+  await c.fetch(2, { ttl: 1, status: s() })
   t.equal(c.getRemainingTTL(2), 25, 'overridden ttl in fetchMethod')
+  t.matchSnapshot(statuses, 'status updates')
 })
 
 t.test('fetch options, signal, with polyfill', async t => {
@@ -386,6 +427,13 @@ t.test('fetch options, signal, with half polyfill', async t => {
 })
 
 t.test('fetchMethod throws', async t => {
+  const statuses: LRUCache.Status<number>[] = []
+  const s = (): LRUCache.Status<number> => {
+    const status: LRUCache.Status<number> = {}
+    statuses.push(status)
+    return status
+  }
+
   // make sure that even if there's no one to sit around and wait for it,
   // the background fetch throwing doesn't blow anything up.
   const cache = new LRU<string, number>({
@@ -400,35 +448,50 @@ t.test('fetchMethod throws', async t => {
   // this simulates the case where the fetch() DID work,
   // and replaced the promise with the resolution, but
   // then they got stale.
-  cache.set('a', 1)
-  cache.set('b', 2)
+  cache.set('a', 1, { status: s() })
+  cache.set('b', 2, { status: s() })
   clock.advance(20)
   await Promise.resolve().then(() => {})
   const a = await Promise.all([
-    cache.fetch('a'),
-    cache.fetch('a'),
-    cache.fetch('a'),
+    cache.fetch('a', { status: s() }),
+    cache.fetch('a', { status: s() }),
+    cache.fetch('a', { status: s() }),
   ])
   t.strictSame(a, [1, 1, 1])
   // clock advances, promise rejects
   clock.advance(20)
   await Promise.resolve().then(() => {})
-  t.equal(cache.get('a'), undefined, 'removed from cache')
+  t.equal(
+    cache.get('a', { status: s() }),
+    undefined,
+    'removed from cache'
+  )
   const b = await Promise.all([
-    cache.fetch('b'),
-    cache.fetch('b'),
-    cache.fetch('b'),
+    cache.fetch('b', { status: s() }),
+    cache.fetch('b', { status: s() }),
+    cache.fetch('b', { status: s() }),
   ])
   t.strictSame(b, [2, 2, 2])
   clock.advance(20)
   await Promise.resolve().then(() => {})
-  t.equal(cache.get('b'), undefined, 'removed from cache')
-  const ap = cache.fetch('a')
+  t.equal(
+    cache.get('b', { status: s() }),
+    undefined,
+    'removed from cache'
+  )
+  const ap = cache.fetch('a', { status: s() })
   const testap = t.rejects(ap, 'aborted by replace')
-  cache.set('a', 99)
+  cache.set('a', 99, { status: s() })
   await testap
-  t.equal(cache.get('a'), 99, 'did not delete new value')
-  t.rejects(cache.fetch('b'), { message: 'fetch failure' })
+  t.equal(
+    cache.get('a', { status: s() }),
+    99,
+    'did not delete new value'
+  )
+  t.rejects(cache.fetch('b', { status: s() }), {
+    message: 'fetch failure',
+  })
+  t.matchSnapshot(statuses, 'status updates')
 })
 
 t.test(
@@ -527,6 +590,13 @@ t.test('fetchContext', async t => {
 })
 
 t.test('forceRefresh', async t => {
+  const statuses: LRUCache.Status<number>[] = []
+  const s = (): LRUCache.Status<number> => {
+    const status: LRUCache.Status<number> = {}
+    statuses.push(status)
+    return status
+  }
+
   const cache = new LRU<number, number>({
     max: 10,
     allowStale: true,
@@ -547,19 +617,35 @@ t.test('forceRefresh', async t => {
   cache.set(2, 200)
   t.equal(await cache.fetch(1), 100)
   // still there, because we're allowing stale, and it's not stale
+  const status: LRUCache.Status<number> = {}
+  t.equal(
+    await cache.fetch(2, { forceRefresh: true, allowStale: false, status }),
+    2
+  )
+  t.equal(status.fetch, 'refresh', 'status reflects forced refresh')
   t.equal(await cache.fetch(1, { forceRefresh: true }), 100)
-  t.equal(await cache.fetch(1, { forceRefresh: true }), 100)
+  clock.advance(100)
+  t.equal(
+    await cache.fetch(2, { forceRefresh: true, status: s() }),
+    2
+  )
   t.equal(cache.peek(1), 100)
   // if we don't allow stale though, then that means that we wait
   // for the background fetch to complete, so we get the updated value.
-  t.equal(await cache.fetch(1, { allowStale: false }), 1)
+  t.equal(await cache.fetch(1, { allowStale: false, status: s() }), 1)
 
   cache.set(1, 100)
   t.equal(await cache.fetch(1, { allowStale: false }), 100)
   t.equal(
-    await cache.fetch(1, { forceRefresh: true, allowStale: false }),
+    await cache.fetch(1, {
+      forceRefresh: true,
+      allowStale: false,
+      status: s(),
+    }),
     1
   )
+
+  t.matchSnapshot(statuses, 'status updates')
 })
 
 t.test('allowStaleOnFetchRejection', async t => {
@@ -576,7 +662,13 @@ t.test('allowStaleOnFetchRejection', async t => {
   t.equal(await c.fetch(1), 1)
   clock.advance(11)
   fetchFail = true
-  t.equal(await c.fetch(1), 1)
+  const status: Status<number> = {}
+  t.equal(await c.fetch(1, { status }), 1)
+  t.equal(
+    status.returnedStale,
+    true,
+    'status reflects returned stale value'
+  )
   t.equal(await c.fetch(1), 1)
   // if we override it, no go
   await t.rejects(c.fetch(1, { allowStaleOnFetchRejection: false }))
@@ -603,7 +695,7 @@ t.test(
 
     resolves[4](4)
     await p4
-    // XXX(@isaacs) these promises should not be exposed
+
     t.match([...c], [[4, 4]])
     resolves[5](5)
     await p5
@@ -631,11 +723,19 @@ t.test(
 )
 
 t.test('send a signal', async t => {
+  const statuses: LRUCache.Status<number>[] = []
+  const s = (): LRUCache.Status<number> => {
+    const status: LRUCache.Status<number> = {}
+    statuses.push(status)
+    return status
+  }
+
   let aborted: Error | undefined = undefined
   let resolved: boolean = false
   const c = new LRU<number, number>({
     max: 10,
-    fetchMethod: async (k, _, { signal }) => {
+    fetchMethod: async (k, _, { signal, options }) => {
+      t.ok(options.status, 'has a status object')
       signal.addEventListener('abort', () => {
         aborted = signal.reason
       })
@@ -648,7 +748,7 @@ t.test('send a signal', async t => {
     },
   })
   const ac = new AbortController()
-  const p = c.fetch(1, { signal: ac.signal })
+  const p = c.fetch(1, { signal: ac.signal, status: s() })
   const er = new Error('custom abort signal')
   const testp = t.rejects(p, er)
   ac.abort(er)
@@ -660,7 +760,47 @@ t.test('send a signal', async t => {
   )
   t.equal(aborted, er)
   t.equal(ac.signal.reason, er)
-  t.equal(c.get(1), undefined)
+  t.equal(c.get(1, { status: s() }), undefined)
+  t.matchSnapshot(statuses, 'status updates')
+})
+
+t.test('verify inflight works as expected', async t => {
+  const statuses: LRUCache.Status<number>[] = []
+  const s = (): LRUCache.Status<number> => {
+    const status: LRUCache.Status<number> = {}
+    statuses.push(status)
+    return status
+  }
+  let called = 0
+  const c = new LRUCache({
+    max: 5,
+    fetchMethod: async () => {
+      called++
+      await new Promise(res => setImmediate(res))
+      return {}
+    },
+  })
+  const e = expose(c)
+  c.fetch(1)
+  const promises: Promise<any>[] = [
+    c.fetch(1, { status: s() }),
+    c.fetch(1),
+    c.fetch(1, { status: s() }),
+    c.fetch(1),
+  ]
+  t.match(e.valList, [Promise, null, null, null, null])
+  t.equal(
+    e.isBackgroundFetch(e.valList[0]),
+    true,
+    'is background fetch'
+  )
+  t.equal(c.get(1, { status: s() }), undefined, 'get while fetching')
+  const a = await Promise.all(promises)
+  for (let i = 1; i < a.length; i++) {
+    t.equal(a[i], a[0], `index ${i} equal to first returned value`)
+  }
+  t.equal(called, 1, 'called one time')
+  t.matchSnapshot(statuses, 'status updates')
 })
 
 t.test('abort, but then keep on fetching anyway', async t => {
@@ -684,11 +824,15 @@ t.test('abort, but then keep on fetching anyway', async t => {
     },
   })
   const ac = new AbortController()
-  const p = cache.fetch(1, { signal: ac.signal })
+  const status: LRUCache.Status<number> = {}
+  const p = cache.fetch(1, { signal: ac.signal, status })
   const er = new Error('ignored abort signal')
   ac.abort(er)
   clock.advance(100)
   t.equal(await p, 1)
+  t.equal(status.fetchAbortIgnored, true, 'status reflects ignored abort')
+  t.equal(status.fetchError, er)
+  t.equal(status.fetchUpdated, true)
 
   t.equal(resolved, true, 'aborted, but resolved anyway')
   t.equal(aborted, er)

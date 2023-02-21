@@ -6,13 +6,20 @@ import t from 'tap'
 import LRU from '../'
 import { expose } from './fixtures/expose'
 
+
 t.test('basic operation', t => {
+  const statuses:LRU.Status<number>[] = []
+  const s = ():LRU.Status<number> => {
+    const status:LRU.Status<number> = {}
+    statuses.push(status)
+    return status
+  }
   const c = new LRU({ max: 10 })
   for (let i = 0; i < 5; i++) {
-    t.equal(c.set(i, i), c)
+    t.equal(c.set(i, i, { status: s() }), c)
   }
   for (let i = 0; i < 5; i++) {
-    t.equal(c.get(i), i)
+    t.equal(c.get(i, { status: s() }), i)
   }
   t.equal(c.size, 5)
   t.matchSnapshot(c.entries())
@@ -28,36 +35,40 @@ t.test('basic operation', t => {
   )
 
   for (let i = 5; i < 10; i++) {
-    c.set(i, i)
+    c.set(i, i, { status: s() })
+  }
+  // second time to get the update statuses
+  for (let i = 5; i < 10; i++) {
+    c.set(i, i, { status: s() })
   }
   t.equal(c.size, 10)
   t.matchSnapshot(c.entries())
 
   for (let i = 0; i < 5; i++) {
     // this doesn't do anything, but shouldn't be a problem.
-    c.get(i, { updateAgeOnGet: true })
+    c.get(i, { updateAgeOnGet: true, status: s() })
   }
   t.equal(c.size, 10)
   t.matchSnapshot(c.entries())
 
   for (let i = 5; i < 10; i++) {
-    c.get(i)
+    c.get(i, { status: s() })
   }
   for (let i = 10; i < 15; i++) {
-    c.set(i, i)
+    c.set(i, i, { status: s() })
   }
   t.equal(c.size, 10)
   t.matchSnapshot(c.entries())
 
   for (let i = 15; i < 20; i++) {
-    c.set(i, i)
+    c.set(i, i, { status: s() })
   }
   // got pruned and replaced
   t.equal(c.size, 10)
   t.matchSnapshot(c.entries())
 
   for (let i = 0; i < 10; i++) {
-    t.equal(c.get(i), undefined)
+    t.equal(c.get(i, { status: s() }), undefined)
   }
   t.matchSnapshot(c.entries())
 
@@ -68,23 +79,24 @@ t.test('basic operation', t => {
   t.equal(c.delete(19), true)
   t.equal(c.delete(19), false)
   t.equal(c.size, 9)
-  c.set(10, 10)
+  c.set(10, 10, { status: s() })
   t.equal(c.size, 10)
 
   c.clear()
   t.equal(c.size, 0)
   for (let i = 0; i < 10; i++) {
-    c.set(i, i)
+    c.set(i, i, { status: s() })
   }
   t.equal(c.size, 10)
-  t.equal(c.has(0), true)
+  t.equal(c.has(0, { status: s() }), true)
   t.equal(c.size, 10)
-  c.set(true, 'true')
-  t.equal(c.has(true), true)
-  t.equal(c.get(true), 'true')
+  c.set(true, 'true', { status: s() })
+  t.equal(c.has(true, { status: s() }), true)
+  t.equal(c.get(true, { status: s() }), 'true')
   c.delete(true)
-  t.equal(c.has(true), false)
+  t.equal(c.has(true, { status: s() }), false)
 
+  t.matchSnapshot(statuses, 'status tracking')
   t.end()
 })
 
@@ -196,12 +208,19 @@ t.test('peek does not disturb order', t => {
 })
 
 t.test('re-use key before initial fill completed', t => {
+  const statuses:LRU.Status<number>[] = []
+  const s = ():LRU.Status<number> => {
+    const status:LRU.Status<number> = {}
+    statuses.push(status)
+    return status
+  }
+
   const c = new LRU({ max: 5 })
-  c.set(0, 0)
-  c.set(1, 1)
-  c.set(2, 2)
-  c.set(1, 2)
-  c.set(3, 3)
+  c.set(0, 0, { status: s() })
+  c.set(1, 1, { status: s() })
+  c.set(2, 2, { status: s() })
+  c.set(1, 2, { status: s() })
+  c.set(3, 3, { status: s() })
   t.same(
     [...c.entries()],
     [
@@ -211,5 +230,6 @@ t.test('re-use key before initial fill completed', t => {
       [0, 0],
     ]
   )
+  t.matchSnapshot(statuses)
   t.end()
 })

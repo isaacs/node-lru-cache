@@ -5,6 +5,52 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
+exports[`test/size-calculation.ts TAP large item falls out of cache because maxEntrySize > status updates 1`] = `
+Array [
+  Object {
+    "entrySize": 2,
+    "set": "add",
+    "totalCalculatedSize": 2,
+  },
+  Object {
+    "maxEntrySizeExceeded": true,
+    "set": "miss",
+  },
+  Object {
+    "entrySize": 3,
+    "set": "add",
+    "totalCalculatedSize": 3,
+  },
+  Object {
+    "maxEntrySizeExceeded": true,
+    "set": "miss",
+  },
+]
+`
+
+exports[`test/size-calculation.ts TAP large item falls out of cache, sizes are kept correct > status updates 1`] = `
+Array [
+  Object {
+    "entrySize": 2,
+    "set": "add",
+    "totalCalculatedSize": 2,
+  },
+  Object {
+    "maxEntrySizeExceeded": true,
+    "set": "miss",
+  },
+  Object {
+    "entrySize": 3,
+    "set": "add",
+    "totalCalculatedSize": 3,
+  },
+  Object {
+    "maxEntrySizeExceeded": true,
+    "set": "miss",
+  },
+]
+`
+
 exports[`test/size-calculation.ts TAP store strings, size = length > dump 1`] = `
 Array [
   Array [
