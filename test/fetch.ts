@@ -68,7 +68,7 @@ t.test('asynchronous fetching', async t => {
   t.matchSnapshot(JSON.stringify(dump), 'safe to stringify dump')
 
   t.equal(e.isBackgroundFetch(v), true)
-  t.equal(e.backgroundFetch('key', 0), v)
+  t.equal(e.backgroundFetch('key', 0, {}), v)
   await v
   const v7 = await c.fetch('key', {
     allowStale: true,
@@ -626,3 +626,36 @@ t.test(
     t.equal([...c].length, 2)
   }
 )
+
+t.test('send a signal', async t => {
+  let aborted: Error | undefined = undefined
+  let resolved: boolean = false
+  const c = new LRU<number, number>({
+    max: 10,
+    fetchMethod: async (k, _, { signal }) => {
+      signal.addEventListener('abort', () => {
+        aborted = signal.reason
+      })
+      return new Promise(res =>
+        setTimeout(() => {
+          resolved = true
+          res(k)
+        }, 100)
+      )
+    },
+  })
+  const ac = new AbortController()
+  const p = c.fetch(1, { signal: ac.signal })
+  const er = new Error('custom abort signal')
+  const testp = t.rejects(p, er)
+  ac.abort(er)
+  await testp
+  t.equal(
+    resolved,
+    false,
+    'should have aborted before fetchMethod resolved'
+  )
+  t.equal(aborted, er)
+  t.equal(ac.signal.reason, er)
+  t.equal(c.get(1), undefined)
+})

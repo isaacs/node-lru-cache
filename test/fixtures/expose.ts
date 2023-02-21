@@ -8,7 +8,12 @@ export const exposeStatics = (LRU: typeof LRUCache) => {
 export const expose = (cache: LRUCache<any, any>) => {
   return cache as unknown as {
     isBackgroundFetch: (v: any) => boolean
-    backgroundFetch: (v: any, index: number) => Promise<any>
+    backgroundFetch: (
+      v: any,
+      index: number,
+      options: { [k: string]: any },
+      context?: any
+    ) => Promise<any>
     valList: any[]
     keyList: any[]
     free: number[]

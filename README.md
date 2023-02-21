@@ -508,14 +508,28 @@ can be confusing when setting values specifically to `undefined`,
 as in `cache.set(key, undefined)`. Use `cache.has()` to
 determine whether a key is present in the cache at all.
 
-### `async fetch(key, { updateAgeOnGet, allowStale, size, sizeCalculation, ttl, noDisposeOnSet, forceRefresh } = {}) => Promise`
+### `async fetch(key, options = {}) => Promise`
+
+The following options are supported:
+
+* `updateAgeOnGet`
+* `allowStale`
+* `size`
+* `sizeCalculation`
+* `ttl`
+* `noDisposeOnSet`
+* `forceRefresh`
+* `signal` - AbortSignal can be used to cancel the `fetch()`
+* `fetchContext` - sets the `context` option passed to the
+  underlying `fetchMethod`.
 
 If the value is in the cache and not stale, then the returned
 Promise resolves to the value.
 
 If not in the cache, or beyond its TTL staleness, then
-`fetchMethod(key, staleValue, options)` is called, and the value
-returned will be added to the cache once resolved.
+`fetchMethod(key, staleValue, { options, signal, context })` is
+called, and the value returned will be added to the cache once
+resolved.
 
 If called with `allowStale`, and an asynchronous fetch is
 currently in progress to reload a stale value, then the former
@@ -538,6 +552,15 @@ alias for `Promise.resolve(cache.get(key))`.
 When the fetch method resolves to a value, if the fetch has not
 been aborted due to deletion, eviction, or being overwritten,
 then it is added to the cache using the options provided.
+
+If the key is evicted or deleted before the `fetchMethod`
+resolves, then the AbortSignal passed to the `fetchMethod` will
+receive an `abort` event, and the promise returned by `fetch()`
+will reject with the reason for the abort.
+
+If a `signal` is passed to the `fetch()` call, then aborting the
+signal will abort the fetch and cause the `fetch()` promise to
+reject with the reason provided.
 
 ### `peek(key, { allowStale } = {}) => value`
 

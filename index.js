@@ -742,6 +742,11 @@ class LRUCache {
       return v
     }
     const ac = new AC()
+    if (options.signal) {
+      options.signal.addEventListener('abort', () =>
+        ac.abort(options.signal.reason)
+      )
+    }
     const fetchOpts = {
       signal: ac.signal,
       options,

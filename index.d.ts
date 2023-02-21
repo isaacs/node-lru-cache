@@ -645,6 +645,7 @@ declare namespace LRUCache {
   interface FetchOptions<K, V> extends FetcherFetchOptions<K, V> {
     forceRefresh?: boolean
     fetchContext?: any
+    signal?: AbortSignal
   }
 
   interface FetcherOptions<K, V> {
