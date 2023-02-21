@@ -32,6 +32,7 @@ t.test('bunch of iteration things', async t => {
   t.matchSnapshot(c.dump(), 'empty, dump')
 
   const p99 = c.fetch(99)
+  const testp99 = t.rejects(p99, 'aborted by eviction')
   const p123 = c.fetch(123)
 
   t.matchSnapshot(c.keys(), 'pending fetch, keys')
@@ -78,7 +79,7 @@ t.test('bunch of iteration things', async t => {
   t.matchSnapshot(c.dump(), 'dump, new value 4')
 
   resolves[99]('99')
-  await p99
+  await testp99
   t.matchSnapshot(c.keys(), 'keys, resolved fetch 99 too late')
   t.matchSnapshot(c.values(), 'values, resolved fetch 99 too late')
   t.matchSnapshot(c.entries(), 'entries, resolved fetch 99 too late')

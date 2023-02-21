@@ -92,8 +92,8 @@ t.test('asynchronous fetching', async t => {
 
   const v13 = c.fetch('key3')
   c.delete('key3')
-  t.equal(await v13, 0, 'returned 0 eventually')
-  t.equal(c.has('key3'), false, 'but not inserted into cache')
+  await t.rejects(v13, 'rejects, because it was deleted')
+  t.equal(c.has('key3'), false, 'not inserted into cache')
 
   c.fetch('key4')
   clock.advance(100)
@@ -174,16 +174,20 @@ t.test('fetch options, signal', async t => {
   })
 
   const v1 = c.fetch(2)
+  const testp1 = t.rejects(v1, 'aborted by clearing the cache')
   c.delete(2)
-  t.equal(await v1, undefined, 'no value returned, aborted by delete')
+  await testp1
+  await new Promise(res => setImmediate(res))
   t.equal(aborted, true)
   t.same(disposed, [], 'no disposals for aborted promises')
   t.same(disposedAfter, [], 'no disposals for aborted promises')
 
   aborted = false
   const v2 = c.fetch(2)
+  const testp2 = t.rejects(v2, 'rejected, replaced')
   c.set(2, 2)
-  t.equal(await v2, undefined, 'no value returned, aborted by set')
+  await testp2
+  await new Promise(res => setImmediate(res))
   t.equal(aborted, true)
   t.same(disposed, [], 'no disposals for aborted promises')
   t.same(disposedAfter, [], 'no disposals for aborted promises')
@@ -193,10 +197,12 @@ t.test('fetch options, signal', async t => {
 
   aborted = false
   const v3 = c.fetch(2)
+  const testp3 = t.rejects(v3, 'rejected, aborted by evict')
   c.set(3, 3)
   c.set(4, 4)
   c.set(5, 5)
-  t.equal(await v3, undefined, 'no value returned, aborted by evict')
+  await testp3
+  await new Promise(res => setImmediate(res))
   t.equal(aborted, true)
   t.same(disposed, [], 'no disposals for aborted promises')
   t.same(disposedAfter, [], 'no disposals for aborted promises')
@@ -249,16 +255,20 @@ t.test('fetch options, signal, with polyfill', async t => {
   })
 
   const v1 = c.fetch(2)
+  const testp1 = t.rejects(v1, 'aborted by delete')
   c.delete(2)
-  t.equal(await v1, undefined, 'no value returned, aborted by delete')
+  await testp1
+  await new Promise(res => setImmediate(res))
   t.equal(aborted, true)
   t.same(disposed, [], 'no disposals for aborted promises')
   t.same(disposedAfter, [], 'no disposals for aborted promises')
 
   aborted = false
   const v2 = c.fetch(2)
+  const testp2 = t.rejects(v2, 'aborted by set')
   c.set(2, 2)
-  t.equal(await v2, undefined, 'no value returned, aborted by set')
+  await testp2
+  await new Promise(res => setImmediate(res))
   t.equal(aborted, true)
   t.same(disposed, [], 'no disposals for aborted promises')
   t.same(disposedAfter, [], 'no disposals for aborted promises')
@@ -268,10 +278,12 @@ t.test('fetch options, signal, with polyfill', async t => {
 
   aborted = false
   const v3 = c.fetch(2)
+  const testp3 = t.rejects(v3, 'aborted by evict')
   c.set(3, 3)
   c.set(4, 4)
   c.set(5, 5)
-  t.equal(await v3, undefined, 'no value returned, aborted by evict')
+  await testp3
+  await new Promise(res => setImmediate(res))
   t.equal(aborted, true)
   t.same(disposed, [], 'no disposals for aborted promises')
   t.same(disposedAfter, [], 'no disposals for aborted promises')
@@ -326,16 +338,20 @@ t.test('fetch options, signal, with half polyfill', async t => {
   })
 
   const v1 = c.fetch(2)
+  const testp1 = t.rejects(v1, 'aborted by delete')
   c.delete(2)
-  t.equal(await v1, undefined, 'no value returned, aborted by delete')
+  await testp1
+  await new Promise(res => setImmediate(res))
   t.equal(aborted, true)
   t.same(disposed, [], 'no disposals for aborted promises')
   t.same(disposedAfter, [], 'no disposals for aborted promises')
 
   aborted = false
   const v2 = c.fetch(2)
+  const testp2 = t.rejects(v2, 'aborted by set')
   c.set(2, 2)
-  t.equal(await v2, undefined, 'no value returned, aborted by set')
+  await testp2
+  await new Promise(res => setImmediate(res))
   t.equal(aborted, true)
   t.same(disposed, [], 'no disposals for aborted promises')
   t.same(disposedAfter, [], 'no disposals for aborted promises')
@@ -345,10 +361,12 @@ t.test('fetch options, signal, with half polyfill', async t => {
 
   aborted = false
   const v3 = c.fetch(2)
+  const testp3 = t.rejects(v3, 'aborted by evict')
   c.set(3, 3)
   c.set(4, 4)
   c.set(5, 5)
-  t.equal(await v3, undefined, 'no value returned, aborted by evict')
+  await testp3
+  await new Promise(res => setImmediate(res))
   t.equal(aborted, true)
   t.same(disposed, [], 'no disposals for aborted promises')
   t.same(disposedAfter, [], 'no disposals for aborted promises')
@@ -403,8 +421,9 @@ t.test('fetchMethod throws', async t => {
   await Promise.resolve().then(() => {})
   t.equal(cache.get('b'), undefined, 'removed from cache')
   const ap = cache.fetch('a')
+  const testap = t.rejects(ap, 'aborted by replace')
   cache.set('a', 99)
-  await t.rejects(ap, { message: 'fetch failure' })
+  await testap
   t.equal(cache.get('a'), 99, 'did not delete new value')
   t.rejects(cache.fetch('b'), { message: 'fetch failure' })
 })
@@ -465,8 +484,9 @@ t.test(
     // even though we don't noDeleteOnFetchRejection,
     // if there's no stale, we still remove the *promise*.
     const ap = cache.fetch('a')
+    const testap = t.rejects(ap, 'aborted by replace')
     cache.set('a', 99)
-    await t.rejects(ap, { message: 'fetch failure' })
+    await testap
     t.equal(cache.get('a'), 99, 'did not delete, was replaced')
     await t.rejects(cache.fetch('b'), { message: 'fetch failure' })
     t.equal(e.keyMap.get('b'), undefined, 'not in cache')
@@ -515,7 +535,7 @@ t.test('forceRefresh', async t => {
         undefined,
         'do not expose forceRefresh'
       )
-      return k
+      return new Promise(res => setImmediate(() => res(k)))
     },
   })
 
@@ -561,41 +581,48 @@ t.test('allowStaleOnFetchRejection', async t => {
   t.equal(c.get(1), undefined)
 })
 
-t.test('placeholder promise is not removed when resolving', async t => {
-  const resolves: Record<number, (v: number) => void> = {}
-  const c = new LRU<number, number>({
-    maxSize: 10,
-    sizeCalculation(v) {
-      return v
-    },
-    fetchMethod: k => {
-      return new Promise(resolve => resolves[k] = resolve)
-    },
-  })
-  const p3 = c.fetch(3)
-  const p4 = c.fetch(4)
-  const p5 = c.fetch(5)
+t.test(
+  'placeholder promise is not removed when resolving',
+  async t => {
+    const resolves: Record<number, (v: number) => void> = {}
+    const c = new LRU<number, number>({
+      maxSize: 10,
+      sizeCalculation(v) {
+        return v
+      },
+      fetchMethod: k => {
+        return new Promise(resolve => (resolves[k] = resolve))
+      },
+    })
+    const p3 = c.fetch(3)
+    const p4 = c.fetch(4)
+    const p5 = c.fetch(5)
 
-  resolves[4](4)
-  await p4
-  // XXX(@isaacs) these promises should not be exposed
-  t.match([...c], [
-    [4, 4],
-  ])
-  resolves[5](5)
-  await p5
-  t.match([...c], [
-    [5, 5],
-    [4, 4],
-  ])
+    resolves[4](4)
+    await p4
+    // XXX(@isaacs) these promises should not be exposed
+    t.match([...c], [[4, 4]])
+    resolves[5](5)
+    await p5
+    t.match(
+      [...c],
+      [
+        [5, 5],
+        [4, 4],
+      ]
+    )
 
-  resolves[3](3)
-  await p3
-  t.same([...c], [
-    [3, 3],
-    [5, 5],
-  ])
+    resolves[3](3)
+    await p3
+    t.same(
+      [...c],
+      [
+        [3, 3],
+        [5, 5],
+      ]
+    )
 
-  t.equal(c.size, 2)
-  t.equal([...c].length, 2)
-})
+    t.equal(c.size, 2)
+    t.equal([...c].length, 2)
+  }
+)

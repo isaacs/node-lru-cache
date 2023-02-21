@@ -510,9 +510,8 @@ declare namespace LRUCache {
      * If `fetchMethod` is not provided, then {@link fetch} is
      * equivalent to `Promise.resolve(cache.get(key))`.
      *
-     * Note that the `fetchMethod` should ONLY return `undefined` in cases
-     * where either the abort controller has sent an abort signal, or the
-     * item should be removed from the cache.
+     * The `fetchMethod` should ONLY return `undefined` in cases where the
+     * abort controller has sent an abort signal.
      *
      * @since 7.6.0
      */

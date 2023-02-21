@@ -17,7 +17,8 @@ const AC = hasAbortController
       constructor() {
         this.signal = new AS()
       }
-      abort() {
+      abort(reason = new Error('This operation was aborted')) {
+        this.signal.reason = reason
         this.signal.dispatchEvent({
           type: 'abort',
           target: this.signal,
@@ -34,6 +35,7 @@ const AS = hasAbortSignal
   ? AC.AbortController
   : class AbortSignal {
       constructor() {
+        this.reason = undefined
         this.aborted = false
         this._listeners = []
       }
@@ -369,9 +371,9 @@ class LRUCache {
       )
     }
   }
-  updateItemAge(index) {}
-  setItemTTL(index, ttl, start) {}
-  isStale(index) {
+  updateItemAge(_index) {}
+  setItemTTL(_index, _ttl, _start) {}
+  isStale(_index) {
     return false
   }
 
@@ -420,9 +422,9 @@ class LRUCache {
       this.calculatedSize += this.sizes[index]
     }
   }
-  removeItemSize(index) {}
-  addItemSize(index, size) {}
-  requireSize(k, v, size, sizeCalculation) {
+  removeItemSize(_index) {}
+  addItemSize(_index, _size) {}
+  requireSize(_k, _v, size, sizeCalculation) {
     if (size || sizeCalculation) {
       throw new TypeError(
         'cannot set size without setting maxSize or maxEntrySize on cache'
@@ -594,7 +596,7 @@ class LRUCache {
     }
   }
 
-  dispose(v, k, reason) {}
+  dispose(_v, _k, _reason) {}
 
   set(
     k,
@@ -636,7 +638,7 @@ class LRUCache {
       const oldVal = this.valList[index]
       if (v !== oldVal) {
         if (this.isBackgroundFetch(oldVal)) {
-          oldVal.__abortController.abort()
+          oldVal.__abortController.abort(new Error('replaced'))
         } else {
           if (!noDisposeOnSet) {
             this.dispose(oldVal, k, 'set')
@@ -691,7 +693,7 @@ class LRUCache {
     const k = this.keyList[head]
     const v = this.valList[head]
     if (this.isBackgroundFetch(v)) {
-      v.__abortController.abort()
+      v.__abortController.abort(new Error('evicted'))
     } else {
       this.dispose(v, k, 'evict')
       if (this.disposeAfter) {
@@ -748,8 +750,10 @@ class LRUCache {
     const cb = v => {
       if (!ac.signal.aborted) {
         this.set(k, v, fetchOpts.options)
+        return v
+      } else {
+        return eb(ac.signal.reason)
       }
-      return v
     }
     const eb = er => {
       if (this.valList[index] === p) {
@@ -773,7 +777,10 @@ class LRUCache {
         throw er
       }
     }
-    const pcall = res => res(this.fetchMethod(k, v, fetchOpts))
+    const pcall = (res, rej) => {
+      ac.signal.addEventListener('abort', () => res())
+      this.fetchMethod(k, v, fetchOpts).then(res, rej)
+    }
     const p = new Promise(pcall).then(cb, eb)
     p.__abortController = ac
     p.__staleWhileFetching = v
@@ -820,6 +827,7 @@ class LRUCache {
       allowStaleOnFetchRejection = this.allowStaleOnFetchRejection,
       fetchContext = this.fetchContext,
       forceRefresh = false,
+      signal,
     } = {}
   ) {
     if (!this.fetchMethod) {
@@ -841,6 +849,7 @@ class LRUCache {
       noUpdateTTL,
       noDeleteOnFetchRejection,
       allowStaleOnFetchRejection,
+      signal,
     }
 
     let index = this.keyMap.get(k)
@@ -955,7 +964,7 @@ class LRUCache {
           this.removeItemSize(index)
           const v = this.valList[index]
           if (this.isBackgroundFetch(v)) {
-            v.__abortController.abort()
+            v.__abortController.abort(new Error('deleted'))
           } else {
             this.dispose(v, k, 'delete')
             if (this.disposeAfter) {
@@ -990,7 +999,7 @@ class LRUCache {
     for (const index of this.rindexes({ allowStale: true })) {
       const v = this.valList[index]
       if (this.isBackgroundFetch(v)) {
-        v.__abortController.abort()
+        v.__abortController.abort(new Error('deleted'))
       } else {
         const k = this.keyList[index]
         this.dispose(v, k, 'delete')
