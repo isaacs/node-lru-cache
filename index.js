@@ -18,7 +18,8 @@ const AC = hasAbortController
         this.signal = new AS()
       }
       abort(reason = new Error('This operation was aborted')) {
-        this.signal.reason = reason
+        this.signal.reason = this.signal.reason || reason
+        this.signal.aborted = true
         this.signal.dispatchEvent({
           type: 'abort',
           target: this.signal,

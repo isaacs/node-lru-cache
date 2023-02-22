@@ -7,6 +7,7 @@ export const exposeStatics = (LRU: typeof LRUCache) => {
 }
 export const expose = (cache: LRUCache<any, any>) => {
   return cache as unknown as {
+    isStale: (n: number) => boolean
     isBackgroundFetch: (v: any) => boolean
     backgroundFetch: (
       v: any,

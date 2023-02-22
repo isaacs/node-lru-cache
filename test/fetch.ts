@@ -1,3 +1,6 @@
+if (typeof performance === 'undefined') {
+  global.performance = require('perf_hooks').performance
+}
 import t from 'tap'
 import type { Fetcher } from '../'
 import LRUCache from '../'
@@ -754,17 +757,18 @@ t.test('background update on timeout, return stale', async t => {
       })
     },
   })
+  const e = expose(c)
   c.set(1, 10)
   clock.advance(100)
   const ac = new AbortController()
   const p = c.fetch(1, { signal: ac.signal })
-  const e = expose(c)
+  await new Promise(res => setImmediate(res))
   t.match(e.valList[0], { __staleWhileFetching: 10 })
   ac.abort(new Error('gimme the stale value'))
   t.equal(await p, 10)
   t.equal(c.get(1, { allowStale: true }), 10)
   clock.advance(200)
-  await new Promise(res => setImmediate(res))
+  await new Promise(res => setImmediate(res)).then(() => {})
   t.equal(e.valList[0], 1, 'got updated value later')
 
   c.set(1, 99)
