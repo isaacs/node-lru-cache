@@ -1,5 +1,11 @@
 # cringe lorg
 
+## 7.17.0
+
+* Add `signal` option for `fetch` to pass a user-supplied
+  AbortSignal
+* Add `ignoreFetchAbort` and `allowStaleOnFetchAbort` options
+
 ## 7.16.0
 
 * Add `allowStaleOnFetchRejection` option
