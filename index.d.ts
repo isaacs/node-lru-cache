@@ -521,6 +521,8 @@ declare namespace LRUCache {
      * Set to true to suppress the deletion of stale data when a
      * {@link fetchMethod} throws an error or returns a rejected promise
      *
+     * This may be overridden in the {@link fetchMethod}.
+     *
      * @default false
      * @since 7.10.0
      */
@@ -533,10 +535,58 @@ declare namespace LRUCache {
      * ONLY be returned in the case that the fetch fails, not any other
      * times.
      *
+     * This may be overridden in the {@link fetchMethod}.
+     *
      * @default false
      * @since 7.16.0
      */
     allowStaleOnFetchRejection?: boolean
+
+    /**
+     *
+     * Set to true to ignore the `abort` event emitted by the `AbortSignal`
+     * object passed to {@link fetchMethod}, and still cache the
+     * resulting resolution value, as long as it is not `undefined`.
+     *
+     * When used on its own, this means aborted {@link fetch} calls are not
+     * immediately resolved or rejected when they are aborted, and instead take
+     * the full time to await.
+     *
+     * When used with {@link allowStaleOnFetchAbort}, aborted {@link fetch}
+     * calls will resolve immediately to their stale cached value or
+     * `undefined`, and will continue to process and eventually update the
+     * cache when they resolve, as long as the resulting value is not
+     * `undefined`, thus supporting a "return stale on timeout while
+     * refreshing" mechanism by passing `AbortSignal.timeout(n)` as the signal.
+     *
+     * **Note**: regardless of this setting, an `abort` event _is still emitted
+     * on the `AbortSignal` object_, so may result in invalid results when
+     * passed to other underlying APIs that use AbortSignals.
+     *
+     * This may be overridden in the {@link fetchMethod} or the call to
+     * {@link fetch}.
+     *
+     * @default false
+     * @since 7.17.0
+     */
+    ignoreFetchAbort?: boolean
+
+    /**
+     * Set to true to return a stale value from the cache when the
+     * `AbortSignal` passed to the {@link fetchMethod} dispatches an `'abort'`
+     * event, whether user-triggered, or due to internal cache behavior.
+     *
+     * Unless {@link ignoreFetchAbort} is also set, the underlying
+     * {@link fetchMethod} will still be considered canceled, and its return
+     * value will be ignored and not cached.
+     *
+     * This may be overridden in the {@link fetchMethod} or the call to
+     * {@link fetch}.
+     *
+     * @default false
+     * @since 7.17.0
+     */
+    allowStaleOnFetchAbort?: boolean
 
     /**
      * Set to any value in the constructor or {@link fetch} options to
@@ -618,8 +668,8 @@ declare namespace LRUCache {
    *
    * May be mutated by the {@link fetchMethod} to affect the behavior of the
    * resulting {@link set} operation on resolution, or in the case of
-   * {@link noDeleteOnFetchRejection} and {@link allowStaleOnFetchRejection},
-   * the handling of failure.
+   * {@link noDeleteOnFetchRejection}, {@link ignoreFetchAbort}, and
+   * {@link allowStaleOnFetchRejection}, the handling of failure.
    */
   interface FetcherFetchOptions<K, V> {
     allowStale?: boolean
@@ -632,6 +682,8 @@ declare namespace LRUCache {
     noUpdateTTL?: boolean
     noDeleteOnFetchRejection?: boolean
     allowStaleOnFetchRejection?: boolean
+    ignoreFetchAbort?: boolean
+    allowStaleOnFetchAbort?: boolean
   }
 
   /**

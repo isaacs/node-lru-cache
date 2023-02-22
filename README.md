@@ -245,6 +245,62 @@ This may be set in calls to `fetch()`, or defaulted on the
 constructor, or overridden by modifying the options object in the
 `fetchMethod`.
 
+### `allowStaleOnFetchAbort`
+
+Set to true to return a stale value from the cache when the
+`AbortSignal` passed to the `fetchMethod` dispatches an `'abort'`
+event, whether user-triggered, or due to internal cache behavior.
+
+Unless `ignoreFetchAbort` is also set, the underlying
+`fetchMethod` will still be considered canceled, and its return
+value will be ignored and not cached.
+
+### `ignoreFetchAbort`
+
+Set to true to ignore the `abort` event emitted by the
+`AbortSignal` object passed to `fetchMethod`, and still cache the
+resulting resolution value, as long as it is not `undefined`.
+
+When used on its own, this means aborted `fetch()` calls are not
+immediately resolved or rejected when they are aborted, and
+instead take the full time to await.
+
+When used with `allowStaleOnFetchAbort`, aborted `fetch()` calls
+will resolve immediately to their stale cached value or
+`undefined`, and will continue to process and eventually update
+the cache when they resolve, as long as the resulting value is
+not `undefined`, thus supporting a "return stale on timeout while
+refreshing" mechanism by passing `AbortSignal.timeout(n)` as the
+signal.
+
+For example:
+
+```js
+const c = new LRUCache({
+  ttl: 100,
+  ignoreFetchAbort: true,
+  allowStaleOnFetchAbort: true,
+  fetchMethod: async (key, oldValue, { signal }) => {
+    // note: do NOT pass the signal to fetch()!
+    // let's say this fetch can take a long time.
+    const res = await fetch(`https://slow-backend-server/${key}`)
+    return await res.json()
+  },
+})
+
+// this will return the stale value after 100ms, while still
+// updating in the background for next time.
+const val = await c.fetch('key', { signal: AbortSignal.timeout(100) })
+```
+
+**Note**: regardless of this setting, an `abort` event _is still
+emitted on the `AbortSignal` object_, so may result in invalid
+results when passed to other underlying APIs that use
+AbortSignals.
+
+This may be overridden on the `fetch()` call or in the
+`fetchMethod` itself.
+
 ### `dispose`
 
 Function that is called on items when they are dropped from the

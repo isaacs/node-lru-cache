@@ -659,3 +659,127 @@ t.test('send a signal', async t => {
   t.equal(ac.signal.reason, er)
   t.equal(c.get(1), undefined)
 })
+
+t.test('abort, but then keep on fetching anyway', async t => {
+  let aborted: Error | undefined = undefined
+  let resolved: boolean = false
+  let returnUndefined: boolean = false
+  const cache = new LRU<number, number>({
+    max: 10,
+    ignoreFetchAbort: true,
+    fetchMethod: async (k, _, { signal, options }) => {
+      t.equal(options.ignoreFetchAbort, true, 'aborts ignored')
+      signal.addEventListener('abort', () => {
+        aborted = signal.reason
+      })
+      return new Promise(res =>
+        setTimeout(() => {
+          resolved = true
+          res(returnUndefined ? undefined : k)
+        }, 100)
+      )
+    },
+  })
+  const ac = new AbortController()
+  const p = cache.fetch(1, { signal: ac.signal })
+  const er = new Error('ignored abort signal')
+  ac.abort(er)
+  clock.advance(100)
+  t.equal(await p, 1)
+
+  t.equal(resolved, true, 'aborted, but resolved anyway')
+  t.equal(aborted, er)
+  t.equal(ac.signal.reason, er)
+  t.equal(cache.get(1), 1)
+
+  const p2 = cache.fetch(2)
+  t.equal(cache.get(2), undefined)
+  cache.delete(2)
+  t.equal(cache.get(2), undefined)
+  clock.advance(100)
+  t.equal(await p2, 2)
+  t.equal(cache.get(2), undefined)
+
+  // if aborted for cause, we don't save the fetched value
+  const p3 = cache.fetch(3)
+  t.equal(cache.get(3), undefined)
+  cache.set(3, 33)
+  t.equal(cache.get(3), 33)
+  clock.advance(100)
+  t.equal(await p3, 3)
+  t.equal(cache.get(3), 33)
+
+  const e = expose(cache)
+  returnUndefined = true
+  const before = e.valList.slice()
+  const p4 = cache.fetch(4)
+  clock.advance(100)
+  t.equal(await p4, undefined)
+  t.same(e.valList, before, 'did not update values with undefined')
+})
+
+t.test('allowStaleOnFetchAbort', async t => {
+  const c = new LRUCache<number, number>({
+    ttl: 10,
+    max: 10,
+    allowStaleOnFetchAbort: true,
+    fetchMethod: async (k, _, { signal }) => {
+      return new Promise(res => {
+        const t = setTimeout(() => res(k), 100)
+        signal.addEventListener('abort', () => clearTimeout(t))
+      })
+    },
+  })
+  c.set(1, 10)
+  clock.advance(100)
+  const ac = new AbortController()
+  const p = c.fetch(1, { signal: ac.signal })
+  ac.abort(new Error('gimme the stale value'))
+  t.equal(await p, 10)
+  t.equal(c.get(1, { allowStale: true }), 10)
+})
+
+t.test('background update on timeout, return stale', async t => {
+  let returnUndefined = false
+  const c = new LRUCache<number, number>({
+    ttl: 10,
+    max: 10,
+    ignoreFetchAbort: true,
+    allowStaleOnFetchAbort: true,
+    fetchMethod: async k => {
+      return new Promise(res => {
+        setTimeout(() => {
+          res(returnUndefined ? undefined : k)
+        }, 100)
+      })
+    },
+  })
+  c.set(1, 10)
+  clock.advance(100)
+  const ac = new AbortController()
+  const p = c.fetch(1, { signal: ac.signal })
+  const e = expose(c)
+  t.match(e.valList[0], { __staleWhileFetching: 10 })
+  ac.abort(new Error('gimme the stale value'))
+  t.equal(await p, 10)
+  t.equal(c.get(1, { allowStale: true }), 10)
+  clock.advance(200)
+  await new Promise(res => setImmediate(res))
+  t.equal(e.valList[0], 1, 'got updated value later')
+
+  c.set(1, 99)
+  clock.advance(100)
+  returnUndefined = true
+  const ac2 = new AbortController()
+  const p2 = c.fetch(1, { signal: ac2.signal })
+  await new Promise(res => setImmediate(res))
+  t.match(e.valList[0], { __staleWhileFetching: 99 })
+  ac2.abort(new Error('gimme stale 99'))
+  t.equal(await p2, 99)
+  t.match(e.valList[0], { __staleWhileFetching: 99 })
+  t.equal(c.get(1, { allowStale: true }), 99)
+  t.match(e.valList[0], { __staleWhileFetching: 99 })
+  clock.advance(200)
+  await new Promise(res => setImmediate(res))
+  t.equal(e.valList[0], 99)
+})

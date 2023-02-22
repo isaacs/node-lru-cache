@@ -168,6 +168,8 @@ class LRUCache {
       noDeleteOnFetchRejection,
       noDeleteOnStaleGet,
       allowStaleOnFetchRejection,
+      allowStaleOnFetchAbort,
+      ignoreFetchAbort,
     } = options
 
     // deprecated options, don't trigger a warning for getting them if
@@ -238,6 +240,8 @@ class LRUCache {
     this.noUpdateTTL = !!noUpdateTTL
     this.noDeleteOnFetchRejection = !!noDeleteOnFetchRejection
     this.allowStaleOnFetchRejection = !!allowStaleOnFetchRejection
+    this.allowStaleOnFetchAbort = !!allowStaleOnFetchAbort
+    this.ignoreFetchAbort = !!ignoreFetchAbort
 
     // NB: maxEntrySize is set to maxSize if it's set
     if (this.maxEntrySize !== 0) {
@@ -752,39 +756,70 @@ class LRUCache {
       options,
       context,
     }
-    const cb = v => {
-      if (!ac.signal.aborted) {
-        this.set(k, v, fetchOpts.options)
-        return v
-      } else {
+    const cb = (v, updateCache = false) => {
+      const { aborted } = ac.signal
+      const ignoreAbort = options.ignoreFetchAbort && v !== undefined
+      if (aborted && !ignoreAbort && !updateCache) {
         return eb(ac.signal.reason)
       }
+      // either we didn't abort, and are still here, or we did, and ignored
+      if (this.valList[index] === p) {
+        if (v === undefined) {
+          if (p.__staleWhileFetching) {
+            this.valList[index] = p.__staleWhileFetching
+          } else {
+            this.delete(k)
+          }
+        } else {
+          this.set(k, v, fetchOpts.options)
+        }
+      }
+      return v
     }
     const eb = er => {
+      const { aborted } = ac.signal
+      const allowStaleAborted =
+        aborted && options.allowStaleOnFetchAbort
+      const allowStale =
+        allowStaleAborted || options.allowStaleOnFetchRejection
+      const noDelete = allowStale || options.noDeleteOnFetchRejection
       if (this.valList[index] === p) {
         // if we allow stale on fetch rejections, then we need to ensure that
         // the stale value is not removed from the cache when the fetch fails.
-        const noDelete =
-          options.noDeleteOnFetchRejection ||
-          options.allowStaleOnFetchRejection
         const del = !noDelete || p.__staleWhileFetching === undefined
         if (del) {
           this.delete(k)
-        } else {
+        } else if (!allowStaleAborted) {
           // still replace the *promise* with the stale value,
           // since we are done with the promise at this point.
+          // leave it untouched if we're still waiting for an
+          // aborted background fetch that hasn't yet returned.
           this.valList[index] = p.__staleWhileFetching
         }
       }
-      if (options.allowStaleOnFetchRejection) {
+      if (allowStale) {
         return p.__staleWhileFetching
       } else if (p.__returned === p) {
         throw er
       }
     }
     const pcall = (res, rej) => {
-      ac.signal.addEventListener('abort', () => res())
-      this.fetchMethod(k, v, fetchOpts).then(res, rej)
+      this.fetchMethod(k, v, fetchOpts).then(v => res(v), rej)
+      // ignored, we go until we finish, regardless.
+      // defer check until we are actually aborting,
+      // so fetchMethod can override.
+      ac.signal.addEventListener('abort', () => {
+        if (
+          !options.ignoreFetchAbort ||
+          options.allowStaleOnFetchAbort
+        ) {
+          res()
+          // when it eventually resolves, update the cache.
+          if (options.allowStaleOnFetchAbort) {
+            res = v => cb(v, true)
+          }
+        }
+      })
     }
     const p = new Promise(pcall).then(cb, eb)
     p.__abortController = ac
@@ -830,6 +865,8 @@ class LRUCache {
       // fetch exclusive options
       noDeleteOnFetchRejection = this.noDeleteOnFetchRejection,
       allowStaleOnFetchRejection = this.allowStaleOnFetchRejection,
+      ignoreFetchAbort = this.ignoreFetchAbort,
+      allowStaleOnFetchAbort = this.allowStaleOnFetchAbort,
       fetchContext = this.fetchContext,
       forceRefresh = false,
       signal,
@@ -854,6 +891,8 @@ class LRUCache {
       noUpdateTTL,
       noDeleteOnFetchRejection,
       allowStaleOnFetchRejection,
+      allowStaleOnFetchAbort,
+      ignoreFetchAbort,
       signal,
     }
 
