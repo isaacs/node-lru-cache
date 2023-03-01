@@ -6,6 +6,10 @@
   AbortSignal
 * Add `ignoreFetchAbort` and `allowStaleOnFetchAbort` options
 
+## 7.16.2
+
+* Fail fetch() promises when they are aborted
+
 ## 7.16.0
 
 * Add `allowStaleOnFetchRejection` option
