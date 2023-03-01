@@ -112,7 +112,7 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
    * `cache.set(key, undefined)`. Use {@link has} to determine whether a key is
    * present in the cache at all.
    */
-  public get(key: K, options?: LRUCache.GetOptions): V | undefined
+  public get(key: K, options?: LRUCache.GetOptions<V>): V | undefined
 
   /**
    * Like {@link get} but doesn't update recency or delete stale items.
@@ -129,7 +129,7 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
    * Will not update item age unless {@link updateAgeOnHas} is set in the
    * options or constructor.
    */
-  public has(key: K, options?: LRUCache.HasOptions): boolean
+  public has(key: K, options?: LRUCache.HasOptions<V>): boolean
 
   /**
    * Deletes a key out of the cache.
@@ -158,7 +158,7 @@ declare class LRUCache<K, V> implements Iterable<[K, V]> {
       key: K,
       cache: this
     ) => boolean | undefined | void,
-    options?: LRUCache.GetOptions
+    options?: LRUCache.GetOptions<V>
   ): V | undefined
 
   /**
@@ -656,7 +656,7 @@ declare namespace LRUCache {
    * options which override the options set in the LRUCAche constructor
    * when calling {@link has}.
    */
-  interface HasOptions {
+  interface HasOptions<V> {
     updateAgeOnHas?: boolean
     status: Status<V>
   }
@@ -665,7 +665,7 @@ declare namespace LRUCache {
    * options which override the options set in the LRUCache constructor
    * when calling {@link get}.
    */
-  interface GetOptions {
+  interface GetOptions<V> {
     allowStale?: boolean
     updateAgeOnGet?: boolean
     noDeleteOnStaleGet?: boolean
@@ -811,11 +811,6 @@ declare namespace LRUCache {
      * The fetchMethod promise resolved successfully
      */
     fetchResolved?: true
-
-    /**
-     * The results of the fetchMethod promise were stored in the cache
-     */
-    fetchUpdated?: true
 
     /**
      * The fetchMethod promise was rejected
