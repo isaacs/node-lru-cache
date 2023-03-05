@@ -488,7 +488,10 @@ class LRUCache {
   }
 
   isValidIndex(index) {
-    return this.keyMap.get(this.keyList[index]) === index
+    return (
+      index !== undefined &&
+      this.keyMap.get(this.keyList[index]) === index
+    )
   }
 
   *entries() {
