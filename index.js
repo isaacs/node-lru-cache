@@ -496,14 +496,22 @@ class LRUCache {
 
   *entries() {
     for (const i of this.indexes()) {
-      if (!this.isBackgroundFetch(this.valList[i])) {
+      if (
+        this.valList[i] !== undefined &&
+        this.keyList[i] !== undefined &&
+        !this.isBackgroundFetch(this.valList[i])
+      ) {
         yield [this.keyList[i], this.valList[i]]
       }
     }
   }
   *rentries() {
     for (const i of this.rindexes()) {
-      if (!this.isBackgroundFetch(this.valList[i])) {
+      if (
+        this.valList[i] !== undefined &&
+        this.keyList[i] !== undefined &&
+        !this.isBackgroundFetch(this.valList[i])
+      ) {
         yield [this.keyList[i], this.valList[i]]
       }
     }
@@ -511,14 +519,20 @@ class LRUCache {
 
   *keys() {
     for (const i of this.indexes()) {
-      if (!this.isBackgroundFetch(this.valList[i])) {
+      if (
+        this.keyList[i] !== undefined &&
+        !this.isBackgroundFetch(this.valList[i])
+      ) {
         yield this.keyList[i]
       }
     }
   }
   *rkeys() {
     for (const i of this.rindexes()) {
-      if (!this.isBackgroundFetch(this.valList[i])) {
+      if (
+        this.keyList[i] !== undefined &&
+        !this.isBackgroundFetch(this.valList[i])
+      ) {
         yield this.keyList[i]
       }
     }
@@ -526,14 +540,20 @@ class LRUCache {
 
   *values() {
     for (const i of this.indexes()) {
-      if (!this.isBackgroundFetch(this.valList[i])) {
+      if (
+        this.valList[i] !== undefined &&
+        !this.isBackgroundFetch(this.valList[i])
+      ) {
         yield this.valList[i]
       }
     }
   }
   *rvalues() {
     for (const i of this.rindexes()) {
-      if (!this.isBackgroundFetch(this.valList[i])) {
+      if (
+        this.valList[i] !== undefined &&
+        !this.isBackgroundFetch(this.valList[i])
+      ) {
         yield this.valList[i]
       }
     }
@@ -543,9 +563,14 @@ class LRUCache {
     return this.entries()
   }
 
-  find(fn, getOptions = {}) {
+  find(fn, getOptions) {
     for (const i of this.indexes()) {
-      if (fn(this.valList[i], this.keyList[i], this)) {
+      const v = this.valList[i]
+      const value = this.isBackgroundFetch(v)
+        ? v.__staleWhileFetching
+        : v
+      if (value === undefined) continue
+      if (fn(value, this.keyList[i], this)) {
         return this.get(this.keyList[i], getOptions)
       }
     }
@@ -553,13 +578,23 @@ class LRUCache {
 
   forEach(fn, thisp = this) {
     for (const i of this.indexes()) {
-      fn.call(thisp, this.valList[i], this.keyList[i], this)
+      const v = this.valList[i]
+      const value = this.isBackgroundFetch(v)
+        ? v.__staleWhileFetching
+        : v
+      if (value === undefined) continue
+      fn.call(thisp, value, this.keyList[i], this)
     }
   }
 
   rforEach(fn, thisp = this) {
     for (const i of this.rindexes()) {
-      fn.call(thisp, this.valList[i], this.keyList[i], this)
+      const v = this.valList[i]
+      const value = this.isBackgroundFetch(v)
+        ? v.__staleWhileFetching
+        : v
+      if (value === undefined) continue
+      fn.call(thisp, value, this.keyList[i], this)
     }
   }
 

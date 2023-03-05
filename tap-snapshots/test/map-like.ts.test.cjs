@@ -183,12 +183,20 @@ exports[`test/map-like.ts TAP bunch of iteration things > empty, entries 1`] = `
 Generator []
 `
 
+exports[`test/map-like.ts TAP bunch of iteration things > empty, foreach 1`] = `
+Array []
+`
+
 exports[`test/map-like.ts TAP bunch of iteration things > empty, keys 1`] = `
 Generator []
 `
 
 exports[`test/map-like.ts TAP bunch of iteration things > empty, rentries 1`] = `
 Generator []
+`
+
+exports[`test/map-like.ts TAP bunch of iteration things > empty, rforeach 1`] = `
+Array []
 `
 
 exports[`test/map-like.ts TAP bunch of iteration things > empty, rkeys 1`] = `
@@ -353,6 +361,27 @@ Generator [
 ]
 `
 
+exports[`test/map-like.ts TAP bunch of iteration things > fetch 123 resolved, foreach 1`] = `
+Array [
+  Array [
+    123,
+    "123",
+  ],
+  Array [
+    2,
+    "2",
+  ],
+  Array [
+    1,
+    "1",
+  ],
+  Array [
+    0,
+    "0",
+  ],
+]
+`
+
 exports[`test/map-like.ts TAP bunch of iteration things > fetch 123 resolved, keys 1`] = `
 Generator [
   123,
@@ -364,6 +393,27 @@ Generator [
 
 exports[`test/map-like.ts TAP bunch of iteration things > fetch 123 resolved, rentries 1`] = `
 Generator [
+  Array [
+    0,
+    "0",
+  ],
+  Array [
+    1,
+    "1",
+  ],
+  Array [
+    2,
+    "2",
+  ],
+  Array [
+    123,
+    "123",
+  ],
+]
+`
+
+exports[`test/map-like.ts TAP bunch of iteration things > fetch 123 resolved, rforeach 1`] = `
+Array [
   Array [
     0,
     "0",
@@ -544,12 +594,20 @@ exports[`test/map-like.ts TAP bunch of iteration things > pending fetch, entries
 Generator []
 `
 
+exports[`test/map-like.ts TAP bunch of iteration things > pending fetch, foreach 1`] = `
+Array []
+`
+
 exports[`test/map-like.ts TAP bunch of iteration things > pending fetch, keys 1`] = `
 Generator []
 `
 
 exports[`test/map-like.ts TAP bunch of iteration things > pending fetch, rentries 1`] = `
 Generator []
+`
+
+exports[`test/map-like.ts TAP bunch of iteration things > pending fetch, rforeach 1`] = `
+Array []
 `
 
 exports[`test/map-like.ts TAP bunch of iteration things > pending fetch, rkeys 1`] = `

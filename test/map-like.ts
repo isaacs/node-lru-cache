@@ -13,6 +13,17 @@ global.performance = clock
 import LRU from '../'
 import { expose } from './fixtures/expose'
 
+const entriesFromForeach = <K, V>(c: LRU<K, V>):[k:K,v:V][] => {
+  const e:[k:K,v:V][] = []
+  c.forEach((v, k) => e.push([k, v]))
+  return e
+}
+const entriesFromRForeach = <K, V>(c: LRU<K, V>):[k:K,v:V][] => {
+  const e:[k:K,v:V][] = []
+  c.rforEach((v, k) => e.push([k, v]))
+  return e
+}
+
 t.test('bunch of iteration things', async t => {
   const resolves: Record<number, (s: string) => void> = {}
 
@@ -26,9 +37,11 @@ t.test('bunch of iteration things', async t => {
   t.matchSnapshot(c.keys(), 'empty, keys')
   t.matchSnapshot(c.values(), 'empty, values')
   t.matchSnapshot(c.entries(), 'empty, entries')
+  t.matchSnapshot(entriesFromForeach(c), 'empty, foreach')
   t.matchSnapshot(c.rkeys(), 'empty, rkeys')
   t.matchSnapshot(c.rvalues(), 'empty, rvalues')
   t.matchSnapshot(c.rentries(), 'empty, rentries')
+  t.matchSnapshot(entriesFromRForeach(c), 'empty, rforeach')
   t.matchSnapshot(c.dump(), 'empty, dump')
 
   const p99 = c.fetch(99)
@@ -38,9 +51,11 @@ t.test('bunch of iteration things', async t => {
   t.matchSnapshot(c.keys(), 'pending fetch, keys')
   t.matchSnapshot(c.values(), 'pending fetch, values')
   t.matchSnapshot(c.entries(), 'pending fetch, entries')
+  t.matchSnapshot(entriesFromForeach(c), 'pending fetch, foreach')
   t.matchSnapshot(c.rkeys(), 'pending fetch, rkeys')
   t.matchSnapshot(c.rvalues(), 'pending fetch, rvalues')
   t.matchSnapshot(c.rentries(), 'pending fetch, rentries')
+  t.matchSnapshot(entriesFromRForeach(c), 'pending fetch, rforeach')
   t.matchSnapshot(c.dump(), 'pending fetch, dump')
 
   for (let i = 0; i < 3; i++) {
@@ -52,9 +67,11 @@ t.test('bunch of iteration things', async t => {
   t.matchSnapshot(c.keys(), 'fetch 123 resolved, keys')
   t.matchSnapshot(c.values(), 'fetch 123 resolved, values')
   t.matchSnapshot(c.entries(), 'fetch 123 resolved, entries')
+  t.matchSnapshot(entriesFromForeach(c), 'fetch 123 resolved, foreach')
   t.matchSnapshot(c.rkeys(), 'fetch 123 resolved, rkeys')
   t.matchSnapshot(c.rvalues(), 'fetch 123 resolved, rvalues')
   t.matchSnapshot(c.rentries(), 'fetch 123 resolved, rentries')
+  t.matchSnapshot(entriesFromRForeach(c), 'fetch 123 resolved, rforeach')
   t.matchSnapshot(c.dump(), 'fetch 123 resolved, dump')
 
   for (let i = 3; i < 8; i++) {
