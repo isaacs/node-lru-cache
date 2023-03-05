@@ -2,7 +2,7 @@ if (typeof performance === 'undefined') {
   global.performance = require('perf_hooks').performance
 }
 import t from 'tap'
-import LRUCache from '../index.js'
+import LRUCache from '../'
 import { expose } from './fixtures/expose'
 
 import Clock from 'clock-mock'
@@ -225,6 +225,8 @@ const runTests = (LRU: typeof LRUCache, t: Tap.Test) => {
     t.equal(c.get(1), 1)
     clock.advance(1)
     t.equal(c.has(1), false)
+
+    t.equal(c.get(1, { status: s(), noDeleteOnStaleGet:true }), 1)
     t.equal(c.get(1), 1)
     t.equal(c.get(1), undefined)
     t.equal(c.size, 0)

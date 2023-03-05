@@ -13,12 +13,12 @@ global.performance = clock
 import LRU from '../'
 import { expose } from './fixtures/expose'
 
-const entriesFromForeach = <K, V>(c: LRU<K, V>):[k:K,v:V][] => {
+const entriesFromForeach = <K extends {}, V extends {}>(c: LRU<K, V>):[k:K,v:V][] => {
   const e:[k:K,v:V][] = []
   c.forEach((v, k) => e.push([k, v]))
   return e
 }
-const entriesFromRForeach = <K, V>(c: LRU<K, V>):[k:K,v:V][] => {
+const entriesFromRForeach = <K extends {}, V extends {}>(c: LRU<K, V>):[k:K,v:V][] => {
   const e:[k:K,v:V][] = []
   c.rforEach((v, k) => e.push([k, v]))
   return e
@@ -142,13 +142,13 @@ t.test('bunch of iteration things', async t => {
   t.matchSnapshot(rfeArr, 'rforEach, no thisp')
   const feArrThisp: any[] = []
   const thisp = { a: 1 }
-  c.forEach(function (value, key) {
+  c.forEach(function (this: typeof thisp, value, key) {
     feArrThisp.push([value, key, this])
   }, thisp)
   t.matchSnapshot(feArrThisp, 'forEach, with thisp')
   const rfeArrThisp: any[] = []
   const rthisp = { r: 1 }
-  c.rforEach(function (value, key) {
+  c.rforEach(function (this: typeof thisp, value, key) {
     rfeArrThisp.push([value, key, this])
   }, rthisp)
   t.matchSnapshot(rfeArrThisp, 'forEach, with thisp')

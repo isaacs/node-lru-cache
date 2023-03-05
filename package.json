@@ -11,22 +11,22 @@
   "sideEffects": false,
   "scripts": {
     "build": "npm run prepare",
+    "preprepare": "rm -rf dist",
+    "prepare": "tsc -p tsconfig.json && tsc -p tsconfig-esm.json",
+    "postprepare": "bash fixup.sh",
     "pretest": "npm run prepare",
     "presnap": "npm run prepare",
-    "prepare": "node ./scripts/transpile-to-esm.js",
-    "size": "size-limit",
-    "test": "tap",
-    "snap": "tap",
+    "test": "c8 tap",
+    "snap": "c8 tap",
     "preversion": "npm test",
     "postversion": "npm publish",
     "prepublishOnly": "git push origin --follow-tags",
     "format": "prettier --write .",
-    "typedoc": "typedoc ./index.d.ts"
+    "typedoc": "typedoc --tsconfig tsconfig-esm.json ./src/*.ts"
   },
-  "type": "commonjs",
-  "main": "./index.js",
-  "module": "./index.mjs",
-  "types": "./index.d.ts",
+  "main": "./dist/cjs/index-cjs.js",
+  "module": "./dist/mjs/index.js",
+  "types": "./dist/mjs/index.d.ts",
   "exports": {
     "./min": {
       "import": {
@@ -40,15 +40,14 @@
     },
     ".": {
       "import": {
-        "types": "./index.d.ts",
-        "default": "./index.mjs"
+        "types": "./dist/mjs/index.d.ts",
+        "default": "./dist/mjs/index.js"
       },
       "require": {
-        "types": "./index.d.ts",
-        "default": "./index.js"
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index-cjs.js"
       }
-    },
-    "./package.json": "./package.json"
+    }
   },
   "repository": "git://github.com/isaacs/node-lru-cache.git",
   "devDependencies": {
@@ -70,9 +69,7 @@
   },
   "license": "ISC",
   "files": [
-    "index.js",
-    "index.mjs",
-    "index.d.ts"
+    "dist"
   ],
   "engines": {
     "node": ">=12"
@@ -89,19 +86,18 @@
     "endOfLine": "lf"
   },
   "tap": {
-    "nyc-arg": [
-      "--include=index.js"
-    ],
+    "coverage": false,
     "node-arg": [
       "--expose-gc",
-      "--require",
-      "ts-node/register"
+      "--no-warnings",
+      "--loader",
+      "ts-node/esm"
     ],
     "ts": false
   },
   "size-limit": [
     {
-      "path": "./index.js"
+      "path": "./dist/mjs/index.js"
     }
   ]
 }

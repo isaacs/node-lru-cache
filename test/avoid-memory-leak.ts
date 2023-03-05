@@ -1,4 +1,4 @@
-#!/usr/bin/env node --expose-gc
+#!/usr/bin/env node --no-warnings --loader=ts-node/esm --expose-gc
 
 // https://github.com/isaacs/node-lru-cache/issues/227
 
@@ -55,7 +55,7 @@ const runTest = async (t: Tap.Test, cache: LRUCache<any, any>) => {
   }
 
   // now start the setting and profiling
-  const profiles = []
+  const profiles:ReturnType<typeof prof>[] = []
   for (let i = 0; i < n; i++) {
     if (i % profEvery === 0) {
       const profile = prof(i, cache)

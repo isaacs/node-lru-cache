@@ -6,7 +6,7 @@ for (let i = 0; i < 9; i++) {
   c.set(i, i)
 }
 
-const d = new LRU(c as unknown as LRU.Options<number, number>)
+const d = new LRU(c)
 d.load(c.dump())
 
 t.strictSame(d, c)

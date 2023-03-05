@@ -1,9 +1,8 @@
 import t from 'tap'
 import LRU from '../'
-import { expose } from './fixtures/expose'
 
 const c = new LRU({ max: 5 })
-const exp = expose(c)
+const exp = c
 
 t.test('list integrity', { bail: true }, t => {
   const e = (index: number) => ({
@@ -20,7 +19,7 @@ t.test('list integrity', { bail: true }, t => {
     tail: exp.tail,
   })
   const snap = () => {
-    const a = []
+    const a: ReturnType<typeof e>[] = []
     for (let i = 0; i < 5; i++) {
       a.push(e(i))
     }
@@ -46,9 +45,11 @@ t.test('list integrity', { bail: true }, t => {
 
   t.matchSnapshot(snap(), 'list after initial fill')
   integrity('after initial fill')
+  //@ts-expect-error
   exp.moveToTail(2)
   t.matchSnapshot(snap(), 'list after moveToTail 2')
   integrity('after moveToTail 2')
+  //@ts-expect-error
   exp.moveToTail(4)
   t.matchSnapshot(snap(), 'list after moveToTail 4')
   integrity('after moveToTail 4')

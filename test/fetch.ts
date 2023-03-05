@@ -2,11 +2,10 @@ if (typeof performance === 'undefined') {
   global.performance = require('perf_hooks').performance
 }
 import t from 'tap'
-import type { Fetcher, Status } from '../'
 import LRUCache from '../'
-import { expose, exposeStatics } from './fixtures/expose'
+import { expose } from './fixtures/expose'
 
-const fn: Fetcher<any, any> = async (_, v) =>
+const fn: LRUCache.Fetcher<any, any> = async (_, v) =>
   new Promise(res =>
     setImmediate(() => res(v === undefined ? 0 : v + 1))
   )
@@ -17,14 +16,6 @@ t.teardown(clock.enter())
 clock.advance(1)
 
 let LRU = LRUCache
-
-// if we're on a version that *doesn't* have a native AbortController,
-// put the polyfill in there to start with, so LRU covers both cases.
-if (!global.AbortController || !global.AbortSignal) {
-  global.AbortController = exposeStatics(LRU).AbortController
-  global.AbortSignal = exposeStatics(LRU).AbortSignal
-  LRU = t.mock('../', {}) as typeof LRUCache
-}
 
 const c = new LRU<string, number>({
   fetchMethod: fn,
@@ -262,170 +253,6 @@ t.test('fetch options, signal', async t => {
   t.matchSnapshot(statuses, 'status updates')
 })
 
-t.test('fetch options, signal, with polyfill', async t => {
-  const { AbortController, AbortSignal } = global
-  t.teardown(() => {
-    Object.assign(global, { AbortController, AbortSignal })
-  })
-  // @ts-expect-error
-  global.AbortController = undefined
-  // @ts-expect-error
-  global.AbortSignal = undefined
-  const LRU = t.mock('../', {}) as typeof LRUCache
-  let aborted = false
-  const disposed: any[] = []
-  const disposedAfter: any[] = []
-  const c = new LRU<number, number>({
-    max: 3,
-    ttl: 100,
-    fetchMethod: async (k, oldVal, { signal, options }) => {
-      // do something async
-      await new Promise(res => setImmediate(res))
-      if (signal.aborted) {
-        aborted = true
-        return
-      }
-      if (k === 2) {
-        options.ttl = 25
-      }
-      return (oldVal || 0) + 1
-    },
-    dispose: (v, k, reason) => {
-      disposed.push([v, k, reason])
-    },
-    disposeAfter: (v, k, reason) => {
-      disposedAfter.push([v, k, reason])
-    },
-  })
-
-  const v1 = c.fetch(2)
-  const testp1 = t.rejects(v1, 'aborted by delete')
-  c.delete(2)
-  await testp1
-  await new Promise(res => setImmediate(res))
-  t.equal(aborted, true)
-  t.same(disposed, [], 'no disposals for aborted promises')
-  t.same(disposedAfter, [], 'no disposals for aborted promises')
-
-  aborted = false
-  const v2 = c.fetch(2)
-  const testp2 = t.rejects(v2, 'aborted by set')
-  c.set(2, 2)
-  await testp2
-  await new Promise(res => setImmediate(res))
-  t.equal(aborted, true)
-  t.same(disposed, [], 'no disposals for aborted promises')
-  t.same(disposedAfter, [], 'no disposals for aborted promises')
-  c.delete(2)
-  disposed.length = 0
-  disposedAfter.length = 0
-
-  aborted = false
-  const v3 = c.fetch(2)
-  const testp3 = t.rejects(v3, 'aborted by evict')
-  c.set(3, 3)
-  c.set(4, 4)
-  c.set(5, 5)
-  await testp3
-  await new Promise(res => setImmediate(res))
-  t.equal(aborted, true)
-  t.same(disposed, [], 'no disposals for aborted promises')
-  t.same(disposedAfter, [], 'no disposals for aborted promises')
-
-  aborted = false
-  await c.fetch(6, { ttl: 1000 })
-  t.equal(
-    c.getRemainingTTL(6),
-    1000,
-    'overridden ttl in fetch() opts'
-  )
-  await c.fetch(2, { ttl: 1 })
-  t.equal(c.getRemainingTTL(2), 25, 'overridden ttl in fetchMethod')
-})
-
-t.test('fetch options, signal, with half polyfill', async t => {
-  const { AbortController, AbortSignal } = global
-  t.teardown(() => {
-    global.AbortSignal = AbortSignal
-    //@ts-expect-error
-    delete AbortController.AbortSignal
-  })
-  // @ts-expect-error
-  global.AbortController.AbortSignal = AbortSignal
-  // @ts-expect-error
-  global.AbortSignal = undefined
-  const LRU = t.mock('../', {}) as typeof LRUCache
-  let aborted = false
-  const disposed: any[] = []
-  const disposedAfter: any[] = []
-  const c = new LRU<number, number>({
-    max: 3,
-    ttl: 100,
-    fetchMethod: async (k, oldVal, { signal, options }) => {
-      // do something async
-      await new Promise(res => setImmediate(res))
-      if (signal.aborted) {
-        aborted = true
-        return
-      }
-      if (k === 2) {
-        options.ttl = 25
-      }
-      return (oldVal || 0) + 1
-    },
-    dispose: (v, k, reason) => {
-      disposed.push([v, k, reason])
-    },
-    disposeAfter: (v, k, reason) => {
-      disposedAfter.push([v, k, reason])
-    },
-  })
-
-  const v1 = c.fetch(2)
-  const testp1 = t.rejects(v1, 'aborted by delete')
-  c.delete(2)
-  await testp1
-  await new Promise(res => setImmediate(res))
-  t.equal(aborted, true)
-  t.same(disposed, [], 'no disposals for aborted promises')
-  t.same(disposedAfter, [], 'no disposals for aborted promises')
-
-  aborted = false
-  const v2 = c.fetch(2)
-  const testp2 = t.rejects(v2, 'aborted by set')
-  c.set(2, 2)
-  await testp2
-  await new Promise(res => setImmediate(res))
-  t.equal(aborted, true)
-  t.same(disposed, [], 'no disposals for aborted promises')
-  t.same(disposedAfter, [], 'no disposals for aborted promises')
-  c.delete(2)
-  disposed.length = 0
-  disposedAfter.length = 0
-
-  aborted = false
-  const v3 = c.fetch(2)
-  const testp3 = t.rejects(v3, 'aborted by evict')
-  c.set(3, 3)
-  c.set(4, 4)
-  c.set(5, 5)
-  await testp3
-  await new Promise(res => setImmediate(res))
-  t.equal(aborted, true)
-  t.same(disposed, [], 'no disposals for aborted promises')
-  t.same(disposedAfter, [], 'no disposals for aborted promises')
-
-  aborted = false
-  await c.fetch(6, { ttl: 1000 })
-  t.equal(
-    c.getRemainingTTL(6),
-    1000,
-    'overridden ttl in fetch() opts'
-  )
-  await c.fetch(2, { ttl: 1 })
-  t.equal(c.getRemainingTTL(2), 25, 'overridden ttl in fetchMethod')
-})
-
 t.test('fetchMethod throws', async t => {
   const statuses: LRUCache.Status<number>[] = []
   const s = (): LRUCache.Status<number> => {
@@ -556,7 +383,7 @@ t.test(
     t.equal(cache.get('a'), 99, 'did not delete, was replaced')
     await t.rejects(cache.fetch('b'), { message: 'fetch failure' })
     t.equal(e.keyMap.get('b'), undefined, 'not in cache')
-    t.equal(e.valList[1], null, 'not in cache')
+    t.equal(e.valList[1], undefined, 'not in cache')
   }
 )
 
@@ -662,7 +489,7 @@ t.test('allowStaleOnFetchRejection', async t => {
   t.equal(await c.fetch(1), 1)
   clock.advance(11)
   fetchFail = true
-  const status: Status<number> = {}
+  const status: LRUCache.Status<number> = {}
   t.equal(await c.fetch(1, { status }), 1)
   t.equal(
     status.returnedStale,

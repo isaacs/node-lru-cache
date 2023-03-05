@@ -106,6 +106,8 @@ t.test('bad max values', t => {
   // @ts-expect-error
   t.throws(() => new LRU(123))
   // @ts-expect-error
+  t.throws(() => new LRU({}))
+  // @ts-expect-error
   t.throws(() => new LRU(null))
   t.throws(() => new LRU({ max: -123 }))
   t.throws(() => new LRU({ max: 0 }))

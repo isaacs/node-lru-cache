@@ -1,5 +1,5 @@
 import t from 'tap'
-import LRUCache from '../index.mjs'
+import LRUCache from '../dist/mjs/index.js'
 const c = new LRUCache({ max: 2 })
 t.type(c, LRUCache)
 c.set(1, 1)

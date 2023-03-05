@@ -1,4 +1,4 @@
-import LRUCache from '../../index'
+import LRUCache from '../../'
 export const exposeStatics = (LRU: typeof LRUCache) => {
   return LRU as unknown as {
     AbortController: any
