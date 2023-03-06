@@ -34,6 +34,8 @@ npm install lru-cache --save
 import LRUCache from 'lru-cache'
 // or:
 const LRUCache = require('lru-cache')
+// or in minified form for web browsers:
+import LRUCache from 'http://unpkg.com/lru-cache@8/dist/mjs/index.min.mjs'
 
 // At least one of 'max', 'ttl', or 'maxSize' is required, to prevent
 // unsafe unbounded storage.
@@ -93,7 +95,8 @@ assert.equal(cache.get({ a: 1 }), undefined)
 cache.clear() // empty the cache
 ```
 
-If you put more stuff in it, then items will fall out.
+If you put more stuff in the cache, then less recently used items
+will fall out.  That's what an LRU cache is.
 
 ## Options
 

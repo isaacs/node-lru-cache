@@ -28,6 +28,16 @@
   "module": "./index.mjs",
   "types": "./index.d.ts",
   "exports": {
+    "./min": {
+      "import": {
+        "types": "./dist/mjs/index.d.ts",
+        "default": "./dist/mjs/index.min.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index-cjs.min.js"
+      }
+    },
     ".": {
       "import": {
         "types": "./index.d.ts",
@@ -48,6 +58,7 @@
     "benchmark": "^2.1.4",
     "c8": "^7.11.2",
     "clock-mock": "^1.0.6",
+    "esbuild": "^0.17.11",
     "eslint-config-prettier": "^8.5.0",
     "prettier": "^2.6.2",
     "size-limit": "^7.0.8",
