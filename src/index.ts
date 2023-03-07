@@ -114,16 +114,16 @@ type BackgroundFetch<V> = Promise<V | undefined | void> & {
 type DisposeTask<K, V> = Parameters<LRUCache.Disposer<K, V>>
 
 namespace LRUCache {
-  export type LRUSize = number
-  export type LRUMilliseconds = number
-  export type LRUCount = number
+  export type Size = number
+  export type Milliseconds = number
+  export type Count = number
   export type DisposeReason = 'evict' | 'set' | 'delete'
   export type Disposer<K, V> = (
     value: V,
     key: K,
     reason: DisposeReason
   ) => void
-  export type SizeCalculator<K, V> = (value: V, key: K) => LRUSize
+  export type SizeCalculator<K, V> = (value: V, key: K) => Size
 
   export interface FetcherOptions<K, V> {
     signal: AbortSignal
@@ -148,32 +148,32 @@ namespace LRUCache {
     /**
      * the ttl stored for the item, or undefined if ttls are not used.
      */
-    ttl?: LRUMilliseconds
+    ttl?: Milliseconds
 
     /**
      * the start time for the item, or undefined if ttls are not used.
      */
-    start?: LRUMilliseconds
+    start?: Milliseconds
 
     /**
      * The timestamp used for TTL calculation
      */
-    now?: LRUMilliseconds
+    now?: Milliseconds
 
     /**
      * the remaining ttl for the item, or undefined if ttls are not used.
      */
-    remainingTTL?: LRUMilliseconds
+    remainingTTL?: Milliseconds
 
     /**
      * The calculated size for the item, if sizes are used.
      */
-    entrySize?: LRUSize
+    entrySize?: Size
 
     /**
      * The total calculated size of the cache, if sizes are used.
      */
-    totalCalculatedSize?: LRUSize
+    totalCalculatedSize?: Size
 
     /**
      * A flag indicating that the item was not stored, due to exceeding the
@@ -266,7 +266,7 @@ namespace LRUCache {
   }
 
   export type FetcherFetchOptions<K, V> = Pick<
-    LRUOptionsBase<K, V>,
+    OptionsBase<K, V>,
     | 'allowStale'
     | 'updateAgeOnGet'
     | 'noDeleteOnStaleGet'
@@ -280,7 +280,7 @@ namespace LRUCache {
     | 'allowStaleOnFetchAbort'
   > & {
     status?: Status<V>
-    size?: LRUSize
+    size?: Size
   }
 
   export type FetchOptions<K, V> = FetcherFetchOptions<K, V> & {
@@ -291,26 +291,26 @@ namespace LRUCache {
   }
 
   export type HasOptions<K, V> = Pick<
-    LRUOptionsBase<K, V>,
+    OptionsBase<K, V>,
     'updateAgeOnHas'
   > & { status?: Status<V> }
 
   export type GetOptions<K, V> = Pick<
-    LRUOptionsBase<K, V>,
+    OptionsBase<K, V>,
     'allowStale' | 'updateAgeOnGet' | 'noDeleteOnStaleGet'
   > & { status?: Status<V> }
 
   export type PeekOptions<K, V> = Pick<
-    LRUOptionsBase<K, V>,
+    OptionsBase<K, V>,
     'allowStale'
   >
 
   export type SetOptions<K, V> = Pick<
-    LRUOptionsBase<K, V>,
+    OptionsBase<K, V>,
     'sizeCalculation' | 'ttl' | 'noDisposeOnSet' | 'noUpdateTTL'
   > & {
-    size?: LRUSize
-    start?: LRUMilliseconds
+    size?: Size
+    start?: Milliseconds
     status?: Status<V>
   }
 
@@ -321,10 +321,10 @@ namespace LRUCache {
   ) => Promise<V | void | undefined> | V | void | undefined
 
   // all options that may be provided to the constructor, with their types
-  export interface LRUOptionsBase<K, V> {
-    max?: LRUCount
-    ttl?: LRUMilliseconds
-    ttlResolution?: LRUMilliseconds
+  export interface OptionsBase<K, V> {
+    max?: Count
+    ttl?: Milliseconds
+    ttlResolution?: Milliseconds
     ttlAutopurge?: boolean
     updateAgeOnGet?: boolean
     updateAgeOnHas?: boolean
@@ -333,8 +333,8 @@ namespace LRUCache {
     disposeAfter?: Disposer<K, V>
     noDisposeOnSet?: boolean
     noUpdateTTL?: boolean
-    maxSize?: LRUSize
-    maxEntrySize?: LRUSize
+    maxSize?: Size
+    maxEntrySize?: Size
     sizeCalculation?: SizeCalculator<K, V>
     fetchMethod?: Fetcher<K, V>
     fetchContext?: any
@@ -345,29 +345,29 @@ namespace LRUCache {
     ignoreFetchAbort?: boolean
   }
 
-  export interface LRUOptionsMaxLimit<K, V>
-    extends LRUOptionsBase<K, V> {
-    max: LRUCount
+  export interface OptionsMaxLimit<K, V>
+    extends OptionsBase<K, V> {
+    max: Count
   }
-  export interface LRUOptionsTTLLimit<K, V>
-    extends LRUOptionsBase<K, V> {
-    ttl: LRUMilliseconds
+  export interface OptionsTTLLimit<K, V>
+    extends OptionsBase<K, V> {
+    ttl: Milliseconds
   }
-  export interface LRUOptionsSizeLimit<K, V>
-    extends LRUOptionsBase<K, V> {
-    maxSize: LRUSize
+  export interface OptionsSizeLimit<K, V>
+    extends OptionsBase<K, V> {
+    maxSize: Size
   }
   // valid safe option combinations for the constructor
-  export type LRUOptions<K, V> =
-    | LRUOptionsMaxLimit<K, V>
-    | LRUOptionsSizeLimit<K, V>
-    | (LRUOptionsTTLLimit<K, V> & { ttlAutopurge: boolean })
+  export type Options<K, V> =
+    | OptionsMaxLimit<K, V>
+    | OptionsSizeLimit<K, V>
+    | (OptionsTTLLimit<K, V> & { ttlAutopurge: boolean })
 
   export interface Entry<V> {
     value: V
-    ttl?: LRUMilliseconds
-    size?: LRUSize
-    start?: LRUMilliseconds
+    ttl?: Milliseconds
+    size?: Size
+    start?: Milliseconds
   }
 }
 
@@ -376,9 +376,9 @@ class LRUCache<K extends {}, V extends {}> {
   // of these, only max really *needs* to be protected,
   // the rest can be modified, as they just set defaults
   // for various methods.
-  #max: LRUCache.LRUCount
-  ttl: LRUCache.LRUMilliseconds
-  ttlResolution: LRUCache.LRUMilliseconds
+  #max: LRUCache.Count
+  ttl: LRUCache.Milliseconds
+  ttlResolution: LRUCache.Milliseconds
   ttlAutopurge: boolean
   updateAgeOnGet: boolean
   updateAgeOnHas: boolean
@@ -387,8 +387,8 @@ class LRUCache<K extends {}, V extends {}> {
   disposeAfter?: LRUCache.Disposer<K, V>
   noDisposeOnSet: boolean
   noUpdateTTL: boolean
-  maxSize: LRUCache.LRUSize
-  maxEntrySize: LRUCache.LRUSize
+  maxSize: LRUCache.Size
+  maxEntrySize: LRUCache.Size
   sizeCalculation?: LRUCache.SizeCalculator<K, V>
   fetchMethod?: LRUCache.Fetcher<K, V>
   fetchContext?: any
@@ -399,8 +399,8 @@ class LRUCache<K extends {}, V extends {}> {
   ignoreFetchAbort: boolean
 
   // computed properties
-  #size: LRUCache.LRUCount
-  #calculatedSize: LRUCache.LRUSize
+  #size: LRUCache.Count
+  #calculatedSize: LRUCache.Size
   #keyMap: Map<K, Index>
   #keyList: (K | undefined)[]
   #valList: (V | BackgroundFetch<V> | undefined)[]
@@ -470,17 +470,17 @@ class LRUCache<K extends {}, V extends {}> {
     }
   }
 
-  get max(): LRUCache.LRUCount {
+  get max(): LRUCache.Count {
     return this.#max
   }
-  get calculatedSize(): LRUCache.LRUSize {
+  get calculatedSize(): LRUCache.Size {
     return this.#calculatedSize
   }
-  get size(): LRUCache.LRUCount {
+  get size(): LRUCache.Count {
     return this.#size
   }
 
-  constructor(options: LRUCache.LRUOptions<K, V> | LRUCache<K, V>) {
+  constructor(options: LRUCache.Options<K, V> | LRUCache<K, V>) {
     const {
       max = 0,
       ttl,
@@ -720,8 +720,8 @@ class LRUCache<K extends {}, V extends {}> {
   ) => void = () => {}
   #setItemTTL: (
     index: Index,
-    ttl: LRUCache.LRUMilliseconds,
-    start?: LRUCache.LRUMilliseconds
+    ttl: LRUCache.Milliseconds,
+    start?: LRUCache.Milliseconds
   ) => void = () => {}
   #isStale: (index: Index) => boolean = () => false
 
@@ -762,7 +762,7 @@ class LRUCache<K extends {}, V extends {}> {
     }
     this.#addItemSize = (
       index: Index,
-      size: LRUCache.LRUSize,
+      size: LRUCache.Size,
       status?: LRUCache.Status<V>
     ) => {
       sizes[index] = size
@@ -783,18 +783,18 @@ class LRUCache<K extends {}, V extends {}> {
   #removeItemSize: (index: Index) => void = () => {}
   #addItemSize: (
     index: Index,
-    size: LRUCache.LRUSize,
+    size: LRUCache.Size,
     status?: LRUCache.Status<V>
   ) => void = () => {}
   #requireSize: (
     k: K,
     v: V | BackgroundFetch<V>,
-    size?: LRUCache.LRUSize,
+    size?: LRUCache.Size,
     sizeCalculation?: LRUCache.SizeCalculator<K, V>
-  ) => LRUCache.LRUSize = (
+  ) => LRUCache.Size = (
     _k: K,
     _v: V | BackgroundFetch<V>,
-    size?: LRUCache.LRUSize,
+    size?: LRUCache.Size,
     sizeCalculation?: LRUCache.SizeCalculator<K, V>
   ) => {
     if (size || sizeCalculation) {
