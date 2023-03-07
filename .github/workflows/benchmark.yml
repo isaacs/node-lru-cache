@@ -1,4 +1,4 @@
-name: CI
+name: Benchmarks
 
 on: [push, pull_request]
 
@@ -9,11 +9,17 @@ jobs:
         node-version: [16.x, 18.x, 19.x]
         platform:
           - os: ubuntu-latest
+            shell: bash
           - os: macos-latest
+            shell: bash
           - os: windows-latest
+            shell: bash
       fail-fast: false
 
     runs-on: ${{ matrix.platform.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.platform.shell }}
 
     steps:
       - name: Checkout Repository
@@ -30,5 +36,5 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run Tests
+      - name: Run Benchmarks
         run: npm run benchmark
