@@ -22,7 +22,8 @@
     "postversion": "npm publish",
     "prepublishOnly": "git push origin --follow-tags",
     "format": "prettier --write .",
-    "typedoc": "typedoc --tsconfig tsconfig-esm.json ./src/*.ts"
+    "typedoc": "typedoc --tsconfig tsconfig-esm.json ./src/*.ts",
+    "benchmark": "make -C benchmark"
   },
   "main": "./dist/cjs/index-cjs.js",
   "module": "./dist/mjs/index.js",
@@ -59,6 +60,8 @@
     "clock-mock": "^1.0.6",
     "esbuild": "^0.17.11",
     "eslint-config-prettier": "^8.5.0",
+    "marked": "^4.2.12",
+    "mkdirp": "^2.1.5",
     "prettier": "^2.6.2",
     "size-limit": "^7.0.8",
     "tap": "^16.3.4",

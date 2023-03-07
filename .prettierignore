@@ -2,8 +2,9 @@
 /tap-snapshots
 /coverage
 /.nyc_output
-/bench-lru
+/benchmark
 /.github
 /scripts
 /CHANGELOG.md
 /docs
+/dist

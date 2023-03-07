@@ -38,7 +38,12 @@ jobs:
         run: npm install
       - name: Generate typedocs
         run: npm run typedoc
-
+      - name: Generate Benchmarks
+        run: npm run benchmark
+      - name: Copy Benchmarks to Docs
+        run: |
+          cp -r benchmark/results docs/benchmarks
+          marked < benchmark/results.md > docs/benchmarks/index.html
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact

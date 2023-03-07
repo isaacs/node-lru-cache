@@ -1,5 +1,7 @@
 {
   "navigationLinks": {
-    "isaacs projects": "https://isaacs.github.io/"
+    "isaacs projects": "https://isaacs.github.io/",
+    "benchmarks summary": "https://isaacs.github.io/lru-cache/benchmarks/",
+    "benchmarks details": "https://isaacs.github.io/lru-cache/benchmarks/results/"
   }
 }
