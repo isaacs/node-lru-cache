@@ -113,19 +113,6 @@ type BackgroundFetch<V> = Promise<V | undefined | void> & {
 
 type DisposeTask<K, V> = Parameters<LRUCache.Disposer<K, V>>
 
-// dummy types just to make TS be in the loop, these do nothing really
-interface LRUCacheTTL<K extends {}, V extends {}>
-  extends LRUCache<K, V> {
-  ttls: ZeroArray
-  starts: ZeroArray
-}
-
-interface LRUCacheSize<K extends {}, V extends {}>
-  extends LRUCache<K, V> {
-  sizes: ZeroArray
-  calculatedSize: number
-}
-
 namespace LRUCache {
   export type LRUSize = number
   export type LRUMilliseconds = number
@@ -386,7 +373,10 @@ namespace LRUCache {
 
 class LRUCache<K extends {}, V extends {}> {
   // properties coming in from the options
-  max: LRUCache.LRUCount
+  // of these, only max really *needs* to be protected,
+  // the rest can be modified, as they just set defaults
+  // for various methods.
+  #max: LRUCache.LRUCount
   ttl: LRUCache.LRUMilliseconds
   ttlResolution: LRUCache.LRUMilliseconds
   ttlAutopurge: boolean
@@ -409,21 +399,86 @@ class LRUCache<K extends {}, V extends {}> {
   ignoreFetchAbort: boolean
 
   // computed properties
-  size: LRUCache.LRUCount
-  calculatedSize?: LRUCache.LRUSize
-  keyMap: Map<K, Index>
-  keyList: (K | undefined)[]
-  valList: (V | BackgroundFetch<V> | undefined)[]
-  next: NumberArray
-  prev: NumberArray
-  head: Index
-  tail: Index
-  free: StackLike
-  initialFill: Index
-  disposed?: DisposeTask<K, V>[]
-  sizes?: ZeroArray
-  starts?: ZeroArray
-  ttls?: ZeroArray
+  #size: LRUCache.LRUCount
+  #calculatedSize: LRUCache.LRUSize
+  #keyMap: Map<K, Index>
+  #keyList: (K | undefined)[]
+  #valList: (V | BackgroundFetch<V> | undefined)[]
+  #next: NumberArray
+  #prev: NumberArray
+  #head: Index
+  #tail: Index
+  #free: StackLike
+  #initialFill: Index
+  #disposed?: DisposeTask<K, V>[]
+  #sizes?: ZeroArray
+  #starts?: ZeroArray
+  #ttls?: ZeroArray
+
+  /**
+   * Do not call this method unless you need to inspect the
+   * inner workings of the cache.  If anything returned by this
+   * object is modified in any way, strange breakage may occur.
+   *
+   * These fields are private for a reason!
+   *
+   * @internal
+   */
+  static unsafeExposeInternals<K extends {}, V extends {}>(
+    c: LRUCache<K, V>
+  ) {
+    return {
+      // properties
+      starts: c.#starts,
+      ttls: c.#ttls,
+      sizes: c.#sizes,
+      keyMap: c.#keyMap as Map<K, number>,
+      keyList: c.#keyList,
+      valList: c.#valList,
+      next: c.#next,
+      prev: c.#prev,
+      get head() {
+        return c.#head
+      },
+      get tail() {
+        return c.#tail
+      },
+      free: c.#free,
+      initialFill: c.#initialFill,
+      // methods
+      isBackgroundFetch: (p: any) => c.#isBackgroundFetch(p),
+      backgroundFetch: (
+        k: K,
+        index: number | undefined,
+        options: LRUCache.FetchOptions<K, V>,
+        context: any
+      ): BackgroundFetch<V> =>
+        c.#backgroundFetch(
+          k,
+          index as Index | undefined,
+          options,
+          context
+        ),
+      moveToTail: (index: number): void =>
+        c.#moveToTail(index as Index),
+      indexes: (options?: { allowStale: boolean }) =>
+        c.#indexes(options),
+      rindexes: (options?: { allowStale: boolean }) =>
+        c.#rindexes(options),
+      isStale: (index: number | undefined) =>
+        c.#isStale(index as Index),
+    }
+  }
+
+  get max(): LRUCache.LRUCount {
+    return this.#max
+  }
+  get calculatedSize(): LRUCache.LRUSize {
+    return this.#calculatedSize
+  }
+  get size(): LRUCache.LRUCount {
+    return this.#size
+  }
 
   constructor(options: LRUCache.LRUOptions<K, V> | LRUCache<K, V>) {
     const {
@@ -459,7 +514,7 @@ class LRUCache<K extends {}, V extends {}> {
       throw new Error('invalid max value: ' + max)
     }
 
-    this.max = max
+    this.#max = max
     this.maxSize = maxSize
     this.maxEntrySize = maxEntrySize || this.maxSize
     this.sizeCalculation = sizeCalculation
@@ -491,26 +546,27 @@ class LRUCache<K extends {}, V extends {}> {
     }
     this.fetchContext = fetchContext
 
-    this.keyMap = new Map()
-    this.keyList = new Array(max).fill(undefined)
-    this.valList = new Array(max).fill(undefined)
-    this.next = new UintArray(max)
-    this.prev = new UintArray(max)
-    this.head = 0 as Index
-    this.tail = 0 as Index
-    this.free = Stack.create(max)
-    this.initialFill = 1 as Index
-    this.size = 0
+    this.#keyMap = new Map()
+    this.#keyList = new Array(max).fill(undefined)
+    this.#valList = new Array(max).fill(undefined)
+    this.#next = new UintArray(max)
+    this.#prev = new UintArray(max)
+    this.#head = 0 as Index
+    this.#tail = 0 as Index
+    this.#free = Stack.create(max)
+    this.#initialFill = 1 as Index
+    this.#size = 0
+    this.#calculatedSize = 0
 
     if (typeof dispose === 'function') {
       this.dispose = dispose
     }
     if (typeof disposeAfter === 'function') {
       this.disposeAfter = disposeAfter
-      this.disposed = []
+      this.#disposed = []
     } else {
       this.disposeAfter = undefined
-      this.disposed = undefined
+      this.#disposed = undefined
     }
     this.noDisposeOnSet = !!noDisposeOnSet
     this.noUpdateTTL = !!noUpdateTTL
@@ -533,7 +589,7 @@ class LRUCache<K extends {}, V extends {}> {
           'maxEntrySize must be a positive integer if specified'
         )
       }
-      this.initializeSizeTracking()
+      this.#initializeSizeTracking()
     }
 
     this.allowStale = !!allowStale
@@ -552,16 +608,16 @@ class LRUCache<K extends {}, V extends {}> {
           'ttl must be a positive integer if specified'
         )
       }
-      this.initializeTTLTracking()
+      this.#initializeTTLTracking()
     }
 
     // do not allow completely unbounded caches
-    if (this.max === 0 && this.ttl === 0 && this.maxSize === 0) {
+    if (this.#max === 0 && this.ttl === 0 && this.maxSize === 0) {
       throw new TypeError(
         'At least one of max, maxSize, or ttl is required'
       )
     }
-    if (!this.ttlAutopurge && !this.max && !this.maxSize) {
+    if (!this.ttlAutopurge && !this.#max && !this.maxSize) {
       const code = 'LRU_CACHE_UNBOUNDED'
       if (shouldWarn(code)) {
         warned.add(code)
@@ -574,21 +630,22 @@ class LRUCache<K extends {}, V extends {}> {
   }
 
   getRemainingTTL(key: K) {
-    return this.has(key, { updateAgeOnHas: false }) ? Infinity : 0
+    return this.#keyMap.has(key) ? Infinity : 0
   }
 
-  initializeTTLTracking() {
-    this.ttls = new ZeroArray(this.max)
-    this.starts = new ZeroArray(this.max)
+  #initializeTTLTracking() {
+    const ttls = new ZeroArray(this.#max)
+    const starts = new ZeroArray(this.#max)
+    this.#ttls = ttls
+    this.#starts = starts
 
-    this.setItemTTL = (index, ttl, start = perf.now()) => {
-      const c = this as LRUCacheTTL<K, V>
-      c.starts[index] = ttl !== 0 ? start : 0
-      c.ttls[index] = ttl
+    this.#setItemTTL = (index, ttl, start = perf.now()) => {
+      starts[index] = ttl !== 0 ? start : 0
+      ttls[index] = ttl
       if (ttl !== 0 && this.ttlAutopurge) {
         const t = setTimeout(() => {
-          if (this.isStale(index)) {
-            this.delete(this.keyList[index] as K)
+          if (this.#isStale(index)) {
+            this.delete(this.#keyList[index] as K)
           }
         }, ttl + 1)
         // unref() not supported on all platforms
@@ -600,16 +657,14 @@ class LRUCache<K extends {}, V extends {}> {
       }
     }
 
-    this.updateItemAge = index => {
-      const c = this as LRUCacheTTL<K, V>
-      c.starts[index] = c.ttls[index] !== 0 ? perf.now() : 0
+    this.#updateItemAge = index => {
+      starts[index] = ttls[index] !== 0 ? perf.now() : 0
     }
 
-    this.statusTTL = (status, index) => {
-      const c = this as LRUCacheTTL<K, V>
-      if (status && c.ttls[index]) {
-        const ttl = c.ttls[index]
-        const start = c.starts[index]
+    this.#statusTTL = (status, index) => {
+      if (status && ttls[index]) {
+        const ttl = ttls[index]
+        const start = starts[index]
         status.ttl = ttl
         status.start = start
         status.now = cachedNow || getNow()
@@ -639,51 +694,49 @@ class LRUCache<K extends {}, V extends {}> {
     }
 
     this.getRemainingTTL = key => {
-      const c = this as LRUCacheTTL<K, V>
-      const index = this.keyMap.get(key)
+      const index = this.#keyMap.get(key)
       if (index === undefined) {
         return 0
       }
-      return c.ttls[index] === 0 || c.starts[index] === 0
+      return ttls[index] === 0 || starts[index] === 0
         ? Infinity
-        : c.starts[index] + c.ttls[index] - (cachedNow || getNow())
+        : starts[index] + ttls[index] - (cachedNow || getNow())
     }
 
-    this.isStale = index => {
-      const c = this as LRUCacheTTL<K, V>
+    this.#isStale = index => {
       return (
-        c.ttls[index] !== 0 &&
-        c.starts[index] !== 0 &&
-        (cachedNow || getNow()) - c.starts[index] > c.ttls[index]
+        ttls[index] !== 0 &&
+        starts[index] !== 0 &&
+        (cachedNow || getNow()) - starts[index] > ttls[index]
       )
     }
   }
-  updateItemAge(_index: Index) {}
-  statusTTL(_status: LRUCache.Status<V> | undefined, _index: Index) {}
-  setItemTTL(
-    _index: Index,
-    _ttl: LRUCache.LRUMilliseconds,
-    _start?: LRUCache.LRUMilliseconds
-  ) {}
-  isStale(_index: Index) {
-    return false
-  }
 
-  initializeSizeTracking() {
-    /* c8 ignore start */
-    this.initializeSizeTracking = () => {}
-    /* c8 ignore stop */
-    const c = this as LRUCacheSize<K, V>
-    this.calculatedSize = 0
-    this.sizes = new ZeroArray(this.max)
-    this.removeItemSize = index => {
-      c.calculatedSize -= c.sizes[index]
-      c.sizes[index] = 0
+  // conditionally set private methods related to TTL
+  #updateItemAge: (index: Index) => void = () => {}
+  #statusTTL: (
+    status: LRUCache.Status<V> | undefined,
+    index: Index
+  ) => void = () => {}
+  #setItemTTL: (
+    index: Index,
+    ttl: LRUCache.LRUMilliseconds,
+    start?: LRUCache.LRUMilliseconds
+  ) => void = () => {}
+  #isStale: (index: Index) => boolean = () => false
+
+  #initializeSizeTracking() {
+    const sizes = new ZeroArray(this.#max)
+    this.#calculatedSize = 0
+    this.#sizes = sizes
+    this.#removeItemSize = index => {
+      this.#calculatedSize -= sizes[index]
+      sizes[index] = 0
     }
-    this.requireSize = (k, v, size, sizeCalculation) => {
+    this.#requireSize = (k, v, size, sizeCalculation) => {
       // provisionally accept background fetches.
       // actual value size will be checked when they return.
-      if (this.isBackgroundFetch(v)) {
+      if (this.#isBackgroundFetch(v)) {
         return 0
       }
       if (!isPosInt(size)) {
@@ -707,129 +760,134 @@ class LRUCache<K extends {}, V extends {}> {
       }
       return size
     }
-    this.addItemSize = (
+    this.#addItemSize = (
       index: Index,
       size: LRUCache.LRUSize,
       status?: LRUCache.Status<V>
     ) => {
-      const c = this as LRUCacheSize<K, V>
-      c.sizes[index] = size
+      sizes[index] = size
       if (this.maxSize) {
-        const maxSize = this.maxSize - c.sizes[index]
-        while (c.calculatedSize > maxSize) {
-          this.evict(true)
+        const maxSize = this.maxSize - sizes[index]
+        while (this.#calculatedSize > maxSize) {
+          this.#evict(true)
         }
       }
-      this.calculatedSize += c.sizes[index]
+      this.#calculatedSize += sizes[index]
       if (status) {
         status.entrySize = size
-        status.totalCalculatedSize = this.calculatedSize
+        status.totalCalculatedSize = this.#calculatedSize
       }
     }
   }
-  removeItemSize(_index: Index) {}
-  addItemSize(
-    _index: Index,
-    _size: LRUCache.LRUSize,
-    _status?: LRUCache.Status<V>
-  ) {}
-  requireSize(
+  // TODO: privatize
+  #removeItemSize: (index: Index) => void = () => {}
+  #addItemSize: (
+    index: Index,
+    size: LRUCache.LRUSize,
+    status?: LRUCache.Status<V>
+  ) => void = () => {}
+  #requireSize: (
+    k: K,
+    v: V | BackgroundFetch<V>,
+    size?: LRUCache.LRUSize,
+    sizeCalculation?: LRUCache.SizeCalculator<K, V>
+  ) => LRUCache.LRUSize = (
     _k: K,
     _v: V | BackgroundFetch<V>,
     size?: LRUCache.LRUSize,
     sizeCalculation?: LRUCache.SizeCalculator<K, V>
-  ): LRUCache.LRUSize {
+  ) => {
     if (size || sizeCalculation) {
       throw new TypeError(
         'cannot set size without setting maxSize or maxEntrySize on cache'
       )
     }
     return 0
-  }
+  };
 
-  *indexes({ allowStale = this.allowStale } = {}) {
+  *#indexes({ allowStale = this.allowStale } = {}) {
     if (this.size) {
-      for (let i = this.tail; true; ) {
-        if (!this.isValidIndex(i)) {
+      for (let i = this.#tail; true; ) {
+        if (!this.#isValidIndex(i)) {
           break
         }
-        if (allowStale || !this.isStale(i)) {
+        if (allowStale || !this.#isStale(i)) {
           yield i
         }
-        if (i === this.head) {
+        if (i === this.#head) {
           break
         } else {
-          i = this.prev[i] as Index
+          i = this.#prev[i] as Index
         }
       }
     }
   }
 
-  *rindexes({ allowStale = this.allowStale } = {}) {
+  *#rindexes({ allowStale = this.allowStale } = {}) {
     if (this.size) {
-      for (let i = this.head; true; ) {
-        if (!this.isValidIndex(i)) {
+      for (let i = this.#head; true; ) {
+        if (!this.#isValidIndex(i)) {
           break
         }
-        if (allowStale || !this.isStale(i)) {
+        if (allowStale || !this.#isStale(i)) {
           yield i
         }
-        if (i === this.tail) {
+        if (i === this.#tail) {
           break
         } else {
-          i = this.next[i] as Index
+          i = this.#next[i] as Index
         }
       }
     }
   }
 
-  isValidIndex(index: Index) {
+  #isValidIndex(index: Index) {
     return (
       index !== undefined &&
-      this.keyMap.get(this.keyList[index] as K) === index
+      this.#keyMap.get(this.#keyList[index] as K) === index
     )
   }
 
   *entries() {
-    for (const i of this.indexes()) {
+    for (const i of this.#indexes()) {
       if (
-        this.valList[i] !== undefined &&
-        this.keyList[i] !== undefined &&
-        !this.isBackgroundFetch(this.valList[i])
+        this.#valList[i] !== undefined &&
+        this.#keyList[i] !== undefined &&
+        !this.#isBackgroundFetch(this.#valList[i])
       ) {
-        yield [this.keyList[i], this.valList[i]]
+        yield [this.#keyList[i], this.#valList[i]]
       }
     }
   }
   *rentries() {
-    for (const i of this.rindexes()) {
+    for (const i of this.#rindexes()) {
       if (
-        this.valList[i] !== undefined &&
-        this.keyList[i] !== undefined &&
-        !this.isBackgroundFetch(this.valList[i])
+        this.#valList[i] !== undefined &&
+        this.#keyList[i] !== undefined &&
+        !this.#isBackgroundFetch(this.#valList[i])
       ) {
-        yield [this.keyList[i], this.valList[i]]
+        yield [this.#keyList[i], this.#valList[i]]
       }
     }
   }
 
   *keys() {
-    for (const i of this.indexes()) {
-      const k = this.keyList[i]
+    for (const i of this.#indexes()) {
+      const k = this.#keyList[i]
       if (
         k !== undefined &&
-        !this.isBackgroundFetch(this.valList[i])
+        !this.#isBackgroundFetch(this.#valList[i])
       ) {
         yield k
       }
     }
   }
   *rkeys() {
-    for (const i of this.rindexes()) {
-      const k = this.keyList[i]
+    for (const i of this.#rindexes()) {
+      const k = this.#keyList[i]
       if (
         k !== undefined &&
-        !this.isBackgroundFetch(this.valList[i])
+        !this.#isBackgroundFetch(this.#valList[i])
       ) {
         yield k
       }
@@ -837,24 +895,24 @@ class LRUCache<K extends {}, V extends {}> {
   }
 
   *values() {
-    for (const i of this.indexes()) {
-      const v = this.valList[i]
+    for (const i of this.#indexes()) {
+      const v = this.#valList[i]
       if (
         v !== undefined &&
-        !this.isBackgroundFetch(this.valList[i])
+        !this.#isBackgroundFetch(this.#valList[i])
       ) {
-        yield this.valList[i]
+        yield this.#valList[i]
       }
     }
   }
   *rvalues() {
-    for (const i of this.rindexes()) {
-      const v = this.valList[i]
+    for (const i of this.#rindexes()) {
+      const v = this.#valList[i]
       if (
         v !== undefined &&
-        !this.isBackgroundFetch(this.valList[i])
+        !this.#isBackgroundFetch(this.#valList[i])
       ) {
-        yield this.valList[i]
+        yield this.#valList[i]
       }
     }
   }
@@ -867,14 +925,14 @@ class LRUCache<K extends {}, V extends {}> {
     fn: (v: V, k: K, self: LRUCache<K, V>) => boolean,
     getOptions: LRUCache.GetOptions<K, V> = {}
   ) {
-    for (const i of this.indexes()) {
-      const v = this.valList[i]
-      const value = this.isBackgroundFetch(v)
+    for (const i of this.#indexes()) {
+      const v = this.#valList[i]
+      const value = this.#isBackgroundFetch(v)
         ? v.__staleWhileFetching
         : v
       if (value === undefined) continue
-      if (fn(value, this.keyList[i] as K, this)) {
-        return this.get(this.keyList[i] as K, getOptions)
+      if (fn(value, this.#keyList[i] as K, this)) {
+        return this.get(this.#keyList[i] as K, getOptions)
       }
     }
   }
@@ -883,13 +941,13 @@ class LRUCache<K extends {}, V extends {}> {
     fn: (v: V, k: K, self: LRUCache<K, V>) => any,
     thisp: any = this
   ) {
-    for (const i of this.indexes()) {
-      const v = this.valList[i]
-      const value = this.isBackgroundFetch(v)
+    for (const i of this.#indexes()) {
+      const v = this.#valList[i]
+      const value = this.#isBackgroundFetch(v)
         ? v.__staleWhileFetching
         : v
       if (value === undefined) continue
-      fn.call(thisp, value, this.keyList[i] as K, this)
+      fn.call(thisp, value, this.#keyList[i] as K, this)
     }
   }
 
@@ -897,21 +955,21 @@ class LRUCache<K extends {}, V extends {}> {
     fn: (v: V, k: K, self: LRUCache<K, V>) => any,
     thisp: any = this
   ) {
-    for (const i of this.rindexes()) {
-      const v = this.valList[i]
-      const value = this.isBackgroundFetch(v)
+    for (const i of this.#rindexes()) {
+      const v = this.#valList[i]
+      const value = this.#isBackgroundFetch(v)
         ? v.__staleWhileFetching
         : v
       if (value === undefined) continue
-      fn.call(thisp, value, this.keyList[i] as K, this)
+      fn.call(thisp, value, this.#keyList[i] as K, this)
     }
   }
 
   purgeStale() {
     let deleted = false
-    for (const i of this.rindexes({ allowStale: true })) {
-      if (this.isStale(i)) {
-        this.delete(this.keyList[i] as K)
+    for (const i of this.#rindexes({ allowStale: true })) {
+      if (this.#isStale(i)) {
+        this.delete(this.#keyList[i] as K)
         deleted = true
       }
     }
@@ -920,24 +978,23 @@ class LRUCache<K extends {}, V extends {}> {
 
   dump() {
     const arr: [K, LRUCache.Entry<V>][] = []
-    for (const i of this.indexes({ allowStale: true })) {
-      const key = this.keyList[i]
-      const v = this.valList[i]
-      const value: V | undefined = this.isBackgroundFetch(v)
+    for (const i of this.#indexes({ allowStale: true })) {
+      const key = this.#keyList[i]
+      const v = this.#valList[i]
+      const value: V | undefined = this.#isBackgroundFetch(v)
         ? v.__staleWhileFetching
         : v
       if (value === undefined || key === undefined) continue
       const entry: LRUCache.Entry<V> = { value }
-      if (this.ttls) {
-        const c = this as LRUCacheTTL<K, V>
-        entry.ttl = this.ttls[i]
+      if (this.#ttls && this.#starts) {
+        entry.ttl = this.#ttls[i]
         // always dump the start relative to a portable timestamp
         // it's ok for this to be a bit slow, it's a rare operation.
-        const age = perf.now() - c.starts[i]
+        const age = perf.now() - this.#starts[i]
         entry.start = Math.floor(Date.now() - age)
       }
-      if (this.sizes) {
-        entry.size = this.sizes[i]
+      if (this.#sizes) {
+        entry.size = this.#sizes[i]
       }
       arr.unshift([key, entry])
     }
@@ -974,7 +1031,7 @@ class LRUCache<K extends {}, V extends {}> {
       status,
     }: LRUCache.SetOptions<K, V> = {}
   ) {
-    size = this.requireSize(k, v, size, sizeCalculation)
+    size = this.#requireSize(k, v, size, sizeCalculation)
     // if the item doesn't fit, don't do anything
     // NB: maxEntrySize set to maxSize by default
     if (this.maxEntrySize && size > this.maxEntrySize) {
@@ -987,44 +1044,44 @@ class LRUCache<K extends {}, V extends {}> {
       this.delete(k)
       return this
     }
-    let index = this.size === 0 ? undefined : this.keyMap.get(k)
+    let index = this.size === 0 ? undefined : this.#keyMap.get(k)
     if (index === undefined) {
       // addition
-      index = this.newIndex()
-      this.keyList[index] = k
-      this.valList[index] = v
-      this.keyMap.set(k, index)
-      this.next[this.tail] = index
-      this.prev[index] = this.tail
-      this.tail = index
-      this.size++
-      this.addItemSize(index, size, status)
+      index = this.#newIndex()
+      this.#keyList[index] = k
+      this.#valList[index] = v
+      this.#keyMap.set(k, index)
+      this.#next[this.#tail] = index
+      this.#prev[index] = this.#tail
+      this.#tail = index
+      this.#size++
+      this.#addItemSize(index, size, status)
       if (status) {
         status.set = 'add'
       }
       noUpdateTTL = false
     } else {
       // update
-      this.moveToTail(index)
-      const oldVal = this.valList[index] as V | BackgroundFetch<V>
+      this.#moveToTail(index)
+      const oldVal = this.#valList[index] as V | BackgroundFetch<V>
       if (v !== oldVal) {
-        if (this.isBackgroundFetch(oldVal)) {
+        if (this.#isBackgroundFetch(oldVal)) {
           oldVal.__abortController.abort(new Error('replaced'))
         } else {
           if (!noDisposeOnSet) {
             this.dispose?.(oldVal, k, 'set')
             if (this.disposeAfter) {
-              this.disposed?.push([oldVal, k, 'set'])
+              this.#disposed?.push([oldVal, k, 'set'])
             }
           }
         }
-        this.removeItemSize(index)
-        this.valList[index] = v
-        this.addItemSize(index, size, status)
+        this.#removeItemSize(index)
+        this.#valList[index] = v
+        this.#addItemSize(index, size, status)
         if (status) {
           status.set = 'replace'
           const oldValue =
-            oldVal && this.isBackgroundFetch(oldVal)
+            oldVal && this.#isBackgroundFetch(oldVal)
               ? oldVal.__staleWhileFetching
               : oldVal
           if (oldValue !== undefined) status.oldValue = oldValue
@@ -1033,15 +1090,15 @@ class LRUCache<K extends {}, V extends {}> {
         status.set = 'update'
       }
     }
-    if (ttl !== 0 && this.ttl === 0 && !this.ttls) {
-      this.initializeTTLTracking()
+    if (ttl !== 0 && this.ttl === 0 && !this.#ttls) {
+      this.#initializeTTLTracking()
     }
     if (!noUpdateTTL) {
-      this.setItemTTL(index, ttl, start)
+      this.#setItemTTL(index, ttl, start)
     }
-    this.statusTTL(status, index)
-    if (this.disposeAfter && this.disposed) {
-      const dt = this.disposed
+    this.#statusTTL(status, index)
+    if (this.disposeAfter && this.#disposed) {
+      const dt = this.#disposed
       let task: DisposeTask<K, V> | undefined
       while ((task = dt?.shift())) {
         this.disposeAfter(...task)
@@ -1050,28 +1107,28 @@ class LRUCache<K extends {}, V extends {}> {
     return this
   }
 
-  newIndex(): Index {
-    if (this.size === 0) {
-      return this.tail
+  #newIndex(): Index {
+    if (this.#size === 0) {
+      return this.#tail
     }
-    if (this.free.length !== 0) {
-      return this.free.pop() as Index
+    if (this.#free.length !== 0) {
+      return this.#free.pop() as Index
     }
-    if (this.size === this.max && this.max !== 0) {
-      return this.evict(false)
+    if (this.#size === this.#max && this.#max !== 0) {
+      return this.#evict(false)
     }
     // initial fill, just keep writing down the list
-    const i = this.initialFill
-    this.initialFill = ((this.initialFill as number) + 1) as Index
+    const i = this.#initialFill
+    this.#initialFill = ((this.#initialFill as number) + 1) as Index
     return i
   }
 
   pop() {
     try {
-      while (this.size) {
-        const val = this.valList[this.head]
-        this.evict(true)
-        if (this.isBackgroundFetch(val)) {
+      while (this.#size) {
+        const val = this.#valList[this.#head]
+        this.#evict(true)
+        if (this.#isBackgroundFetch(val)) {
           if (val.__staleWhileFetching) {
             return val.__staleWhileFetching
           }
@@ -1080,8 +1137,8 @@ class LRUCache<K extends {}, V extends {}> {
         }
       }
     } finally {
-      if (this.disposeAfter && this.disposed) {
-        const dt = this.disposed
+      if (this.disposeAfter && this.#disposed) {
+        const dt = this.#disposed
         let task: DisposeTask<K, V> | undefined
         while ((task = dt?.shift())) {
           this.disposeAfter(...task)
@@ -1090,34 +1147,34 @@ class LRUCache<K extends {}, V extends {}> {
     }
   }
 
-  evict(free: boolean) {
-    const head = this.head
-    const k = this.keyList[head] as K
-    const v = this.valList[head] as V
-    if (this.isBackgroundFetch(v)) {
+  #evict(free: boolean) {
+    const head = this.#head
+    const k = this.#keyList[head] as K
+    const v = this.#valList[head] as V
+    if (this.#isBackgroundFetch(v)) {
       v.__abortController.abort(new Error('evicted'))
     } else {
       this.dispose?.(v, k, 'evict')
       if (this.disposeAfter) {
-        this.disposed?.push([v, k, 'evict'])
+        this.#disposed?.push([v, k, 'evict'])
       }
     }
-    this.removeItemSize(head)
+    this.#removeItemSize(head)
     // if we aren't about to use the index, then null these out
     if (free) {
-      this.keyList[head] = undefined
-      this.valList[head] = undefined
-      this.free.push(head)
+      this.#keyList[head] = undefined
+      this.#valList[head] = undefined
+      this.#free.push(head)
     }
-    if (this.size === 1) {
-      this.head = this.tail = 0 as Index
-      this.initialFill = 1 as Index
-      this.free.length = 0
+    if (this.#size === 1) {
+      this.#head = this.#tail = 0 as Index
+      this.#initialFill = 1 as Index
+      this.#free.length = 0
     } else {
-      this.head = this.next[head] as Index
+      this.#head = this.#next[head] as Index
     }
-    this.keyMap.delete(k)
-    this.size--
+    this.#keyMap.delete(k)
+    this.#size--
     return head
   }
 
@@ -1128,18 +1185,18 @@ class LRUCache<K extends {}, V extends {}> {
       status,
     }: LRUCache.HasOptions<K, V> = {}
   ) {
-    const index = this.keyMap.get(k)
+    const index = this.#keyMap.get(k)
     if (index !== undefined) {
-      if (!this.isStale(index)) {
+      if (!this.#isStale(index)) {
         if (updateAgeOnHas) {
-          this.updateItemAge(index)
+          this.#updateItemAge(index)
         }
         if (status) status.has = 'hit'
-        this.statusTTL(status, index)
+        this.#statusTTL(status, index)
         return true
       } else if (status) {
         status.has = 'stale'
-        this.statusTTL(status, index)
+        this.#statusTTL(status, index)
       }
     } else if (status) {
       status.has = 'miss'
@@ -1149,22 +1206,25 @@ class LRUCache<K extends {}, V extends {}> {
 
   // like get(), but without any LRU updating or TTL expiration
   peek(k: K, { allowStale = this.allowStale } = {}) {
-    const index = this.keyMap.get(k)
-    if (index !== undefined && (allowStale || !this.isStale(index))) {
-      const v = this.valList[index]
+    const index = this.#keyMap.get(k)
+    if (
+      index !== undefined &&
+      (allowStale || !this.#isStale(index))
+    ) {
+      const v = this.#valList[index]
       // either stale and allowed, or forcing a refresh of non-stale value
-      return this.isBackgroundFetch(v) ? v.__staleWhileFetching : v
+      return this.#isBackgroundFetch(v) ? v.__staleWhileFetching : v
     }
   }
 
-  backgroundFetch(
+  #backgroundFetch(
     k: K,
     index: Index | undefined,
     options: LRUCache.FetchOptions<K, V>,
     context: any
   ): BackgroundFetch<V> {
-    const v = index === undefined ? undefined : this.valList[index]
-    if (this.isBackgroundFetch(v)) {
+    const v = index === undefined ? undefined : this.#valList[index]
+    if (this.#isBackgroundFetch(v)) {
       return v
     }
     const ac = new AbortController()
@@ -1197,10 +1257,10 @@ class LRUCache<K extends {}, V extends {}> {
       }
       // either we didn't abort, and are still here, or we did, and ignored
       const bf = p as BackgroundFetch<V>
-      if (this.valList[index as Index] === p) {
+      if (this.#valList[index as Index] === p) {
         if (v === undefined) {
           if (bf.__staleWhileFetching) {
-            this.valList[index as Index] = bf.__staleWhileFetching
+            this.#valList[index as Index] = bf.__staleWhileFetching
           } else {
             this.delete(k)
           }
@@ -1226,7 +1286,7 @@ class LRUCache<K extends {}, V extends {}> {
         allowStaleAborted || options.allowStaleOnFetchRejection
       const noDelete = allowStale || options.noDeleteOnFetchRejection
       const bf = p as BackgroundFetch<V>
-      if (this.valList[index as Index] === p) {
+      if (this.#valList[index as Index] === p) {
         // if we allow stale on fetch rejections, then we need to ensure that
         // the stale value is not removed from the cache when the fetch fails.
         const del = !noDelete || bf.__staleWhileFetching === undefined
@@ -1237,7 +1297,7 @@ class LRUCache<K extends {}, V extends {}> {
           // since we are done with the promise at this point.
           // leave it untouched if we're still waiting for an
           // aborted background fetch that hasn't yet returned.
-          this.valList[index as Index] = bf.__staleWhileFetching
+          this.#valList[index as Index] = bf.__staleWhileFetching
         }
       }
       if (allowStale) {
@@ -1283,14 +1343,14 @@ class LRUCache<K extends {}, V extends {}> {
     if (index === undefined) {
       // internal, don't expose status.
       this.set(k, bf, { ...fetchOpts.options, status: undefined })
-      index = this.keyMap.get(k)
+      index = this.#keyMap.get(k)
     } else {
-      this.valList[index] = bf
+      this.#valList[index] = bf
     }
     return bf
   }
 
-  isBackgroundFetch(p: any): p is BackgroundFetch<V> {
+  #isBackgroundFetch(p: any): p is BackgroundFetch<V> {
     return (
       !!p &&
       typeof p === 'object' &&
@@ -1357,15 +1417,15 @@ class LRUCache<K extends {}, V extends {}> {
       signal,
     }
 
-    let index = this.keyMap.get(k)
+    let index = this.#keyMap.get(k)
     if (index === undefined) {
       if (status) status.fetch = 'miss'
-      const p = this.backgroundFetch(k, index, options, fetchContext)
+      const p = this.#backgroundFetch(k, index, options, fetchContext)
       return (p.__returned = p)
     } else {
       // in cache, maybe already fetching
-      const v = this.valList[index]
-      if (this.isBackgroundFetch(v)) {
+      const v = this.#valList[index]
+      if (this.#isBackgroundFetch(v)) {
         const stale =
           allowStale && v.__staleWhileFetching !== undefined
         if (status) {
@@ -1377,20 +1437,20 @@ class LRUCache<K extends {}, V extends {}> {
 
       // if we force a refresh, that means do NOT serve the cached value,
       // unless we are already in the process of refreshing the cache.
-      const isStale = this.isStale(index)
+      const isStale = this.#isStale(index)
       if (!forceRefresh && !isStale) {
         if (status) status.fetch = 'hit'
-        this.moveToTail(index)
+        this.#moveToTail(index)
         if (updateAgeOnGet) {
-          this.updateItemAge(index)
+          this.#updateItemAge(index)
         }
-        this.statusTTL(status, index)
+        this.#statusTTL(status, index)
         return v
       }
 
       // ok, it is stale or a forced refresh, and not already fetching.
       // refresh the cache.
-      const p = this.backgroundFetch(k, index, options, fetchContext)
+      const p = this.#backgroundFetch(k, index, options, fetchContext)
       const hasStale = p.__staleWhileFetching !== undefined
       const staleVal = hasStale && allowStale
       if (status) {
@@ -1410,12 +1470,12 @@ class LRUCache<K extends {}, V extends {}> {
       status,
     }: LRUCache.GetOptions<K, V> = {}
   ) {
-    const index = this.keyMap.get(k)
+    const index = this.#keyMap.get(k)
     if (index !== undefined) {
-      const value = this.valList[index]
-      const fetching = this.isBackgroundFetch(value)
-      this.statusTTL(status, index)
-      if (this.isStale(index)) {
+      const value = this.#valList[index]
+      const fetching = this.#isBackgroundFetch(value)
+      this.#statusTTL(status, index)
+      if (this.#isStale(index)) {
         if (status) status.get = 'stale'
         // delete only if not an in-flight background fetch
         if (!fetching) {
@@ -1444,9 +1504,9 @@ class LRUCache<K extends {}, V extends {}> {
         if (fetching) {
           return value.__staleWhileFetching
         }
-        this.moveToTail(index)
+        this.#moveToTail(index)
         if (updateAgeOnGet) {
-          this.updateItemAge(index)
+          this.#updateItemAge(index)
         }
         return value
       }
@@ -1455,12 +1515,12 @@ class LRUCache<K extends {}, V extends {}> {
     }
   }
 
-  connect(p: Index, n: Index) {
-    this.prev[n] = p
-    this.next[p] = n
+  #connect(p: Index, n: Index) {
+    this.#prev[n] = p
+    this.#next[p] = n
   }
 
-  moveToTail(index: Index) {
+  #moveToTail(index: Index): void {
     // if tail already, nothing to do
     // if head, move head to next[index]
     // else
@@ -1469,57 +1529,57 @@ class LRUCache<K extends {}, V extends {}> {
     // prev[index] = tail
     // next[tail] = index
     // tail = index
-    if (index !== this.tail) {
-      if (index === this.head) {
-        this.head = this.next[index] as Index
+    if (index !== this.#tail) {
+      if (index === this.#head) {
+        this.#head = this.#next[index] as Index
       } else {
-        this.connect(
-          this.prev[index] as Index,
-          this.next[index] as Index
+        this.#connect(
+          this.#prev[index] as Index,
+          this.#next[index] as Index
         )
       }
-      this.connect(this.tail, index)
-      this.tail = index
+      this.#connect(this.#tail, index)
+      this.#tail = index
     }
   }
 
   delete(k: K) {
     let deleted = false
-    if (this.size !== 0) {
-      const index = this.keyMap.get(k)
+    if (this.#size !== 0) {
+      const index = this.#keyMap.get(k)
       if (index !== undefined) {
         deleted = true
-        if (this.size === 1) {
+        if (this.#size === 1) {
           this.clear()
         } else {
-          this.removeItemSize(index)
-          const v = this.valList[index]
-          if (this.isBackgroundFetch(v)) {
+          this.#removeItemSize(index)
+          const v = this.#valList[index]
+          if (this.#isBackgroundFetch(v)) {
             v.__abortController.abort(new Error('deleted'))
           } else {
             this.dispose?.(v as V, k, 'delete')
             if (this.disposeAfter) {
-              this.disposed?.push([v as V, k, 'delete'])
+              this.#disposed?.push([v as V, k, 'delete'])
             }
           }
-          this.keyMap.delete(k)
-          this.keyList[index] = undefined
-          this.valList[index] = undefined
-          if (index === this.tail) {
-            this.tail = this.prev[index] as Index
-          } else if (index === this.head) {
-            this.head = this.next[index] as Index
+          this.#keyMap.delete(k)
+          this.#keyList[index] = undefined
+          this.#valList[index] = undefined
+          if (index === this.#tail) {
+            this.#tail = this.#prev[index] as Index
+          } else if (index === this.#head) {
+            this.#head = this.#next[index] as Index
           } else {
-            this.next[this.prev[index]] = this.next[index]
-            this.prev[this.next[index]] = this.prev[index]
+            this.#next[this.#prev[index]] = this.#next[index]
+            this.#prev[this.#next[index]] = this.#prev[index]
           }
-          this.size--
-          this.free.push(index)
+          this.#size--
+          this.#free.push(index)
         }
       }
     }
-    if (this.disposeAfter && this.disposed) {
-      const dt = this.disposed
+    if (this.disposeAfter && this.#disposed) {
+      const dt = this.#disposed
       let task: DisposeTask<K, V> | undefined
       while ((task = dt?.shift())) {
         this.disposeAfter(...task)
@@ -1529,37 +1589,37 @@ class LRUCache<K extends {}, V extends {}> {
   }
 
   clear() {
-    for (const index of this.rindexes({ allowStale: true })) {
-      const v = this.valList[index]
-      if (this.isBackgroundFetch(v)) {
+    for (const index of this.#rindexes({ allowStale: true })) {
+      const v = this.#valList[index]
+      if (this.#isBackgroundFetch(v)) {
         v.__abortController.abort(new Error('deleted'))
       } else {
-        const k = this.keyList[index]
+        const k = this.#keyList[index]
         this.dispose?.(v as V, k as K, 'delete')
         if (this.disposeAfter) {
-          this.disposed?.push([v as V, k as K, 'delete'])
+          this.#disposed?.push([v as V, k as K, 'delete'])
         }
       }
     }
 
-    this.keyMap.clear()
-    this.valList.fill(undefined)
-    this.keyList.fill(undefined)
-    if (this.ttls && this.starts) {
-      this.ttls.fill(0)
-      this.starts.fill(0)
+    this.#keyMap.clear()
+    this.#valList.fill(undefined)
+    this.#keyList.fill(undefined)
+    if (this.#ttls && this.#starts) {
+      this.#ttls.fill(0)
+      this.#starts.fill(0)
     }
-    if (this.sizes) {
-      this.sizes.fill(0)
+    if (this.#sizes) {
+      this.#sizes.fill(0)
     }
-    this.head = 0 as Index
-    this.tail = 0 as Index
-    this.initialFill = 1 as Index
-    this.free.length = 0
-    this.calculatedSize = 0
-    this.size = 0
-    if (this.disposeAfter && this.disposed) {
-      const dt = this.disposed
+    this.#head = 0 as Index
+    this.#tail = 0 as Index
+    this.#initialFill = 1 as Index
+    this.#free.length = 0
+    this.#calculatedSize = 0
+    this.#size = 0
+    if (this.disposeAfter && this.#disposed) {
+      const dt = this.#disposed
       let task: DisposeTask<K, V> | undefined
       while ((task = dt?.shift())) {
         this.disposeAfter(...task)

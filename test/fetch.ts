@@ -76,7 +76,7 @@ t.test('asynchronous fetching', async t => {
   t.matchSnapshot(JSON.stringify(dump), 'safe to stringify dump')
 
   t.equal(e.isBackgroundFetch(v), true)
-  t.equal(e.backgroundFetch('key', 0, {}), v)
+  t.equal(e.backgroundFetch('key', 0, {}, undefined), v)
   await v
   const v7 = await c.fetch('key', {
     allowStale: true,

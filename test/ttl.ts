@@ -35,7 +35,7 @@ const runTests = (LRU: typeof LRUCache, t: Tap.Test) => {
     // This is a known bug that I am ok with.
     clock.advance(1)
     const c = new LRU({ max: 5, ttl: 10, ttlResolution: 0 })
-    const e = expose(c)
+    const e = expose(c, LRU)
     c.set(1, 1, { status: s() })
     t.equal(c.get(1, { status: s() }), 1, '1 get not stale', {
       now: clock._now,
@@ -62,8 +62,6 @@ const runTests = (LRU: typeof LRUCache, t: Tap.Test) => {
     t.equal(c.size, 1, 'still there though')
     t.equal(c.has(1, { status: s() }), false, '1 has stale', {
       now: clock._now,
-      ttls: e.ttls,
-      starts: e.starts,
       index: e.keyMap.get(1),
       stale: e.isStale(e.keyMap.get(1)),
     })
@@ -104,7 +102,7 @@ const runTests = (LRU: typeof LRUCache, t: Tap.Test) => {
   t.test('ttl tests with ttlResolution=100', t => {
     statuses.length = 0
     const c = new LRU({ ttl: 10, ttlResolution: 100, max: 10 })
-    const e = expose(c)
+    const e = expose(c, LRU)
     c.set(1, 1, { status: s() })
     t.equal(c.get(1, { status: s() }), 1, '1 get not stale', {
       now: clock._now,
@@ -376,7 +374,7 @@ const runTests = (LRU: typeof LRUCache, t: Tap.Test) => {
   // https://github.com/isaacs/node-lru-cache/issues/203
   t.test('indexes/rindexes can walk over stale entries', t => {
     const c = new LRU({ max: 10, ttl: 10 })
-    const e = expose(c)
+    const e = expose(c, LRU)
     for (let i = 0; i < 3; i++) {
       c.set(i, i)
     }
