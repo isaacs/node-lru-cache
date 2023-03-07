@@ -44,6 +44,11 @@ jobs:
         run: |
           cp -r benchmark/results docs/benchmarks
           marked < benchmark/results.md > docs/benchmarks/index.html
+          echo '<html>' > benchmark/results/index.html
+          ls benchmark/results | while read f; do
+            echo '<a href="'$f'">'$f'</a>' >> benchmark/results/index.html
+          done
+          echo '</html>' >> benchmark/results/index.html
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
