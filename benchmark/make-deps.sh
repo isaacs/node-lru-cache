@@ -1,22 +1,12 @@
 #!/usr/bin/env bash
 
-# get the latest patch in each lru-cache 7.x and up,
-# plus mnemonist, hashlru, and lru-fast
-
-nvs=($(
-  npm view 'lru-cache@>=7' name | awk -F. '{print $1 "." $2}' | sort -r -V | uniq
-)
-'mnemonist@0.39'
-'hashlru@2'
-'lru-fast@0.2')
-
-echo "lru-cache_CURRENT" > impls.txt
-
 deps=""
 install=()
-for dep in "${nvs[@]}"; do
-  name=${dep/@/_}
-  echo $name >> impls.txt
+for name in $(cat impls.txt); do
+  if [ "$name" = "lru-cache_CURRENT" ]; then
+    continue
+  fi
+  dep=${name/_/@}
   deps="${deps}"'    "'"$name"'": "'"npm:$dep"$'",\n'
 done
 
