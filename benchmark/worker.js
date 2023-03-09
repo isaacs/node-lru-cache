@@ -2,8 +2,9 @@
 
 const precise = require('precise')
 const retsu = require('retsu')
-const caches = require(process.env.__LRU_BENCH_DIR + '/impls.js')
-const num = 10_000
+const dir = process.env.__LRU_BENCH_DIR || __dirname
+const caches = require(dir + '/impls.js')
+const num = +process.env.N || 10_000
 const evict = num * 2
 const times = 10
 const x = 1e6
@@ -30,7 +31,7 @@ const typeKeys = Object.keys(typeGen)
 ;(function seed() {
   let z = -1
 
-  const t = process.env.TYPE
+  const t = process.env.TYPE || 'mix'
   while (++z < evict) {
     const x = typeGen[t](z)
     data1[z] = [x, Math.floor(Math.random() * 1e7)]
@@ -47,8 +48,7 @@ const typeKeys = Object.keys(typeGen)
   }
 })()
 
-self.onmessage = function (ev) {
-  const id = ev.data
+const runTest = id => {
   const time = {
     set: [],
     get1: [],
@@ -179,4 +179,11 @@ self.onmessage = function (ev) {
   })
 
   postMessage(JSON.stringify(results))
+}
+
+if (typeof self !== 'undefined') {
+  self.onmessage = ev => runTest(ev.data)
+} else {
+  global.postMessage = console.log
+  runTest('lru-cache_CURRENT')
 }
