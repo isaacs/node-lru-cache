@@ -1087,7 +1087,7 @@ export class LRUCache<K extends {}, V extends {}> {
     }
 
     this.#statusTTL = (status, index) => {
-      if (status && ttls[index]) {
+      if (ttls[index]) {
         const ttl = ttls[index]
         const start = starts[index]
         status.ttl = ttl
@@ -1139,10 +1139,8 @@ export class LRUCache<K extends {}, V extends {}> {
 
   // conditionally set private methods related to TTL
   #updateItemAge: (index: Index) => void = () => {}
-  #statusTTL: (
-    status: LRUCache.Status<V> | undefined,
-    index: Index
-  ) => void = () => {}
+  #statusTTL: (status: LRUCache.Status<V>, index: Index) => void =
+    () => {}
   #setItemTTL: (
     index: Index,
     ttl: LRUCache.Milliseconds,
@@ -1594,7 +1592,7 @@ export class LRUCache<K extends {}, V extends {}> {
     if (!noUpdateTTL) {
       this.#setItemTTL(index, ttl, start)
     }
-    this.#statusTTL(status, index)
+    if (status) this.#statusTTL(status, index)
     if (this.#disposeAfter && this.#disposed) {
       const dt = this.#disposed
       let task: DisposeTask<K, V> | undefined
@@ -1697,8 +1695,10 @@ export class LRUCache<K extends {}, V extends {}> {
         if (updateAgeOnHas) {
           this.#updateItemAge(index)
         }
-        if (status) status.has = 'hit'
-        this.#statusTTL(status, index)
+        if (status) {
+          status.has = 'hit'
+          this.#statusTTL(status, index)
+        }
         return true
       } else if (status) {
         status.has = 'stale'
@@ -1981,7 +1981,7 @@ export class LRUCache<K extends {}, V extends {}> {
         if (updateAgeOnGet) {
           this.#updateItemAge(index)
         }
-        this.#statusTTL(status, index)
+        if (status) this.#statusTTL(status, index)
         return v
       }
 
@@ -2015,7 +2015,7 @@ export class LRUCache<K extends {}, V extends {}> {
     if (index !== undefined) {
       const value = this.#valList[index]
       const fetching = this.#isBackgroundFetch(value)
-      this.#statusTTL(status, index)
+      if (status) this.#statusTTL(status, index)
       if (this.#isStale(index)) {
         if (status) status.get = 'stale'
         // delete only if not an in-flight background fetch
