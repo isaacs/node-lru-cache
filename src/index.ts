@@ -163,14 +163,14 @@ export namespace LRUCache {
    * Options provided to the
    * {@link OptionsBase.fetchMethod} function.
    */
-  export interface FetcherOptions<K, V> {
+  export interface FetcherOptions<K, V, FC> {
     signal: AbortSignal
-    options: FetcherFetchOptions<K, V>
+    options: FetcherFetchOptions<K, V, FC>
     /**
      * Object provided in the
      * {@link OptionsBase.fetchContext} option
      */
-    context: any
+    context: FC
   }
 
   /**
@@ -325,9 +325,9 @@ export namespace LRUCache {
    * effect, as the {@link LRUCache#get} call already happened by the time
    * the fetchMethod is called.
    */
-  export interface FetcherFetchOptions<K, V>
+  export interface FetcherFetchOptions<K, V, FC>
     extends Pick<
-      OptionsBase<K, V>,
+      OptionsBase<K, V, FC>,
       | 'allowStale'
       | 'updateAgeOnGet'
       | 'noDeleteOnStaleGet'
@@ -347,8 +347,8 @@ export namespace LRUCache {
   /**
    * Options that may be passed to the {@link LRUCache#fetch} method.
    */
-  export interface FetchOptions<K, V>
-    extends FetcherFetchOptions<K, V> {
+  export interface FetchOptions<K, V, FC>
+    extends FetcherFetchOptions<K, V, FC> {
     /**
      * Set to true to force a re-load of the existing data, even if it
      * is not yet stale.
@@ -358,7 +358,7 @@ export namespace LRUCache {
      * Set to override {@link OptionsBase.fetchContext} provided
      * to constructor.
      */
-    fetchContext?: any
+    fetchContext?: FC
     signal?: AbortSignal
     status?: Status<V>
   }
@@ -366,17 +366,17 @@ export namespace LRUCache {
   /**
    * Options that may be passed to the {@link LRUCache#has} method.
    */
-  export interface HasOptions<K, V>
-    extends Pick<OptionsBase<K, V>, 'updateAgeOnHas'> {
+  export interface HasOptions<K, V, FC>
+    extends Pick<OptionsBase<K, V, FC>, 'updateAgeOnHas'> {
     status?: Status<V>
   }
 
   /**
    * Options that may be passed to the {@link LRUCache#get} method.
    */
-  export interface GetOptions<K, V>
+  export interface GetOptions<K, V, FC>
     extends Pick<
-      OptionsBase<K, V>,
+      OptionsBase<K, V, FC>,
       'allowStale' | 'updateAgeOnGet' | 'noDeleteOnStaleGet'
     > {
     status?: Status<V>
@@ -385,15 +385,15 @@ export namespace LRUCache {
   /**
    * Options that may be passed to the {@link LRUCache#peek} method.
    */
-  export interface PeekOptions<K, V>
-    extends Pick<OptionsBase<K, V>, 'allowStale'> {}
+  export interface PeekOptions<K, V, FC>
+    extends Pick<OptionsBase<K, V, FC>, 'allowStale'> {}
 
   /**
    * Options that may be passed to the {@link LRUCache#set} method.
    */
-  export interface SetOptions<K, V>
+  export interface SetOptions<K, V, FC>
     extends Pick<
-      OptionsBase<K, V>,
+      OptionsBase<K, V, FC>,
       'sizeCalculation' | 'ttl' | 'noDisposeOnSet' | 'noUpdateTTL'
     > {
     /**
@@ -417,10 +417,10 @@ export namespace LRUCache {
   /**
    * The type signature for the {@link OptionsBase.fetchMethod} option.
    */
-  export type Fetcher<K, V> = (
+  export type Fetcher<K, V, FC> = (
     key: K,
     staleValue: V | undefined,
-    options: FetcherOptions<K, V>
+    options: FetcherOptions<K, V, FC>
   ) => Promise<V | void | undefined> | V | void | undefined
 
   /**
@@ -438,7 +438,7 @@ export namespace LRUCache {
    * also set {@link OptionsBase.ttlAutopurge}, to prevent potentially
    * unbounded storage.
    */
-  export interface OptionsBase<K, V> {
+  export interface OptionsBase<K, V, FC> {
     /**
      * The maximum number of items to store in the cache before evicting
      * old entries. This is read-only on the {@link LRUCache} instance,
@@ -599,7 +599,7 @@ export namespace LRUCache {
     /**
      * Method that provides the implementation for {@link LRUCache#fetch}
      */
-    fetchMethod?: Fetcher<K, V>
+    fetchMethod?: Fetcher<K, V, FC>
 
     /**
      * Optional context provided to the {@link OptionsBase.fetchMethod} by
@@ -607,7 +607,7 @@ export namespace LRUCache {
      *
      * If set, then {@link OptionsBase.fetchMethod} must be provided as well.
      */
-    fetchContext?: any
+    fetchContext?: FC
 
     /**
      * Set to true to suppress the deletion of stale data when a
@@ -672,24 +672,27 @@ export namespace LRUCache {
     ignoreFetchAbort?: boolean
   }
 
-  export interface OptionsMaxLimit<K, V> extends OptionsBase<K, V> {
+  export interface OptionsMaxLimit<K, V, FC>
+    extends OptionsBase<K, V, FC> {
     max: Count
   }
-  export interface OptionsTTLLimit<K, V> extends OptionsBase<K, V> {
+  export interface OptionsTTLLimit<K, V, FC>
+    extends OptionsBase<K, V, FC> {
     ttl: Milliseconds
     ttlAutopurge: boolean
   }
-  export interface OptionsSizeLimit<K, V> extends OptionsBase<K, V> {
+  export interface OptionsSizeLimit<K, V, FC>
+    extends OptionsBase<K, V, FC> {
     maxSize: Size
   }
 
   /**
    * The valid safe options for the {@link LRUCache} constructor
    */
-  export type Options<K, V> =
-    | OptionsMaxLimit<K, V>
-    | OptionsSizeLimit<K, V>
-    | OptionsTTLLimit<K, V>
+  export type Options<K, V, FC> =
+    | OptionsMaxLimit<K, V, FC>
+    | OptionsSizeLimit<K, V, FC>
+    | OptionsTTLLimit<K, V, FC>
 
   /**
    * Entry objects used by {@link LRUCache#load} and {@link LRUCache#dump}
@@ -711,7 +714,11 @@ export namespace LRUCache {
  * Changing any of these will alter the defaults for subsequent method calls,
  * but is otherwise safe.
  */
-export class LRUCache<K extends {}, V extends {}> {
+export class LRUCache<
+  K extends {},
+  V extends {},
+  FC = unknown
+> {
   // properties coming in from the options of these, only max and maxSize
   // really *need* to be protected. The rest can be modified, as they just
   // set defaults for various methods.
@@ -765,11 +772,11 @@ export class LRUCache<K extends {}, V extends {}> {
   /**
    * {@link LRUCache.OptionsBase.fetchMethod}
    */
-  fetchMethod?: LRUCache.Fetcher<K, V>
+  fetchMethod?: LRUCache.Fetcher<K, V, FC>
   /**
    * {@link LRUCache.OptionsBase.fetchContext}
    */
-  fetchContext?: any
+  fetchContext?: FC
   /**
    * {@link LRUCache.OptionsBase.noDeleteOnFetchRejection}
    */
@@ -817,9 +824,11 @@ export class LRUCache<K extends {}, V extends {}> {
    *
    * @internal
    */
-  static unsafeExposeInternals<K extends {}, V extends {}>(
-    c: LRUCache<K, V>
-  ) {
+  static unsafeExposeInternals<
+    K extends {},
+    V extends {},
+    FC = unknown
+  >(c: LRUCache<K, V, FC>) {
     return {
       // properties
       starts: c.#starts,
@@ -843,7 +852,7 @@ export class LRUCache<K extends {}, V extends {}> {
       backgroundFetch: (
         k: K,
         index: number | undefined,
-        options: LRUCache.FetchOptions<K, V>,
+        options: LRUCache.FetchOptions<K, V, FC>,
         context: any
       ): BackgroundFetch<V> =>
         c.#backgroundFetch(
@@ -902,7 +911,9 @@ export class LRUCache<K extends {}, V extends {}> {
     return this.#disposeAfter
   }
 
-  constructor(options: LRUCache.Options<K, V> | LRUCache<K, V>) {
+  constructor(
+    options: LRUCache.Options<K, V, FC> | LRUCache<K, V, FC>
+  ) {
     const {
       max = 0,
       ttl,
@@ -1386,8 +1397,8 @@ export class LRUCache<K extends {}, V extends {}> {
    * similar to Array.find().  fn is called as fn(value, key, cache).
    */
   find(
-    fn: (v: V, k: K, self: LRUCache<K, V>) => boolean,
-    getOptions: LRUCache.GetOptions<K, V> = {}
+    fn: (v: V, k: K, self: LRUCache<K, V, FC>) => boolean,
+    getOptions: LRUCache.GetOptions<K, V, FC> = {}
   ) {
     for (const i of this.#indexes()) {
       const v = this.#valList[i]
@@ -1408,7 +1419,7 @@ export class LRUCache<K extends {}, V extends {}> {
    * Does not iterate over stale values.
    */
   forEach(
-    fn: (v: V, k: K, self: LRUCache<K, V>) => any,
+    fn: (v: V, k: K, self: LRUCache<K, V, FC>) => any,
     thisp: any = this
   ) {
     for (const i of this.#indexes()) {
@@ -1426,7 +1437,7 @@ export class LRUCache<K extends {}, V extends {}> {
    * reverse order.  (ie, less recently used items are iterated over first.)
    */
   rforEach(
-    fn: (v: V, k: K, self: LRUCache<K, V>) => any,
+    fn: (v: V, k: K, self: LRUCache<K, V, FC>) => any,
     thisp: any = this
   ) {
     for (const i of this.#rindexes()) {
@@ -1511,7 +1522,7 @@ export class LRUCache<K extends {}, V extends {}> {
   set(
     k: K,
     v: V | BackgroundFetch<V>,
-    setOptions: LRUCache.SetOptions<K, V> = {}
+    setOptions: LRUCache.SetOptions<K, V, FC> = {}
   ) {
     const {
       ttl = this.ttl,
@@ -1686,7 +1697,7 @@ export class LRUCache<K extends {}, V extends {}> {
    * Will not update item age unless
    * {@link LRUCache.OptionsBase.updateAgeOnHas} is set.
    */
-  has(k: K, hasOptions: LRUCache.HasOptions<K, V> = {}) {
+  has(k: K, hasOptions: LRUCache.HasOptions<K, V, FC> = {}) {
     const { updateAgeOnHas = this.updateAgeOnHas, status } =
       hasOptions
     const index = this.#keyMap.get(k)
@@ -1717,7 +1728,7 @@ export class LRUCache<K extends {}, V extends {}> {
    * Returns `undefined` if the item is stale, unless
    * {@link LRUCache.OptionsBase.allowStale} is set.
    */
-  peek(k: K, peekOptions: LRUCache.PeekOptions<K, V> = {}) {
+  peek(k: K, peekOptions: LRUCache.PeekOptions<K, V, FC> = {}) {
     const { allowStale = this.allowStale } = peekOptions
     const index = this.#keyMap.get(k)
     if (
@@ -1733,7 +1744,7 @@ export class LRUCache<K extends {}, V extends {}> {
   #backgroundFetch(
     k: K,
     index: Index | undefined,
-    options: LRUCache.FetchOptions<K, V>,
+    options: LRUCache.FetchOptions<K, V, FC>,
     context: any
   ): BackgroundFetch<V> {
     const v = index === undefined ? undefined : this.#valList[index]
@@ -1904,7 +1915,7 @@ export class LRUCache<K extends {}, V extends {}> {
    * someone complains about it, as the fix would involve added complexity and
    * may not be worth the costs for this edge case.
    */
-  async fetch(k: K, fetchOptions: LRUCache.FetchOptions<K, V> = {}) {
+  async fetch(k: K, fetchOptions: LRUCache.FetchOptions<K, V, FC> = {}) {
     const {
       // get options
       allowStale = this.allowStale,
@@ -2004,7 +2015,7 @@ export class LRUCache<K extends {}, V extends {}> {
    *
    * If the key is not found, get() will return `undefined`.
    */
-  get(k: K, getOptions: LRUCache.GetOptions<K, V> = {}) {
+  get(k: K, getOptions: LRUCache.GetOptions<K, V, FC> = {}) {
     const {
       allowStale = this.allowStale,
       updateAgeOnGet = this.updateAgeOnGet,
