@@ -1884,17 +1884,12 @@ export class LRUCache<
   }
 
   #isBackgroundFetch(p: any): p is BackgroundFetch<V> {
+    const b = p as BackgroundFetch<V>
     return (
-      !!p &&
-      typeof p === 'object' &&
-      typeof p.then === 'function' &&
-      Object.prototype.hasOwnProperty.call(
-        p,
-        '__staleWhileFetching'
-      ) &&
-      Object.prototype.hasOwnProperty.call(p, '__returned') &&
-      (p.__returned === p || p.__returned === undefined) &&
-      p.__abortController instanceof AbortController
+      !!b &&
+      b instanceof Promise &&
+      b.hasOwnProperty('__staleWhileFetching') &&
+      b.__abortController instanceof AbortController
     )
   }
 
