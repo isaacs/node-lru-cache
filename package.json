@@ -24,7 +24,9 @@
     "format": "prettier --write .",
     "typedoc": "typedoc --tsconfig tsconfig-esm.json ./src/*.ts",
     "prebenchmark": "npm run prepare",
-    "benchmark": "make -C benchmark"
+    "benchmark": "make -C benchmark",
+    "preprofile": "npm run prepare",
+    "profile": "make -C benchmark profile"
   },
   "main": "./dist/cjs/index-cjs.js",
   "module": "./dist/mjs/index.js",
