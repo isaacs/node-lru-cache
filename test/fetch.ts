@@ -156,10 +156,6 @@ t.test('fetchMethod must be a function', async t => {
   t.throws(() => new LRU({ fetchMethod: true, max: 2 }))
 })
 
-t.test('no fetchContext without fetchMethod', async t => {
-  t.throws(() => new LRU({ fetchContext: true, max: 2 }))
-})
-
 t.test('fetch without fetch method', async t => {
   const c = new LRU({ max: 3 })
   c.set(0, 0)
@@ -387,32 +383,34 @@ t.test(
   }
 )
 
-t.test('fetchContext', async t => {
-  const cache = new LRU<string, [string, any]>({
+t.test('fetch context', async t => {
+  const cache = new LRU<string, [string, any], string>({
     max: 10,
     ttl: 10,
     allowStale: true,
     noDeleteOnFetchRejection: true,
-    fetchContext: 'default context',
     fetchMethod: async (k, _, { context, options }) => {
       //@ts-expect-error
-      t.equal(options.fetchContext, undefined)
+      t.equal(options.context, undefined)
       t.equal(context, expectContext)
       return [k, context]
     },
   })
 
-  let expectContext = 'default context'
-  t.strictSame(await cache.fetch('x'), ['x', 'default context'])
-  expectContext = 'overridden'
-  t.strictSame(
-    await cache.fetch('y', { fetchContext: 'overridden' }),
-    ['y', 'overridden']
-  )
-  // if still in cache, doesn't call fetchMethod again
-  t.strictSame(await cache.fetch('x', { fetchContext: 'ignored' }), [
+  let expectContext = 'overridden'
+  t.strictSame(await cache.fetch('y', { context: 'overridden' }), [
+    'y',
+    'overridden',
+  ])
+  expectContext = 'first context'
+  t.strictSame(await cache.fetch('x', { context: 'first context' }), [
     'x',
-    'default context',
+    'first context',
+  ])
+  // if still in cache, doesn't call fetchMethod again
+  t.strictSame(await cache.fetch('x', { context: 'ignored' }), [
+    'x',
+    'first context',
   ])
 })
 
@@ -446,7 +444,11 @@ t.test('forceRefresh', async t => {
   // still there, because we're allowing stale, and it's not stale
   const status: LRUCache.Status<number> = {}
   t.equal(
-    await cache.fetch(2, { forceRefresh: true, allowStale: false, status }),
+    await cache.fetch(2, {
+      forceRefresh: true,
+      allowStale: false,
+      status,
+    }),
     2
   )
   t.equal(status.fetch, 'refresh', 'status reflects forced refresh')
@@ -657,7 +659,11 @@ t.test('abort, but then keep on fetching anyway', async t => {
   ac.abort(er)
   clock.advance(100)
   t.equal(await p, 1)
-  t.equal(status.fetchAbortIgnored, true, 'status reflects ignored abort')
+  t.equal(
+    status.fetchAbortIgnored,
+    true,
+    'status reflects ignored abort'
+  )
   t.equal(status.fetchError, er)
   t.equal(status.fetchUpdated, true)
 
@@ -693,7 +699,7 @@ t.test('abort, but then keep on fetching anyway', async t => {
 })
 
 t.test('allowStaleOnFetchAbort', async t => {
-  const c = new LRUCache<number, number>({
+  const c = new LRUCache<number, number, undefined>({
     ttl: 10,
     max: 10,
     allowStaleOnFetchAbort: true,
@@ -715,7 +721,7 @@ t.test('allowStaleOnFetchAbort', async t => {
 
 t.test('background update on timeout, return stale', async t => {
   let returnUndefined = false
-  const c = new LRUCache<number, number>({
+  const c = new LRUCache<number, number, void>({
     ttl: 10,
     max: 10,
     ignoreFetchAbort: true,
@@ -757,4 +763,39 @@ t.test('background update on timeout, return stale', async t => {
   clock.advance(200)
   await new Promise(res => setImmediate(res))
   t.equal(e.valList[0], 99)
+})
+
+t.test('fetch context required if set in ctor type', async t => {
+  const c = new LRUCache<string, string, { a: number }>({
+    max: 5,
+    fetchMethod: async (k, _, { context }) => {
+      if (k === 'y') t.equal(context, undefined)
+      else if (k === 'z') t.same(context, { x: 1 })
+      else t.same(context, { a: 1 })
+      return k
+    },
+  })
+  c.fetch('x', { context: { a: 1 } })
+  //@ts-expect-error
+  c.fetch('y')
+  //@ts-expect-error
+  c.fetch('z', { context: { x: 1 } })
+
+  const c2 = new LRUCache<string, string, void>({
+    max: 5,
+    fetchMethod: async (k, _, { context }) => {
+      if (k === 'y') t.equal(context, undefined)
+      else if (k === 'z') t.same(context, { x: 1 })
+      else t.same(context, { a: 1 })
+      return k
+    },
+  })
+  //@ts-expect-error
+  c2.fetch('x', { context: { a: 1 } })
+  c2.fetch('y')
+  c2.fetch('y', { allowStale: true })
+  //@ts-expect-error
+  c2.fetch('z', { context: { x: 1 } })
+
+  t.end()
 })

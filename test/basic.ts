@@ -6,11 +6,10 @@ import t from 'tap'
 import LRU from '../'
 import { expose } from './fixtures/expose'
 
-
 t.test('basic operation', t => {
-  const statuses:LRU.Status<number>[] = []
-  const s = ():LRU.Status<number> => {
-    const status:LRU.Status<number> = {}
+  const statuses: LRU.Status<number>[] = []
+  const s = (): LRU.Status<number> => {
+    const status: LRU.Status<number> = {}
     statuses.push(status)
     return status
   }
@@ -210,9 +209,9 @@ t.test('peek does not disturb order', t => {
 })
 
 t.test('re-use key before initial fill completed', t => {
-  const statuses:LRU.Status<number>[] = []
-  const s = ():LRU.Status<number> => {
-    const status:LRU.Status<number> = {}
+  const statuses: LRU.Status<number>[] = []
+  const s = (): LRU.Status<number> => {
+    const status: LRU.Status<number> = {}
     statuses.push(status)
     return status
   }

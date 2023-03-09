@@ -157,9 +157,9 @@ t.test('delete while empty, or missing key, is no-op', t => {
 })
 
 t.test('large item falls out of cache, sizes are kept correct', t => {
-  const statuses:LRU.Status<number>[] = []
-  const s = ():LRU.Status<number> => {
-    const status:LRU.Status<number> = {}
+  const statuses: LRU.Status<number>[] = []
+  const s = (): LRU.Status<number> => {
+    const status: LRU.Status<number> = {}
     statuses.push(status)
     return status
   }
@@ -210,9 +210,9 @@ t.test('large item falls out of cache, sizes are kept correct', t => {
 })
 
 t.test('large item falls out of cache because maxEntrySize', t => {
-  const statuses:LRU.Status<number>[] = []
-  const s = ():LRU.Status<number> => {
-    const status:LRU.Status<number> = {}
+  const statuses: LRU.Status<number>[] = []
+  const s = (): LRU.Status<number> => {
+    const status: LRU.Status<number> = {}
     statuses.push(status)
     return status
   }

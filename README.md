@@ -96,7 +96,7 @@ cache.clear() // empty the cache
 ```
 
 If you put more stuff in the cache, then less recently used items
-will fall out.  That's what an LRU cache is.
+will fall out. That's what an LRU cache is.
 
 ## Options
 
@@ -646,7 +646,7 @@ use. Age is updated if `updateAgeOnHas` is set to `true` in
 either the options or the constructor.
 
 Will return `false` if the item is stale, even though it is
-technically in the cache.  The difference can be determined (if
+technically in the cache. The difference can be determined (if
 it matters) by using a `status` argument, and inspecting the
 `has` field.
 
@@ -824,7 +824,7 @@ They will be ignored.
 
 Occasionally, it may be useful to track the internal behavior of
 the cache, particularly for logging, debugging, or for behavior
-within the `fetchMethod`.  To do this, you can pass a `status`
+within the `fetchMethod`. To do this, you can pass a `status`
 object to the `get()`, `set()`, `has()`, and `fetch()` methods.
 
 The `status` option should be a plain JavaScript object.

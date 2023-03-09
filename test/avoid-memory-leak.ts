@@ -55,7 +55,7 @@ const runTest = async (t: Tap.Test, cache: LRUCache<any, any>) => {
   }
 
   // now start the setting and profiling
-  const profiles:ReturnType<typeof prof>[] = []
+  const profiles: ReturnType<typeof prof>[] = []
   for (let i = 0; i < n; i++) {
     if (i % profEvery === 0) {
       const profile = prof(i, cache)

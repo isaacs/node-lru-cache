@@ -224,7 +224,7 @@ const runTests = (LRU: typeof LRUCache, t: Tap.Test) => {
     clock.advance(1)
     t.equal(c.has(1), false)
 
-    t.equal(c.get(1, { status: s(), noDeleteOnStaleGet:true }), 1)
+    t.equal(c.get(1, { status: s(), noDeleteOnStaleGet: true }), 1)
     t.equal(c.get(1), 1)
     t.equal(c.get(1), undefined)
     t.equal(c.size, 0)

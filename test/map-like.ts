@@ -15,13 +15,17 @@ global.performance = clock
 import LRU from '../'
 import { expose } from './fixtures/expose'
 
-const entriesFromForeach = <K extends {}, V extends {}>(c: LRU<K, V>):[k:K,v:V][] => {
-  const e:[k:K,v:V][] = []
+const entriesFromForeach = <K extends {}, V extends {}>(
+  c: LRU<K, V>
+): [k: K, v: V][] => {
+  const e: [k: K, v: V][] = []
   c.forEach((v, k) => e.push([k, v]))
   return e
 }
-const entriesFromRForeach = <K extends {}, V extends {}>(c: LRU<K, V>):[k:K,v:V][] => {
-  const e:[k:K,v:V][] = []
+const entriesFromRForeach = <K extends {}, V extends {}>(
+  c: LRU<K, V>
+): [k: K, v: V][] => {
+  const e: [k: K, v: V][] = []
   c.rforEach((v, k) => e.push([k, v]))
   return e
 }
@@ -69,11 +73,17 @@ t.test('bunch of iteration things', async t => {
   t.matchSnapshot(c.keys(), 'fetch 123 resolved, keys')
   t.matchSnapshot(c.values(), 'fetch 123 resolved, values')
   t.matchSnapshot(c.entries(), 'fetch 123 resolved, entries')
-  t.matchSnapshot(entriesFromForeach(c), 'fetch 123 resolved, foreach')
+  t.matchSnapshot(
+    entriesFromForeach(c),
+    'fetch 123 resolved, foreach'
+  )
   t.matchSnapshot(c.rkeys(), 'fetch 123 resolved, rkeys')
   t.matchSnapshot(c.rvalues(), 'fetch 123 resolved, rvalues')
   t.matchSnapshot(c.rentries(), 'fetch 123 resolved, rentries')
-  t.matchSnapshot(entriesFromRForeach(c), 'fetch 123 resolved, rforeach')
+  t.matchSnapshot(
+    entriesFromRForeach(c),
+    'fetch 123 resolved, rforeach'
+  )
   t.matchSnapshot(c.dump(), 'fetch 123 resolved, dump')
 
   for (let i = 3; i < 8; i++) {
@@ -104,7 +114,10 @@ t.test('bunch of iteration things', async t => {
   t.matchSnapshot(c.entries(), 'entries, resolved fetch 99 too late')
   t.matchSnapshot(c.rkeys(), 'rkeys, resolved fetch 99 too late')
   t.matchSnapshot(c.rvalues(), 'rvalues, resolved fetch 99 too late')
-  t.matchSnapshot(c.rentries(), 'rentries, resolved fetch 99 too late')
+  t.matchSnapshot(
+    c.rentries(),
+    'rentries, resolved fetch 99 too late'
+  )
   t.matchSnapshot(c.dump(), 'dump, resolved fetch 99 too late')
 
   // pretend an entry is stale for some reason

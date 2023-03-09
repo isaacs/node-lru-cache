@@ -2,9 +2,9 @@
 import t from 'tap'
 import LRU from '../'
 const lru = new LRU<string, string>({
-  maxSize:2,
+  maxSize: 2,
   sizeCalculation: () => 1,
-});
+})
 lru.set('x', 'x')
 lru.set('y', 'y')
 for (const key of lru.rkeys()) {

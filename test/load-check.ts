@@ -27,7 +27,7 @@ const verifyCache = () => {
   // index in the keyMap, and the value matches.
   const e = expose(cache)
   for (const [k, i] of e.keyMap.entries()) {
-    const v = e.valList[i]
+    const v = e.valList[i] as number[]
     const key = e.keyList[i]
     if (k !== key) {
       t.equal(k, key, 'key at proper index', { k, i })
