@@ -23,6 +23,7 @@
     "prepublishOnly": "git push origin --follow-tags",
     "format": "prettier --write .",
     "typedoc": "typedoc --tsconfig tsconfig-esm.json ./src/*.ts",
+    "prebenchmark": "npm run prepare",
     "benchmark": "make -C benchmark"
   },
   "main": "./dist/cjs/index-cjs.js",
