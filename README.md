@@ -72,7 +72,11 @@ const options = {
 
   // async method to use for cache.fetch(), for
   // stale-while-revalidate type of behavior
-  fetchMethod: async (key, staleValue, { options, signal }) => {},
+  fetchMethod: async (
+    key,
+    staleValue,
+    { options, signal, context }
+  ) => {},
 }
 
 const cache = new LRUCache(options)
@@ -98,9 +102,31 @@ cache.clear() // empty the cache
 If you put more stuff in the cache, then less recently used items
 will fall out. That's what an LRU cache is.
 
+## `class LRUCache<K, V, FC = unknown>(options)`
+
+Create a new `LRUCache` object.
+
+When using TypeScript, set the `K` and `V` types to the `key` and
+`value` types, respectively.
+
+The `FC` ("fetch context") generic type defaults to `unknown`.
+If set to a value other than `void` or `undefined`, then any
+calls to `cache.fetch()` _must_ provide a `context` option
+matching the `FC` type. If `FC` is set to `void` or `undefined`,
+then `cache.fetch()` _must not_ provide a `context` option. See
+the documentation on `async fetch()` below.
+
 ## Options
 
-### `max`
+All options are available on the LRUCache instance, making it
+safe to pass an LRUCache instance as the options argument to make
+another empty cache of the same type.
+
+Some options are marked read-only because changing them after
+instantiation is not safe. Changing any of the other options
+will of course only have an effect on subsequent method calls.
+
+### `max` (read only)
 
 The maximum number of items that remain in the cache (assuming no
 TTL pruning or explicit deletions). Note that fewer items may be
@@ -113,7 +139,7 @@ must be a positive integer if set.
 **It is strongly recommended to set a `max` to prevent unbounded
 growth of the cache.** See "Storage Bounds Safety" below.
 
-### `maxSize`
+### `maxSize` (read only)
 
 Set to a positive integer to track the sizes of items added to
 the cache, and automatically evict items in order to stay below
@@ -165,7 +191,7 @@ added to the cache.
 
 Deprecated alias: `length`
 
-### `fetchMethod`
+### `fetchMethod` (read only)
 
 Function that is used to make background asynchronous fetches.
 Called with `fetchMethod(key, staleValue, { signal, options,
@@ -199,18 +225,6 @@ failures.
 For example, a DNS cache may update the TTL based on the value
 returned from a remote DNS server by changing `options.ttl` in
 the `fetchMethod`.
-
-### `fetchContext`
-
-Arbitrary data that can be passed to the `fetchMethod` as the
-`context` option.
-
-Note that this will only be relevant when the `cache.fetch()`
-call needs to call `fetchMethod()`. Thus, any data which will
-meaningfully vary the fetch response needs to be present in the
-key. This is primarily intended for including `x-request-id`
-headers and the like for debugging purposes, which do not affect
-the `fetchMethod()` response.
 
 ### `noDeleteOnFetchRejection`
 
@@ -304,7 +318,7 @@ AbortSignals.
 This may be overridden on the `fetch()` call or in the
 `fetchMethod` itself.
 
-### `dispose`
+### `dispose` (read only)
 
 Function that is called on items when they are dropped from the
 cache, as `this.dispose(value, key, reason)`.
@@ -339,7 +353,7 @@ and deletes of in-flight asynchronous fetches, you must use the
 
 Optional, must be a function.
 
-### `disposeAfter`
+### `disposeAfter` (read only)
 
 The same as `dispose`, but called _after_ the entry is completely
 removed and the cache is once again in a clean state.
@@ -590,8 +604,8 @@ The following options are supported:
   a different object, because it must also respond to internal
   cache state changes, but aborting this signal will abort the
   one passed to `fetchMethod` as well.
-- `fetchContext` - sets the `context` option passed to the
-  underlying `fetchMethod`.
+- `context` - sets the `context` option passed to the underlying
+  `fetchMethod`.
 
 If the value is in the cache and not stale, then the returned
 Promise resolves to the value.
@@ -631,6 +645,34 @@ will reject with the reason for the abort.
 If a `signal` is passed to the `fetch()` call, then aborting the
 signal will abort the fetch and cause the `fetch()` promise to
 reject with the reason provided.
+
+#### Setting `context`
+
+If an `FC` type is set to a type other than `unknown`, `void`, or
+`undefined` in the LRUCache constructor, then all
+calls to `cache.fetch()` _must_ provide a `context` option. If
+set to `undefined` or `void`, then calls to fetch _must not_
+provide a `context` option.
+
+The `context` param allows you to provide arbitrary data that
+might be relevant in the course of fetching the data. It is only
+relevant for the course of a single `fetch()` operation, and
+discarded afterwards.
+
+#### Note: `fetch()` calls are inflight-unique
+
+If you call `fetch()` multiple times with the same key value,
+then every call after the first will return the same promise,
+_even if they have different settings that would otherwise change
+the behvavior of the fetch_, such as `noDeleteOnFetchRejection` or
+`ignoreFetchAbort`.
+
+In most cases, this is not a problem (in fact, only fetching
+something once is what you probably want, if you're caching in
+the first place). If you are changing the fetch() options
+dramatically between runs, there's a good chance that you might
+be trying to fit divergent semantics into a single object, and
+would be better off with multiple cache instances.
 
 ### `peek(key, { allowStale } = {}) => value`
 
@@ -1095,13 +1137,24 @@ If performance matters to you:
    [mnemonist's
    LRUCache](https://yomguithereal.github.io/mnemonist/lru-cache)
    which uses an Object as its data store.
+
 2. Failing that, if at all possible, use short non-numeric
    strings (ie, less than 256 characters) as your keys, and use
    [mnemonist's
    LRUCache](https://yomguithereal.github.io/mnemonist/lru-cache).
-3. If the types of your keys will be long strings, strings that
-   look like floats, `null`, objects, or some mix of types, or if
-   you aren't sure, then this library will work well for you.
+
+3. If the types of your keys will be anything else, especially
+   long strings, strings that look like floats, objects, or some
+   mix of types, or if you aren't sure, then this library will
+   work well for you.
+
+   If you do not need the features that this library provides
+   (like asynchronous fetching, a variety of TTL staleness
+   options, and so on), then [mnemonist's
+   LRUMap](https://yomguithereal.github.io/mnemonist/lru-map) is
+   a very good option, and just slightly faster than this module
+   (since it does considerably less).
+
 4. Do not use a `dispose` function, size tracking, or especially
    ttl behavior, unless absolutely needed. These features are
    convenient, and necessary in some use cases, and every attempt
@@ -1116,5 +1169,19 @@ performance, albeit with some subtle changes as a result.
 
 If you were relying on the internals of LRUCache in version 6 or
 before, it probably will not work in version 7 and above.
+
+## Breaking Changes in Version 8
+
+- The `fetchContext` option was renamed to `context`, and may no
+  longer be set on the cache instance itself.
+- Rewritten in TypeScript, so pretty much all the types moved
+  around a lot.
+- The AbortController/AbortSignal polyfill is removed. For this
+  reason, **Node version 16.14.0 or higher is now required**.
+- Internal properties were moved to actual private class
+  properties.
+- Keys and values must not be `null` or `undefined`.
+- Minified export available at `'lru-cache/min'`, for both CJS
+  and MJS builds.
 
 For more info, see the [change log](CHANGELOG.md).
