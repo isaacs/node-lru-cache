@@ -200,9 +200,6 @@ context })`. May return a Promise.
 If `fetchMethod` is not provided, then `cache.fetch(key)` is
 equivalent to `Promise.resolve(cache.get(key))`.
 
-The `signal` object is an `AbortSignal` if that's available in
-the global object, otherwise it's a pretty close polyfill.
-
 If at any time, `signal.aborted` is set to `true`, or if the
 `signal.onabort` method is called, or if it emits an `'abort'`
 event which you can listen to with `addEventListener`, then that
