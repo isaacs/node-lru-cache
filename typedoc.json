@@ -1,7 +1,7 @@
 {
   "navigationLinks": {
     "isaacs projects": "https://isaacs.github.io/",
-    "benchmarks summary": "https://isaacs.github.io/node-lru-cache/benchmarks/",
-    "benchmarks details": "https://isaacs.github.io/node-lru-cache/benchmarks/results/"
+    "benchmark summary": "https://isaacs.github.io/node-lru-cache/benchmark/",
+    "benchmark details": "https://isaacs.github.io/node-lru-cache/benchmark/results/"
   }
 }
