@@ -23,6 +23,7 @@
     "prepublishOnly": "git push origin --follow-tags",
     "format": "prettier --write .",
     "typedoc": "typedoc --tsconfig tsconfig-esm.json ./src/*.ts",
+    "benchmark-results-typedoc": "bash scripts/benchmark-results-typedoc.sh",
     "prebenchmark": "npm run prepare",
     "benchmark": "make -C benchmark",
     "preprofile": "npm run prepare",
