@@ -189,8 +189,6 @@ If the `size` (or return value of `sizeCalculation`) for a given
 entry is greater than `maxEntrySize`, then the item will not be
 added to the cache.
 
-Deprecated alias: `length`
-
 ### `fetchMethod` (read only)
 
 Function that is used to make background asynchronous fetches.
@@ -330,10 +328,7 @@ the `dispose()` function call, it will break things in subtle and
 weird ways.
 
 Unlike several other options, this may _not_ be overridden by
-passing an option to `set()`, for performance reasons. If
-disposal functions may vary between cache entries, then the
-entire list must be scanned on every cache swap, even if no
-disposal function is in use.
+passing an option to `set()`, for performance reasons.
 
 The `reason` will be one of the following strings, corresponding
 to the reason for the item's deletion:
@@ -405,8 +400,7 @@ set a `max` to prevent unbounded growth of the cache.** See
 If ttl tracking is enabled, and `max` and `maxSize` are not set,
 and `ttlAutopurge` is not set, then a warning will be emitted
 cautioning about the potential for unbounded memory consumption.
-
-Deprecated alias: `maxAge`
+(The TypeScript definitions will also discourage this.)
 
 ### `noUpdateTTL`
 
@@ -469,8 +463,6 @@ This may be overridden by passing an options object to
 
 Boolean, default false, only relevant if `ttl` is set.
 
-Deprecated alias: `stale`
-
 ### `noDeleteOnStaleGet`
 
 When using time-expiring entries with `ttl`, by default stale
@@ -514,10 +506,16 @@ Boolean, default false, only relevant if `ttl` is set.
 
 ## API
 
-### `new LRUCache(options)`
+### `new LRUCache<K, V, FC = unknown>(options)`
 
 Create a new LRUCache. All options are documented above, and are
 on the cache as public members.
+
+The `K` and `V` types define the key and value types,
+respectively.  The optional `FC` type defines the type of the
+`context` object passed to `cache.fetch()`.
+
+Keys and values **must not** be `null` or `undefined`.
 
 ### `cache.max`, `cache.maxSize`, `cache.allowStale`,
 
@@ -576,10 +574,7 @@ Return a value from the cache.
 
 Will update the recency of the cache entry found.
 
-If the key is not found, `get()` will return `undefined`. This
-can be confusing when setting values specifically to `undefined`,
-as in `cache.set(key, undefined)`. Use `cache.has()` to
-determine whether a key is present in the cache at all.
+If the key is not found, `get()` will return `undefined`.
 
 For the usage of the `status` option, see **Status Tracking**
 below.
@@ -702,8 +697,6 @@ Returns `true` if the key was deleted, `false` otherwise.
 
 Clear the cache entirely, throwing away all values.
 
-Deprecated alias: `reset()`
-
 ### `keys()`
 
 Return a generator yielding the keys in the cache, in order from
@@ -772,8 +765,6 @@ available.
 
 Delete any stale entries. Returns `true` if anything was
 removed, `false` otherwise.
-
-Deprecated alias: `prune`
 
 ### `getRemainingTTL(key)`
 
