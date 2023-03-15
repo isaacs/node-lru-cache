@@ -1,3 +1,3 @@
 import LRUCache from './index.js'
 
-export = LRUCache
+export = Object.assign(LRUCache, { default: LRUCache })
