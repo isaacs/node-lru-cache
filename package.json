@@ -40,7 +40,7 @@
       },
       "require": {
         "types": "./dist/cjs/index.d.ts",
-        "default": "./dist/cjs/index-cjs.min.js"
+        "default": "./dist/cjs/index.min.js"
       }
     },
     ".": {
