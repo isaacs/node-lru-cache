@@ -512,7 +512,7 @@ Create a new LRUCache. All options are documented above, and are
 on the cache as public members.
 
 The `K` and `V` types define the key and value types,
-respectively.  The optional `FC` type defines the type of the
+respectively. The optional `FC` type defines the type of the
 `context` object passed to `cache.fetch()`.
 
 Keys and values **must not** be `null` or `undefined`.
@@ -654,10 +654,11 @@ discarded afterwards.
 #### Note: `fetch()` calls are inflight-unique
 
 If you call `fetch()` multiple times with the same key value,
-then every call after the first will return the same promise,
+then every call after the first will resolve on the same
+promise<sup>1</sup>,
 _even if they have different settings that would otherwise change
-the behvavior of the fetch_, such as `noDeleteOnFetchRejection` or
-`ignoreFetchAbort`.
+the behvavior of the fetch_, such as `noDeleteOnFetchRejection`
+or `ignoreFetchAbort`.
 
 In most cases, this is not a problem (in fact, only fetching
 something once is what you probably want, if you're caching in
@@ -665,6 +666,10 @@ the first place). If you are changing the fetch() options
 dramatically between runs, there's a good chance that you might
 be trying to fit divergent semantics into a single object, and
 would be better off with multiple cache instances.
+
+**1**: Ie, they're not the "same Promise", but they resolve at
+the same time, because they're both waiting on the same
+underlying fetchMethod response.
 
 ### `peek(key, { allowStale } = {}) => value`
 
