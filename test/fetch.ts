@@ -2,7 +2,7 @@ if (typeof performance === 'undefined') {
   global.performance = require('perf_hooks').performance
 }
 import t from 'tap'
-import LRUCache from '../'
+import LRUCache, { BackgroundFetch } from '../'
 import { expose } from './fixtures/expose'
 
 const fn: LRUCache.Fetcher<any, any> = async (_, v) =>
@@ -798,4 +798,41 @@ t.test('fetch context required if set in ctor type', async t => {
   c2.fetch('z', { context: { x: 1 } })
 
   t.end()
+})
+
+t.test('has false for pending fetch without stale val', async t => {
+  const c = new LRUCache<number, number>({
+    max: 10,
+    fetchMethod: async (key: number) =>
+      new Promise<number>(r => setTimeout(() => r(key), 10)),
+  })
+  const e = expose(c)
+  {
+    const p = c.fetch(1)
+    const index = e.keyMap.get(1) as number
+    t.not(index, undefined)
+    const bf = e.valList[index] as BackgroundFetch<number>
+    t.type(bf, Promise, 'pending fetch')
+    t.equal(bf.hasOwnProperty('__staleWhileFetching'), true)
+    t.equal(c.has(1), false)
+    clock.advance(10)
+    const res = await p
+    t.equal(res, 1)
+    t.equal(c.has(1), true)
+  }
+
+  {
+    // background fetch that DOES have a __staleWhileFetching value
+    const p  = c.fetch(1, { forceRefresh: true })
+    const index = e.keyMap.get(1) as number
+    t.not(index, undefined)
+    const bf = e.valList[index] as BackgroundFetch<number>
+    t.type(bf, Promise, 'pending fetch')
+    t.equal(bf.__staleWhileFetching, 1)
+    t.equal(c.has(1), true)
+    clock.advance(10)
+    const res = await p
+    t.equal(res, 1)
+    t.equal(c.has(1), true)
+  }
 })

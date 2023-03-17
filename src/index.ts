@@ -1702,6 +1702,13 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       hasOptions
     const index = this.#keyMap.get(k)
     if (index !== undefined) {
+      const v = this.#valList[index]
+      if (
+        this.#isBackgroundFetch(v) &&
+        v.__staleWhileFetching === undefined
+      ) {
+        return false
+      }
       if (!this.#isStale(index)) {
         if (updateAgeOnHas) {
           this.#updateItemAge(index)
