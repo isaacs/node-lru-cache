@@ -15,7 +15,7 @@ t.test('verify require works as expected', t => {
   const LRUCache = t.mock('../dist/cjs/index-cjs.js', {})
   t.equal(LRUCache.LRUCache, LRUCache, 'exposed as LRUCache export')
   t.equal(LRUCache.default, LRUCache, 'exposed as default export')
-  t.equal(LRUCache.toString().split(/\n/)[0], 'class LRUCache {')
+  t.equal(LRUCache.toString().split(/\r?\n/)[0].trim(), 'class LRUCache {')
   t.end()
 })
 

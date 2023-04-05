@@ -12,5 +12,5 @@ t.test('import', async t => {
     'function',
     'LRUCache export is function'
   )
-  t.equal(imp.default.toString().split(/\n/)[0], 'class LRUCache {')
+  t.equal(imp.default.toString().split(/\r?\n/)[0].trim(), 'class LRUCache {')
 })
