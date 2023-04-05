@@ -6,6 +6,19 @@ import t from 'tap'
 import LRU from '../'
 import { expose } from './fixtures/expose'
 
+t.test('verify require works as expected', t => {
+  t.equal(
+    require.resolve('../'),
+    require.resolve('../dist/cjs/index-cjs.js'),
+    'require resolves to expected module'
+  )
+  const LRUCache = t.mock('../dist/cjs/index-cjs.js', {})
+  t.equal(LRUCache.LRUCache, LRUCache, 'exposed as LRUCache export')
+  t.equal(LRUCache.default, LRUCache, 'exposed as default export')
+  t.equal(LRUCache.toString().split(/\n/)[0], 'class LRUCache {')
+  t.end()
+})
+
 t.test('basic operation', t => {
   const statuses: LRU.Status<number>[] = []
   const s = (): LRU.Status<number> => {
