@@ -1,5 +1,5 @@
 import t from 'tap'
-import LRUCache from '../'
+import { LRUCache } from '../'
 
 t.test('emits warning', t => {
   const { emitWarning } = process
@@ -29,7 +29,9 @@ t.test('emits warning', t => {
 })
 
 t.test('prints to stderr if no process.emitWarning', t => {
-  const LRU = t.mock('../', {}) as typeof LRUCache
+  const { LRUCache: LRU } = t.mock('../', {}) as {
+    LRUCache: typeof LRUCache
+  }
   const { error } = console
   const { emitWarning } = process
   t.teardown(() => {

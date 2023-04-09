@@ -1,6 +1,6 @@
 process.env.TAP_BAIL = '1'
 import t from 'tap'
-import LRU from '../'
+import { LRUCache as LRU } from '../'
 import { expose } from './fixtures/expose'
 
 const max = 10000

@@ -31,11 +31,11 @@ npm install lru-cache --save
 
 ```js
 // hybrid module, either works
-import LRUCache from 'lru-cache'
+import { LRUCache } from 'lru-cache'
 // or:
-const LRUCache = require('lru-cache')
+const { LRUCache } = require('lru-cache')
 // or in minified form for web browsers:
-import LRUCache from 'http://unpkg.com/lru-cache@8/dist/mjs/index.min.mjs'
+import { LRUCache } from 'http://unpkg.com/lru-cache@9/dist/mjs/index.min.mjs'
 
 // At least one of 'max', 'ttl', or 'maxSize' is required, to prevent
 // unsafe unbounded storage.

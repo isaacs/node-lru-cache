@@ -2,7 +2,7 @@ if (typeof performance === 'undefined') {
   global.performance = require('perf_hooks').performance
 }
 import t from 'tap'
-import LRUCache from '../'
+import { LRUCache } from '../'
 import { expose } from './fixtures/expose'
 
 import Clock from 'clock-mock'
@@ -509,7 +509,7 @@ t.test('tests with perf_hooks.performance.now()', t => {
   global.Date = clock.Date
   // @ts-ignore
   global.performance = clock
-  const LRU = t.mock('../', {})
+  const { LRUCache: LRU } = t.mock('../', {})
   runTests(LRU, t)
 })
 
@@ -521,6 +521,6 @@ t.test('tests using Date.now()', t => {
   global.Date = clock.Date
   // @ts-ignore
   global.performance = null
-  const LRU = t.mock('../', {})
+  const { LRUCache: LRU } = t.mock('../', {})
   runTests(LRU, t)
 })

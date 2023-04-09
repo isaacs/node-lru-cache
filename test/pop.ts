@@ -1,5 +1,5 @@
 import t from 'tap'
-import LRU from '../'
+import { LRUCache as LRU } from '../'
 
 const cache = new LRU<number, number>({ max: 5 })
 for (let i = 0; i < 5; i++) {

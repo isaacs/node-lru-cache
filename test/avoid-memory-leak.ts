@@ -26,7 +26,7 @@ const tryReq = (mod: string) => {
 
 const v8 = tryReq('v8')
 
-import LRUCache from '../'
+import { LRUCache } from '../'
 const expectItemCount = Math.ceil(maxSize / itemSize)
 const max = expectItemCount + 1
 const keyRange = expectItemCount * 2

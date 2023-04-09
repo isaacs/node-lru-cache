@@ -12,7 +12,7 @@ global.Date = clock.Date
 //@ts-ignore
 global.performance = clock
 
-import LRU from '../'
+import { LRUCache as LRU } from '../'
 import { expose } from './fixtures/expose'
 
 const entriesFromForeach = <K extends {}, V extends {}>(

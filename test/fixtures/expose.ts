@@ -1,4 +1,4 @@
-import LRUCache from '../../'
+import { LRUCache } from '../../'
 export const expose = <
   K extends {},
   V extends {},

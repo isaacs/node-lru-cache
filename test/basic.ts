@@ -3,19 +3,20 @@ if (typeof performance === 'undefined') {
 }
 
 import t from 'tap'
-import LRU from '../'
+import { LRUCache as LRU } from '../'
 import { expose } from './fixtures/expose'
 
 t.test('verify require works as expected', t => {
   t.equal(
     require.resolve('../'),
-    require.resolve('../dist/cjs/index-cjs.js'),
+    require.resolve('../dist/cjs/index.js'),
     'require resolves to expected module'
   )
-  const LRUCache = t.mock('../dist/cjs/index-cjs.js', {})
-  t.equal(LRUCache.LRUCache, LRUCache, 'exposed as LRUCache export')
-  t.equal(LRUCache.default, LRUCache, 'exposed as default export')
-  t.equal(LRUCache.toString().split(/\r?\n/)[0].trim(), 'class LRUCache {')
+  const { LRUCache } = t.mock('../dist/cjs/index.js', {})
+  t.equal(
+    LRUCache.toString().split(/\r?\n/)[0].trim(),
+    'class LRUCache {'
+  )
   t.end()
 })
 

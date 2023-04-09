@@ -2,7 +2,7 @@ if (typeof performance === 'undefined') {
   global.performance = require('perf_hooks').performance
 }
 import t from 'tap'
-import LRUCache, { BackgroundFetch } from '../'
+import { LRUCache, BackgroundFetch } from '../'
 import { expose } from './fixtures/expose'
 
 const fn: LRUCache.Fetcher<any, any> = async (_, v) =>

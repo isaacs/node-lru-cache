@@ -3,7 +3,7 @@ if (typeof performance === 'undefined') {
 }
 
 import t from 'tap'
-import LRU from '../'
+import { LRUCache as LRU } from '../'
 import { expose } from './fixtures/expose'
 
 const Clock = require('clock-mock')

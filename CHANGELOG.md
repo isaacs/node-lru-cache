@@ -1,5 +1,9 @@
 # cringe lorg
 
+## 9.0.0
+
+- Use named export only, no default export.
+
 ## 8.0.0
 
 - The `fetchContext` option was renamed to `context`, and may no

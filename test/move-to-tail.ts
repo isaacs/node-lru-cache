@@ -1,5 +1,5 @@
 import t from 'tap'
-import LRU from '../'
+import { LRUCache as LRU } from '../'
 import { expose } from './fixtures/expose'
 
 const c = new LRU({ max: 5 })

@@ -1,5 +1,5 @@
 import t from 'tap'
-import LRU from '../'
+import { LRUCache as LRU } from '../'
 
 const resolves: Record<
   number,

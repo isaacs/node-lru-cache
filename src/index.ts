@@ -2216,5 +2216,3 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     }
   }
 }
-
-export default LRUCache

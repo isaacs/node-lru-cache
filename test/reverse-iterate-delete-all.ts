@@ -1,6 +1,6 @@
 // https://github.com/isaacs/node-lru-cache/issues/278
 import t from 'tap'
-import LRU from '../'
+import { LRUCache as LRU } from '../'
 const lru = new LRU<string, string>({
   maxSize: 2,
   sizeCalculation: () => 1,

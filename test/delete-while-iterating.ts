@@ -1,5 +1,5 @@
 import t from 'tap'
-import LRU from '../'
+import { LRUCache as LRU } from '../'
 
 t.beforeEach(t => {
   const c = new LRU({ max: 5 })
