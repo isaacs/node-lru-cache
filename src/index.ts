@@ -29,6 +29,44 @@ const emitWarning = (
     : console.error(`[${code}] ${type}: ${msg}`)
 }
 
+/* c8 ignore start */
+if (typeof AbortController === 'undefined') {
+  emitWarning(
+    'AbortController is not defined. If using lru-cache in ' +
+      'node 14, load an AbortController polyfill from the ' +
+      '`node-abort-controller` package. A minimal polyfill is ' +
+      'provided for LRUCache.fetch(), but this may cause undesirable ' +
+      'behavior in other APIs that use AbortController.',
+    'NO_ABORT_CONTROLLER',
+    'ENOTSUP',
+    () => {}
+  )
+  //@ts-ignore
+  const AbortSignal = (globalThis.AbortSignal = class AbortSignal {
+    onabort?: (...a: any[]) => any
+    _onabort: ((...a: any[]) => any)[] = []
+    reason?: any
+    aborted: boolean = false
+    addEventListener(_: string, fn: (...a: any[]) => any) {
+      this._onabort.push(fn)
+    }
+  })
+  //@ts-ignore
+  globalThis.AbortController = class AbortController {
+    signal = new AbortSignal()
+    abort(reason: any) {
+      if (this.signal.aborted) return
+      this.signal.reason = reason
+      this.signal.aborted = true
+      for (const fn of this.signal._onabort) {
+        fn(reason)
+      }
+      this.signal.onabort?.(reason)
+    }
+  }
+}
+/* c8 ignore stop */
+
 const shouldWarn = (code: string) => !warned.has(code)
 
 const TYPE = Symbol('type')

@@ -78,7 +78,7 @@
     "dist"
   ],
   "engines": {
-    "node": ">=16.14"
+    "node": "14 || >=16.14"
   },
   "prettier": {
     "semi": false,
