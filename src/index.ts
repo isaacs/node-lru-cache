@@ -16,33 +16,45 @@ const warned = new Set<string>()
 // either a function or a class
 type ForC = ((...a: any[]) => any) | { new (...a: any[]): any }
 
+/* c8 ignore start */
+const PROCESS = (
+  typeof process === 'object' && !!process ? process : {}
+) as { [k: string]: any }
+/* c8 ignore start */
+
 const emitWarning = (
   msg: string,
   type: string,
   code: string,
   fn: ForC
 ) => {
-  typeof process === 'object' &&
-  process &&
-  typeof process.emitWarning === 'function'
-    ? process.emitWarning(msg, type, code, fn)
+  typeof PROCESS.emitWarning === 'function'
+    ? PROCESS.emitWarning(msg, type, code, fn)
     : console.error(`[${code}] ${type}: ${msg}`)
 }
 
+let AC = globalThis.AbortController
+let AS = globalThis.AbortSignal
+
 /* c8 ignore start */
-if (typeof AbortController === 'undefined') {
+if (
+  typeof AC === 'undefined' &&
+  PROCESS.env?.LRU_CACHE_IGNORE_AC_WARNING !== '1'
+) {
   emitWarning(
     'AbortController is not defined. If using lru-cache in ' +
       'node 14, load an AbortController polyfill from the ' +
       '`node-abort-controller` package. A minimal polyfill is ' +
-      'provided for LRUCache.fetch(), but this may cause undesirable ' +
-      'behavior in other APIs that use AbortController.',
+      'provided for use by LRUCache.fetch(), but it should not be ' +
+      'relied upon in other contexts (eg, passing it to other APIs that ' +
+      'use AbortController/AbortSignal might have undesirable effects). ' +
+      'You may disable this with LRU_CACHE_IGNORE_AC_WARNING=1 in the env.',
     'NO_ABORT_CONTROLLER',
     'ENOTSUP',
     () => {}
   )
   //@ts-ignore
-  const AbortSignal = (globalThis.AbortSignal = class AbortSignal {
+  AS = class AbortSignal {
     onabort?: (...a: any[]) => any
     _onabort: ((...a: any[]) => any)[] = []
     reason?: any
@@ -50,14 +62,17 @@ if (typeof AbortController === 'undefined') {
     addEventListener(_: string, fn: (...a: any[]) => any) {
       this._onabort.push(fn)
     }
-  })
+  }
   //@ts-ignore
-  globalThis.AbortController = class AbortController {
-    signal = new AbortSignal()
+  AC = class AbortController {
+    signal = new AS()
     abort(reason: any) {
       if (this.signal.aborted) return
+      //@ts-ignore
       this.signal.reason = reason
+      //@ts-ignore
       this.signal.aborted = true
+      //@ts-ignore
       for (const fn of this.signal._onabort) {
         fn(reason)
       }
@@ -1797,7 +1812,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       return v
     }
 
-    const ac = new AbortController()
+    const ac = new AC()
     const { signal } = options
     // when/if our AC signals, then stop listening to theirs.
     signal?.addEventListener('abort', () => ac.abort(signal.reason), {
@@ -1935,7 +1950,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       !!b &&
       b instanceof Promise &&
       b.hasOwnProperty('__staleWhileFetching') &&
-      b.__abortController instanceof AbortController
+      b.__abortController instanceof AC
     )
   }
 
