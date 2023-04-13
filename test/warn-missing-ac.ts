@@ -6,11 +6,13 @@ const main = async () => {
   // need to run both tests in parallel so we don't miss the close event
   t.jobs = 2
 
-  const warn = spawn('ts-node', [__filename, 'child'])
+  const tsNode = process.platform === 'win32' ? 'ts-node.cmd' : 'ts-node'
+
+  const warn = spawn(tsNode, [__filename, 'child'])
   const warnErr: Buffer[] = []
   warn.stderr.on('data', c => warnErr.push(c))
 
-  const noWarn = spawn('ts-node', [__filename, 'child'], {
+  const noWarn = spawn(tsNode, [__filename, 'child'], {
     env: {
       ...process.env,
       LRU_CACHE_IGNORE_AC_WARNING: '1',
