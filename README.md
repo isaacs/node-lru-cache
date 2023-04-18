@@ -568,6 +568,10 @@ Returns the cache object.
 For the usage of the `status` option, see **Status Tracking**
 below.
 
+If the value is `undefined`, then this is an alias for
+`cache.delete(key)`.  `undefined` is never stored in the cache.
+See **Storing Undefined Values** below.
+
 ### `get(key, { updateAgeOnGet, allowStale, status } = {}) => value`
 
 Return a value from the cache.
@@ -798,63 +802,6 @@ Evict the least recently used item, returning its value.
 
 Returns `undefined` if cache is empty.
 
-### Internal Methods and Properties
-
-In order to optimize performance as much as possible, "private"
-members and methods are exposed on the object as normal
-properties, rather than being accessed via Symbols, private
-members, or closure variables.
-
-**Do not use or rely on these.** They will change or be removed
-without notice. They will cause undefined behavior if used
-inappropriately. There is no need or reason to ever call them
-directly.
-
-This documentation is here so that it is especially clear that
-this not "undocumented" because someone forgot; it _is_
-documented, and the documentation is telling you not to do it.
-
-**Do not report bugs that stem from using these properties.**
-They will be ignored.
-
-- `initializeTTLTracking()` Set up the cache for tracking TTLs
-- `updateItemAge(index)` Called when an item age is updated, by
-  internal ID
-- `setItemTTL(index)` Called when an item ttl is updated, by
-  internal ID
-- `isStale(index)` Called to check an item's staleness, by
-  internal ID
-- `initializeSizeTracking()` Set up the cache for tracking item
-  size. Called automatically when a size is specified.
-- `removeItemSize(index)` Updates the internal size calculation
-  when an item is removed or modified, by internal ID
-- `addItemSize(index)` Updates the internal size calculation when
-  an item is added or modified, by internal ID
-- `indexes()` An iterator over the non-stale internal IDs, from
-  most recently to least recently used.
-- `rindexes()` An iterator over the non-stale internal IDs, from
-  least recently to most recently used.
-- `newIndex()` Create a new internal ID, either reusing a deleted
-  ID, evicting the least recently used ID, or walking to the end
-  of the allotted space.
-- `evict()` Evict the least recently used internal ID, returning
-  its ID. Does not do any bounds checking.
-- `connect(p, n)` Connect the `p` and `n` internal IDs in the
-  linked list.
-- `moveToTail(index)` Move the specified internal ID to the most
-  recently used position.
-- `keyMap` Map of keys to internal IDs
-- `keyList` List of keys by internal ID
-- `valList` List of values by internal ID
-- `sizes` List of calculated sizes by internal ID
-- `ttls` List of TTL values by internal ID
-- `starts` List of start time values by internal ID
-- `next` Array of "next" pointers by internal ID
-- `prev` Array of "previous" pointers by internal ID
-- `head` Internal ID of least recently used item
-- `tail` Internal ID of most recently used item
-- `free` Stack of deleted internal IDs
-
 ## Status Tracking
 
 Occasionally, it may be useful to track the internal behavior of
@@ -1074,6 +1021,38 @@ const cache = {
 If that isn't to your liking, check out
 [@isaacs/ttlcache](http://npm.im/@isaacs/ttlcache).
 
+## Storing Undefined Values
+
+This cache never stores undefined values, as `undefined` is used
+internally in a few places to indicate that a key is not in the
+cache.
+
+You may call `cache.set(key, undefined)`, but this is just an
+an alias for `cache.delete(key)`.  Note that this has the effect
+that `cache.has(key)` will return _false_ after setting it to
+undefined.
+
+```js
+cache.set(myKey, undefined)
+cache.has(myKey) // false!
+```
+
+If you need to track `undefined` values, and still note that the
+key is in the cache, an easy workaround is to use a sigil object
+of your own.
+
+```js
+import { LRUCache } from 'lru-cache'
+const undefinedValue = Symbol('undefined')
+const cache = new LRUCache(...)
+const mySet = (key, value) =>
+  cache.set(key, value === undefined ? undefinedValue : value)
+const myGet = (key, value) => {
+  const v = cache.get(key)
+  return v === undefinedValue ? undefined : v
+}
+```
+
 ## Performance
 
 As of January 2022, version 7 of this library is one of the most
@@ -1169,12 +1148,18 @@ before, it probably will not work in version 7 and above.
   longer be set on the cache instance itself.
 - Rewritten in TypeScript, so pretty much all the types moved
   around a lot.
-- The AbortController/AbortSignal polyfill is removed. For this
+- The AbortController/AbortSignal polyfill was removed. For this
   reason, **Node version 16.14.0 or higher is now required**.
 - Internal properties were moved to actual private class
   properties.
 - Keys and values must not be `null` or `undefined`.
 - Minified export available at `'lru-cache/min'`, for both CJS
   and MJS builds.
+
+## Changes in Version 9
+
+- Named export only, no default export.
+- AbortController polyfill returned, albeit with a warning when
+  used.
 
 For more info, see the [change log](CHANGELOG.md).

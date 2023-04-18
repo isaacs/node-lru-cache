@@ -106,7 +106,7 @@ t.test('basic operation', t => {
   c.set(true, 'true', { status: s() })
   t.equal(c.has(true, { status: s() }), true)
   t.equal(c.get(true, { status: s() }), 'true')
-  c.delete(true)
+  c.set(true, undefined)
   t.equal(c.has(true, { status: s() }), false)
 
   t.matchSnapshot(statuses, 'status tracking')

@@ -1585,12 +1585,19 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
 
   /**
    * Add a value to the cache.
+   *
+   * Note: if `undefined` is specified as a value, this is an alias for
+   * {@link LRUCache#delete}
    */
   set(
     k: K,
-    v: V | BackgroundFetch<V>,
+    v: V | BackgroundFetch<V> | undefined,
     setOptions: LRUCache.SetOptions<K, V, FC> = {}
   ) {
+    if (v === undefined) {
+      this.delete(k)
+      return this
+    }
     const {
       ttl = this.ttl,
       start,

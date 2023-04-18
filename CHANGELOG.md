@@ -1,8 +1,16 @@
 # cringe lorg
 
+## 9.1.0
+
+- `cache.set(key, undefined)` is now an alias for
+  `cache.delete(key)`
+
 ## 9.0.0
 
 - Use named export only, no default export.
+- Bring back minimal polyfill.  If this polyfill ends up being
+  used, then a warning is printed, as it is not safe for use
+  outside of LRUCache.
 
 ## 8.0.0
 
