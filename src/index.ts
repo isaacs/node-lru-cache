@@ -1167,7 +1167,8 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
         status.ttl = ttl
         status.start = start
         status.now = cachedNow || getNow()
-        status.remainingTTL = status.now + ttl - start
+        const age = status.now - start
+        status.remainingTTL = ttl - age
       }
     }
 
@@ -1197,9 +1198,13 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       if (index === undefined) {
         return 0
       }
-      return ttls[index] === 0 || starts[index] === 0
-        ? Infinity
-        : starts[index] + ttls[index] - (cachedNow || getNow())
+      const ttl = ttls[index]
+      const start = starts[index]
+      if (ttl === 0 || start === 0) {
+        return Infinity
+      }
+      const age = (cachedNow || getNow()) - start
+      return ttl - age
     }
 
     this.#isStale = index => {
