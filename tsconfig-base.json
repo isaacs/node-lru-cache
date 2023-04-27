@@ -1,5 +1,4 @@
 {
-  "exclude": ["./test", "./tap-snapshots"],
   "include": ["src/**/*.ts"],
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,

@@ -437,8 +437,8 @@ export namespace LRUCache {
    * Options provided to {@link LRUCache#fetch} when the FC type is
    * `undefined` or `void`
    */
-  export interface FetchOptionsNoContext<K, V, FC>
-    extends FetchOptions<K, V, FC> {
+  export interface FetchOptionsNoContext<K, V>
+    extends FetchOptions<K, V, undefined> {
     context?: undefined
   }
 
@@ -1994,7 +1994,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     fetchOptions: unknown extends FC
       ? LRUCache.FetchOptions<K, V, FC>
       : FC extends undefined | void
-      ? LRUCache.FetchOptionsNoContext<K, V, FC>
+      ? LRUCache.FetchOptionsNoContext<K, V>
       : LRUCache.FetchOptionsWithContext<K, V, FC>
   ): Promise<void | V>
   // this overload not allowed if context is required
@@ -2007,7 +2007,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     fetchOptions?: unknown extends FC
       ? LRUCache.FetchOptions<K, V, FC>
       : FC extends undefined | void
-      ? LRUCache.FetchOptionsNoContext<K, V, FC>
+      ? LRUCache.FetchOptionsNoContext<K, V>
       : never
   ): Promise<void | V>
   async fetch(
