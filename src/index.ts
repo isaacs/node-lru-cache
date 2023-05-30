@@ -1393,12 +1393,15 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
    * in order from most recently used to least recently used.
    */
   *keys() {
+    const visited = new Set<K>()
     for (const i of this.#indexes()) {
       const k = this.#keyList[i]
       if (
         k !== undefined &&
+        !visited.has(k) &&
         !this.#isBackgroundFetch(this.#valList[i])
       ) {
+        visited.add(k)
         yield k
       }
     }
