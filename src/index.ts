@@ -167,7 +167,7 @@ class Stack {
 /**
  * Promise representing an in-progress {@link LRUCache#fetch} call
  */
-export type BackgroundFetch<V> = Promise<V | undefined | void> & {
+export type BackgroundFetch<V> = Promise<V | undefined> & {
   __returned: BackgroundFetch<V> | undefined
   __abortController: AbortController
   __staleWhileFetching: V | undefined
@@ -500,7 +500,7 @@ export namespace LRUCache {
     key: K,
     staleValue: V | undefined,
     options: FetcherOptions<K, V, FC>
-  ) => Promise<V | void | undefined> | V | void | undefined
+  ) => Promise<V | undefined | void> | V | undefined | void
 
   /**
    * Options which may be passed to the {@link LRUCache} constructor.
@@ -1868,9 +1868,9 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     }
 
     const cb = (
-      v: V | void | undefined,
+      v: V | undefined,
       updateCache = false
-    ): V | undefined | void => {
+    ): V | undefined => {
       const { aborted } = ac.signal
       const ignoreAbort = options.ignoreFetchAbort && v !== undefined
       if (options.status) {
@@ -1943,12 +1943,12 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     }
 
     const pcall = (
-      res: (v: V | void | undefined) => void,
+      res: (v: V | undefined) => void,
       rej: (e: any) => void
     ) => {
       const fmp = this.#fetchMethod?.(k, v, fetchOpts)
       if (fmp && fmp instanceof Promise) {
-        fmp.then(v => res(v), rej)
+        fmp.then(v => res(v === undefined ? undefined : v), rej)
       }
       // ignored, we go until we finish, regardless.
       // defer check until we are actually aborting,
@@ -1958,7 +1958,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
           !options.ignoreFetchAbort ||
           options.allowStaleOnFetchAbort
         ) {
-          res()
+          res(undefined)
           // when it eventually resolves, update the cache.
           if (options.allowStaleOnFetchAbort) {
             res = v => cb(v, true)
@@ -1969,7 +1969,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
 
     if (options.status) options.status.fetchDispatched = true
     const p = new Promise(pcall).then(cb, eb)
-    const bf = Object.assign(p, {
+    const bf: BackgroundFetch<V> = Object.assign(p, {
       __abortController: ac,
       __staleWhileFetching: v,
       __returned: undefined,
@@ -2020,7 +2020,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       : FC extends undefined | void
       ? LRUCache.FetchOptionsNoContext<K, V>
       : LRUCache.FetchOptionsWithContext<K, V, FC>
-  ): Promise<void | V>
+  ): Promise<undefined | V>
   // this overload not allowed if context is required
   fetch(
     k: unknown extends FC
@@ -2033,11 +2033,11 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       : FC extends undefined | void
       ? LRUCache.FetchOptionsNoContext<K, V>
       : never
-  ): Promise<void | V>
+  ): Promise<undefined | V>
   async fetch(
     k: K,
     fetchOptions: LRUCache.FetchOptions<K, V, FC> = {}
-  ): Promise<void | V> {
+  ): Promise<undefined | V> {
     const {
       // get options
       allowStale = this.allowStale,
