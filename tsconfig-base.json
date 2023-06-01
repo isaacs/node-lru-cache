@@ -9,7 +9,6 @@
     "isolatedModules": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "skipLibCheck": true,
     "sourceMap": true,
     "inlineSources": true,
     "strict": true,

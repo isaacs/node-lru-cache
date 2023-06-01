@@ -647,7 +647,8 @@ t.test('abort, but then keep on fetching anyway', async t => {
       return new Promise(res =>
         setTimeout(() => {
           resolved = true
-          res(returnUndefined ? undefined : k)
+          if (returnUndefined) res()
+          else res(k)
         }, 100)
       )
     },
@@ -706,7 +707,10 @@ t.test('allowStaleOnFetchAbort', async t => {
     fetchMethod: async (k, _, { signal }) => {
       return new Promise(res => {
         const t = setTimeout(() => res(k), 100)
-        signal.addEventListener('abort', () => clearTimeout(t))
+        signal.addEventListener('abort', () => {
+          clearTimeout(t)
+          res()
+        })
       })
     },
   })
@@ -716,7 +720,11 @@ t.test('allowStaleOnFetchAbort', async t => {
   const p = c.fetch(1, { signal: ac.signal })
   ac.abort(new Error('gimme the stale value'))
   t.equal(await p, 10)
-  t.equal(c.get(1, { allowStale: true }), 10)
+  t.equal(c.get(1, { allowStale: true, noDeleteOnStaleGet: true }), 10)
+  const p2 = c.fetch(1)
+  c.set(1, 100)
+  t.equal(await p2, 10)
+  t.equal(c.get(1), 100)
 })
 
 t.test('background update on timeout, return stale', async t => {

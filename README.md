@@ -264,8 +264,32 @@ Set to true to return a stale value from the cache when the
 event, whether user-triggered, or due to internal cache behavior.
 
 Unless `ignoreFetchAbort` is also set, the underlying
-`fetchMethod` will still be considered canceled, and its return
-value will be ignored and not cached.
+`fetchMethod` will still be considered canceled, and any value
+it returns will be ignored and not cached.
+
+Caveat: since fetches are aborted when a new value is explicitly
+set in the cache, this can lead to fetch returning a stale value,
+since that was the fallback value _at the moment the `fetch()` was
+initiated_, even though the new updated value is now present in
+the cache.
+
+For example:
+
+```ts
+const cache = new LRUCache<string, any>({
+  ttl: 100,
+  fetchMethod: async (url, oldValue, { signal }) =>  {
+    const res = await fetch(url, { signal })
+    return await res.json()
+  }
+})
+cache.set('https://example.com/', { some: 'data' })
+// 100ms go by...
+const result = cache.fetch('https://example.com/')
+cache.set('https://example.com/', { other: 'thing' })
+console.log(await result) // { some: 'data' }
+console.log(cache.get('https://example.com/')) // { other: 'thing' }
+```
 
 ### `ignoreFetchAbort`
 
@@ -569,7 +593,7 @@ For the usage of the `status` option, see **Status Tracking**
 below.
 
 If the value is `undefined`, then this is an alias for
-`cache.delete(key)`.  `undefined` is never stored in the cache.
+`cache.delete(key)`. `undefined` is never stored in the cache.
 See **Storing Undefined Values** below.
 
 ### `get(key, { updateAgeOnGet, allowStale, status } = {}) => value`
@@ -1028,7 +1052,7 @@ internally in a few places to indicate that a key is not in the
 cache.
 
 You may call `cache.set(key, undefined)`, but this is just an
-an alias for `cache.delete(key)`.  Note that this has the effect
+an alias for `cache.delete(key)`. Note that this has the effect
 that `cache.has(key)` will return _false_ after setting it to
 undefined.
 

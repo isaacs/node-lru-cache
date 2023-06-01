@@ -712,8 +712,32 @@ export namespace LRUCache {
      * event, whether user-triggered, or due to internal cache behavior.
      *
      * Unless {@link OptionsBase.ignoreFetchAbort} is also set, the underlying
-     * {@link OptionsBase.fetchMethod} will still be considered canceled, and its return
-     * value will be ignored and not cached.
+     * {@link OptionsBase.fetchMethod} will still be considered canceled, and
+     * any value it returns will be ignored and not cached.
+     *
+     * Caveat: since fetches are aborted when a new value is explicitly
+     * set in the cache, this can lead to fetch returning a stale value,
+     * since that was the fallback value _at the moment the `fetch()` was
+     * initiated_, even though the new updated value is now present in
+     * the cache.
+     *
+     * For example:
+     *
+     * ```ts
+     * const cache = new LRUCache<string, any>({
+     *   ttl: 100,
+     *   fetchMethod: async (url, oldValue, { signal }) =>  {
+     *     const res = await fetch(url, { signal })
+     *     return await res.json()
+     *   }
+     * })
+     * cache.set('https://example.com/', { some: 'data' })
+     * // 100ms go by...
+     * const result = cache.fetch('https://example.com/')
+     * cache.set('https://example.com/', { other: 'thing' })
+     * console.log(await result) // { some: 'data' }
+     * console.log(cache.get('https://example.com/')) // { other: 'thing' }
+     * ```
      */
     allowStaleOnFetchAbort?: boolean
 
