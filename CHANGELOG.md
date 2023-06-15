@@ -1,5 +1,12 @@
 # cringe lorg
 
+## 10.0.0
+
+- `cache.fetch()` return type is now `Promise<V | undefined>`
+  instead of `Promise<V | void>`. This is an irrelevant change
+  practically speaking, but can require changes for TypeScript
+  users.
+
 ## 9.1.0
 
 - `cache.set(key, undefined)` is now an alias for
