@@ -1682,6 +1682,15 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       if (v !== oldVal) {
         if (this.#hasFetchMethod && this.#isBackgroundFetch(oldVal)) {
           oldVal.__abortController.abort(new Error('replaced'))
+          const { __staleWhileFetching: s } = oldVal
+          if (s !== undefined && !noDisposeOnSet) {
+            if (this.#hasDispose) {
+              this.#dispose?.(s as V, k, 'set')
+            }
+            if (this.#hasDisposeAfter) {
+              this.#disposed?.push([s as V, k, 'set'])
+            }
+          }
         } else if (!noDisposeOnSet) {
           if (this.#hasDispose) {
             this.#dispose?.(oldVal as V, k, 'set')

@@ -2,7 +2,7 @@ if (typeof performance === 'undefined') {
   global.performance = require('perf_hooks').performance
 }
 import t from 'tap'
-import { LRUCache, BackgroundFetch } from '../'
+import { BackgroundFetch, LRUCache } from '../'
 import { expose } from './fixtures/expose'
 
 const fn: LRUCache.Fetcher<any, any> = async (_, v) =>
@@ -720,7 +720,10 @@ t.test('allowStaleOnFetchAbort', async t => {
   const p = c.fetch(1, { signal: ac.signal })
   ac.abort(new Error('gimme the stale value'))
   t.equal(await p, 10)
-  t.equal(c.get(1, { allowStale: true, noDeleteOnStaleGet: true }), 10)
+  t.equal(
+    c.get(1, { allowStale: true, noDeleteOnStaleGet: true }),
+    10
+  )
   const p2 = c.fetch(1)
   c.set(1, 100)
   t.equal(await p2, 10)
@@ -843,4 +846,23 @@ t.test('has false for pending fetch without stale val', async t => {
     t.equal(res, 1)
     t.equal(c.has(1), true)
   }
+})
+
+t.test('properly dispose when using fetch', async t => {
+  const disposes: [number, number, string][] = []
+  const disposeAfters: [number, number, string][] = []
+  let i = 0
+  const c = new LRUCache<number, number>({
+    max: 3,
+    ttl: 10,
+    dispose: (key, val, reason) => disposes.push([key, val, reason]),
+    disposeAfter: (key, val, reason) =>
+      disposeAfters.push([key, val, reason]),
+    fetchMethod: async () => Promise.resolve(i++),
+  })
+  t.equal(await c.fetch(1), 0)
+  clock.advance(20)
+  t.equal(await c.fetch(1), 1)
+  t.strictSame(disposes, [[0, 1, 'set']])
+  t.strictSame(disposeAfters, [[0, 1, 'set']])
 })
