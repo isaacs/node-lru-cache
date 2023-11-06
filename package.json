@@ -32,16 +32,6 @@
   "main": "./dist/cjs/index.js",
   "module": "./dist/mjs/index.js",
   "exports": {
-    "./min": {
-      "import": {
-        "types": "./dist/mjs/index.d.ts",
-        "default": "./dist/mjs/index.min.js"
-      },
-      "require": {
-        "types": "./dist/cjs/index.d.ts",
-        "default": "./dist/cjs/index.min.js"
-      }
-    },
     ".": {
       "import": {
         "types": "./dist/mjs/index.d.ts",
@@ -50,6 +40,16 @@
       "require": {
         "types": "./dist/cjs/index.d.ts",
         "default": "./dist/cjs/index.js"
+      }
+    },
+    "./min": {
+      "import": {
+        "types": "./dist/mjs/index.d.ts",
+        "default": "./dist/mjs/index.min.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.min.js"
       }
     }
   },
