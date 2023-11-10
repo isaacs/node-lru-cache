@@ -45,7 +45,10 @@
       }
     }
   },
-  "repository": "git://github.com/isaacs/node-lru-cache.git",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/isaacs/node-lru-cache.git"
+  },
   "devDependencies": {
     "@tapjs/clock": "^1.1.16",
     "@types/node": "^20.2.5",
