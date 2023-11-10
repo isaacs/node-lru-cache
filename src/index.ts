@@ -97,8 +97,8 @@ export type Index = number & { [TYPE]: 'LRUCache Index' }
 const isPosInt = (n: any): n is PosInt =>
   n && n === Math.floor(n) && n > 0 && isFinite(n)
 
-type UintArray = Uint8Array | Uint16Array | Uint32Array
-type NumberArray = UintArray | number[]
+export type UintArray = Uint8Array | Uint16Array | Uint32Array
+export type NumberArray = UintArray | number[]
 
 /* c8 ignore start */
 // This is a little bit ridiculous, tbh.
@@ -129,8 +129,9 @@ class ZeroArray extends Array<number> {
     this.fill(0)
   }
 }
+export type { ZeroArray }
 
-type StackLike = Stack | Index[]
+export type StackLike = Stack | Index[]
 class Stack {
   heap: NumberArray
   length: number
@@ -163,6 +164,7 @@ class Stack {
     return this.heap[--this.length] as Index
   }
 }
+export type { Stack }
 
 /**
  * Promise representing an in-progress {@link LRUCache#fetch} call
@@ -173,7 +175,7 @@ export type BackgroundFetch<V> = Promise<V | undefined> & {
   __staleWhileFetching: V | undefined
 }
 
-type DisposeTask<K, V> = [
+export type DisposeTask<K, V> = [
   value: V,
   key: K,
   reason: LRUCache.DisposeReason
@@ -377,7 +379,7 @@ export namespace LRUCache {
    * {@link OptionsBase.noDeleteOnFetchRejection},
    * {@link OptionsBase.allowStaleOnFetchRejection},
    * {@link FetchOptions.forceRefresh}, and
-   * {@link OptionsBase.context}
+   * {@link FetcherOptions.context}
    *
    * Any of these may be modified in the {@link OptionsBase.fetchMethod}
    * function, but the {@link GetOptions} fields will of course have no
