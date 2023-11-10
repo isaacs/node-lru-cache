@@ -1,5 +1,5 @@
 import t from 'tap'
-import { LRUCache as LRU } from '../'
+import { LRUCache as LRU } from '../dist/esm/index.js'
 
 t.test('disposal', t => {
   const disposed: any[] = []

@@ -5,7 +5,7 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
-exports[`test/basic.ts TAP basic operation > must match snapshot 1`] = `
+exports[`test/basic.ts > TAP > basic operation > must match snapshot 1`] = `
 Generator [
   Array [
     4,
@@ -30,7 +30,7 @@ Generator [
 ]
 `
 
-exports[`test/basic.ts TAP basic operation > must match snapshot 2`] = `
+exports[`test/basic.ts > TAP > basic operation > must match snapshot 2`] = `
 Generator [
   Array [
     9,
@@ -75,7 +75,7 @@ Generator [
 ]
 `
 
-exports[`test/basic.ts TAP basic operation > must match snapshot 3`] = `
+exports[`test/basic.ts > TAP > basic operation > must match snapshot 3`] = `
 Generator [
   Array [
     4,
@@ -120,7 +120,7 @@ Generator [
 ]
 `
 
-exports[`test/basic.ts TAP basic operation > must match snapshot 4`] = `
+exports[`test/basic.ts > TAP > basic operation > must match snapshot 4`] = `
 Generator [
   Array [
     14,
@@ -165,52 +165,7 @@ Generator [
 ]
 `
 
-exports[`test/basic.ts TAP basic operation > must match snapshot 5`] = `
-Generator [
-  Array [
-    19,
-    19,
-  ],
-  Array [
-    18,
-    18,
-  ],
-  Array [
-    17,
-    17,
-  ],
-  Array [
-    16,
-    16,
-  ],
-  Array [
-    15,
-    15,
-  ],
-  Array [
-    14,
-    14,
-  ],
-  Array [
-    13,
-    13,
-  ],
-  Array [
-    12,
-    12,
-  ],
-  Array [
-    11,
-    11,
-  ],
-  Array [
-    10,
-    10,
-  ],
-]
-`
-
-exports[`test/basic.ts TAP basic operation > must match snapshot 6`] = `
+exports[`test/basic.ts > TAP > basic operation > must match snapshot 5`] = `
 Generator [
   Array [
     19,
@@ -255,7 +210,52 @@ Generator [
 ]
 `
 
-exports[`test/basic.ts TAP basic operation > status tracking 1`] = `
+exports[`test/basic.ts > TAP > basic operation > must match snapshot 6`] = `
+Generator [
+  Array [
+    19,
+    19,
+  ],
+  Array [
+    18,
+    18,
+  ],
+  Array [
+    17,
+    17,
+  ],
+  Array [
+    16,
+    16,
+  ],
+  Array [
+    15,
+    15,
+  ],
+  Array [
+    14,
+    14,
+  ],
+  Array [
+    13,
+    13,
+  ],
+  Array [
+    12,
+    12,
+  ],
+  Array [
+    11,
+    11,
+  ],
+  Array [
+    10,
+    10,
+  ],
+]
+`
+
+exports[`test/basic.ts > TAP > basic operation > status tracking 1`] = `
 Array [
   Object {
     "set": "add",
@@ -458,7 +458,7 @@ Array [
 ]
 `
 
-exports[`test/basic.ts TAP re-use key before initial fill completed > must match snapshot 1`] = `
+exports[`test/basic.ts > TAP > re-use key before initial fill completed > must match snapshot 1`] = `
 Array [
   Object {
     "set": "add",

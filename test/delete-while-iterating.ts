@@ -1,5 +1,5 @@
 import t from 'tap'
-import { LRUCache as LRU } from '../'
+import { LRUCache as LRU } from '../dist/esm/index.js'
 
 t.beforeEach(t => {
   const c = new LRU({ max: 5 })

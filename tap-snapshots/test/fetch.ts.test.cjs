@@ -5,35 +5,35 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
-exports[`test/fetch.ts TAP asynchronous fetching > safe to stringify dump 1`] = `
-[["key",{"value":1,"ttl":5,"start":11}]]
+exports[`test/fetch.ts > TAP > asynchronous fetching > safe to stringify dump 1`] = `
+[["key",{"value":1,"ttl":5,"start":12}]]
 `
 
-exports[`test/fetch.ts TAP asynchronous fetching > status 1 1`] = `
+exports[`test/fetch.ts > TAP > asynchronous fetching > status 1 1`] = `
 Object {
   "fetch": "miss",
   "fetchDispatched": true,
   "fetchResolved": true,
   "fetchUpdated": true,
-  "now": 1,
+  "now": 2,
   "remainingTTL": 5,
   "set": "replace",
-  "start": 1,
+  "start": 2,
   "ttl": 5,
 }
 `
 
-exports[`test/fetch.ts TAP asynchronous fetching > status 2 1`] = `
+exports[`test/fetch.ts > TAP > asynchronous fetching > status 2 1`] = `
 Object {
   "fetch": "hit",
-  "now": 1,
+  "now": 2,
   "remainingTTL": 5,
-  "start": 1,
+  "start": 2,
   "ttl": 5,
 }
 `
 
-exports[`test/fetch.ts TAP asynchronous fetching > status 3 1`] = `
+exports[`test/fetch.ts > TAP > asynchronous fetching > status 3 1`] = `
 Object {
   "fetch": "stale",
   "fetchDispatched": true,
@@ -41,30 +41,30 @@ Object {
 }
 `
 
-exports[`test/fetch.ts TAP asynchronous fetching > status 3.1 1`] = `
+exports[`test/fetch.ts > TAP > asynchronous fetching > status 3.1 1`] = `
 Object {
   "fetch": "inflight",
   "returnedStale": true,
 }
 `
 
-exports[`test/fetch.ts TAP asynchronous fetching > status 4 1`] = `
+exports[`test/fetch.ts > TAP > asynchronous fetching > status 4 1`] = `
 Object {
   "fetch": "inflight",
 }
 `
 
-exports[`test/fetch.ts TAP asynchronous fetching > status 5 1`] = `
+exports[`test/fetch.ts > TAP > asynchronous fetching > status 5 1`] = `
 Object {
   "fetch": "hit",
-  "now": 11,
+  "now": 12,
   "remainingTTL": 5,
-  "start": 11,
+  "start": 12,
   "ttl": 5,
 }
 `
 
-exports[`test/fetch.ts TAP fetch options, signal > status updates 1`] = `
+exports[`test/fetch.ts > TAP > fetch options, signal > status updates 1`] = `
 Array [
   Object {
     "fetch": "miss",
@@ -91,24 +91,24 @@ Array [
     },
   },
   Object {
-    "now": 721,
+    "now": 722,
     "remainingTTL": 100,
     "set": "add",
-    "start": 721,
+    "start": 722,
     "ttl": 100,
   },
   Object {
-    "now": 721,
+    "now": 722,
     "remainingTTL": 100,
     "set": "add",
-    "start": 721,
+    "start": 722,
     "ttl": 100,
   },
   Object {
-    "now": 721,
+    "now": 722,
     "remainingTTL": 100,
     "set": "add",
-    "start": 721,
+    "start": 722,
     "ttl": 100,
   },
   Object {
@@ -116,10 +116,10 @@ Array [
     "fetchDispatched": true,
     "fetchResolved": true,
     "fetchUpdated": true,
-    "now": 721,
+    "now": 722,
     "remainingTTL": 1000,
     "set": "replace",
-    "start": 721,
+    "start": 722,
     "ttl": 1000,
   },
   Object {
@@ -127,36 +127,36 @@ Array [
     "fetchDispatched": true,
     "fetchResolved": true,
     "fetchUpdated": true,
-    "now": 721,
+    "now": 722,
     "remainingTTL": 25,
     "set": "replace",
-    "start": 721,
+    "start": 722,
     "ttl": 25,
   },
 ]
 `
 
-exports[`test/fetch.ts TAP fetch without fetch method > status update 1`] = `
+exports[`test/fetch.ts > TAP > fetch without fetch method > status update 1`] = `
 Object {
   "fetch": "get",
   "get": "hit",
 }
 `
 
-exports[`test/fetch.ts TAP fetchMethod throws > status updates 1`] = `
+exports[`test/fetch.ts > TAP > fetchMethod throws > status updates 1`] = `
 Array [
   Object {
-    "now": 721,
+    "now": 722,
     "remainingTTL": 10,
     "set": "add",
-    "start": 721,
+    "start": 722,
     "ttl": 10,
   },
   Object {
-    "now": 721,
+    "now": 722,
     "remainingTTL": 10,
     "set": "add",
-    "start": 721,
+    "start": 722,
     "ttl": 10,
   },
   Object {
@@ -204,17 +204,17 @@ Array [
     },
   },
   Object {
-    "now": 781,
+    "now": 782,
     "remainingTTL": 10,
     "set": "replace",
-    "start": 781,
+    "start": 782,
     "ttl": 10,
   },
   Object {
     "get": "hit",
-    "now": 781,
+    "now": 782,
     "remainingTTL": 10,
-    "start": 781,
+    "start": 782,
     "ttl": 10,
   },
   Object {
@@ -224,18 +224,18 @@ Array [
 ]
 `
 
-exports[`test/fetch.ts TAP forceRefresh > status updates 1`] = `
+exports[`test/fetch.ts > TAP > forceRefresh > status updates 1`] = `
 Array [
   Object {
     "fetch": "refresh",
     "fetchDispatched": true,
     "fetchResolved": true,
     "fetchUpdated": true,
-    "now": 941,
+    "now": 942,
     "oldValue": 2,
     "remainingTTL": 100,
     "set": "replace",
-    "start": 941,
+    "start": 942,
     "ttl": 100,
   },
   Object {
@@ -246,17 +246,17 @@ Array [
     "fetchDispatched": true,
     "fetchResolved": true,
     "fetchUpdated": true,
-    "now": 941,
+    "now": 942,
     "oldValue": 100,
     "remainingTTL": 100,
     "set": "replace",
-    "start": 941,
+    "start": 942,
     "ttl": 100,
   },
 ]
 `
 
-exports[`test/fetch.ts TAP send a signal > status updates 1`] = `
+exports[`test/fetch.ts > TAP > send a signal > status updates 1`] = `
 Array [
   Object {
     "fetch": "miss",
@@ -272,7 +272,7 @@ Array [
 ]
 `
 
-exports[`test/fetch.ts TAP verify inflight works as expected > status updates 1`] = `
+exports[`test/fetch.ts > TAP > verify inflight works as expected > status updates 1`] = `
 Array [
   Object {
     "fetch": "inflight",

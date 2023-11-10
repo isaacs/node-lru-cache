@@ -1,5 +1,5 @@
 import t from 'tap'
-import { LRUCache as LRU } from '../'
+import { LRUCache as LRU } from '../dist/esm/index.js'
 
 const cache = new LRU<number, number>({ max: 5 })
 for (let i = 0; i < 5; i++) {
@@ -37,7 +37,7 @@ t.test('pop with background fetches', async t => {
   t.equal(f.pop(), 2)
   t.equal(f.size, 0)
   t.equal(aborted, true)
-  resolves[1](1)
+  resolves[1]?.(1)
   await t.rejects(pf)
 
   f.set(0, 0, { ttl: 0 })
@@ -52,7 +52,7 @@ t.test('pop with background fetches', async t => {
   t.equal(f.size, 1)
   t.equal(f.pop(), 2)
   t.equal(f.size, 0)
-  resolves[1](1)
+  resolves[1]?.(1)
   await t.rejects(pf)
 })
 

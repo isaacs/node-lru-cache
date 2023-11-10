@@ -1,8 +1,18 @@
 {
-  "extends": "./tsconfig-base.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "outDir": "dist/cjs",
-    "moduleResolution": "Node"
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "inlineSources": true,
+    "jsx": "react",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "noUncheckedIndexedAccess": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "es2022"
   }
 }

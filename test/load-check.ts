@@ -1,7 +1,7 @@
 process.env.TAP_BAIL = '1'
 import t from 'tap'
-import { LRUCache as LRU } from '../'
-import { expose } from './fixtures/expose'
+import { LRUCache as LRU } from '../dist/esm/index.js'
+import { expose } from './fixtures/expose.js'
 
 const max = 10000
 const cache = new LRU<string, number[]>({ max })

@@ -1,12 +1,15 @@
 if (typeof performance === 'undefined') {
-  global.performance = require('perf_hooks').performance
+  Object.assign(global, {
+    performance: (await import('perf_hooks')).performance,
+  })
 }
 
+import { Clock } from 'clock-mock'
+import assert from 'node:assert'
 import t from 'tap'
-import { LRUCache as LRU } from '../'
-import { expose } from './fixtures/expose'
+import { LRUCache as LRU } from '../dist/esm/index.js'
+import { expose } from './fixtures/expose.js'
 
-const Clock = require('clock-mock')
 const clock = new Clock()
 clock.advance(1)
 
@@ -63,7 +66,6 @@ const runTestStep = ({
   }
 
   clock.enter()
-  const assert = require('assert')
   const c = new LRU({ max: len, ttl: 100 })
   const e = expose(c)
   // fill the array with index matching k/v

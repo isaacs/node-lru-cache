@@ -1,6 +1,6 @@
 import t from 'tap'
 t.test('import', async t => {
-  const imp = await import('../dist/mjs/index.js')
+  const imp = await import('../dist/esm/index.js')
   t.equal(Object.getPrototypeOf(imp), null, 'import returns null obj')
   t.equal(
     typeof imp.LRUCache,

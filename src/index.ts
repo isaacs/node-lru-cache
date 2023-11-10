@@ -91,8 +91,8 @@ if (typeof AC === 'undefined') {
 const shouldWarn = (code: string) => !warned.has(code)
 
 const TYPE = Symbol('type')
-type PosInt = number & { [TYPE]: 'Positive Integer' }
-type Index = number & { [TYPE]: 'LRUCache Index' }
+export type PosInt = number & { [TYPE]: 'Positive Integer' }
+export type Index = number & { [TYPE]: 'LRUCache Index' }
 
 const isPosInt = (n: any): n is PosInt =>
   n && n === Math.floor(n) && n > 0 && isFinite(n)
@@ -1188,6 +1188,8 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       if (ttls[index]) {
         const ttl = ttls[index]
         const start = starts[index]
+        /* c8 ignore next */
+        if (!ttl || !start) return
         status.ttl = ttl
         status.start = start
         status.now = cachedNow || getNow()
@@ -1224,7 +1226,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       }
       const ttl = ttls[index]
       const start = starts[index]
-      if (ttl === 0 || start === 0) {
+      if (!ttl || !start) {
         return Infinity
       }
       const age = (cachedNow || getNow()) - start
@@ -1232,11 +1234,9 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     }
 
     this.#isStale = index => {
-      return (
-        ttls[index] !== 0 &&
-        starts[index] !== 0 &&
-        (cachedNow || getNow()) - starts[index] > ttls[index]
-      )
+      const s = starts[index]
+      const t = ttls[index]
+      return !!t && !!s && (cachedNow || getNow()) - s > t
     }
   }
 
@@ -1260,7 +1260,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     this.#calculatedSize = 0
     this.#sizes = sizes
     this.#removeItemSize = index => {
-      this.#calculatedSize -= sizes[index]
+      this.#calculatedSize -= sizes[index] as number
       sizes[index] = 0
     }
     this.#requireSize = (k, v, size, sizeCalculation) => {
@@ -1297,12 +1297,12 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     ) => {
       sizes[index] = size
       if (this.#maxSize) {
-        const maxSize = this.#maxSize - sizes[index]
+        const maxSize = this.#maxSize - (sizes[index] as number)
         while (this.#calculatedSize > maxSize) {
           this.#evict(true)
         }
       }
-      this.#calculatedSize += sizes[index]
+      this.#calculatedSize += sizes[index] as number
       if (status) {
         status.entrySize = size
         status.totalCalculatedSize = this.#calculatedSize
@@ -1579,7 +1579,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
         entry.ttl = this.#ttls[i]
         // always dump the start relative to a portable timestamp
         // it's ok for this to be a bit slow, it's a rare operation.
-        const age = perf.now() - this.#starts[i]
+        const age = perf.now() - (this.#starts[i] as number)
         entry.start = Math.floor(Date.now() - age)
       }
       if (this.#sizes) {
@@ -1843,13 +1843,14 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     const { allowStale = this.allowStale } = peekOptions
     const index = this.#keyMap.get(k)
     if (
-      index !== undefined &&
-      (allowStale || !this.#isStale(index))
+      index === undefined ||
+      (!allowStale && this.#isStale(index))
     ) {
-      const v = this.#valList[index]
-      // either stale and allowed, or forcing a refresh of non-stale value
-      return this.#isBackgroundFetch(v) ? v.__staleWhileFetching : v
+      return
     }
+    const v = this.#valList[index]
+    // either stale and allowed, or forcing a refresh of non-stale value
+    return this.#isBackgroundFetch(v) ? v.__staleWhileFetching : v
   }
 
   #backgroundFetch(
@@ -2259,8 +2260,10 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
           } else if (index === this.#head) {
             this.#head = this.#next[index] as Index
           } else {
-            this.#next[this.#prev[index]] = this.#next[index]
-            this.#prev[this.#next[index]] = this.#prev[index]
+            const pi = this.#prev[index] as number
+            this.#next[pi] = this.#next[index] as number
+            const ni = this.#next[index] as number
+            this.#prev[ni] = this.#prev[index] as number
           }
           this.#size--
           this.#free.push(index)

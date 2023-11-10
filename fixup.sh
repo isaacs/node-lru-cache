@@ -2,24 +2,12 @@
 
 esbuild --minify \
   --sourcemap \
-  --bundle dist/cjs/index.js \
-  --outfile=dist/cjs/index.min.js \
+  --bundle dist/commonjs/index.js \
+  --outfile=dist/commonjs/index.min.js \
   --format=cjs
 
 esbuild --minify \
   --sourcemap \
-  --bundle dist/mjs/index.js \
-  --outfile=dist/mjs/index.min.js \
+  --bundle dist/esm/index.js \
+  --outfile=dist/esm/index.min.js \
   --format=esm
-
-cat >dist/cjs/package.json <<!EOF
-{
-  "type": "commonjs"
-}
-!EOF
-
-cat >dist/mjs/package.json <<!EOF
-{
-  "type": "module"
-}
-!EOF

@@ -1,14 +1,14 @@
 if (typeof performance === 'undefined') {
   global.performance = require('perf_hooks').performance
 }
-import t from 'tap'
-import { LRUCache } from '../'
-import { expose } from './fixtures/expose'
+import t, { Test } from 'tap'
+import { LRUCache } from '../dist/esm/index.js'
+import { expose } from './fixtures/expose.js'
 
-import Clock from 'clock-mock'
+import { Clock } from 'clock-mock'
 const clock = new Clock()
 
-const runTests = (LRU: typeof LRUCache, t: Tap.Test) => {
+const runTests = (LRU: typeof LRUCache, t: Test) => {
   const statuses: LRUCache.Status<any>[] = []
   const s = (): LRUCache.Status<any> => {
     const status: LRUCache.Status<any> = {}
@@ -38,11 +38,11 @@ const runTests = (LRU: typeof LRUCache, t: Tap.Test) => {
     const e = expose(c, LRU)
     c.set(1, 1, { status: s() })
     t.equal(c.get(1, { status: s() }), 1, '1 get not stale', {
-      now: clock._now,
+      now: clock.now(),
     })
     clock.advance(5)
     t.equal(c.get(1, { status: s() }), 1, '1 get not stale', {
-      now: clock._now,
+      now: clock.now(),
     })
     t.equal(c.getRemainingTTL(1), 5, '5ms left to live')
     t.equal(
@@ -52,7 +52,7 @@ const runTests = (LRU: typeof LRUCache, t: Tap.Test) => {
     )
     clock.advance(5)
     t.equal(c.get(1, { status: s() }), 1, '1 get not stale', {
-      now: clock._now,
+      now: clock.now(),
     })
     t.equal(c.getRemainingTTL(1), 0, 'almost stale')
     clock.advance(1)
@@ -61,7 +61,7 @@ const runTests = (LRU: typeof LRUCache, t: Tap.Test) => {
     t.equal(c.getRemainingTTL(1), -2, 'even more stale')
     t.equal(c.size, 1, 'still there though')
     t.equal(c.has(1, { status: s() }), false, '1 has stale', {
-      now: clock._now,
+      now: clock.now(),
       index: e.keyMap.get(1),
       stale: e.isStale(e.keyMap.get(1)),
     })
@@ -105,19 +105,19 @@ const runTests = (LRU: typeof LRUCache, t: Tap.Test) => {
     const e = expose(c, LRU)
     c.set(1, 1, { status: s() })
     t.equal(c.get(1, { status: s() }), 1, '1 get not stale', {
-      now: clock._now,
+      now: clock.now(),
     })
     clock.advance(5)
     t.equal(c.get(1, { status: s() }), 1, '1 get not stale', {
-      now: clock._now,
+      now: clock.now(),
     })
     clock.advance(5)
     t.equal(c.get(1, { status: s() }), 1, '1 get not stale', {
-      now: clock._now,
+      now: clock.now(),
     })
     clock.advance(1)
     t.equal(c.has(1, { status: s() }), true, '1 has stale', {
-      now: clock._now,
+      now: clock.now(),
       ttls: e.ttls,
       starts: e.starts,
       index: e.keyMap.get(1),
@@ -126,7 +126,7 @@ const runTests = (LRU: typeof LRUCache, t: Tap.Test) => {
     t.equal(c.get(1, { status: s() }), 1)
     clock.advance(100)
     t.equal(c.has(1, { status: s() }), false, '1 has stale', {
-      now: clock._now,
+      now: clock.now(),
       ttls: e.ttls,
       starts: e.starts,
       index: e.keyMap.get(1),
@@ -509,7 +509,7 @@ t.test('tests with perf_hooks.performance.now()', t => {
   global.Date = clock.Date
   // @ts-ignore
   global.performance = clock
-  const { LRUCache: LRU } = t.mock('../', {})
+  const { LRUCache: LRU } = t.mockRequire('../', {})
   runTests(LRU, t)
 })
 
@@ -521,6 +521,6 @@ t.test('tests using Date.now()', t => {
   global.Date = clock.Date
   // @ts-ignore
   global.performance = null
-  const { LRUCache: LRU } = t.mock('../', {})
+  const { LRUCache: LRU } = t.mockRequire('../', {})
   runTests(LRU, t)
 })

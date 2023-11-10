@@ -1,7 +1,7 @@
 import t from 'tap'
-import { LRUCache as LRU } from '../'
+import { LRUCache as LRU } from '../dist/esm/index.js'
 
-import { expose } from './fixtures/expose'
+import { expose } from './fixtures/expose.js'
 
 const checkSize = (c: LRU<any, any>) => {
   const e = expose(c)

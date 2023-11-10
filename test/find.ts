@@ -1,5 +1,5 @@
 import t from 'tap'
-import { LRUCache as LRU } from '../'
+import { LRUCache as LRU } from '../dist/esm/index.js'
 
 const resolves: Record<
   number,
@@ -35,7 +35,7 @@ t.same(
   { value: 8 }
 )
 
-resolves[8]({ value: 10 })
+resolves[8]?.({ value: 10 })
 
 new Promise(setImmediate)
   .then(() => p)
@@ -51,7 +51,7 @@ t.equal(
   c.find(o => o.value === 99),
   undefined
 )
-resolves[99]({ value: 99 })
+resolves[99]?.({ value: 99 })
 t.equal(
   c.find(o => o.value === 99),
   undefined

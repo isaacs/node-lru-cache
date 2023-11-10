@@ -1,6 +1,6 @@
 import t from 'tap'
-import { LRUCache as LRU } from '../'
-import { expose } from './fixtures/expose'
+import { LRUCache as LRU } from '../dist/esm/index.js'
+import { expose } from './fixtures/expose.js'
 
 const c = new LRU({ max: 5 })
 const exp = expose(c)
@@ -30,10 +30,10 @@ t.test('list integrity', { bail: true }, t => {
     t.test(msg, { bail: false }, t => {
       for (let i = 0; i < c.max; i++) {
         if (i !== exp.head) {
-          t.equal(exp.next[exp.prev[i]], i, 'n[p[i]] === i')
+          t.equal(exp.next[(exp.prev[i] as number)], i, 'n[p[i]] === i')
         }
         if (i !== exp.tail) {
-          t.equal(exp.prev[exp.next[i]], i, 'p[n[i]] === i')
+          t.equal(exp.prev[(exp.next[i] as number)], i, 'p[n[i]] === i')
         }
       }
       t.end()

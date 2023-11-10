@@ -5,7 +5,7 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
-exports[`test/move-to-tail.ts TAP list integrity > list after initial fill 1`] = `
+exports[`test/move-to-tail.ts > TAP > list integrity > list after initial fill 1`] = `
 Array [
   Object {
     "_": "H",
@@ -50,7 +50,7 @@ Array [
 ]
 `
 
-exports[`test/move-to-tail.ts TAP list integrity > list after moveToTail 2 1`] = `
+exports[`test/move-to-tail.ts > TAP > list integrity > list after moveToTail 2 1`] = `
 Array [
   Object {
     "_": "H",
@@ -95,7 +95,7 @@ Array [
 ]
 `
 
-exports[`test/move-to-tail.ts TAP list integrity > list after moveToTail 4 1`] = `
+exports[`test/move-to-tail.ts > TAP > list integrity > list after moveToTail 4 1`] = `
 Array [
   Object {
     "_": "H",

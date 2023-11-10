@@ -2,15 +2,15 @@ if (typeof performance === 'undefined') {
   global.performance = require('perf_hooks').performance
 }
 import t from 'tap'
-import { BackgroundFetch, LRUCache } from '../'
-import { expose } from './fixtures/expose'
+import { BackgroundFetch, LRUCache } from '../dist/esm/index.js'
+import { expose } from './fixtures/expose.js'
 
 const fn: LRUCache.Fetcher<any, any> = async (_, v) =>
   new Promise(res =>
-    setImmediate(() => res(v === undefined ? 0 : v + 1))
+    queueMicrotask(() => res(v === undefined ? 0 : v + 1))
   )
 
-import Clock from 'clock-mock'
+import { Clock } from 'clock-mock'
 const clock = new Clock()
 t.teardown(clock.enter())
 clock.advance(1)
@@ -185,7 +185,7 @@ t.test('fetch options, signal', async t => {
     fetchMethod: async (k, oldVal, { signal, options }) => {
       t.ok(options.status, 'received status object')
       // do something async
-      await new Promise(res => setImmediate(res))
+      await new Promise<void>(res => queueMicrotask(res))
       if (signal.aborted) {
         aborted = true
         return
@@ -207,7 +207,7 @@ t.test('fetch options, signal', async t => {
   const testp1 = t.rejects(v1, 'aborted by clearing the cache')
   c.delete(2)
   await testp1
-  await new Promise(res => setImmediate(res))
+  await new Promise<void>(res => queueMicrotask(res))
   t.equal(aborted, true)
   t.same(disposed, [], 'no disposals for aborted promises')
   t.same(disposedAfter, [], 'no disposals for aborted promises')
@@ -217,7 +217,7 @@ t.test('fetch options, signal', async t => {
   const testp2 = t.rejects(v2, 'rejected, replaced')
   c.set(2, 2)
   await testp2
-  await new Promise(res => setImmediate(res))
+  await new Promise<void>(res => queueMicrotask(res))
   t.equal(aborted, true)
   t.same(disposed, [], 'no disposals for aborted promises')
   t.same(disposedAfter, [], 'no disposals for aborted promises')
@@ -232,7 +232,7 @@ t.test('fetch options, signal', async t => {
   c.set(4, 4, { status: s() })
   c.set(5, 5, { status: s() })
   await testp3
-  await new Promise(res => setImmediate(res))
+  await new Promise<void>(res => queueMicrotask(res))
   t.equal(aborted, true)
   t.same(disposed, [], 'no disposals for aborted promises')
   t.same(disposedAfter, [], 'no disposals for aborted promises')
@@ -433,7 +433,7 @@ t.test('forceRefresh', async t => {
         undefined,
         'do not expose forceRefresh'
       )
-      return new Promise(res => setImmediate(() => res(k)))
+      return new Promise<number>(res => queueMicrotask(() => res(k)))
     },
   })
 
@@ -522,11 +522,11 @@ t.test(
     const p4 = c.fetch(4)
     const p5 = c.fetch(5)
 
-    resolves[4](4)
+    resolves[4]?.(4)
     await p4
 
     t.match([...c], [[4, 4]])
-    resolves[5](5)
+    resolves[5]?.(5)
     await p5
     t.match(
       [...c],
@@ -536,7 +536,7 @@ t.test(
       ]
     )
 
-    resolves[3](3)
+    resolves[3]?.(3)
     await p3
     t.same(
       [...c],
@@ -605,7 +605,7 @@ t.test('verify inflight works as expected', async t => {
     max: 5,
     fetchMethod: async () => {
       called++
-      await new Promise(res => setImmediate(res))
+      await new Promise<void>(res => queueMicrotask(res))
       return {}
     },
   })
@@ -750,13 +750,13 @@ t.test('background update on timeout, return stale', async t => {
   clock.advance(100)
   const ac = new AbortController()
   const p = c.fetch(1, { signal: ac.signal })
-  await new Promise(res => setImmediate(res))
+  await new Promise<void>(res => queueMicrotask(res))
   t.match(e.valList[0], { __staleWhileFetching: 10 })
   ac.abort(new Error('gimme the stale value'))
   t.equal(await p, 10)
   t.equal(c.get(1, { allowStale: true }), 10)
   clock.advance(200)
-  await new Promise(res => setImmediate(res)).then(() => {})
+  await new Promise<void>(res => queueMicrotask(res)).then(() => {})
   t.equal(e.valList[0], 1, 'got updated value later')
 
   c.set(1, 99)
@@ -764,7 +764,7 @@ t.test('background update on timeout, return stale', async t => {
   returnUndefined = true
   const ac2 = new AbortController()
   const p2 = c.fetch(1, { signal: ac2.signal })
-  await new Promise(res => setImmediate(res))
+  await new Promise<void>(res => queueMicrotask(res))
   t.match(e.valList[0], { __staleWhileFetching: 99 })
   ac2.abort(new Error('gimme stale 99'))
   t.equal(await p2, 99)
@@ -772,7 +772,7 @@ t.test('background update on timeout, return stale', async t => {
   t.equal(c.get(1, { allowStale: true }), 99)
   t.match(e.valList[0], { __staleWhileFetching: 99 })
   clock.advance(200)
-  await new Promise(res => setImmediate(res))
+  await new Promise<void>(res => queueMicrotask(res))
   t.equal(e.valList[0], 99)
 })
 

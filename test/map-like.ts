@@ -1,19 +1,10 @@
-if (typeof global.performance === 'undefined') {
-  global.performance = require('perf_hooks').performance
-}
 import t from 'tap'
-import Clock from 'clock-mock'
+import { Clock } from 'clock-mock'
 const clock = new Clock()
-const { performance, Date } = global
-// @ts-ignore
-t.teardown(() => Object.assign(global, { performance, Date }))
-//@ts-ignore
-global.Date = clock.Date
-//@ts-ignore
-global.performance = clock
+t.teardown(clock.enter())
 
-import { LRUCache as LRU } from '../'
-import { expose } from './fixtures/expose'
+import { LRUCache as LRU } from '../dist/esm/index.js'
+import { expose } from './fixtures/expose.js'
 
 const entriesFromForeach = <K extends {}, V extends {}>(
   c: LRU<K, V>
@@ -68,7 +59,7 @@ t.test('bunch of iteration things', async t => {
     c.set(i, String(i))
   }
 
-  resolves[123]('123')
+  resolves[123]?.('123')
   t.equal(await p123, '123')
   t.matchSnapshot(c.keys(), 'fetch 123 resolved, keys')
   t.matchSnapshot(c.values(), 'fetch 123 resolved, values')
@@ -107,7 +98,7 @@ t.test('bunch of iteration things', async t => {
   t.matchSnapshot(c.rentries(), 'rentries, new value 4')
   t.matchSnapshot(c.dump(), 'dump, new value 4')
 
-  resolves[99]('99')
+  resolves[99]?.('99')
   await testp99
   t.matchSnapshot(c.keys(), 'keys, resolved fetch 99 too late')
   t.matchSnapshot(c.values(), 'values, resolved fetch 99 too late')
@@ -130,7 +121,7 @@ t.test('bunch of iteration things', async t => {
   for (const i of e.indexes()) {
     seen[i] = seen[i] || 0
     seen[i]++
-    if (seen[i] > 2) {
+    if ((seen[i] as number) > 2) {
       throw new Error('cycle on ' + i)
     }
   }
@@ -138,7 +129,7 @@ t.test('bunch of iteration things', async t => {
   for (const i of e.rindexes()) {
     seen[i] = seen[i] || 0
     seen[i]++
-    if (seen[i] > 2) {
+    if ((seen[i] as number) > 2) {
       throw new Error('cycle on ' + i)
     }
   }

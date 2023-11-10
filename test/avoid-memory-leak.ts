@@ -2,8 +2,8 @@
 
 // https://github.com/isaacs/node-lru-cache/issues/227
 
-import t from 'tap'
-import { expose } from './fixtures/expose'
+import t, {Test} from 'tap'
+import { expose } from './fixtures/expose.js'
 
 const maxSize = 100_000
 const itemSize = 1_000
@@ -15,9 +15,10 @@ if (typeof gc !== 'function') {
   process.exit(0)
 }
 
+const req = createRequire(import.meta.url)
 const tryReq = (mod: string) => {
   try {
-    return require(mod)
+    return req(mod)
   } catch (er) {
     t.plan(0, `need ${mod} module`)
     process.exit(0)
@@ -26,7 +27,8 @@ const tryReq = (mod: string) => {
 
 const v8 = tryReq('v8')
 
-import { LRUCache } from '../'
+import { LRUCache } from '../dist/esm/index.js'
+import {createRequire} from 'module'
 const expectItemCount = Math.ceil(maxSize / itemSize)
 const max = expectItemCount + 1
 const keyRange = expectItemCount * 2
@@ -48,7 +50,7 @@ const prof = (i: number, cache: LRUCache<number, any>) => {
   }
 }
 
-const runTest = async (t: Tap.Test, cache: LRUCache<any, any>) => {
+const runTest = async (t: Test, cache: LRUCache<any, any>) => {
   // first, fill to expected size
   for (let i = 0; i < expectItemCount; i++) {
     cache.set(i, makeItem())

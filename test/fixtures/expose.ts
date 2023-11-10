@@ -1,4 +1,4 @@
-import { LRUCache } from '../../'
+import { LRUCache } from '../../dist/esm/index.js'
 export const expose = <
   K extends {},
   V extends {},

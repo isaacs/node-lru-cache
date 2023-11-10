@@ -1,5 +1,5 @@
 import t from 'tap'
-import { LRUCache as LRU } from '../'
+import { LRUCache as LRU } from '../dist/esm/index.js'
 
 const c = new LRU<number, number>({ max: 5 })
 for (let i = 0; i < 9; i++) {

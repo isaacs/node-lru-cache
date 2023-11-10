@@ -1,4 +1,7 @@
+import {fileURLToPath} from 'url'
+
 export {}
+const __filename = fileURLToPath(import.meta.url)
 const main = async () => {
   const { default: t } = await import('tap')
   const { spawn } = await import('child_process')
@@ -6,23 +9,32 @@ const main = async () => {
   // need to run both tests in parallel so we don't miss the close event
   t.jobs = 3
 
-  const tsNode =
-    process.platform === 'win32' ? 'ts-node.cmd' : 'ts-node'
-
-  const warn = spawn(tsNode, [__filename, 'child'])
+  const warn = spawn(process.execPath, [
+    ...process.execArgv,
+    __filename,
+    'child',
+  ])
   const warnErr: Buffer[] = []
   warn.stderr.on('data', c => warnErr.push(c))
 
-  const noWarn = spawn(tsNode, [__filename, 'child'], {
-    env: {
-      ...process.env,
-      LRU_CACHE_IGNORE_AC_WARNING: '1',
-    },
-  })
+  const noWarn = spawn(
+    process.execPath,
+    [...process.execArgv, __filename, 'child'],
+    {
+      env: {
+        ...process.env,
+        LRU_CACHE_IGNORE_AC_WARNING: '1',
+      },
+    }
+  )
   const noWarnErr: Buffer[] = []
   noWarn.stderr.on('data', c => noWarnErr.push(c))
 
-  const noFetch = spawn(tsNode, [__filename, 'child-no-fetch'])
+  const noFetch = spawn(process.execPath, [
+    ...process.execArgv,
+    __filename,
+    'child-no-fetch',
+  ])
   const noFetchErr: Buffer[] = []
   noFetch.stderr.on('data', c => noFetchErr.push(c))
 
@@ -66,7 +78,7 @@ switch (process.argv[2]) {
     globalThis.AbortController = undefined
     //@ts-ignore
     globalThis.AbortSignal = undefined
-    import('../').then(({ LRUCache }) => {
+    import('../dist/esm/index.js').then(({ LRUCache }) => {
       new LRUCache({ max: 1, fetchMethod: async () => 1 }).fetch(1)
     })
     break
@@ -75,7 +87,7 @@ switch (process.argv[2]) {
     globalThis.AbortController = undefined
     //@ts-ignore
     globalThis.AbortSignal = undefined
-    import('../')
+    import('../dist/esm/index.js')
     break
   default:
     main()

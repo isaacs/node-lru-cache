@@ -1,5 +1,5 @@
 import t from 'tap'
-import { LRUCache } from '../'
+import { LRUCache } from '../dist/esm/index.js'
 
 t.test('emits warning', t => {
   const { emitWarning } = process
@@ -29,7 +29,7 @@ t.test('emits warning', t => {
 })
 
 t.test('prints to stderr if no process.emitWarning', t => {
-  const { LRUCache: LRU } = t.mock('../', {}) as {
+  const { LRUCache: LRU } = t.mockRequire('../', {}) as {
     LRUCache: typeof LRUCache
   }
   const { error } = console

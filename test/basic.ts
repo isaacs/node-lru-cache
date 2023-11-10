@@ -2,22 +2,23 @@ if (typeof performance === 'undefined') {
   global.performance = require('perf_hooks').performance
 }
 
+import { createRequire } from 'module'
 import t from 'tap'
-import { LRUCache as LRU } from '../'
-import { expose } from './fixtures/expose'
+import { LRUCache as LRU } from '../dist/esm/index.js'
+import { expose } from './fixtures/expose.js'
 
-t.test('verify require works as expected', t => {
+t.test('verify require works as expected', async t => {
+  const req = createRequire(import.meta.url)
   t.equal(
-    require.resolve('../'),
-    require.resolve('../dist/cjs/index.js'),
+    req.resolve('../'),
+    req.resolve('../dist/commonjs/index.js'),
     'require resolves to expected module'
   )
-  const { LRUCache } = t.mock('../dist/cjs/index.js', {})
+  const { LRUCache } = await t.mockImport('../dist/esm/index.js', {})
   t.equal(
     LRUCache.toString().split(/\r?\n/)[0].trim(),
     'class LRUCache {'
   )
-  t.end()
 })
 
 t.test('basic operation', t => {
