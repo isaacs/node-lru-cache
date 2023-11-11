@@ -278,10 +278,10 @@ For example:
 ```ts
 const cache = new LRUCache<string, any>({
   ttl: 100,
-  fetchMethod: async (url, oldValue, { signal }) =>  {
+  fetchMethod: async (url, oldValue, { signal }) => {
     const res = await fetch(url, { signal })
     return await res.json()
-  }
+  },
 })
 cache.set('https://example.com/', { some: 'data' })
 // 100ms go by...

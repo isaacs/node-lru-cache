@@ -2,7 +2,7 @@
 
 // https://github.com/isaacs/node-lru-cache/issues/227
 
-import t, {Test} from 'tap'
+import t, { Test } from 'tap'
 import { expose } from './fixtures/expose.js'
 
 const maxSize = 100_000
@@ -28,7 +28,7 @@ const tryReq = (mod: string) => {
 const v8 = tryReq('v8')
 
 import { LRUCache } from '../dist/esm/index.js'
-import {createRequire} from 'module'
+import { createRequire } from 'module'
 const expectItemCount = Math.ceil(maxSize / itemSize)
 const max = expectItemCount + 1
 const keyRange = expectItemCount * 2

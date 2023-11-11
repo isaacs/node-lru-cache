@@ -1,10 +1,10 @@
 /node_modules
-/tap-snapshots
-/coverage
-/.nyc_output
-/benchmark
-/.github
-/scripts
-/CHANGELOG.md
 /docs
+/.tap
+/*.json
+/example
+/.github
 /dist
+/tap-snapshots
+/benchmark
+/.tshy

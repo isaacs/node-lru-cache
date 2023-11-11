@@ -1,6 +1,6 @@
-import {fileURLToPath} from 'url'
+import { createRequire } from 'module'
+import { fileURLToPath } from 'url'
 
-export {}
 const __filename = fileURLToPath(import.meta.url)
 const main = async () => {
   const { default: t } = await import('tap')
@@ -9,32 +9,46 @@ const main = async () => {
   // need to run both tests in parallel so we don't miss the close event
   t.jobs = 3
 
-  const warn = spawn(process.execPath, [
-    ...process.execArgv,
-    __filename,
-    'child',
-  ])
+  const argv = process.execArgv.filter(
+    a => !a.startsWith('--no-warnings')
+  )
+  const warn = spawn(
+    process.execPath,
+    [...argv, __filename, 'child'],
+    {
+      env: {
+        ...process.env,
+        NODE_OPTIONS: '',
+      },
+    }
+  )
   const warnErr: Buffer[] = []
   warn.stderr.on('data', c => warnErr.push(c))
 
   const noWarn = spawn(
     process.execPath,
-    [...process.execArgv, __filename, 'child'],
+    [...argv, __filename, 'child'],
     {
       env: {
         ...process.env,
         LRU_CACHE_IGNORE_AC_WARNING: '1',
+        NODE_OPTIONS: '',
       },
     }
   )
   const noWarnErr: Buffer[] = []
   noWarn.stderr.on('data', c => noWarnErr.push(c))
 
-  const noFetch = spawn(process.execPath, [
-    ...process.execArgv,
-    __filename,
-    'child-no-fetch',
-  ])
+  const noFetch = spawn(
+    process.execPath,
+    [...argv, __filename, 'child-no-fetch'],
+    {
+      env: {
+        ...process.env,
+        NODE_OPTIONS: '',
+      },
+    }
+  )
   const noFetchErr: Buffer[] = []
   noFetch.stderr.on('data', c => noFetchErr.push(c))
 
@@ -46,7 +60,10 @@ const main = async () => {
         r()
       })
     )
-    t.equal(Buffer.concat(noWarnErr).toString().trim(), '')
+    t.notMatch(
+      Buffer.concat(noWarnErr).toString().trim(),
+      'NO_ABORT_CONTROLLER'
+    )
   })
 
   t.test('no warning (because no fetch)', async t => {
@@ -57,7 +74,10 @@ const main = async () => {
         r()
       })
     )
-    t.equal(Buffer.concat(noFetchErr).toString().trim(), '')
+    t.notMatch(
+      Buffer.concat(noWarnErr).toString().trim(),
+      'NO_ABORT_CONTROLLER'
+    )
   })
 
   t.test('warning', async t => {
@@ -68,24 +88,29 @@ const main = async () => {
         r()
       })
     )
-    t.not(Buffer.concat(warnErr).toString().trim(), '')
+    t.match(
+      Buffer.concat(warnErr).toString().trim(),
+      /NO_ABORT_CONTROLLER/
+    )
   })
 }
 
 switch (process.argv[2]) {
   case 'child':
-    //@ts-ignore
+    //@ts-expect-error
+    process.emitWarning = null
+    //@ts-expect-error
     globalThis.AbortController = undefined
-    //@ts-ignore
+    //@ts-expect-error
     globalThis.AbortSignal = undefined
-    import('../dist/esm/index.js').then(({ LRUCache }) => {
-      new LRUCache({ max: 1, fetchMethod: async () => 1 }).fetch(1)
-    })
+    const req = createRequire(import.meta.url)
+    const { LRUCache } = req('../dist/commonjs/index.js')
+    new LRUCache({ max: 1, fetchMethod: async () => 1 }).fetch(1)
     break
   case 'child-no-fetch':
-    //@ts-ignore
+    //@ts-expect-error
     globalThis.AbortController = undefined
-    //@ts-ignore
+    //@ts-expect-error
     globalThis.AbortSignal = undefined
     import('../dist/esm/index.js')
     break

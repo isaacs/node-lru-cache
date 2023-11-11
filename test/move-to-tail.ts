@@ -30,10 +30,10 @@ t.test('list integrity', { bail: true }, t => {
     t.test(msg, { bail: false }, t => {
       for (let i = 0; i < c.max; i++) {
         if (i !== exp.head) {
-          t.equal(exp.next[(exp.prev[i] as number)], i, 'n[p[i]] === i')
+          t.equal(exp.next[exp.prev[i] as number], i, 'n[p[i]] === i')
         }
         if (i !== exp.tail) {
-          t.equal(exp.prev[(exp.next[i] as number)], i, 'p[n[i]] === i')
+          t.equal(exp.prev[exp.next[i] as number], i, 'p[n[i]] === i')
         }
       }
       t.end()
