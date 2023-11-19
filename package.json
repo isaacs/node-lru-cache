@@ -114,8 +114,5 @@
       }
     }
   },
-  "type": "module",
-  "dependencies": {
-    "semver": "^7.3.5"
-  }
+  "type": "module"
 }
