@@ -1,5 +1,10 @@
 # cringe lorg
 
+## 10.1.0
+
+- add `cache.info(key)` to get value as well as ttl and size
+  information.
+
 ## 10.0.0
 
 - `cache.fetch()` return type is now `Promise<V | undefined>`

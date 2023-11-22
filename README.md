@@ -607,6 +607,21 @@ If the key is not found, `get()` will return `undefined`.
 For the usage of the `status` option, see **Status Tracking**
 below.
 
+### `info(key) => Entry | undefined`
+
+Return an `Entry` object containing the currently cached value,
+as well as ttl and size information if available. Returns
+undefined if the key is not found in the cache.
+
+Unlike `dump()` (which is designed to be portable and survive
+serialization), the `start` value is always the current
+timestamp, and the `ttl` is a calculated remaining time to live
+(negative if expired).
+
+Note that stale values are always returned, rather than being
+pruned and treated as if they were not in the cache. If you wish
+to exclude stale entries, guard against a negative `ttl` value.
+
 ### `async fetch(key, options = {}) => Promise`
 
 The following options are supported:

@@ -130,6 +130,7 @@ class ZeroArray extends Array<number> {
   }
 }
 export type { ZeroArray }
+export type { Stack }
 
 export type StackLike = Stack | Index[]
 class Stack {
@@ -164,7 +165,6 @@ class Stack {
     return this.heap[--this.length] as Index
   }
 }
-export type { Stack }
 
 /**
  * Promise representing an in-progress {@link LRUCache#fetch} call
@@ -792,7 +792,8 @@ export namespace LRUCache {
     | OptionsTTLLimit<K, V, FC>
 
   /**
-   * Entry objects used by {@link LRUCache#load} and {@link LRUCache#dump}
+   * Entry objects used by {@link LRUCache#load} and {@link LRUCache#dump},
+   * and returned by {@link LRUCache#info}.
    */
   export interface Entry<V> {
     value: V
@@ -1561,6 +1562,36 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       }
     }
     return deleted
+  }
+
+  /**
+   * Get the extended info about a given entry, to get its value, size, and
+   * TTL info simultaneously. Like {@link LRUCache#dump}, but just for a
+   * single key. Always returns stale values, if their info is found in the
+   * cache, so be sure to check for expired TTLs if relevant.
+   */
+  info(key: K): LRUCache.Entry<V> | undefined {
+    const i = this.#keyMap.get(key)
+    if (i === undefined) return undefined
+    const v = this.#valList[i]
+    const value: V | undefined = this.#isBackgroundFetch(v)
+      ? v.__staleWhileFetching
+      : v
+    if (value === undefined) return undefined
+    const entry: LRUCache.Entry<V> = { value }
+    if (this.#ttls && this.#starts) {
+      const ttl = this.#ttls[i]
+      const start = this.#starts[i]
+      if (ttl && start) {
+        const remain = ttl - (perf.now() - start)
+        entry.ttl = remain
+        entry.start = Date.now()
+      }
+    }
+    if (this.#sizes) {
+      entry.size = this.#sizes[i]
+    }
+    return entry
   }
 
   /**
