@@ -1,5 +1,9 @@
 # cringe lorg
 
+## 10.2.0
+
+- types: implement the `Map<K, V>` interface
+
 ## 10.1.0
 
 - add `cache.info(key)` to get value as well as ttl and size

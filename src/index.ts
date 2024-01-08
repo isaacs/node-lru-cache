@@ -812,7 +812,7 @@ export namespace LRUCache {
  * Changing any of these will alter the defaults for subsequent method calls,
  * but is otherwise safe.
  */
-export class LRUCache<K extends {}, V extends {}, FC = unknown> {
+export class LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K,V> {
   // properties coming in from the options of these, only max and maxSize
   // really *need* to be protected. The rest can be modified, as they just
   // set defaults for various methods.
@@ -1392,7 +1392,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
         this.#keyList[i] !== undefined &&
         !this.#isBackgroundFetch(this.#valList[i])
       ) {
-        yield [this.#keyList[i], this.#valList[i]]
+        yield [this.#keyList[i], this.#valList[i]] as [K, V]
       }
     }
   }
@@ -1460,7 +1460,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
         v !== undefined &&
         !this.#isBackgroundFetch(this.#valList[i])
       ) {
-        yield this.#valList[i]
+        yield this.#valList[i] as V
       }
     }
   }
@@ -1490,6 +1490,12 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   [Symbol.iterator]() {
     return this.entries()
   }
+
+  /**
+   * A String value that is used in the creation of the default string description of an object.
+   * Called by the built-in method Object.prototype.toString.
+   */
+  [Symbol.toStringTag] = 'LRUCache'
 
   /**
    * Find a value for which the supplied fn method returns a truthy value,
