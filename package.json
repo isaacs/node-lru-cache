@@ -35,8 +35,8 @@
       ".": "./src/index.ts",
       "./min": {
         "import": {
-          "types": "./dist/mjs/index.d.ts",
-          "default": "./dist/mjs/index.min.js"
+          "types": "./dist/esm/index.d.ts",
+          "default": "./dist/esm/index.min.js"
         },
         "require": {
           "types": "./dist/commonjs/index.d.ts",
