@@ -1,5 +1,5 @@
 {
-  "name": "lru-cache",
+  "name": "@bubblegroup/lru-cache",
   "description": "A cache object that deletes the least-recently-used items.",
   "version": "10.3.0",
   "author": "Isaac Z. Schlueter <i@izs.me>",
