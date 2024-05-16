@@ -1,5 +1,9 @@
 # cringe lorg
 
+## 10.3.0
+
+- add back in default export for compatibility with 8.x
+
 ## 10.2.0
 
 - types: implement the `Map<K, V>` interface
