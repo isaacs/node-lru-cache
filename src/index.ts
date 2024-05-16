@@ -2362,3 +2362,5 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K
     }
   }
 }
+
+export default LRUCache
