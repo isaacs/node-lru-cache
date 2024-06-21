@@ -131,7 +131,7 @@ will of course only have an effect on subsequent method calls.
 The maximum number of items that remain in the cache (assuming no
 TTL pruning or explicit deletions). Note that fewer items may be
 stored if size calculation is used, and `maxSize` is exceeded.
-This must be a positive finite intger.
+This must be a positive finite integer.
 
 At least one of `max`, `maxSize`, or `TTL` is required. This
 must be a positive integer if set.
@@ -700,7 +700,7 @@ If you call `fetch()` multiple times with the same key value,
 then every call after the first will resolve on the same
 promise<sup>1</sup>,
 _even if they have different settings that would otherwise change
-the behvavior of the fetch_, such as `noDeleteOnFetchRejection`
+the behavior of the fetch_, such as `noDeleteOnFetchRejection`
 or `ignoreFetchAbort`.
 
 In most cases, this is not a problem (in fact, only fetching
@@ -1066,7 +1066,7 @@ This cache never stores undefined values, as `undefined` is used
 internally in a few places to indicate that a key is not in the
 cache.
 
-You may call `cache.set(key, undefined)`, but this is just an
+You may call `cache.set(key, undefined)`, but this is just
 an alias for `cache.delete(key)`. Note that this has the effect
 that `cache.has(key)` will return _false_ after setting it to
 undefined.
