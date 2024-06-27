@@ -562,7 +562,7 @@ moment.
 
 The total size of items in cache when using size tracking.
 
-### `set(key, value, [{ size, sizeCalculation, ttl, noDisposeOnSet, start, status }])`
+### `set(key, value, { size, sizeCalculation, ttl, noDisposeOnSet, start, status } = {})`
 
 Add a value to the cache.
 
