@@ -1,5 +1,12 @@
 # cringe lorg
 
+## 10.3.0
+
+- add `forceFetch()` method
+- set `disposeReason` to `'expire'` when it's the result of a TTL
+  expiration, or `'fetch'` when it's the result of an aborted
+  or `undefined`-returning `fetch()`
+
 ## 10.2.0
 
 - types: implement the `Map<K, V>` interface
