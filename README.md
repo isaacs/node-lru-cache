@@ -401,6 +401,9 @@ Note that stale items are NOT preemptively removed by default,
 and MAY live in the cache, contributing to its LRU max, long
 after they have expired.
 
+If set to `0` (the default value), then that means "do not track
+TTL", not "expire immediately".
+
 Also, as this cache is optimized for LRU/MRU operations, some of
 the staleness/TTL checks will reduce performance.
 
@@ -409,7 +412,7 @@ guarantees. There is no pre-emptive pruning of expired items,
 but you _may_ set a TTL on the cache, and it will treat expired
 items as missing when they are fetched, and delete them.
 
-Optional, but must be a positive integer in ms if specified.
+Optional, but must be a non-negative integer in ms if specified.
 
 This may be overridden by passing an options object to
 `cache.set()`.
