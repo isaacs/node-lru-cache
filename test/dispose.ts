@@ -1,5 +1,7 @@
+import { Clock } from 'clock-mock'
 import t from 'tap'
 import { LRUCache as LRU } from '../dist/esm/index.js'
+import { LRUCache } from '../src/index.js'
 
 t.test('disposal', t => {
   const disposed: any[] = []
@@ -204,4 +206,54 @@ t.test('disposeAfter', t => {
   t.same([...c.entries()], [[2, 23]])
 
   t.end()
+})
+
+t.test('expiration reflected in dispose reason', async t => {
+  const clock = new Clock()
+  t.teardown(clock.enter())
+  clock.advance(1)
+  const disposes: [number, number, LRUCache.DisposeReason][] = []
+  const c = new LRUCache<number, number>({
+    ttl: 100,
+    max: 5,
+    dispose: (v, k, r) => disposes.push([k, v, r]),
+  })
+  c.set(1, 1)
+  c.set(2, 2, { ttl: 10 })
+  c.set(3, 3)
+  c.set(4, 4)
+  c.set(5, 5)
+  t.strictSame(disposes, [])
+  c.set(6, 6)
+  t.strictSame(disposes, [[1, 1, 'evict']])
+  c.delete(6)
+  c.delete(5)
+  c.delete(4)
+  // test when it's the last one, and when it's not, because we
+  // delete with cache.clear() when it's the only entry.
+  t.strictSame(disposes, [
+    [1, 1, 'evict'],
+    [6, 6, 'delete'],
+    [5, 5, 'delete'],
+    [4, 4, 'delete'],
+  ])
+  clock.advance(20)
+  t.equal(c.get(2), undefined)
+  t.strictSame(disposes, [
+    [1, 1, 'evict'],
+    [6, 6, 'delete'],
+    [5, 5, 'delete'],
+    [4, 4, 'delete'],
+    [2, 2, 'expire'],
+  ])
+  clock.advance(200)
+  t.equal(c.get(3), undefined)
+  t.strictSame(disposes, [
+    [1, 1, 'evict'],
+    [6, 6, 'delete'],
+    [5, 5, 'delete'],
+    [4, 4, 'delete'],
+    [2, 2, 'expire'],
+    [3, 3, 'expire'],
+  ])
 })

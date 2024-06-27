@@ -201,8 +201,23 @@ export namespace LRUCache {
   /**
    * The reason why an item was removed from the cache, passed
    * to the {@link Disposer} methods.
+   *
+   * - `evict`: The item was evicted because it is the least recently used,
+   *   and the cache is full.
+   * - `set`: A new value was set, overwriting the old value being disposed.
+   * - `delete`: The item was explicitly deleted, either by calling
+   *   {@link LRUCache#delete}, {@link LRUCache#clear}, or
+   *   {@link LRUCache#set} with an undefined value.
+   * - `expire`: The item was removed due to exceeding its TTL.
+   * - `fetch`: A {@link OptionsBase#fetchMethod} operation returned
+   *   `undefined` or was aborted, causing the item to be deleted.
    */
-  export type DisposeReason = 'evict' | 'set' | 'delete'
+  export type DisposeReason =
+    | 'evict'
+    | 'set'
+    | 'delete'
+    | 'expire'
+    | 'fetch'
   /**
    * A method called upon item removal, passed as the
    * {@link OptionsBase.dispose} and/or
@@ -1174,7 +1189,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
       if (ttl !== 0 && this.ttlAutopurge) {
         const t = setTimeout(() => {
           if (this.#isStale(index)) {
-            this.delete(this.#keyList[index] as K)
+            this.#delete(this.#keyList[index] as K, 'expire')
           }
         }, ttl + 1)
         // unref() not supported on all platforms
@@ -1566,7 +1581,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
     let deleted = false
     for (const i of this.#rindexes({ allowStale: true })) {
       if (this.#isStale(i)) {
-        this.delete(this.#keyList[i] as K)
+        this.#delete(this.#keyList[i] as K, 'expire')
         deleted = true
       }
     }
@@ -1692,7 +1707,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
         status.maxEntrySizeExceeded = true
       }
       // have to delete, in case something is there already.
-      this.delete(k)
+      this.#delete(k, 'set')
       return this
     }
     let index = this.#size === 0 ? undefined : this.#keyMap.get(k)
@@ -1944,7 +1959,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
           if (bf.__staleWhileFetching) {
             this.#valList[index as Index] = bf.__staleWhileFetching
           } else {
-            this.delete(k)
+            this.#delete(k, 'fetch')
           }
         } else {
           if (options.status) options.status.fetchUpdated = true
@@ -1975,7 +1990,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
         // the stale value is not removed from the cache when the fetch fails.
         const del = !noDelete || bf.__staleWhileFetching === undefined
         if (del) {
-          this.delete(k)
+          this.#delete(k, 'fetch')
         } else if (!allowStaleAborted) {
           // still replace the *promise* with the stale value,
           // since we are done with the promise at this point.
@@ -2256,7 +2271,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
         // delete only if not an in-flight background fetch
         if (!fetching) {
           if (!noDeleteOnStaleGet) {
-            this.delete(k)
+            this.#delete(k, 'expire')
           }
           if (status && allowStale) status.returnedStale = true
           return allowStale ? value : undefined
@@ -2324,13 +2339,17 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
    * Returns true if the key was deleted, false otherwise.
    */
   delete(k: K) {
+    return this.#delete(k, 'delete')
+  }
+
+  #delete(k: K, reason: LRUCache.DisposeReason) {
     let deleted = false
     if (this.#size !== 0) {
       const index = this.#keyMap.get(k)
       if (index !== undefined) {
         deleted = true
         if (this.#size === 1) {
-          this.clear()
+          this.#clear(reason)
         } else {
           this.#removeItemSize(index)
           const v = this.#valList[index]
@@ -2338,10 +2357,10 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
             v.__abortController.abort(new Error('deleted'))
           } else if (this.#hasDispose || this.#hasDisposeAfter) {
             if (this.#hasDispose) {
-              this.#dispose?.(v as V, k, 'delete')
+              this.#dispose?.(v as V, k, reason)
             }
             if (this.#hasDisposeAfter) {
-              this.#disposed?.push([v as V, k, 'delete'])
+              this.#disposed?.push([v as V, k, reason])
             }
           }
           this.#keyMap.delete(k)
@@ -2376,6 +2395,9 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
    * Clear the cache entirely, throwing away all values.
    */
   clear() {
+    return this.#clear('delete')
+  }
+  #clear(reason: LRUCache.DisposeReason) {
     for (const index of this.#rindexes({ allowStale: true })) {
       const v = this.#valList[index]
       if (this.#isBackgroundFetch(v)) {
@@ -2383,10 +2405,10 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
       } else {
         const k = this.#keyList[index]
         if (this.#hasDispose) {
-          this.#dispose?.(v as V, k as K, 'delete')
+          this.#dispose?.(v as V, k as K, reason)
         }
         if (this.#hasDisposeAfter) {
-          this.#disposed?.push([v as V, k as K, 'delete'])
+          this.#disposed?.push([v as V, k as K, reason])
         }
       }
     }
