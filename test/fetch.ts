@@ -673,7 +673,7 @@ t.test('abort, but then keep on fetching anyway', async t => {
   t.equal(ac.signal.reason, er)
   t.equal(cache.get(1), 1)
 
-  const p2 = cache.fetch(2)
+  const p2 = cache.forceFetch(2)
   t.equal(cache.get(2), undefined)
   cache.delete(2)
   t.equal(cache.get(2), undefined)
@@ -696,6 +696,9 @@ t.test('abort, but then keep on fetching anyway', async t => {
   const p4 = cache.fetch(4)
   clock.advance(100)
   t.equal(await p4, undefined)
+  const p5 = cache.forceFetch(4)
+  clock.advance(100)
+  await t.rejects(p5, { message: 'fetch() returned undefined' })
   t.same(e.valList, before, 'did not update values with undefined')
 })
 

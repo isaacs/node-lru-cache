@@ -306,7 +306,8 @@ export namespace LRUCache {
      * various states.
      *
      * - inflight: there is another fetch() for this key which is in process
-     * - get: there is no fetchMethod, so {@link LRUCache#get} was called.
+     * - get: there is no {@link OptionsBase.fetchMethod}, so
+     *   {@link LRUCache#get} was called.
      * - miss: the item is not in cache, and will be fetched.
      * - hit: the item is in the cache, and was resolved immediately.
      * - stale: the item is in the cache, but stale.
@@ -812,7 +813,9 @@ export namespace LRUCache {
  * Changing any of these will alter the defaults for subsequent method calls,
  * but is otherwise safe.
  */
-export class LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K,V> {
+export class LRUCache<K extends {}, V extends {}, FC = unknown>
+  implements Map<K, V>
+{
   // properties coming in from the options of these, only max and maxSize
   // really *need* to be protected. The rest can be modified, as they just
   // set defaults for various methods.
@@ -2178,6 +2181,56 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K
       }
       return staleVal ? p.__staleWhileFetching : (p.__returned = p)
     }
+  }
+
+  /**
+   * In some cases, `cache.fetch()` may resolve to `undefined`, either because
+   * a {@link LRUCache.OptionsBase#fetchMethod} was not provided (turning
+   * `cache.fetch(k)` into just an async wrapper around `cache.get(k)`) or
+   * because `ignoreFetchAbort` was specified (either to the constructor or
+   * in the {@link LRUCache.FetchOptions}). Also, the
+   * {@link OptionsBase.fetchMethod} may return `undefined` or `void`, making
+   * the test even more complicated.
+   *
+   * Because inferring the cases where `undefined` might be returned are so
+   * cumbersome, but testing for `undefined` can also be annoying, this method
+   * can be used, which will reject if `this.fetch()` resolves to undefined.
+   */
+  forceFetch(
+    k: K,
+    fetchOptions: unknown extends FC
+      ? LRUCache.FetchOptions<K, V, FC>
+      : FC extends undefined | void
+      ? LRUCache.FetchOptionsNoContext<K, V>
+      : LRUCache.FetchOptionsWithContext<K, V, FC>
+  ): Promise<V>
+  // this overload not allowed if context is required
+  forceFetch(
+    k: unknown extends FC
+      ? K
+      : FC extends undefined | void
+      ? K
+      : never,
+    fetchOptions?: unknown extends FC
+      ? LRUCache.FetchOptions<K, V, FC>
+      : FC extends undefined | void
+      ? LRUCache.FetchOptionsNoContext<K, V>
+      : never
+  ): Promise<V>
+  async forceFetch(
+    k: K,
+    fetchOptions: LRUCache.FetchOptions<K, V, FC> = {}
+  ): Promise<V> {
+    const v = await this.fetch(
+      k,
+      fetchOptions as unknown extends FC
+        ? LRUCache.FetchOptions<K, V, FC>
+        : FC extends undefined | void
+        ? LRUCache.FetchOptionsNoContext<K, V>
+        : LRUCache.FetchOptionsWithContext<K, V, FC>
+    )
+    if (v === undefined) throw new Error('fetch() returned undefined')
+    return v
   }
 
   /**
