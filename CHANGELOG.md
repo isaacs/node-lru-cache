@@ -6,6 +6,7 @@
 - set `disposeReason` to `'expire'` when it's the result of a TTL
   expiration, or `'fetch'` when it's the result of an aborted
   or `undefined`-returning `fetch()`
+- add `memo()` method
 
 ## 10.2.0
 
