@@ -250,8 +250,14 @@ export namespace LRUCache {
   }
 
   /**
-   * Status object that may be passed to {@link LRUCache#fetch},
-   * {@link LRUCache#get}, {@link LRUCache#set}, and {@link LRUCache#has}.
+   * Occasionally, it may be useful to track the internal behavior of the
+   * cache, particularly for logging, debugging, or for behavior within the
+   * `fetchMethod`. To do this, you can pass a `status` object to the
+   * {@link LRUCache#fetch}, {@link LRUCache#get}, {@link LRUCache#set},
+   * {@link LRUCache#memo}, and {@link LRUCache#has} methods.
+   *
+   * The `status` option should be a plain JavaScript object. The following
+   * fields will be set on it appropriately, depending on the situation.
    */
   export interface Status<V> {
     /**
@@ -633,6 +639,14 @@ export namespace LRUCache {
    * (and in fact required by the type definitions here) that the cache
    * also set {@link OptionsBase.ttlAutopurge}, to prevent potentially
    * unbounded storage.
+   *
+   * All options are also available on the {@link LRUCache} instance, making
+   * it safe to pass an LRUCache instance as the options argumemnt to
+   * make another empty cache of the same type.
+   *
+   * Some options are marked as read-only, because changing them after
+   * instantiation is not safe. Changing any of the other options will of
+   * course only have an effect on subsequent method calls.
    */
   export interface OptionsBase<K, V, FC> {
     /**
@@ -646,21 +660,45 @@ export namespace LRUCache {
      * Note that significantly fewer items may be stored, if
      * {@link OptionsBase.maxSize} and/or {@link OptionsBase.ttl} are also
      * set.
+     *
+     * **It is strongly recommended to set a `max` to prevent unbounded growth
+     * of the cache.**
      */
     max?: Count
 
     /**
      * Max time in milliseconds for items to live in cache before they are
-     * considered stale.  Note that stale items are NOT preemptively removed
-     * by default, and MAY live in the cache long after they have expired.
+     * considered stale.  Note that stale items are NOT preemptively removed by
+     * default, and MAY live in the cache, contributing to its LRU max, long
+     * after they have expired, unless {@link OptionsBase.ttlAutopurge} is
+     * set.
+     *
+     * If set to `0` (the default value), then that means "do not track
+     * TTL", not "expire immediately".
      *
      * Also, as this cache is optimized for LRU/MRU operations, some of
      * the staleness/TTL checks will reduce performance, as they will incur
      * overhead by deleting items.
      *
-     * Must be an integer number of ms. If set to 0, this indicates "no TTL"
+     * This is not primarily a TTL cache, and does not make strong TTL
+     * guarantees. There is no pre-emptive pruning of expired items, but you
+     * _may_ set a TTL on the cache, and it will treat expired items as missing
+     * when they are fetched, and delete them.
      *
-     * @default 0
+     * Optional, but must be a non-negative integer in ms if specified.
+     *
+     * This may be overridden by passing an options object to `cache.set()`.
+     *
+     * At least one of `max`, `maxSize`, or `TTL` is required. This must be a
+     * positive integer if set.
+     *
+     * Even if ttl tracking is enabled, **it is strongly recommended to set a
+     * `max` to prevent unbounded growth of the cache.**
+     *
+     * If ttl tracking is enabled, and `max` and `maxSize` are not set,
+     * and `ttlAutopurge` is not set, then a warning will be emitted
+     * cautioning about the potential for unbounded memory consumption.
+     * (The TypeScript definitions will also discourage this.)
      */
     ttl?: Milliseconds
 
@@ -682,59 +720,100 @@ export namespace LRUCache {
 
     /**
      * Preemptively remove stale items from the cache.
-     * Note that this may significantly degrade performance,
-     * especially if the cache is storing a large number of items.
-     * It is almost always best to just leave the stale items in
-     * the cache, and let them fall out as new items are added.
+     *
+     * Note that this may *significantly* degrade performance, especially if
+     * the cache is storing a large number of items. It is almost always best
+     * to just leave the stale items in the cache, and let them fall out as new
+     * items are added.
      *
      * Note that this means that {@link OptionsBase.allowStale} is a bit
      * pointless, as stale items will be deleted almost as soon as they
      * expire.
      *
-     * @default false
+     * Use with caution!
      */
     ttlAutopurge?: boolean
 
     /**
-     * Update the age of items on {@link LRUCache#get}, renewing their TTL
+     * When using time-expiring entries with `ttl`, setting this to `true` will
+     * make each item's age reset to 0 whenever it is retrieved from cache with
+     * {@link LRUCache#get}, causing it to not expire. (It can still fall out
+     * of cache based on recency of use, of course.)
      *
      * Has no effect if {@link OptionsBase.ttl} is not set.
      *
-     * @default false
+     * This may be overridden by passing an options object to `cache.get()`.
      */
     updateAgeOnGet?: boolean
 
     /**
-     * Update the age of items on {@link LRUCache#has}, renewing their TTL
+     * When using time-expiring entries with `ttl`, setting this to `true` will
+     * make each item's age reset to 0 whenever its presence in the cache is
+     * checked with {@link LRUCache#has}, causing it to not expire. (It can
+     * still fall out of cache based on recency of use, of course.)
      *
      * Has no effect if {@link OptionsBase.ttl} is not set.
-     *
-     * @default false
      */
     updateAgeOnHas?: boolean
 
     /**
      * Allow {@link LRUCache#get} and {@link LRUCache#fetch} calls to return
      * stale data, if available.
+     *
+     * By default, if you set `ttl`, stale items will only be deleted from the
+     * cache when you `get(key)`. That is, it's not preemptively pruning items,
+     * unless {@link OptionsBase.ttlAutopurge} is set.
+     *
+     * If you set `allowStale:true`, it'll return the stale value *as well as*
+     * deleting it. If you don't set this, then it'll return `undefined` when
+     * you try to get a stale entry.
+     *
+     * Note that when a stale entry is fetched, _even if it is returned due to
+     * `allowStale` being set_, it is removed from the cache immediately. You
+     * can suppress this behavior by setting
+     * {@link OptionsBase.noDeleteOnStaleGet}, either in the constructor, or in
+     * the options provided to {@link LRUCache#get}.
+     *
+     * This may be overridden by passing an options object to `cache.get()`.
+     * The `cache.has()` method will always return `false` for stale items.
+     *
+     * Only relevant if a ttl is set.
      */
     allowStale?: boolean
 
     /**
-     * Function that is called on items when they are dropped from the cache.
-     * This can be handy if you want to close file descriptors or do other
-     * cleanup tasks when items are no longer accessible. Called with `key,
-     * value`.  It's called before actually removing the item from the
-     * internal cache, so it is *NOT* safe to re-add them.
+     * Function that is called on items when they are dropped from the
+     * cache, as `dispose(value, key, reason)`.
      *
-     * Use {@link OptionsBase.disposeAfter} if you wish to dispose items after
-     * they have been full removed, when it is safe to add them back to the
-     * cache.
+     * This can be handy if you want to close file descriptors or do
+     * other cleanup tasks when items are no longer stored in the cache.
+     *
+     * **NOTE**: It is called _before_ the item has been fully removed
+     * from the cache, so if you want to put it right back in, you need
+     * to wait until the next tick. If you try to add it back in during
+     * the `dispose()` function call, it will break things in subtle and
+     * weird ways.
+     *
+     * Unlike several other options, this may _not_ be overridden by
+     * passing an option to `set()`, for performance reasons.
+     *
+     * The `reason` will be one of the following strings, corresponding
+     * to the reason for the item's deletion:
+     *
+     * - `evict` Item was evicted to make space for a new addition
+     * - `set` Item was overwritten by a new value
+     * - `expire` Item expired its TTL
+     * - `fetch` Item was deleted due to a failed or aborted fetch, or a
+     *   fetchMethod returning `undefined.
+     * - `delete` Item was removed by explicit `cache.delete(key)`,
+     *   `cache.clear()`, or `cache.set(key, undefined)`.
      */
     dispose?: Disposer<K, V>
 
     /**
      * The same as {@link OptionsBase.dispose}, but called *after* the entry
      * is completely removed and the cache is once again in a clean state.
+     *
      * It is safe to add an item right back into the cache at this point.
      * However, note that it is *very* easy to inadvertently create infinite
      * recursion this way.
@@ -745,28 +824,45 @@ export namespace LRUCache {
      * Set to true to suppress calling the
      * {@link OptionsBase.dispose} function if the entry key is
      * still accessible within the cache.
+     *
      * This may be overridden by passing an options object to
      * {@link LRUCache#set}.
+     *
+     * Only relevant if `dispose` or `disposeAfter` are set.
      */
     noDisposeOnSet?: boolean
 
     /**
-     * Boolean flag to tell the cache to not update the TTL when
-     * setting a new value for an existing key (ie, when updating a value
-     * rather than inserting a new value).  Note that the TTL value is
-     * _always_ set (if provided) when adding a new entry into the cache.
+     * Boolean flag to tell the cache to not update the TTL when setting a new
+     * value for an existing key (ie, when updating a value rather than
+     * inserting a new value).  Note that the TTL value is _always_ set (if
+     * provided) when adding a new entry into the cache.
      *
      * Has no effect if a {@link OptionsBase.ttl} is not set.
+     *
+     * May be passed as an option to {@link LRUCache#set}.
      */
     noUpdateTTL?: boolean
 
     /**
-     * If you wish to track item size, you must provide a maxSize
-     * note that we still will only keep up to max *actual items*,
-     * if max is set, so size tracking may cause fewer than max items
-     * to be stored.  At the extreme, a single item of maxSize size
-     * will cause everything else in the cache to be dropped when it
-     * is added.  Use with caution!
+     * Set to a positive integer to track the sizes of items added to the
+     * cache, and automatically evict items in order to stay below this size.
+     * Note that this may result in fewer than `max` items being stored.
+     *
+     * Attempting to add an item to the cache whose calculated size is greater
+     * that this amount will be a no-op. The item will not be cached, and no
+     * other items will be evicted.
+     *
+     * Optional, must be a positive integer if provided.
+     *
+     * Sets `maxEntrySize` to the same value, unless a different value is
+     * provided for `maxEntrySize`.
+     *
+     * At least one of `max`, `maxSize`, or `TTL` is required. This must be a
+     * positive integer if set.
+     *
+     * Even if size tracking is enabled, **it is strongly recommended to set a
+     * `max` to prevent unbounded growth of the cache.**
      *
      * Note also that size tracking can negatively impact performance,
      * though for most cases, only minimally.
@@ -777,13 +873,22 @@ export namespace LRUCache {
      * The maximum allowed size for any single item in the cache.
      *
      * If a larger item is passed to {@link LRUCache#set} or returned by a
-     * {@link OptionsBase.fetchMethod}, then it will not be stored in the
-     * cache.
+     * {@link OptionsBase.fetchMethod} or {@link OptionsBase.memoMethod}, then
+     * it will not be stored in the cache.
+     *
+     * Attempting to add an item whose calculated size is greater than
+     * this amount will not cache the item or evict any old items, but
+     * WILL delete an existing value if one is already present.
+     *
+     * Optional, must be a positive integer if provided. Defaults to
+     * the value of `maxSize` if provided.
      */
     maxEntrySize?: Size
 
     /**
      * A function that returns a number indicating the item's size.
+     *
+     * Requires {@link OptionsBase.maxSize} to be set.
      *
      * If not provided, and {@link OptionsBase.maxSize} or
      * {@link OptionsBase.maxEntrySize} are set, then all
@@ -794,6 +899,35 @@ export namespace LRUCache {
 
     /**
      * Method that provides the implementation for {@link LRUCache#fetch}
+     *
+     * ```ts
+     * fetchMethod(key, staleValue, { signal, options, context })
+     * ```
+     *
+     * If `fetchMethod` is not provided, then `cache.fetch(key)` is equivalent
+     * to `Promise.resolve(cache.get(key))`.
+     *
+     * If at any time, `signal.aborted` is set to `true`, or if the
+     * `signal.onabort` method is called, or if it emits an `'abort'` event
+     * which you can listen to with `addEventListener`, then that means that
+     * the fetch should be abandoned. This may be passed along to async
+     * functions aware of AbortController/AbortSignal behavior.
+     *
+     * The `fetchMethod` should **only** return `undefined` or a Promise
+     * resolving to `undefined` if the AbortController signaled an `abort`
+     * event. In all other cases, it should return or resolve to a value
+     * suitable for adding to the cache.
+     *
+     * The `options` object is a union of the options that may be provided to
+     * `set()` and `get()`. If they are modified, then that will result in
+     * modifying the settings to `cache.set()` when the value is resolved, and
+     * in the case of
+     * {@link OptionsBase.noDeleteOnFetchRejection} and
+     * {@link OptionsBase.allowStaleOnFetchRejection}, the handling of
+     * `fetchMethod` failures.
+     *
+     * For example, a DNS cache may update the TTL based on the value returned
+     * from a remote DNS server by changing `options.ttl` in the `fetchMethod`.
      */
     fetchMethod?: Fetcher<K, V, FC>
 
@@ -814,6 +948,18 @@ export namespace LRUCache {
      *
      * Note that the `get` return value will still be `undefined`
      * unless {@link OptionsBase.allowStale} is true.
+     *
+     * When using time-expiring entries with `ttl`, by default stale
+     * items will be removed from the cache when the key is accessed
+     * with `cache.get()`.
+     *
+     * Setting this option will cause stale items to remain in the cache, until
+     * they are explicitly deleted with `cache.delete(key)`, or retrieved with
+     * `noDeleteOnStaleGet` set to `false`.
+     *
+     * This may be overridden by passing an options object to `cache.get()`.
+     *
+     * Only relevant if a ttl is used.
      */
     noDeleteOnStaleGet?: boolean
 
@@ -823,15 +969,25 @@ export namespace LRUCache {
      * promise.
      *
      * This differs from using {@link OptionsBase.allowStale} in that stale
-     * data will ONLY be returned in the case that the
-     * {@link LRUCache#fetch} fails, not any other times.
+     * data will ONLY be returned in the case that the {@link LRUCache#fetch}
+     * fails, not any other times.
+     *
+     * If a `fetchMethod` fails, and there is no stale value available, the
+     * `fetch()` will resolve to `undefined`. Ie, all `fetchMethod` errors are
+     * suppressed.
+     *
+     * Implies `noDeleteOnFetchRejection`.
+     *
+     * This may be set in calls to `fetch()`, or defaulted on the constructor,
+     * or overridden by modifying the options object in the `fetchMethod`.
      */
     allowStaleOnFetchRejection?: boolean
 
     /**
      * Set to true to return a stale value from the cache when the
-     * `AbortSignal` passed to the {@link OptionsBase.fetchMethod} dispatches an `'abort'`
-     * event, whether user-triggered, or due to internal cache behavior.
+     * `AbortSignal` passed to the {@link OptionsBase.fetchMethod} dispatches
+     * an `'abort'` event, whether user-triggered, or due to internal cache
+     * behavior.
      *
      * Unless {@link OptionsBase.ignoreFetchAbort} is also set, the underlying
      * {@link OptionsBase.fetchMethod} will still be considered canceled, and
@@ -868,9 +1024,9 @@ export namespace LRUCache {
      * object passed to {@link OptionsBase.fetchMethod}, and still cache the
      * resulting resolution value, as long as it is not `undefined`.
      *
-     * When used on its own, this means aborted {@link LRUCache#fetch} calls are not
-     * immediately resolved or rejected when they are aborted, and instead
-     * take the full time to await.
+     * When used on its own, this means aborted {@link LRUCache#fetch} calls
+     * are not immediately resolved or rejected when they are aborted, and
+     * instead take the full time to await.
      *
      * When used with {@link OptionsBase.allowStaleOnFetchAbort}, aborted
      * {@link LRUCache#fetch} calls will resolve immediately to their stale
@@ -878,6 +1034,26 @@ export namespace LRUCache {
      * update the cache when they resolve, as long as the resulting value is
      * not `undefined`, thus supporting a "return stale on timeout while
      * refreshing" mechanism by passing `AbortSignal.timeout(n)` as the signal.
+     *
+     * For example:
+     *
+     * ```ts
+     * const c = new LRUCache({
+     *   ttl: 100,
+     *   ignoreFetchAbort: true,
+     *   allowStaleOnFetchAbort: true,
+     *   fetchMethod: async (key, oldValue, { signal }) => {
+     *     // note: do NOT pass the signal to fetch()!
+     *     // let's say this fetch can take a long time.
+     *     const res = await fetch(`https://slow-backend-server/${key}`)
+     *     return await res.json()
+     *   },
+     * })
+     *
+     * // this will return the stale value after 100ms, while still
+     * // updating in the background for next time.
+     * const val = await c.fetch('key', { signal: AbortSignal.timeout(100) })
+     * ```
      *
      * **Note**: regardless of this setting, an `abort` event _is still
      * emitted on the `AbortSignal` object_, so may result in invalid results
@@ -926,18 +1102,22 @@ export namespace LRUCache {
 /**
  * Default export, the thing you're using this module to get.
  *
- * All properties from the options object (with the exception of
- * {@link OptionsBase.max} and {@link OptionsBase.maxSize}) are added as
- * normal public members. (`max` and `maxBase` are read-only getters.)
- * Changing any of these will alter the defaults for subsequent method calls,
- * but is otherwise safe.
+ * The `K` and `V` types define the key and value types, respectively. The
+ * optional `FC` type defines the type of the `context` object passed to
+ * `cache.fetch()` and `cache.memo()`.
+ *
+ * Keys and values **must not** be `null` or `undefined`.
+ *
+ * All properties from the options object (with the exception of `max`,
+ * `maxSize`, `fetchMethod`, `memoMethod`, `dispose` and `disposeAfter`) are
+ * added as normal public members. (The listed options are read-only getters.)
+ *
+ * Changing any of these will alter the defaults for subsequent method calls.
  */
 export class LRUCache<K extends {}, V extends {}, FC = unknown>
   implements Map<K, V>
 {
-  // properties coming in from the options of these, only max and maxSize
-  // really *need* to be protected. The rest can be modified, as they just
-  // set defaults for various methods.
+  // options that cannot be changed without disaster
   readonly #max: LRUCache.Count
   readonly #maxSize: LRUCache.Size
   readonly #dispose?: LRUCache.Disposer<K, V>
@@ -1288,7 +1468,8 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
   }
 
   /**
-   * Return the remaining TTL time for a given entry key
+   * Return the number of ms left in the item's TTL. If item is not in cache,
+   * returns `0`. Returns `Infinity` if item is in cache without a defined TTL.
    */
   getRemainingTTL(key: K) {
     return this.#keyMap.has(key) ? Infinity : 0
@@ -1627,14 +1808,15 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
   }
 
   /**
-   * A String value that is used in the creation of the default string description of an object.
-   * Called by the built-in method Object.prototype.toString.
+   * A String value that is used in the creation of the default string
+   * description of an object. Called by the built-in method
+   * `Object.prototype.toString`.
    */
   [Symbol.toStringTag] = 'LRUCache'
 
   /**
    * Find a value for which the supplied fn method returns a truthy value,
-   * similar to Array.find().  fn is called as fn(value, key, cache).
+   * similar to `Array.find()`. fn is called as `fn(value, key, cache)`.
    */
   find(
     fn: (v: V, k: K, self: LRUCache<K, V, FC>) => boolean,
@@ -1653,10 +1835,15 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
   }
 
   /**
-   * Call the supplied function on each item in the cache, in order from
-   * most recently used to least recently used.  fn is called as
-   * fn(value, key, cache).  Does not update age or recenty of use.
-   * Does not iterate over stale values.
+   * Call the supplied function on each item in the cache, in order from most
+   * recently used to least recently used.
+   *
+   * `fn` is called as `fn(value, key, cache)`.
+   *
+   * If `thisp` is provided, function will be called in the `this`-context of
+   * the provided object, or the cache if no `thisp` object is provided.
+   *
+   * Does not update age or recenty of use, or iterate over stale values.
    */
   forEach(
     fn: (v: V, k: K, self: LRUCache<K, V, FC>) => any,
@@ -1707,9 +1894,15 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
 
   /**
    * Get the extended info about a given entry, to get its value, size, and
-   * TTL info simultaneously. Like {@link LRUCache#dump}, but just for a
-   * single key. Always returns stale values, if their info is found in the
-   * cache, so be sure to check for expired TTLs if relevant.
+   * TTL info simultaneously. Returns `undefined` if the key is not present.
+   *
+   * Unlike {@link LRUCache#dump}, which is designed to be portable and survive
+   * serialization, the `start` value is always the current timestamp, and the
+   * `ttl` is a calculated remaining time to live (negative if expired).
+   *
+   * Always returns stale values, if their info is found in the cache, so be
+   * sure to check for expirations (ie, a negative {@link LRUCache.Entry#ttl})
+   * if relevant.
    */
   info(key: K): LRUCache.Entry<V> | undefined {
     const i = this.#keyMap.get(key)
@@ -1737,7 +1930,16 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
 
   /**
    * Return an array of [key, {@link LRUCache.Entry}] tuples which can be
-   * passed to cache.load()
+   * passed to {@link LRLUCache#load}.
+   *
+   * The `start` fields are calculated relative to a portable `Date.now()`
+   * timestamp, even if `performance.now()` is available.
+   *
+   * Stale entries are always included in the `dump`, even if
+   * {@link LRUCache.OptionsBase.allowStale} is false.
+   *
+   * Note: this returns an actual array, not a generator, so it can be more
+   * easily passed around.
    */
   dump() {
     const arr: [K, LRUCache.Entry<V>][] = []
@@ -1766,8 +1968,12 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
 
   /**
    * Reset the cache and load in the items in entries in the order listed.
-   * Note that the shape of the resulting cache may be different if the
-   * same options are not used in both caches.
+   *
+   * The shape of the resulting cache may be different if the same options are
+   * not used in both caches.
+   *
+   * The `start` fields are assumed to be calculated relative to a portable
+   * `Date.now()` timestamp, even if `performance.now()` is available.
    */
   load(arr: [K, LRUCache.Entry<V>][]) {
     this.clear()
@@ -1791,6 +1997,30 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
    *
    * Note: if `undefined` is specified as a value, this is an alias for
    * {@link LRUCache#delete}
+   *
+   * Fields on the {@link LRUCache.SetOptions} options param will override
+   * their corresponding values in the constructor options for the scope
+   * of this single `set()` operation.
+   *
+   * If `start` is provided, then that will set the effective start
+   * time for the TTL calculation. Note that this must be a previous
+   * value of `performance.now()` if supported, or a previous value of
+   * `Date.now()` if not.
+   *
+   * Options object may also include `size`, which will prevent
+   * calling the `sizeCalculation` function and just use the specified
+   * number if it is a positive integer, and `noDisposeOnSet` which
+   * will prevent calling a `dispose` function in the case of
+   * overwrites.
+   *
+   * If the `size` (or return value of `sizeCalculation`) for a given
+   * entry is greater than `maxEntrySize`, then the item will not be
+   * added to the cache.
+   *
+   * Will update the recency of the entry.
+   *
+   * If the value is `undefined`, then this is an alias for
+   * `cache.delete(key)`. `undefined` is never stored in the cache.
    */
   set(
     k: K,
@@ -1971,6 +2201,14 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
    * Check if a key is in the cache, without updating the recency of use.
    * Will return false if the item is stale, even though it is technically
    * in the cache.
+   *
+   * Check if a key is in the cache, without updating the recency of
+   * use. Age is updated if {@link LRUCache.OptionsBase.updateAgeOnHas} is set
+   * to `true` in either the options or the constructor.
+   *
+   * Will return `false` if the item is stale, even though it is technically in
+   * the cache. The difference can be determined (if it matters) by using a
+   * `status` argument, and inspecting the `has` field.
    *
    * Will not update item age unless
    * {@link LRUCache.OptionsBase.updateAgeOnHas} is set.
@@ -2184,6 +2422,25 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
    * Make an asynchronous cached fetch using the
    * {@link LRUCache.OptionsBase.fetchMethod} function.
    *
+   * If the value is in the cache and not stale, then the returned
+   * Promise resolves to the value.
+   *
+   * If not in the cache, or beyond its TTL staleness, then
+   * `fetchMethod(key, staleValue, { options, signal, context })` is
+   * called, and the value returned will be added to the cache once
+   * resolved.
+   *
+   * If called with `allowStale`, and an asynchronous fetch is
+   * currently in progress to reload a stale value, then the former
+   * stale value will be returned.
+   *
+   * If called with `forceRefresh`, then the cached item will be
+   * re-fetched, even if it is not stale. However, if `allowStale` is also
+   * set, then the old value will still be returned. This is useful
+   * in cases where you want to force a reload of a cached value. If
+   * a background fetch is already in progress, then `forceRefresh`
+   * has no effect.
+   *
    * If multiple fetches for the same key are issued, then they will all be
    * coalesced into a single call to fetchMethod.
    *
@@ -2196,7 +2453,57 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
    * This is a known (fixable) shortcoming which will be addresed on when
    * someone complains about it, as the fix would involve added complexity and
    * may not be worth the costs for this edge case.
+   *
+   * If {@link LRUCache.OptionsBase.fetchMethod} is not specified, then this is
+   * effectively an alias for `Promise.resolve(cache.get(key))`.
+   *
+   * When the fetch method resolves to a value, if the fetch has not
+   * been aborted due to deletion, eviction, or being overwritten,
+   * then it is added to the cache using the options provided.
+   *
+   * If the key is evicted or deleted before the `fetchMethod`
+   * resolves, then the AbortSignal passed to the `fetchMethod` will
+   * receive an `abort` event, and the promise returned by `fetch()`
+   * will reject with the reason for the abort.
+   *
+   * If a `signal` is passed to the `fetch()` call, then aborting the
+   * signal will abort the fetch and cause the `fetch()` promise to
+   * reject with the reason provided.
+   *
+   * **Setting `context`**
+   *
+   * If an `FC` type is set to a type other than `unknown`, `void`, or
+   * `undefined` in the {@link LRUCache} constructor, then all
+   * calls to `cache.fetch()` _must_ provide a `context` option. If
+   * set to `undefined` or `void`, then calls to fetch _must not_
+   * provide a `context` option.
+   *
+   * The `context` param allows you to provide arbitrary data that
+   * might be relevant in the course of fetching the data. It is only
+   * relevant for the course of a single `fetch()` operation, and
+   * discarded afterwards.
+   *
+   * **Note: `fetch()` calls are inflight-unique**
+   *
+   * If you call `fetch()` multiple times with the same key value,
+   * then every call after the first will resolve on the same
+   * promise<sup>1</sup>,
+   * _even if they have different settings that would otherwise change
+   * the behavior of the fetch_, such as `noDeleteOnFetchRejection`
+   * or `ignoreFetchAbort`.
+   *
+   * In most cases, this is not a problem (in fact, only fetching
+   * something once is what you probably want, if you're caching in
+   * the first place). If you are changing the fetch() options
+   * dramatically between runs, there's a good chance that you might
+   * be trying to fit divergent semantics into a single object, and
+   * would be better off with multiple cache instances.
+   *
+   * **1**: Ie, they're not the "same Promise", but they resolve at
+   * the same time, because they're both waiting on the same
+   * underlying fetchMethod response.
    */
+
   fetch(
     k: K,
     fetchOptions: unknown extends FC
@@ -2205,6 +2512,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
       ? LRUCache.FetchOptionsNoContext<K, V>
       : LRUCache.FetchOptionsWithContext<K, V, FC>
   ): Promise<undefined | V>
+
   // this overload not allowed if context is required
   fetch(
     k: unknown extends FC
@@ -2218,6 +2526,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
       ? LRUCache.FetchOptionsNoContext<K, V>
       : never
   ): Promise<undefined | V>
+
   async fetch(
     k: K,
     fetchOptions: LRUCache.FetchOptions<K, V, FC> = {}
@@ -2367,9 +2676,17 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
 
   /**
    * If the key is found in the cache, then this is equivalent to
-   * {@link LRUCache#get}. If not, in the cache, then
-   * calculate the value using the {@link LRUCache.OptionsBase.memoMethod},
-   * and add it to the cache.
+   * {@link LRUCache#get}. If not, in the cache, then calculate the value using
+   * the {@link LRUCache.OptionsBase.memoMethod}, and add it to the cache.
+   *
+   * If an `FC` type is set to a type other than `unknown`, `void`, or
+   * `undefined` in the LRUCache constructor, then all calls to `cache.memo()`
+   * _must_ provide a `context` option. If set to `undefined` or `void`, then
+   * calls to memo _must not_ provide a `context` option.
+   *
+   * The `context` param allows you to provide arbitrary data that might be
+   * relevant in the course of fetching the data. It is only relevant for the
+   * course of a single `memo()` operation, and discarded afterwards.
    */
   memo(
     k: K,
@@ -2496,6 +2813,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
 
   /**
    * Deletes a key out of the cache.
+   *
    * Returns true if the key was deleted, false otherwise.
    */
   delete(k: K) {
