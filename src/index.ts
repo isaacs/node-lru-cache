@@ -460,6 +460,96 @@ export namespace LRUCache {
     context?: undefined
   }
 
+  export interface MemoOptions<K, V, FC = unknown>
+    extends Pick<
+      OptionsBase<K, V, FC>,
+      | 'allowStale'
+      | 'updateAgeOnGet'
+      | 'noDeleteOnStaleGet'
+      | 'sizeCalculation'
+      | 'ttl'
+      | 'noDisposeOnSet'
+      | 'noUpdateTTL'
+      | 'noDeleteOnFetchRejection'
+      | 'allowStaleOnFetchRejection'
+      | 'ignoreFetchAbort'
+      | 'allowStaleOnFetchAbort'
+    > {
+    /**
+     * Set to true to force a re-load of the existing data, even if it
+     * is not yet stale.
+     */
+    forceRefresh?: boolean
+    /**
+     * Context provided to the {@link OptionsBase.memoMethod} as
+     * the {@link MemoizerOptions.context} param.
+     *
+     * If the FC type is specified as unknown (the default),
+     * undefined or void, then this is optional.  Otherwise, it will
+     * be required.
+     */
+    context?: FC
+    status?: Status<V>
+  }
+  /**
+   * Options provided to {@link LRUCache#memo} when the FC type is something
+   * other than `unknown`, `undefined`, or `void`
+   */
+  export interface MemoOptionsWithContext<K, V, FC>
+    extends MemoOptions<K, V, FC> {
+    context: FC
+  }
+  /**
+   * Options provided to {@link LRUCache#memo} when the FC type is
+   * `undefined` or `void`
+   */
+  export interface MemoOptionsNoContext<K, V>
+    extends MemoOptions<K, V, undefined> {
+    context?: undefined
+  }
+
+  /**
+   * Options provided to the
+   * {@link OptionsBase.memoMethod} function.
+   */
+  export interface MemoizerOptions<K, V, FC = unknown> {
+    options: MemoizerMemoOptions<K, V, FC>
+    /**
+     * Object provided in the {@link MemoOptions.context} option to
+     * {@link LRUCache#memo}
+     */
+    context: FC
+  }
+
+  /**
+   * options which override the options set in the LRUCache constructor
+   * when calling {@link LRUCache#memo}.
+   *
+   * This is the union of {@link GetOptions} and {@link SetOptions}, plus
+   * {@link MemoOptions.forceRefresh}, and
+   * {@link MemoerOptions.context}
+   *
+   * Any of these may be modified in the {@link OptionsBase.memoMethod}
+   * function, but the {@link GetOptions} fields will of course have no
+   * effect, as the {@link LRUCache#get} call already happened by the time
+   * the memoMethod is called.
+   */
+  export interface MemoizerMemoOptions<K, V, FC = unknown>
+    extends Pick<
+      OptionsBase<K, V, FC>,
+      | 'allowStale'
+      | 'updateAgeOnGet'
+      | 'noDeleteOnStaleGet'
+      | 'sizeCalculation'
+      | 'ttl'
+      | 'noDisposeOnSet'
+      | 'noUpdateTTL'
+    > {
+    status?: Status<V>
+    size?: Size
+    start?: Milliseconds
+  }
+
   /**
    * Options that may be passed to the {@link LRUCache#has} method.
    */
@@ -519,6 +609,15 @@ export namespace LRUCache {
     staleValue: V | undefined,
     options: FetcherOptions<K, V, FC>
   ) => Promise<V | undefined | void> | V | undefined | void
+
+  /**
+   * the type signature for the {@link OptionsBase.memoMethod} option.
+   */
+  export type Memoizer<K, V, FC = unknown> = (
+    key: K,
+    staleValue: V | undefined,
+    options: MemoizerOptions<K, V, FC>
+  ) => V
 
   /**
    * Options which may be passed to the {@link LRUCache} constructor.
@@ -699,6 +798,11 @@ export namespace LRUCache {
     fetchMethod?: Fetcher<K, V, FC>
 
     /**
+     * Method that provides the implementation for {@link LRUCache#memo}
+     */
+    memoMethod?: Memoizer<K, V, FC>
+
+    /**
      * Set to true to suppress the deletion of stale data when a
      * {@link OptionsBase.fetchMethod} returns a rejected promise.
      */
@@ -839,6 +943,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
   readonly #dispose?: LRUCache.Disposer<K, V>
   readonly #disposeAfter?: LRUCache.Disposer<K, V>
   readonly #fetchMethod?: LRUCache.Fetcher<K, V, FC>
+  readonly #memoMethod?: LRUCache.Memoizer<K, V, FC>
 
   /**
    * {@link LRUCache.OptionsBase.ttl}
@@ -1011,6 +1116,9 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
   get fetchMethod(): LRUCache.Fetcher<K, V, FC> | undefined {
     return this.#fetchMethod
   }
+  get memoMethod(): LRUCache.Memoizer<K, V, FC> | undefined {
+    return this.#memoMethod
+  }
   /**
    * {@link LRUCache.OptionsBase.dispose} (read-only)
    */
@@ -1043,6 +1151,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
       maxEntrySize = 0,
       sizeCalculation,
       fetchMethod,
+      memoMethod,
       noDeleteOnFetchRejection,
       noDeleteOnStaleGet,
       allowStaleOnFetchRejection,
@@ -1073,6 +1182,14 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
         throw new TypeError('sizeCalculation set to non-function')
       }
     }
+
+    if (
+      memoMethod !== undefined &&
+      typeof memoMethod !== 'function'
+    ) {
+      throw new TypeError('memoMethod must be a function if defined')
+    }
+    this.#memoMethod = memoMethod
 
     if (
       fetchMethod !== undefined &&
@@ -2246,6 +2363,49 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
     )
     if (v === undefined) throw new Error('fetch() returned undefined')
     return v
+  }
+
+  /**
+   * If the key is found in the cache, then this is equivalent to
+   * {@link LRUCache#get}. If not, in the cache, then
+   * calculate the value using the {@link LRUCache.OptionsBase.memoMethod},
+   * and add it to the cache.
+   */
+  memo(
+    k: K,
+    memoOptions: unknown extends FC
+      ? LRUCache.MemoOptions<K, V, FC>
+      : FC extends undefined | void
+      ? LRUCache.MemoOptionsNoContext<K, V>
+      : LRUCache.MemoOptionsWithContext<K, V, FC>
+  ): V
+  // this overload not allowed if context is required
+  memo(
+    k: unknown extends FC
+      ? K
+      : FC extends undefined | void
+      ? K
+      : never,
+    memoOptions?: unknown extends FC
+      ? LRUCache.MemoOptions<K, V, FC>
+      : FC extends undefined | void
+      ? LRUCache.MemoOptionsNoContext<K, V>
+      : never
+  ): V
+  memo(k: K, memoOptions: LRUCache.MemoOptions<K, V, FC> = {}) {
+    const memoMethod = this.#memoMethod
+    if (!memoMethod) {
+      throw new Error('no memoMethod provided to constructor')
+    }
+    const { context, forceRefresh, ...options } = memoOptions
+    const v = this.get(k, options)
+    if (!forceRefresh && v !== undefined) return v
+    const vv = memoMethod(k, v, {
+      options,
+      context,
+    } as LRUCache.MemoizerOptions<K, V, FC>)
+    this.set(k, vv, options)
+    return vv
   }
 
   /**
