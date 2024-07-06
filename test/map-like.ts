@@ -1,6 +1,5 @@
 import t from 'tap'
-import { Clock } from 'clock-mock'
-const clock = new Clock()
+const clock = t.clock
 t.teardown(clock.enter())
 
 import { LRUCache as LRU } from '../dist/esm/index.js'

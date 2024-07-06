@@ -4,13 +4,12 @@ if (typeof performance === 'undefined') {
   })
 }
 
-import { Clock } from 'clock-mock'
 import assert from 'node:assert'
 import t from 'tap'
 import { LRUCache as LRU } from '../dist/esm/index.js'
 import { expose } from './fixtures/expose.js'
 
-const clock = new Clock()
+const clock = t.clock
 clock.advance(1)
 
 const boolOpts = (n: number): number[][] => {

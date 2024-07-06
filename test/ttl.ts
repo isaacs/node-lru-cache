@@ -5,8 +5,7 @@ import t, { Test } from 'tap'
 import { LRUCache } from '../dist/esm/index.js'
 import { expose } from './fixtures/expose.js'
 
-import { Clock } from 'clock-mock'
-const clock = new Clock()
+const clock = t.clock
 
 const runTests = (LRU: typeof LRUCache, t: Test) => {
   const statuses: LRUCache.Status<any>[] = []

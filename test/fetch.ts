@@ -5,14 +5,15 @@ import t from 'tap'
 import { BackgroundFetch, LRUCache } from '../dist/esm/index.js'
 import { expose } from './fixtures/expose.js'
 
+t.teardown(() => {})
+
 const fn: LRUCache.Fetcher<any, any> = async (_, v) =>
   new Promise(res =>
     queueMicrotask(() => res(v === undefined ? 0 : v + 1))
   )
 
-import { Clock } from 'clock-mock'
-const clock = new Clock()
-t.teardown(clock.enter())
+const clock = t.clock
+clock.enter()
 clock.advance(1)
 
 let LRU = LRUCache
