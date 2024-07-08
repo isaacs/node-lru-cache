@@ -1,8 +1,12 @@
 # cringe lorg
 
+## 11.0
+
+- Drop support for node less than v20
+
 ## 10.4
 
-Accidental minor update, should've been patch.
+- Accidental minor update, should've been patch.
 
 ## 10.3
 
