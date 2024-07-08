@@ -58,7 +58,7 @@
     "mkdirp": "^2.1.5",
     "prettier": "^2.6.2",
     "tap": "^20.0.3",
-    "tshy": "^1.17.0",
+    "tshy": "^2.0.0",
     "tslib": "^2.4.0",
     "typedoc": "^0.25.3",
     "typescript": "^5.2.2"
@@ -92,12 +92,10 @@
   "exports": {
     ".": {
       "import": {
-        "source": "./src/index.ts",
         "types": "./dist/esm/index.d.ts",
         "default": "./dist/esm/index.js"
       },
       "require": {
-        "source": "./src/index.ts",
         "types": "./dist/commonjs/index.d.ts",
         "default": "./dist/commonjs/index.js"
       }
