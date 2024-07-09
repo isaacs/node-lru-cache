@@ -70,9 +70,6 @@
   "files": [
     "dist"
   ],
-  "engines": {
-    "node": "14 || 16 || 18 || 20 || >=22"
-  },
   "prettier": {
     "semi": false,
     "printWidth": 70,
