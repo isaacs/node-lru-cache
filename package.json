@@ -1,5 +1,8 @@
 {
   "name": "lru-cache",
+  "publishConfig": {
+    "tag": "legacy-v10"
+  },
   "description": "A cache object that deletes the least-recently-used items.",
   "version": "10.4.1",
   "author": "Isaac Z. Schlueter <i@izs.me>",
@@ -68,7 +71,7 @@
     "dist"
   ],
   "engines": {
-    "node": "14 >= 14.21 || 16 >= 16.20 || 18 >=18.20 || 20 || >=22"
+    "node": "14 || 16 || 18 || 20 || >=22"
   },
   "prettier": {
     "semi": false,
