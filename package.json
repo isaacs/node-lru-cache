@@ -4,7 +4,7 @@
     "tag": "legacy-v10"
   },
   "description": "A cache object that deletes the least-recently-used items.",
-  "version": "10.4.1",
+  "version": "10.4.2",
   "author": "Isaac Z. Schlueter <i@izs.me>",
   "keywords": [
     "mru",
