@@ -49,6 +49,8 @@
     "url": "git://github.com/isaacs/node-lru-cache.git"
   },
   "devDependencies": {
+    "@tapjs/core": "^3.0.0",
+    "@tapjs/clock": "^2.0.3",
     "@types/node": "^20.2.5",
     "@types/tap": "^15.0.6",
     "benchmark": "^2.1.4",
