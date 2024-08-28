@@ -4,7 +4,7 @@
 
 // module-private names and types
 type Perf = { now: () => number }
-const perf: Perf =
+let perf: Perf =
   typeof performance === 'object' &&
   performance &&
   typeof performance.now === 'function'
@@ -1261,6 +1261,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
         c.#rindexes(options),
       isStale: (index: number | undefined) =>
         c.#isStale(index as Index),
+      refreshTTLTimerReference: () => c.#refreshTTLTimerReference(),
     }
   }
 
@@ -1557,6 +1558,15 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
       const t = ttls[index]
       return !!t && !!s && (cachedNow || getNow()) - s > t
     }
+  }
+
+  #refreshTTLTimerReference() {
+    perf =
+      typeof performance === 'object' &&
+      performance &&
+      typeof performance.now === 'function'
+        ? performance
+        : Date
   }
 
   // conditionally set private methods related to TTL
