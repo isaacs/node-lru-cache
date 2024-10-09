@@ -1,7 +1,7 @@
 {
   "name": "@bubblegroup/lru-cache",
   "description": "A cache object that deletes the least-recently-used items.",
-  "version": "10.3.0",
+  "version": "10.3.0-patch.1",
   "author": "Isaac Z. Schlueter <i@izs.me>",
   "keywords": [
     "mru",
@@ -10,10 +10,6 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "build": "npm run prepare",
-    "prepare": "tshy && bash fixup.sh",
-    "pretest": "npm run prepare",
-    "presnap": "npm run prepare",
     "test": "tap",
     "snap": "tap",
     "preversion": "npm test",
@@ -22,9 +18,7 @@
     "format": "prettier --write .",
     "typedoc": "typedoc --tsconfig ./.tshy/esm.json ./src/*.ts",
     "benchmark-results-typedoc": "bash scripts/benchmark-results-typedoc.sh",
-    "prebenchmark": "npm run prepare",
     "benchmark": "make -C benchmark",
-    "preprofile": "npm run prepare",
     "profile": "make -C benchmark profile"
   },
   "main": "./dist/commonjs/index.js",
