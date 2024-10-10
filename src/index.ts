@@ -1114,9 +1114,7 @@ export namespace LRUCache {
  *
  * Changing any of these will alter the defaults for subsequent method calls.
  */
-export class LRUCache<K extends {}, V extends {}, FC = unknown>
-  implements Map<K, V>
-{
+export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   // options that cannot be changed without disaster
   readonly #max: LRUCache.Count
   readonly #maxSize: LRUCache.Size
