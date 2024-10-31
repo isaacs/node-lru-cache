@@ -533,7 +533,7 @@ export namespace LRUCache {
    *
    * This is the union of {@link GetOptions} and {@link SetOptions}, plus
    * {@link MemoOptions.forceRefresh}, and
-   * {@link MemoerOptions.context}
+   * {@link MemoOptions.context}
    *
    * Any of these may be modified in the {@link OptionsBase.memoMethod}
    * function, but the {@link GetOptions} fields will of course have no
@@ -1928,7 +1928,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
 
   /**
    * Return an array of [key, {@link LRUCache.Entry}] tuples which can be
-   * passed to {@link LRLUCache#load}.
+   * passed to {@link LRUCache#load}.
    *
    * The `start` fields are calculated relative to a portable `Date.now()`
    * timestamp, even if `performance.now()` is available.
@@ -2628,7 +2628,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
    * `cache.fetch(k)` into just an async wrapper around `cache.get(k)`) or
    * because `ignoreFetchAbort` was specified (either to the constructor or
    * in the {@link LRUCache.FetchOptions}). Also, the
-   * {@link OptionsBase.fetchMethod} may return `undefined` or `void`, making
+   * {@link LRUCache.OptionsBase.fetchMethod} may return `undefined` or `void`, making
    * the test even more complicated.
    *
    * Because inferring the cases where `undefined` might be returned are so
