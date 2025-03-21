@@ -230,6 +230,26 @@ export namespace LRUCache {
   ) => void
 
   /**
+   * The reason why an item was added to the cache, passed
+   * to the {@link Inserter} methods.
+   *
+   * - `add`: the item was not found in the cache, and was added
+   * - `update`: the item was in the cache, with the same value provided
+   * - `replace`: the item was in the cache, and replaced
+   */
+  export type InsertReason = 'add' | 'update' | 'replace'
+
+  /**
+   * A method called upon item insertion, passed as the
+   * {@link OptionsBase.insert}
+   */
+  export type Inserter<K, V> = (
+    value: V,
+    key: K,
+    reason: InsertReason
+  ) => void
+
+  /**
    * A function that returns the effective calculated size
    * of an entry in the cache.
    */
@@ -811,6 +831,18 @@ export namespace LRUCache {
     dispose?: Disposer<K, V>
 
     /**
+     * Function that is called when new items are inserted into the cache,
+     * as `onInsert(value, key)`.
+     *
+     * This can be useful if you need to perform actions when an item is
+     * added, such as logging or tracking insertions.
+     *
+     * Unlike some other options, this may _not_ be overridden by passing
+     * an option to `set()`, for performance and consistency reasons.
+     */
+    onInsert?: Inserter<K, V>
+
+    /**
      * The same as {@link OptionsBase.dispose}, but called *after* the entry
      * is completely removed and the cache is once again in a clean state.
      *
@@ -1119,6 +1151,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   readonly #max: LRUCache.Count
   readonly #maxSize: LRUCache.Size
   readonly #dispose?: LRUCache.Disposer<K, V>
+  readonly #onInsert?: LRUCache.Inserter<K, V>
   readonly #disposeAfter?: LRUCache.Disposer<K, V>
   readonly #fetchMethod?: LRUCache.Fetcher<K, V, FC>
   readonly #memoMethod?: LRUCache.Memoizer<K, V, FC>
@@ -1205,6 +1238,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   #hasDispose: boolean
   #hasFetchMethod: boolean
   #hasDisposeAfter: boolean
+  #hasOnInsert: boolean
 
   /**
    * Do not call this method unless you need to inspect the
@@ -1304,6 +1338,12 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     return this.#dispose
   }
   /**
+   * {@link LRUCache.OptionsBase.onInsert} (read-only)
+   */
+  get onInsert() {
+    return this.#onInsert
+  }
+  /**
    * {@link LRUCache.OptionsBase.disposeAfter} (read-only)
    */
   get disposeAfter() {
@@ -1322,6 +1362,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       updateAgeOnHas,
       allowStale,
       dispose,
+      onInsert,
       disposeAfter,
       noDisposeOnSet,
       noUpdateTTL,
@@ -1394,6 +1435,9 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     if (typeof dispose === 'function') {
       this.#dispose = dispose
     }
+    if (typeof onInsert === 'function') {
+      this.#onInsert = onInsert
+    }
     if (typeof disposeAfter === 'function') {
       this.#disposeAfter = disposeAfter
       this.#disposed = []
@@ -1402,6 +1446,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       this.#disposed = undefined
     }
     this.#hasDispose = !!this.#dispose
+    this.#hasOnInsert = !!this.#onInsert
     this.#hasDisposeAfter = !!this.#disposeAfter
 
     this.noDisposeOnSet = !!noDisposeOnSet
@@ -2077,6 +2122,9 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       this.#addItemSize(index, size, status)
       if (status) status.set = 'add'
       noUpdateTTL = false
+      if (this.#hasOnInsert) {
+        this.#onInsert?.(v as V, k, 'add')
+      }
     } else {
       // update
       this.#moveToTail(index)
@@ -2114,6 +2162,10 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
         }
       } else if (status) {
         status.set = 'update'
+      }
+
+      if (this.#hasOnInsert) {
+        this.onInsert?.(v as V, k, v === oldVal ? 'update' : 'replace');
       }
     }
     if (ttl !== 0 && !this.#ttls) {
