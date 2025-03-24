@@ -1,5 +1,9 @@
 # cringe lorg
 
+## 11.1
+
+- Add the `onInsert` method
+
 ## 11.0
 
 - Drop support for node less than v20
