@@ -4,7 +4,8 @@ const impls = readFileSync(__dirname + '/impls.txt', 'utf8')
   .split('\n')
 for (const impl of impls) {
   if (impl.startsWith('lru-cache_')) {
-    const LRUCache = require(impl)
+    const req = require(impl)
+    const LRUCache = req.LRUCache || req
     exports[impl] = max => new LRUCache({ max })
   } else if (impl.startsWith('mnemonist_')) {
     MnemonistLRUMap = require(impl + '/lru-map-with-delete')
