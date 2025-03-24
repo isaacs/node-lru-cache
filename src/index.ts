@@ -832,7 +832,7 @@ export namespace LRUCache {
 
     /**
      * Function that is called when new items are inserted into the cache,
-     * as `onInsert(value, key)`.
+     * as `onInsert(value, key, reason)`.
      *
      * This can be useful if you need to perform actions when an item is
      * added, such as logging or tracking insertions.

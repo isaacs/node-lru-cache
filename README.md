@@ -57,8 +57,15 @@ const options = {
 
   // for use when you need to clean up something when objects
   // are evicted from the cache
-  dispose: (value, key) => {
+  dispose: (value, key, reason) => {
     freeFromMemoryOrWhatever(value)
+  },
+
+  // for use when you need to know that an item is being inserted
+  // note that this does NOT allow you to prevent the insertion,
+  // it just allows you to know about it.
+  onInsert: (value, key, reason) => {
+    logInsertionOrWhatever(key, value)
   },
 
   // how long to live in ms
