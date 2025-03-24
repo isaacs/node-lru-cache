@@ -50,17 +50,14 @@
   },
   "devDependencies": {
     "@types/node": "^22.5.4",
-    "@types/tap": "^15.0.6",
     "benchmark": "^2.1.4",
-    "esbuild": "^0.17.11",
-    "eslint-config-prettier": "^8.5.0",
+    "esbuild": "^0.25.1",
     "marked": "^4.2.12",
-    "mkdirp": "^2.1.5",
-    "prettier": "^2.6.2",
-    "tap": "^21.0.1",
+    "mkdirp": "^3.0.1",
+    "prettier": "^3.5.3",
+    "tap": "^21.1.0",
     "tshy": "^3.0.2",
-    "tslib": "^2.4.0",
-    "typedoc": "^0.26.6"
+    "typedoc": "^0.28.1"
   },
   "license": "ISC",
   "files": [
