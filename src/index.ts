@@ -3,13 +3,12 @@
  */
 
 // module-private names and types
-type Perf = { now: () => number }
-const perf: Perf =
+const getPerfNow: () => number =
   typeof performance === 'object' &&
   performance &&
   typeof performance.now === 'function'
-    ? performance
-    : Date
+    ? () => performance.now()
+    : () => Date.now()
 
 const warned = new Set<string>()
 
@@ -1524,7 +1523,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     this.#ttls = ttls
     this.#starts = starts
 
-    this.#setItemTTL = (index, ttl, start = perf.now()) => {
+    this.#setItemTTL = (index, ttl, start = getPerfNow()) => {
       starts[index] = ttl !== 0 ? start : 0
       ttls[index] = ttl
       if (ttl !== 0 && this.ttlAutopurge) {
@@ -1543,7 +1542,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     }
 
     this.#updateItemAge = index => {
-      starts[index] = ttls[index] !== 0 ? perf.now() : 0
+      starts[index] = ttls[index] !== 0 ? getPerfNow() : 0
     }
 
     this.#statusTTL = (status, index) => {
@@ -1564,7 +1563,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     // that costly call repeatedly.
     let cachedNow = 0
     const getNow = () => {
-      const n = perf.now()
+      const n = getPerfNow()
       if (this.ttlResolution > 0) {
         cachedNow = n
         const t = setTimeout(
@@ -1960,7 +1959,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       const ttl = this.#ttls[i]
       const start = this.#starts[i]
       if (ttl && start) {
-        const remain = ttl - (perf.now() - start)
+        const remain = ttl - (getPerfNow() - start)
         entry.ttl = remain
         entry.start = Date.now()
       }
@@ -1998,7 +1997,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
         entry.ttl = this.#ttls[i]
         // always dump the start relative to a portable timestamp
         // it's ok for this to be a bit slow, it's a rare operation.
-        const age = perf.now() - (this.#starts[i] as number)
+        const age = getPerfNow() - (this.#starts[i] as number)
         entry.start = Math.floor(Date.now() - age)
       }
       if (this.#sizes) {
@@ -2029,7 +2028,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
         //
         // it's ok for this to be a bit slow, it's a rare operation.
         const age = Date.now() - entry.start
-        entry.start = perf.now() - age
+        entry.start = getPerfNow() - age
       }
       this.set(key, entry.value, entry)
     }
