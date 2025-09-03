@@ -10,7 +10,7 @@ const main = async () => {
   t.jobs = 3
 
   const argv = process.execArgv.filter(
-    a => !a.startsWith('--no-warnings')
+    a => !a.startsWith('--no-warnings'),
   )
   const warn = spawn(
     process.execPath,
@@ -20,7 +20,7 @@ const main = async () => {
         ...process.env,
         NODE_OPTIONS: '',
       },
-    }
+    },
   )
   const warnErr: Buffer[] = []
   warn.stderr.on('data', c => warnErr.push(c))
@@ -34,7 +34,7 @@ const main = async () => {
         LRU_CACHE_IGNORE_AC_WARNING: '1',
         NODE_OPTIONS: '',
       },
-    }
+    },
   )
   const noWarnErr: Buffer[] = []
   noWarn.stderr.on('data', c => noWarnErr.push(c))
@@ -47,7 +47,7 @@ const main = async () => {
         ...process.env,
         NODE_OPTIONS: '',
       },
-    }
+    },
   )
   const noFetchErr: Buffer[] = []
   noFetch.stderr.on('data', c => noFetchErr.push(c))
@@ -58,11 +58,11 @@ const main = async () => {
         t.equal(code, 0)
         t.equal(signal, null)
         r()
-      })
+      }),
     )
     t.notMatch(
       Buffer.concat(noWarnErr).toString().trim(),
-      'NO_ABORT_CONTROLLER'
+      'NO_ABORT_CONTROLLER',
     )
   })
 
@@ -72,11 +72,11 @@ const main = async () => {
         t.equal(code, 0)
         t.equal(signal, null)
         r()
-      })
+      }),
     )
     t.notMatch(
       Buffer.concat(noWarnErr).toString().trim(),
-      'NO_ABORT_CONTROLLER'
+      'NO_ABORT_CONTROLLER',
     )
   })
 
@@ -86,11 +86,11 @@ const main = async () => {
         t.equal(code, 0)
         t.equal(signal, null)
         r()
-      })
+      }),
     )
     t.match(
       Buffer.concat(warnErr).toString().trim(),
-      /NO_ABORT_CONTROLLER/
+      /NO_ABORT_CONTROLLER/,
     )
   })
 }

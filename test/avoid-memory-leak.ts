@@ -64,22 +64,22 @@ const runTest = async (t: Test, cache: LRUCache<any, any>) => {
       t.ok(
         profile.valListLength <= max,
         `expect valList to have fewer than ${max} items`,
-        { found: profile.valListLength }
+        { found: profile.valListLength },
       )
       t.ok(
         profile.freeLength <= 1,
         'expect free stack to have <= 1 item',
-        { found: profile.freeLength }
+        { found: profile.freeLength },
       )
       t.ok(
         profile.number_of_native_contexts <= 2,
         'expect only 1 or 2 native contexts',
-        { found: profile.number_of_native_contexts }
+        { found: profile.number_of_native_contexts },
       )
       t.equal(
         profile.number_of_detached_contexts,
         0,
-        '0 detached contexts'
+        '0 detached contexts',
       )
       profiles.push(profile)
     }
@@ -121,8 +121,8 @@ t.test('both max and maxSize', t =>
       maxSize,
       sizeCalculation: s => s.length,
       max,
-    })
-  )
+    }),
+  ),
 )
 
 t.test('no max, only maxSize', t =>
@@ -131,8 +131,8 @@ t.test('no max, only maxSize', t =>
     new LRUCache({
       maxSize,
       sizeCalculation: s => s.length,
-    })
-  )
+    }),
+  ),
 )
 
 t.test('only max, no maxSize', t => runTest(t, new LRUCache({ max })))

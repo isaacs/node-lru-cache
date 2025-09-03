@@ -3,13 +3,18 @@
  */
 
 // module-private names and types
-type Perf = { now: () => number }
+// this provides the default Perf object source.
+// it can be passed in via configuration to override it
+// for a single LRU object.
+export type Perf = { now: () => number }
 const perf: Perf =
-  typeof performance === 'object' &&
-  performance &&
-  typeof performance.now === 'function'
-    ? performance
-    : Date
+  (
+    typeof performance === 'object' &&
+    performance &&
+    typeof performance.now === 'function'
+  ) ?
+    performance
+  : Date
 
 const warned = new Set<string>()
 
@@ -18,19 +23,20 @@ type ForC = ((...a: any[]) => any) | { new (...a: any[]): any }
 
 /* c8 ignore start */
 const PROCESS = (
-  typeof process === 'object' && !!process ? process : {}
-) as { [k: string]: any }
+  typeof process === 'object' && !!process ?
+    process
+  : {}) as { [k: string]: any }
 /* c8 ignore start */
 
 const emitWarning = (
   msg: string,
   type: string,
   code: string,
-  fn: ForC
+  fn: ForC,
 ) => {
-  typeof PROCESS.emitWarning === 'function'
-    ? PROCESS.emitWarning(msg, type, code, fn)
-    : console.error(`[${code}] ${type}: ${msg}`)
+  typeof PROCESS.emitWarning === 'function' ?
+    PROCESS.emitWarning(msg, type, code, fn)
+  : console.error(`[${code}] ${type}: ${msg}`)
 }
 
 let AC = globalThis.AbortController
@@ -82,7 +88,7 @@ if (typeof AC === 'undefined') {
         'You may disable this with LRU_CACHE_IGNORE_AC_WARNING=1 in the env.',
       'NO_ABORT_CONTROLLER',
       'ENOTSUP',
-      warnACPolyfill
+      warnACPolyfill,
     )
   }
 }
@@ -110,17 +116,12 @@ export type NumberArray = UintArray | number[]
 // But why not be complete?
 // Maybe in the future, these limits will have expanded.
 const getUintArray = (max: number) =>
-  !isPosInt(max)
-    ? null
-    : max <= Math.pow(2, 8)
-    ? Uint8Array
-    : max <= Math.pow(2, 16)
-    ? Uint16Array
-    : max <= Math.pow(2, 32)
-    ? Uint32Array
-    : max <= Number.MAX_SAFE_INTEGER
-    ? ZeroArray
-    : null
+  !isPosInt(max) ? null
+  : max <= Math.pow(2, 8) ? Uint8Array
+  : max <= Math.pow(2, 16) ? Uint16Array
+  : max <= Math.pow(2, 32) ? Uint32Array
+  : max <= Number.MAX_SAFE_INTEGER ? ZeroArray
+  : null
 /* c8 ignore stop */
 
 class ZeroArray extends Array<number> {
@@ -148,7 +149,7 @@ class Stack {
   }
   constructor(
     max: number,
-    HeapCls: { new (n: number): NumberArray }
+    HeapCls: { new (n: number): NumberArray },
   ) {
     /* c8 ignore start */
     if (!Stack.#constructing) {
@@ -178,7 +179,7 @@ export type BackgroundFetch<V> = Promise<V | undefined> & {
 export type DisposeTask<K, V> = [
   value: V,
   key: K,
-  reason: LRUCache.DisposeReason
+  reason: LRUCache.DisposeReason,
 ]
 
 export namespace LRUCache {
@@ -226,7 +227,7 @@ export namespace LRUCache {
   export type Disposer<K, V> = (
     value: V,
     key: K,
-    reason: DisposeReason
+    reason: DisposeReason,
   ) => void
 
   /**
@@ -246,7 +247,7 @@ export namespace LRUCache {
   export type Inserter<K, V> = (
     value: V,
     key: K,
-    reason: InsertReason
+    reason: InsertReason,
   ) => void
 
   /**
@@ -633,7 +634,7 @@ export namespace LRUCache {
   export type Fetcher<K, V, FC = unknown> = (
     key: K,
     staleValue: V | undefined,
-    options: FetcherOptions<K, V, FC>
+    options: FetcherOptions<K, V, FC>,
   ) => Promise<V | undefined | void> | V | undefined | void
 
   /**
@@ -642,7 +643,7 @@ export namespace LRUCache {
   export type Memoizer<K, V, FC = unknown> = (
     key: K,
     staleValue: V | undefined,
-    options: MemoizerOptions<K, V, FC>
+    options: MemoizerOptions<K, V, FC>,
   ) => V
 
   /**
@@ -1095,6 +1096,16 @@ export namespace LRUCache {
      * call to {@link LRUCache#fetch}.
      */
     ignoreFetchAbort?: boolean
+
+    /**
+     * In some cases, you may want to swap out the performance/Date object
+     * used for TTL tracking. This should almost certainly NOT be done in
+     * production environments!
+     *
+     * This value defaults to `global.performance` if it has a `now()` method,
+     * or the `global.Date` object otherwise.
+     */
+    perf?: Perf
   }
 
   export interface OptionsMaxLimit<K, V, FC>
@@ -1252,7 +1263,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   static unsafeExposeInternals<
     K extends {},
     V extends {},
-    FC extends unknown = unknown
+    FC extends unknown = unknown,
   >(c: LRUCache<K, V, FC>) {
     return {
       // properties
@@ -1277,13 +1288,13 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
         k: K,
         index: number | undefined,
         options: LRUCache.FetchOptions<K, V, FC>,
-        context: any
+        context: any,
       ): BackgroundFetch<V> =>
         c.#backgroundFetch(
           k,
           index as Index | undefined,
           options,
-          context
+          context,
         ),
       moveToTail: (index: number): void =>
         c.#moveToTail(index as Index),
@@ -1351,7 +1362,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   }
 
   constructor(
-    options: LRUCache.Options<K, V, FC> | LRUCache<K, V, FC>
+    options: LRUCache.Options<K, V, FC> | LRUCache<K, V, FC>,
   ) {
     const {
       max = 0,
@@ -1394,7 +1405,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     if (this.sizeCalculation) {
       if (!this.#maxSize && !this.maxEntrySize) {
         throw new TypeError(
-          'cannot set sizeCalculation without setting maxSize or maxEntrySize'
+          'cannot set sizeCalculation without setting maxSize or maxEntrySize',
         )
       }
       if (typeof this.sizeCalculation !== 'function') {
@@ -1415,7 +1426,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       typeof fetchMethod !== 'function'
     ) {
       throw new TypeError(
-        'fetchMethod must be a function if specified'
+        'fetchMethod must be a function if specified',
       )
     }
     this.#fetchMethod = fetchMethod
@@ -1461,13 +1472,13 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       if (this.#maxSize !== 0) {
         if (!isPosInt(this.#maxSize)) {
           throw new TypeError(
-            'maxSize must be a positive integer if specified'
+            'maxSize must be a positive integer if specified',
           )
         }
       }
       if (!isPosInt(this.maxEntrySize)) {
         throw new TypeError(
-          'maxEntrySize must be a positive integer if specified'
+          'maxEntrySize must be a positive integer if specified',
         )
       }
       this.#initializeSizeTracking()
@@ -1478,15 +1489,15 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     this.updateAgeOnGet = !!updateAgeOnGet
     this.updateAgeOnHas = !!updateAgeOnHas
     this.ttlResolution =
-      isPosInt(ttlResolution) || ttlResolution === 0
-        ? ttlResolution
-        : 1
+      isPosInt(ttlResolution) || ttlResolution === 0 ?
+        ttlResolution
+      : 1
     this.ttlAutopurge = !!ttlAutopurge
     this.ttl = ttl || 0
     if (this.ttl) {
       if (!isPosInt(this.ttl)) {
         throw new TypeError(
-          'ttl must be a positive integer if specified'
+          'ttl must be a positive integer if specified',
         )
       }
       this.#initializeTTLTracking()
@@ -1495,7 +1506,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     // do not allow completely unbounded caches
     if (this.#max === 0 && this.ttl === 0 && this.#maxSize === 0) {
       throw new TypeError(
-        'At least one of max, maxSize, or ttl is required'
+        'At least one of max, maxSize, or ttl is required',
       )
     }
     if (!this.ttlAutopurge && !this.#max && !this.#maxSize) {
@@ -1569,7 +1580,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
         cachedNow = n
         const t = setTimeout(
           () => (cachedNow = 0),
-          this.ttlResolution
+          this.ttlResolution,
         )
         // not available on all platforms
         /* c8 ignore start */
@@ -1609,7 +1620,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   #setItemTTL: (
     index: Index,
     ttl: LRUCache.Milliseconds,
-    start?: LRUCache.Milliseconds
+    start?: LRUCache.Milliseconds,
     // ignore because we never call this if we're not already in TTL mode
     /* c8 ignore start */
   ) => void = () => {}
@@ -1639,14 +1650,14 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
           size = sizeCalculation(v, k)
           if (!isPosInt(size)) {
             throw new TypeError(
-              'sizeCalculation return invalid (expect positive integer)'
+              'sizeCalculation return invalid (expect positive integer)',
             )
           }
         } else {
           throw new TypeError(
             'invalid size value (must be positive integer). ' +
               'When maxSize or maxEntrySize is used, sizeCalculation ' +
-              'or size must be set.'
+              'or size must be set.',
           )
         }
       }
@@ -1655,7 +1666,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     this.#addItemSize = (
       index: Index,
       size: LRUCache.Size,
-      status?: LRUCache.Status<V>
+      status?: LRUCache.Status<V>,
     ) => {
       sizes[index] = size
       if (this.#maxSize) {
@@ -1676,22 +1687,22 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   #addItemSize: (
     index: Index,
     size: LRUCache.Size,
-    status?: LRUCache.Status<V>
+    status?: LRUCache.Status<V>,
   ) => void = (_i, _s, _st) => {}
   #requireSize: (
     k: K,
     v: V | BackgroundFetch<V>,
     size?: LRUCache.Size,
-    sizeCalculation?: LRUCache.SizeCalculator<K, V>
+    sizeCalculation?: LRUCache.SizeCalculator<K, V>,
   ) => LRUCache.Size = (
     _k: K,
     _v: V | BackgroundFetch<V>,
     size?: LRUCache.Size,
-    sizeCalculation?: LRUCache.SizeCalculator<K, V>
+    sizeCalculation?: LRUCache.SizeCalculator<K, V>,
   ) => {
     if (size || sizeCalculation) {
       throw new TypeError(
-        'cannot set size without setting maxSize or maxEntrySize on cache'
+        'cannot set size without setting maxSize or maxEntrySize on cache',
       )
     }
     return 0
@@ -1863,13 +1874,12 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
    */
   find(
     fn: (v: V, k: K, self: LRUCache<K, V, FC>) => boolean,
-    getOptions: LRUCache.GetOptions<K, V, FC> = {}
+    getOptions: LRUCache.GetOptions<K, V, FC> = {},
   ) {
     for (const i of this.#indexes()) {
       const v = this.#valList[i]
-      const value = this.#isBackgroundFetch(v)
-        ? v.__staleWhileFetching
-        : v
+      const value =
+        this.#isBackgroundFetch(v) ? v.__staleWhileFetching : v
       if (value === undefined) continue
       if (fn(value, this.#keyList[i] as K, this)) {
         return this.get(this.#keyList[i] as K, getOptions)
@@ -1890,13 +1900,12 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
    */
   forEach(
     fn: (v: V, k: K, self: LRUCache<K, V, FC>) => any,
-    thisp: any = this
+    thisp: any = this,
   ) {
     for (const i of this.#indexes()) {
       const v = this.#valList[i]
-      const value = this.#isBackgroundFetch(v)
-        ? v.__staleWhileFetching
-        : v
+      const value =
+        this.#isBackgroundFetch(v) ? v.__staleWhileFetching : v
       if (value === undefined) continue
       fn.call(thisp, value, this.#keyList[i] as K, this)
     }
@@ -1908,13 +1917,12 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
    */
   rforEach(
     fn: (v: V, k: K, self: LRUCache<K, V, FC>) => any,
-    thisp: any = this
+    thisp: any = this,
   ) {
     for (const i of this.#rindexes()) {
       const v = this.#valList[i]
-      const value = this.#isBackgroundFetch(v)
-        ? v.__staleWhileFetching
-        : v
+      const value =
+        this.#isBackgroundFetch(v) ? v.__staleWhileFetching : v
       if (value === undefined) continue
       fn.call(thisp, value, this.#keyList[i] as K, this)
     }
@@ -1951,10 +1959,12 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     const i = this.#keyMap.get(key)
     if (i === undefined) return undefined
     const v = this.#valList[i]
-    const value: V | undefined = this.#isBackgroundFetch(v)
-      ? v.__staleWhileFetching
-      : v
+    /* c8 ignore start - this isn't tested for the info function, 
+     * but it's the same logic as found in other places. */
+    const value: V | undefined =
+      this.#isBackgroundFetch(v) ? v.__staleWhileFetching : v
     if (value === undefined) return undefined
+    /* c8 ignore end */
     const entry: LRUCache.Entry<V> = { value }
     if (this.#ttls && this.#starts) {
       const ttl = this.#ttls[i]
@@ -1989,9 +1999,8 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     for (const i of this.#indexes({ allowStale: true })) {
       const key = this.#keyList[i]
       const v = this.#valList[i]
-      const value: V | undefined = this.#isBackgroundFetch(v)
-        ? v.__staleWhileFetching
-        : v
+      const value: V | undefined =
+        this.#isBackgroundFetch(v) ? v.__staleWhileFetching : v
       if (value === undefined || key === undefined) continue
       const entry: LRUCache.Entry<V> = { value }
       if (this.#ttls && this.#starts) {
@@ -2068,7 +2077,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   set(
     k: K,
     v: V | BackgroundFetch<V> | undefined,
-    setOptions: LRUCache.SetOptions<K, V, FC> = {}
+    setOptions: LRUCache.SetOptions<K, V, FC> = {},
   ) {
     if (v === undefined) {
       this.delete(k)
@@ -2087,7 +2096,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       k,
       v,
       setOptions.size || 0,
-      sizeCalculation
+      sizeCalculation,
     )
     // if the item doesn't fit, don't do anything
     // NB: maxEntrySize set to maxSize by default
@@ -2104,14 +2113,10 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     if (index === undefined) {
       // addition
       index = (
-        this.#size === 0
-          ? this.#tail
-          : this.#free.length !== 0
-          ? this.#free.pop()
-          : this.#size === this.#max
-          ? this.#evict(false)
-          : this.#size
-      ) as Index
+        this.#size === 0 ? this.#tail
+        : this.#free.length !== 0 ? this.#free.pop()
+        : this.#size === this.#max ? this.#evict(false)
+        : this.#size) as Index
       this.#keyList[index] = k
       this.#valList[index] = v
       this.#keyMap.set(k, index)
@@ -2155,9 +2160,9 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
         if (status) {
           status.set = 'replace'
           const oldValue =
-            oldVal && this.#isBackgroundFetch(oldVal)
-              ? oldVal.__staleWhileFetching
-              : oldVal
+            oldVal && this.#isBackgroundFetch(oldVal) ?
+              oldVal.__staleWhileFetching
+            : oldVal
           if (oldValue !== undefined) status.oldValue = oldValue
         }
       } else if (status) {
@@ -2165,7 +2170,11 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       }
 
       if (this.#hasOnInsert) {
-        this.onInsert?.(v as V, k, v === oldVal ? 'update' : 'replace');
+        this.onInsert?.(
+          v as V,
+          k,
+          v === oldVal ? 'update' : 'replace',
+        )
       }
     }
     if (ttl !== 0 && !this.#ttls) {
@@ -2319,7 +2328,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     k: K,
     index: Index | undefined,
     options: LRUCache.FetchOptions<K, V, FC>,
-    context: any
+    context: any,
   ): BackgroundFetch<V> {
     const v = index === undefined ? undefined : this.#valList[index]
     if (this.#isBackgroundFetch(v)) {
@@ -2341,7 +2350,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
 
     const cb = (
       v: V | undefined,
-      updateCache = false
+      updateCache = false,
     ): V | undefined => {
       const { aborted } = ac.signal
       const ignoreAbort = options.ignoreFetchAbort && v !== undefined
@@ -2361,7 +2370,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       const bf = p as BackgroundFetch<V>
       if (this.#valList[index as Index] === p) {
         if (v === undefined) {
-          if (bf.__staleWhileFetching) {
+          if (bf.__staleWhileFetching !== undefined) {
             this.#valList[index as Index] = bf.__staleWhileFetching
           } else {
             this.#delete(k, 'fetch')
@@ -2416,7 +2425,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
 
     const pcall = (
       res: (v: V | undefined) => void,
-      rej: (e: any) => void
+      rej: (e: any) => void,
     ) => {
       const fmp = this.#fetchMethod?.(k, v, fetchOpts)
       if (fmp && fmp instanceof Promise) {
@@ -2556,30 +2565,27 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
 
   fetch(
     k: K,
-    fetchOptions: unknown extends FC
-      ? LRUCache.FetchOptions<K, V, FC>
-      : FC extends undefined | void
-      ? LRUCache.FetchOptionsNoContext<K, V>
-      : LRUCache.FetchOptionsWithContext<K, V, FC>
+    fetchOptions: unknown extends FC ? LRUCache.FetchOptions<K, V, FC>
+    : FC extends undefined | void ?
+      LRUCache.FetchOptionsNoContext<K, V>
+    : LRUCache.FetchOptionsWithContext<K, V, FC>,
   ): Promise<undefined | V>
 
   // this overload not allowed if context is required
   fetch(
-    k: unknown extends FC
-      ? K
-      : FC extends undefined | void
-      ? K
-      : never,
-    fetchOptions?: unknown extends FC
-      ? LRUCache.FetchOptions<K, V, FC>
-      : FC extends undefined | void
-      ? LRUCache.FetchOptionsNoContext<K, V>
-      : never
+    k: unknown extends FC ? K
+    : FC extends undefined | void ? K
+    : never,
+    fetchOptions?: unknown extends FC ?
+      LRUCache.FetchOptions<K, V, FC>
+    : FC extends undefined | void ?
+      LRUCache.FetchOptionsNoContext<K, V>
+    : never,
   ): Promise<undefined | V>
 
   async fetch(
     k: K,
-    fetchOptions: LRUCache.FetchOptions<K, V, FC> = {}
+    fetchOptions: LRUCache.FetchOptions<K, V, FC> = {},
   ): Promise<undefined | V> {
     const {
       // get options
@@ -2689,36 +2695,33 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
    */
   forceFetch(
     k: K,
-    fetchOptions: unknown extends FC
-      ? LRUCache.FetchOptions<K, V, FC>
-      : FC extends undefined | void
-      ? LRUCache.FetchOptionsNoContext<K, V>
-      : LRUCache.FetchOptionsWithContext<K, V, FC>
+    fetchOptions: unknown extends FC ? LRUCache.FetchOptions<K, V, FC>
+    : FC extends undefined | void ?
+      LRUCache.FetchOptionsNoContext<K, V>
+    : LRUCache.FetchOptionsWithContext<K, V, FC>,
   ): Promise<V>
   // this overload not allowed if context is required
   forceFetch(
-    k: unknown extends FC
-      ? K
-      : FC extends undefined | void
-      ? K
-      : never,
-    fetchOptions?: unknown extends FC
-      ? LRUCache.FetchOptions<K, V, FC>
-      : FC extends undefined | void
-      ? LRUCache.FetchOptionsNoContext<K, V>
-      : never
+    k: unknown extends FC ? K
+    : FC extends undefined | void ? K
+    : never,
+    fetchOptions?: unknown extends FC ?
+      LRUCache.FetchOptions<K, V, FC>
+    : FC extends undefined | void ?
+      LRUCache.FetchOptionsNoContext<K, V>
+    : never,
   ): Promise<V>
   async forceFetch(
     k: K,
-    fetchOptions: LRUCache.FetchOptions<K, V, FC> = {}
+    fetchOptions: LRUCache.FetchOptions<K, V, FC> = {},
   ): Promise<V> {
     const v = await this.fetch(
       k,
-      fetchOptions as unknown extends FC
-        ? LRUCache.FetchOptions<K, V, FC>
-        : FC extends undefined | void
-        ? LRUCache.FetchOptionsNoContext<K, V>
-        : LRUCache.FetchOptionsWithContext<K, V, FC>
+      fetchOptions as unknown extends FC ?
+        LRUCache.FetchOptions<K, V, FC>
+      : FC extends undefined | void ?
+        LRUCache.FetchOptionsNoContext<K, V>
+      : LRUCache.FetchOptionsWithContext<K, V, FC>,
     )
     if (v === undefined) throw new Error('fetch() returned undefined')
     return v
@@ -2740,24 +2743,20 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
    */
   memo(
     k: K,
-    memoOptions: unknown extends FC
-      ? LRUCache.MemoOptions<K, V, FC>
-      : FC extends undefined | void
-      ? LRUCache.MemoOptionsNoContext<K, V>
-      : LRUCache.MemoOptionsWithContext<K, V, FC>
+    memoOptions: unknown extends FC ? LRUCache.MemoOptions<K, V, FC>
+    : FC extends undefined | void ?
+      LRUCache.MemoOptionsNoContext<K, V>
+    : LRUCache.MemoOptionsWithContext<K, V, FC>,
   ): V
   // this overload not allowed if context is required
   memo(
-    k: unknown extends FC
-      ? K
-      : FC extends undefined | void
-      ? K
-      : never,
-    memoOptions?: unknown extends FC
-      ? LRUCache.MemoOptions<K, V, FC>
-      : FC extends undefined | void
-      ? LRUCache.MemoOptionsNoContext<K, V>
-      : never
+    k: unknown extends FC ? K
+    : FC extends undefined | void ? K
+    : never,
+    memoOptions?: unknown extends FC ? LRUCache.MemoOptions<K, V, FC>
+    : FC extends undefined | void ?
+      LRUCache.MemoOptionsNoContext<K, V>
+    : never,
   ): V
   memo(k: K, memoOptions: LRUCache.MemoOptions<K, V, FC> = {}) {
     const memoMethod = this.#memoMethod
@@ -2853,7 +2852,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       } else {
         this.#connect(
           this.#prev[index] as Index,
-          this.#next[index] as Index
+          this.#next[index] as Index,
         )
       }
       this.#connect(this.#tail, index)

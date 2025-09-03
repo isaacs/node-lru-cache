@@ -7,7 +7,7 @@ t.throws(
       max: 1,
       //@ts-expect-error
       memoMethod: true,
-    })
+    }),
 )
 t.throws(() => new LRUCache({ max: 1 }).memo(3))
 
@@ -39,7 +39,7 @@ t.test('with context', t => {
     {
       context,
       options,
-    }: LRUCache.MemoizerOptions<number, number, boolean>
+    }: LRUCache.MemoizerOptions<number, number, boolean>,
   ) => {
     memoCalls.push([k, v, context])
     t.type(context, 'boolean')

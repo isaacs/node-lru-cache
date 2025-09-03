@@ -21,7 +21,7 @@ const boolOpts = (n: number): number[][] => {
         .toString(2)
         .slice(1)
         .split('')
-        .map(n => +n)
+        .map(n => +n),
     )
   }
   return arr
@@ -40,7 +40,7 @@ const permute = (arr: number[] | number): number[][] => {
     const items = arr.slice(0)
     const item = items.splice(i, 1)
     permutations.push(
-      ...permute(items).map(perm => item.concat(perm))
+      ...permute(items).map(perm => item.concat(perm)),
     )
   }
   return permutations
@@ -88,7 +88,7 @@ const runTestStep = ({
   c.purgeStale()
   assert.deepEqual(
     [...e.rindexes()],
-    [...e.rindexes({ allowStale: true })]
+    [...e.rindexes({ allowStale: true })],
   )
   // make all go stale
   clock.advance(100)

@@ -12,12 +12,12 @@ t.test('verify require works as expected', async t => {
   t.equal(
     req.resolve('../'),
     req.resolve('../dist/commonjs/index.js'),
-    'require resolves to expected module'
+    'require resolves to expected module',
   )
   const { LRUCache } = await t.mockImport('../dist/esm/index.js', {})
   t.equal(
     LRUCache.toString().split(/\r?\n/)[0].trim(),
-    'class LRUCache {'
+    'class LRUCache {',
   )
 })
 
@@ -40,12 +40,12 @@ t.test('basic operation', t => {
   t.equal(
     c.getRemainingTTL(1),
     Infinity,
-    'no ttl, so returns Infinity'
+    'no ttl, so returns Infinity',
   )
   t.equal(
     c.getRemainingTTL('not in cache'),
     0,
-    'not in cache, no ttl'
+    'not in cache, no ttl',
   )
 
   for (let i = 5; i < 10; i++) {
@@ -141,14 +141,14 @@ t.test('bad max values', t => {
       sizeOnly.set('foo', 'bar', {
         sizeCalculation: () => -1,
       }),
-    TypeError
+    TypeError,
   )
   t.throws(
     () =>
       sizeOnly.set('foo', 'bar', {
         sizeCalculation: () => 0,
       }),
-    TypeError
+    TypeError,
   )
 
   const ttlOnly = new LRU({ ttl: 1000, ttlAutopurge: true })
@@ -178,11 +178,11 @@ t.test('setting maxSize with non-integer values', t => {
   t.throws(
     // @ts-expect-error
     () => new LRU({ max: 10, maxEntrySize: 'banana' }),
-    TypeError
+    TypeError,
   )
   t.throws(
     () => new LRU({ max: 10, maxEntrySize: Infinity }),
-    TypeError
+    TypeError,
   )
   // @ts-expect-error
   t.throws(() => new LRU({ max: 10, maxSize: 'banana' }), TypeError)
@@ -244,7 +244,7 @@ t.test('re-use key before initial fill completed', t => {
       [1, 2],
       [2, 2],
       [0, 0],
-    ]
+    ],
   )
   t.matchSnapshot(statuses)
   t.end()

@@ -6,14 +6,14 @@ import { LRUCache as LRU } from '../dist/esm/index.js'
 import { expose } from './fixtures/expose.js'
 
 const entriesFromForeach = <K extends {}, V extends {}>(
-  c: LRU<K, V>
+  c: LRU<K, V>,
 ): [k: K, v: V][] => {
   const e: [k: K, v: V][] = []
   c.forEach((v, k) => e.push([k, v]))
   return e
 }
 const entriesFromRForeach = <K extends {}, V extends {}>(
-  c: LRU<K, V>
+  c: LRU<K, V>,
 ): [k: K, v: V][] => {
   const e: [k: K, v: V][] = []
   c.rforEach((v, k) => e.push([k, v]))
@@ -65,14 +65,14 @@ t.test('bunch of iteration things', async t => {
   t.matchSnapshot(c.entries(), 'fetch 123 resolved, entries')
   t.matchSnapshot(
     entriesFromForeach(c),
-    'fetch 123 resolved, foreach'
+    'fetch 123 resolved, foreach',
   )
   t.matchSnapshot(c.rkeys(), 'fetch 123 resolved, rkeys')
   t.matchSnapshot(c.rvalues(), 'fetch 123 resolved, rvalues')
   t.matchSnapshot(c.rentries(), 'fetch 123 resolved, rentries')
   t.matchSnapshot(
     entriesFromRForeach(c),
-    'fetch 123 resolved, rforeach'
+    'fetch 123 resolved, rforeach',
   )
   t.matchSnapshot(c.dump(), 'fetch 123 resolved, dump')
 
@@ -106,7 +106,7 @@ t.test('bunch of iteration things', async t => {
   t.matchSnapshot(c.rvalues(), 'rvalues, resolved fetch 99 too late')
   t.matchSnapshot(
     c.rentries(),
-    'rentries, resolved fetch 99 too late'
+    'rentries, resolved fetch 99 too late',
   )
   t.matchSnapshot(c.dump(), 'dump, resolved fetch 99 too late')
 

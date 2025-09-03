@@ -9,7 +9,7 @@ t.teardown(() => {})
 
 const fn: LRUCache.Fetcher<any, any> = async (_, v) =>
   new Promise(res =>
-    queueMicrotask(() => res(v === undefined ? 0 : v + 1))
+    queueMicrotask(() => res(v === undefined ? 0 : v + 1)),
   )
 
 const clock = t.clock
@@ -46,7 +46,7 @@ t.test('asynchronous fetching', async t => {
   t.equal(
     await c.fetch('key', { allowStale: true, status: s31 }),
     0,
-    'get stale data again while re-fetching because stale previously'
+    'get stale data again while re-fetching because stale previously',
   )
   t.matchSnapshot(s31, 'status 3.1')
   const s4 = getStatusObj()
@@ -64,7 +64,7 @@ t.test('asynchronous fetching', async t => {
   t.equal(
     v6,
     1,
-    'fetch while stale, starts new fetch, return stale data'
+    'fetch while stale, starts new fetch, return stale data',
   )
   const e = expose(c)
   const v = e.valList[0]
@@ -110,7 +110,7 @@ t.test('asynchronous fetching', async t => {
   t.equal(
     v15,
     0,
-    'there was no stale data, even though we were ok with that'
+    'there was no stale data, even though we were ok with that',
   )
 
   c.set('key5', 0)
@@ -125,7 +125,7 @@ t.test('asynchronous fetching', async t => {
   t.equal(
     v18,
     undefined,
-    'get while fetching, but did not want stale data'
+    'get while fetching, but did not want stale data',
   )
 
   const p6 = c.fetch('key6')
@@ -135,7 +135,7 @@ t.test('asynchronous fetching', async t => {
   t.equal(
     v20,
     undefined,
-    'get while fetching, but no stale data to return'
+    'get while fetching, but no stale data to return',
   )
   t.equal(await p6, 0)
   clock.advance(100)
@@ -146,7 +146,7 @@ t.test('asynchronous fetching', async t => {
   t.equal(
     status.returnedStale,
     true,
-    'status reflects stale data returned'
+    'status reflects stale data returned',
   )
   clock.advance(100)
   t.equal(await p7, 1, 'eventually updated')
@@ -164,7 +164,7 @@ t.test('fetch without fetch method', async t => {
   const status: LRUCache.Status<number> = {}
   t.same(
     await Promise.all([c.fetch(0, { status }), c.fetch(1)]),
-    [0, 1]
+    [0, 1],
   )
   t.matchSnapshot(status, 'status update')
 })
@@ -243,7 +243,7 @@ t.test('fetch options, signal', async t => {
   t.equal(
     c.getRemainingTTL(6),
     1000,
-    'overridden ttl in fetch() opts'
+    'overridden ttl in fetch() opts',
   )
   await c.fetch(2, { ttl: 1, status: s() })
   t.equal(c.getRemainingTTL(2), 25, 'overridden ttl in fetchMethod')
@@ -288,7 +288,7 @@ t.test('fetchMethod throws', async t => {
   t.equal(
     cache.get('a', { status: s() }),
     undefined,
-    'removed from cache'
+    'removed from cache',
   )
   const b = await Promise.all([
     cache.fetch('b', { status: s() }),
@@ -301,7 +301,7 @@ t.test('fetchMethod throws', async t => {
   t.equal(
     cache.get('b', { status: s() }),
     undefined,
-    'removed from cache'
+    'removed from cache',
   )
   const ap = cache.fetch('a', { status: s() })
   const testap = t.rejects(ap, 'aborted by replace')
@@ -310,7 +310,7 @@ t.test('fetchMethod throws', async t => {
   t.equal(
     cache.get('a', { status: s() }),
     99,
-    'did not delete new value'
+    'did not delete new value',
   )
   t.rejects(cache.fetch('b', { status: s() }), {
     message: 'fetch failure',
@@ -381,7 +381,7 @@ t.test(
     await t.rejects(cache.fetch('b'), { message: 'fetch failure' })
     t.equal(e.keyMap.get('b'), undefined, 'not in cache')
     t.equal(e.valList[1], undefined, 'not in cache')
-  }
+  },
 )
 
 t.test('fetch context', async t => {
@@ -432,7 +432,7 @@ t.test('forceRefresh', async t => {
         //@ts-expect-error
         options.forceRefresh,
         undefined,
-        'do not expose forceRefresh'
+        'do not expose forceRefresh',
       )
       return new Promise<number>(res => queueMicrotask(() => res(k)))
     },
@@ -450,14 +450,14 @@ t.test('forceRefresh', async t => {
       allowStale: false,
       status,
     }),
-    2
+    2,
   )
   t.equal(status.fetch, 'refresh', 'status reflects forced refresh')
   t.equal(await cache.fetch(1, { forceRefresh: true }), 100)
   clock.advance(100)
   t.equal(
     await cache.fetch(2, { forceRefresh: true, status: s() }),
-    2
+    2,
   )
   t.equal(cache.peek(1), 100)
   // if we don't allow stale though, then that means that we wait
@@ -472,7 +472,7 @@ t.test('forceRefresh', async t => {
       allowStale: false,
       status: s(),
     }),
-    1
+    1,
   )
 
   t.matchSnapshot(statuses, 'status updates')
@@ -497,7 +497,7 @@ t.test('allowStaleOnFetchRejection', async t => {
   t.equal(
     status.returnedStale,
     true,
-    'status reflects returned stale value'
+    'status reflects returned stale value',
   )
   t.equal(await c.fetch(1), 1)
   // if we override it, no go
@@ -534,7 +534,7 @@ t.test(
       [
         [5, 5],
         [4, 4],
-      ]
+      ],
     )
 
     resolves[3]?.(3)
@@ -544,12 +544,12 @@ t.test(
       [
         [3, 3],
         [5, 5],
-      ]
+      ],
     )
 
     t.equal(c.size, 2)
     t.equal([...c].length, 2)
-  }
+  },
 )
 
 t.test('send a signal', async t => {
@@ -573,7 +573,7 @@ t.test('send a signal', async t => {
         setTimeout(() => {
           resolved = true
           res(k)
-        }, 100)
+        }, 100),
       )
     },
   })
@@ -586,7 +586,7 @@ t.test('send a signal', async t => {
   t.equal(
     resolved,
     false,
-    'should have aborted before fetchMethod resolved'
+    'should have aborted before fetchMethod resolved',
   )
   t.equal(aborted, er)
   t.equal(ac.signal.reason, er)
@@ -622,7 +622,7 @@ t.test('verify inflight works as expected', async t => {
   t.equal(
     e.isBackgroundFetch(e.valList[0]),
     true,
-    'is background fetch'
+    'is background fetch',
   )
   t.equal(c.get(1, { status: s() }), undefined, 'get while fetching')
   const a = await Promise.all(promises)
@@ -650,7 +650,7 @@ t.test('abort, but then keep on fetching anyway', async t => {
           resolved = true
           if (returnUndefined) res()
           else res(k)
-        }, 100)
+        }, 100),
       )
     },
   })
@@ -664,7 +664,7 @@ t.test('abort, but then keep on fetching anyway', async t => {
   t.equal(
     status.fetchAbortIgnored,
     true,
-    'status reflects ignored abort'
+    'status reflects ignored abort',
   )
   t.equal(status.fetchError, er)
   t.equal(status.fetchUpdated, true)
@@ -726,7 +726,7 @@ t.test('allowStaleOnFetchAbort', async t => {
   t.equal(await p, 10)
   t.equal(
     c.get(1, { allowStale: true, noDeleteOnStaleGet: true }),
-    10
+    10,
   )
   const p2 = c.fetch(1)
   c.set(1, 100)

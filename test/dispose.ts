@@ -175,7 +175,7 @@ t.test('disposeAfter', t => {
       [2, 21],
       [97, 97],
       [96, 96],
-    ]
+    ],
   )
   c.delete(2)
   t.same(
@@ -186,7 +186,7 @@ t.test('disposeAfter', t => {
       [98, 98],
       [97, 97],
       [96, 96],
-    ]
+    ],
   )
   for (let i = 96; i < 100; i++) {
     c.set(i, i + 1)
@@ -199,7 +199,7 @@ t.test('disposeAfter', t => {
       [97, 98],
       [96, 97],
       [2, 22],
-    ]
+    ],
   )
   c.clear()
   t.same([...c.entries()], [[2, 23]])

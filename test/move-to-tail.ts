@@ -10,11 +10,9 @@ t.test('list integrity', { bail: true }, t => {
     index,
     prev: exp.prev[index],
     _:
-      index === exp.tail
-        ? 'T'
-        : index === exp.head
-        ? 'H'
-        : '' + index,
+      index === exp.tail ? 'T'
+      : index === exp.head ? 'H'
+      : '' + index,
     next: exp.next[index],
     head: exp.head,
     tail: exp.tail,

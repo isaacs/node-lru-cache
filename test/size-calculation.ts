@@ -103,8 +103,8 @@ t.test('bad size calculation fn throws on set()', t => {
   t.throws(
     () => c.set(1, '1'.repeat(100)),
     new TypeError(
-      'sizeCalculation return invalid (expect positive integer)'
-    )
+      'sizeCalculation return invalid (expect positive integer)',
+    ),
   )
   t.throws(() => {
     // @ts-expect-error

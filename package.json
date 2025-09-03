@@ -49,15 +49,14 @@
     "url": "git://github.com/isaacs/node-lru-cache.git"
   },
   "devDependencies": {
-    "@types/node": "^22.5.4",
+    "@types/node": "^24.3.0",
     "benchmark": "^2.1.4",
-    "esbuild": "^0.25.1",
     "marked": "^4.2.12",
     "mkdirp": "^3.0.1",
-    "prettier": "^3.5.3",
+    "prettier": "^3.6.2",
     "tap": "^21.1.0",
     "tshy": "^3.0.2",
-    "typedoc": "^0.28.1"
+    "typedoc": "^0.28.12"
   },
   "license": "ISC",
   "files": [
@@ -67,6 +66,7 @@
     "node": "20 || >=22"
   },
   "prettier": {
+    "experimentalTernaries": true,
     "semi": false,
     "printWidth": 70,
     "tabWidth": 2,
@@ -108,5 +108,8 @@
     }
   },
   "type": "module",
-  "module": "./dist/esm/index.js"
+  "module": "./dist/esm/index.js",
+  "dependencies": {
+    "esbuild": "^0.25.9"
+  }
 }

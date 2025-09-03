@@ -1,6 +1,7 @@
 if (typeof performance === 'undefined') {
   global.performance = require('perf_hooks').performance
 }
+
 import t, { Test } from 'tap'
 import { LRUCache } from '../dist/esm/index.js'
 import { expose } from './fixtures/expose.js'
@@ -18,7 +19,7 @@ const runTests = (LRU: typeof LRUCache, t: Test) => {
   const { setTimeout, clearTimeout } = global
   t.teardown(() =>
     // @ts-ignore
-    Object.assign(global, { setTimeout, clearTimeout })
+    Object.assign(global, { setTimeout, clearTimeout }),
   )
   //@ts-ignore
   global.setTimeout = clock.setTimeout.bind(clock)
@@ -47,7 +48,7 @@ const runTests = (LRU: typeof LRUCache, t: Test) => {
     t.equal(
       c.getRemainingTTL('not in cache'),
       0,
-      'thing doesnt exist'
+      'thing doesnt exist',
     )
     clock.advance(5)
     t.equal(c.get(1, { status: s() }), 1, '1 get not stale', {
@@ -149,7 +150,7 @@ const runTests = (LRU: typeof LRUCache, t: Test) => {
         t.ok(c.ttlResolution >= 0)
       }
       t.end()
-    }
+    },
   )
 
   t.test('ttlAutopurge', t => {
@@ -346,17 +347,17 @@ const runTests = (LRU: typeof LRUCache, t: Test) => {
     t.equal(
       c.get(2, { status: s() }),
       undefined,
-      'fell out of cache normally'
+      'fell out of cache normally',
     )
     t.equal(
       c.get(1, { status: s() }),
       1,
-      'still in cache, ttl updated'
+      'still in cache, ttl updated',
     )
     t.equal(
       c.get(0, { status: s() }),
       undefined,
-      'fell out of cache, despite update'
+      'fell out of cache, despite update',
     )
 
     clock.advance(9)
@@ -364,7 +365,7 @@ const runTests = (LRU: typeof LRUCache, t: Test) => {
     t.equal(
       c.get(1, { status: s() }),
       undefined,
-      'fell out of cache after ttl update'
+      'fell out of cache after ttl update',
     )
 
     t.end()
@@ -400,7 +401,7 @@ const runTests = (LRU: typeof LRUCache, t: Test) => {
         indexesStale: [3, 1, 9, 8, 7, 6, 5, 4, 2, 0],
         rindexes: [4, 5, 6, 7, 8, 9, 3],
         rindexesStale: [0, 2, 4, 5, 6, 7, 8, 9, 1, 3],
-      }
+      },
     )
     t.end()
   })
@@ -491,7 +492,7 @@ const runTests = (LRU: typeof LRUCache, t: Test) => {
     t.equal(c.get(1, { allowStale: true }), 1)
     t.equal(
       c.get(1, { allowStale: true, noDeleteOnStaleGet: false }),
-      1
+      1,
     )
     t.equal(c.get(1, { allowStale: true }), undefined)
     t.end()
