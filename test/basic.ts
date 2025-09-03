@@ -28,7 +28,15 @@ t.test('basic operation', t => {
     statuses.push(status)
     return status
   }
-  const c = new LRU({ max: 10 })
+
+  //@ts-expect-error
+  t.throws(() => new LRU({ max: 10, perf: {} }), {
+    name: 'TypeError',
+    message: 'perf option must have a now() method if specified',
+  })
+
+  const c = new LRU({ max: 10, perf: Date })
+  t.equal(c.perf, Date)
   for (let i = 0; i < 5; i++) {
     t.equal(c.set(i, i, { status: s() }), c)
   }

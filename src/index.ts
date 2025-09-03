@@ -7,7 +7,7 @@
 // it can be passed in via configuration to override it
 // for a single LRU object.
 export type Perf = { now: () => number }
-const perf: Perf =
+const defaultPerf: Perf =
   (
     typeof performance === 'object' &&
     performance &&
@@ -1166,6 +1166,14 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   readonly #disposeAfter?: LRUCache.Disposer<K, V>
   readonly #fetchMethod?: LRUCache.Fetcher<K, V, FC>
   readonly #memoMethod?: LRUCache.Memoizer<K, V, FC>
+  readonly #perf: Perf
+
+  /**
+   * {@link LRUCache.OptionsBase.perf}
+   */
+  get perf() {
+    return this.#perf
+  }
 
   /**
    * {@link LRUCache.OptionsBase.ttl}
@@ -1387,7 +1395,18 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       allowStaleOnFetchRejection,
       allowStaleOnFetchAbort,
       ignoreFetchAbort,
+      perf,
     } = options
+
+    if (perf !== undefined) {
+      if (typeof perf?.now !== 'function') {
+        throw new TypeError(
+          'perf option must have a now() method if specified',
+        )
+      }
+    }
+
+    this.#perf = perf ?? defaultPerf
 
     if (max !== 0 && !isPosInt(max)) {
       throw new TypeError('max option must be a nonnegative integer')
@@ -1535,7 +1554,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     this.#ttls = ttls
     this.#starts = starts
 
-    this.#setItemTTL = (index, ttl, start = perf.now()) => {
+    this.#setItemTTL = (index, ttl, start = this.#perf.now()) => {
       starts[index] = ttl !== 0 ? start : 0
       ttls[index] = ttl
       if (ttl !== 0 && this.ttlAutopurge) {
@@ -1554,7 +1573,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     }
 
     this.#updateItemAge = index => {
-      starts[index] = ttls[index] !== 0 ? perf.now() : 0
+      starts[index] = ttls[index] !== 0 ? this.#perf.now() : 0
     }
 
     this.#statusTTL = (status, index) => {
@@ -1575,7 +1594,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     // that costly call repeatedly.
     let cachedNow = 0
     const getNow = () => {
-      const n = perf.now()
+      const n = this.#perf.now()
       if (this.ttlResolution > 0) {
         cachedNow = n
         const t = setTimeout(
@@ -1959,7 +1978,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     const i = this.#keyMap.get(key)
     if (i === undefined) return undefined
     const v = this.#valList[i]
-    /* c8 ignore start - this isn't tested for the info function, 
+    /* c8 ignore start - this isn't tested for the info function,
      * but it's the same logic as found in other places. */
     const value: V | undefined =
       this.#isBackgroundFetch(v) ? v.__staleWhileFetching : v
@@ -1970,7 +1989,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       const ttl = this.#ttls[i]
       const start = this.#starts[i]
       if (ttl && start) {
-        const remain = ttl - (perf.now() - start)
+        const remain = ttl - (this.#perf.now() - start)
         entry.ttl = remain
         entry.start = Date.now()
       }
@@ -2007,7 +2026,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
         entry.ttl = this.#ttls[i]
         // always dump the start relative to a portable timestamp
         // it's ok for this to be a bit slow, it's a rare operation.
-        const age = perf.now() - (this.#starts[i] as number)
+        const age = this.#perf.now() - (this.#starts[i] as number)
         entry.start = Math.floor(Date.now() - age)
       }
       if (this.#sizes) {
@@ -2038,7 +2057,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
         //
         // it's ok for this to be a bit slow, it's a rare operation.
         const age = Date.now() - entry.start
-        entry.start = perf.now() - age
+        entry.start = this.#perf.now() - age
       }
       this.set(key, entry.value, entry)
     }

@@ -1,5 +1,10 @@
 # cringe lorg
 
+## 11.2
+
+- Add the `perf` option to specify `performance`, `Date`, or any
+  other object with a `now()` method that returns a number.
+
 ## 11.1
 
 - Add the `onInsert` method
