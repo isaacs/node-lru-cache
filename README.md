@@ -295,6 +295,55 @@ If performance matters to you:
    has been made to make the performance impact minimal, but it
    isn't nothing.
 
+## Testing
+
+When writing tests that involve TTL-related functionality, note
+that this module creates an internal reference to the global
+`performance` or `Date` objects at import time. If you import it
+statically at the top level, those references cannot be mocked or
+overridden in your test environment.
+
+To avoid this, dynamically import the package within your tests
+so that the references are captured after your mocks are applied.
+For example:
+
+```ts
+// ❌ Not recommended
+import { LRUCache } from 'lru-cache'
+// mocking timers, e.g. jest.useFakeTimers()
+
+// ✅ Recommended for TTL tests
+// mocking timers, e.g. jest.useFakeTimers()
+const { LRUCache } = await import('lru-cache')
+```
+
+This ensures that your mocked timers or time sources are
+respected when testing TTL behavior.
+
+Additionally, you can pass in a `perf` option when creating your
+LRUCache instance. This option accepts any object with a `now`
+method that returns a number.
+
+For example, this would be a very bare-bones time-mocking system
+you could use in your tests, without any particular test
+framework:
+
+```ts
+import { LRUCache } from 'lru-cache'
+
+let myClockTime = 0
+
+const cache = new LRUCache<string>({
+  max: 10,
+  ttl: 1000,
+  perf: {
+    now: () => myClockTime,
+  },
+})
+
+// run tests, updating myClockTime as needed
+```
+
 ## Breaking Changes in Version 7
 
 This library changed to a different algorithm and internal data
