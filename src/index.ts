@@ -2387,7 +2387,11 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       }
       // either we didn't abort, and are still here, or we did, and ignored
       const bf = p as BackgroundFetch<V>
-      if (this.#valList[index as Index] === p) {
+      // if nothing else has been written there but we're set to update the
+      // cache and ignore the abort, or if it's still pending on this specific
+      // background request, then write it to the cache.
+      const vl = this.#valList[index as Index]
+      if (vl === p || ignoreAbort && updateCache && vl === undefined) {
         if (v === undefined) {
           if (bf.__staleWhileFetching !== undefined) {
             this.#valList[index as Index] = bf.__staleWhileFetching

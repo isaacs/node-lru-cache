@@ -870,3 +870,28 @@ t.test('properly dispose when using fetch', async t => {
   t.strictSame(disposes, [[0, 1, 'set']])
   t.strictSame(disposeAfters, [[0, 1, 'set']])
 })
+
+t.test('allowStaleOnFetchAbort and ignoreFetchAbort', async t => {
+  const c = new LRUCache<number, number, void>({
+    ttl: 10,
+    max: 10,
+    ignoreFetchAbort: true,
+    allowStaleOnFetchAbort: true,
+    fetchMethod: async k => {
+      return new Promise(res => {
+        setTimeout(() => {
+          res(k)
+        }, 100)
+      })
+    },
+  })
+  const ac = new AbortController()
+  const p = c.fetch(1, { signal: ac.signal })
+  await new Promise<void>(res => queueMicrotask(res))
+  ac.abort(new Error('gimme the stale value'))
+  t.equal(await p, undefined)
+  t.equal(c.get(1, { allowStale: true }), undefined)
+  clock.advance(200)
+  await new Promise<void>(res => queueMicrotask(res)).then(() => {})
+  t.equal(c.get(1), 1)
+})
