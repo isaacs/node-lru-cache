@@ -6,7 +6,7 @@ jobs:
   build:
     strategy:
       matrix:
-        node-version: [20.x, 22.x]
+        node-version: [20.x, 22.x, 24.x]
         platform:
           - os: ubuntu-latest
             shell: bash
@@ -25,11 +25,9 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        if: ${{ (matrix.node-version == '18.x') || (matrix.node-version == '19.x') || (matrix.platform.os != 'windows-latest') }}
         uses: actions/checkout@v4
 
       - name: Use Nodejs ${{ matrix.node-version }}
-        if: ${{ (matrix.node-version == '18.x') || (matrix.node-version == '19.x') || (matrix.platform.os != 'windows-latest') }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
@@ -38,9 +36,7 @@ jobs:
         run: echo NODEVERSION=[${{ matrix.node-version }}] OS=[${{ matrix.platform.os }}]
 
       - name: Install dependencies
-        if: ${{ (matrix.node-version == '18.x') || (matrix.node-version == '19.x') || (matrix.platform.os != 'windows-latest') }}
         run: npm install
 
       - name: Run Tests
-        if: ${{ (matrix.node-version == '18.x') || (matrix.node-version == '19.x') || (matrix.platform.os != 'windows-latest') }}
         run: npm test -- -c -t0
