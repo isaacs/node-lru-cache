@@ -59,7 +59,7 @@
     "tshy": "^3.0.2",
     "typedoc": "^0.28.12"
   },
-  "license": "ISC",
+  "license": "BlueOak-1.0.0",
   "files": [
     "dist"
   ],
