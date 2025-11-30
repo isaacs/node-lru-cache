@@ -1253,6 +1253,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   #sizes?: ZeroArray
   #starts?: ZeroArray
   #ttls?: ZeroArray
+  #autopurgeTimers?: (undefined | ReturnType<typeof setTimeout>)[]
 
   #hasDispose: boolean
   #hasFetchMethod: boolean
@@ -1277,6 +1278,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       // properties
       starts: c.#starts,
       ttls: c.#ttls,
+      autopurgeTimers: c.#autopurgeTimers,
       sizes: c.#sizes,
       keyMap: c.#keyMap as Map<K, number>,
       keyList: c.#keyList,
@@ -1553,11 +1555,20 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     const starts = new ZeroArray(this.#max)
     this.#ttls = ttls
     this.#starts = starts
+    const purgeTimers = this.ttlAutopurge ? new Array<undefined | ReturnType<typeof setTimeout>>(this.#max) : undefined
+    this.#autopurgeTimers = purgeTimers
 
     this.#setItemTTL = (index, ttl, start = this.#perf.now()) => {
       starts[index] = ttl !== 0 ? start : 0
       ttls[index] = ttl
-      if (ttl !== 0 && this.ttlAutopurge) {
+      // clear out the purge timer if we're setting TTL to 0, and
+      // previously had a ttl purge timer running, so it doesn't
+      // fire unnecessarily.
+      if (purgeTimers?.[index]) {
+        clearTimeout(purgeTimers[index])
+        purgeTimers[index] = undefined
+      }
+      if (ttl !== 0 && purgeTimers) {
         const t = setTimeout(() => {
           if (this.#isStale(index)) {
             this.#delete(this.#keyList[index] as K, 'expire')
@@ -1569,6 +1580,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
           t.unref()
         }
         /* c8 ignore stop */
+        purgeTimers[index] = t
       }
     }
 
@@ -2897,6 +2909,10 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     if (this.#size !== 0) {
       const index = this.#keyMap.get(k)
       if (index !== undefined) {
+        if (this.#autopurgeTimers?.[index]) {
+          clearTimeout(this.#autopurgeTimers?.[index])
+          this.#autopurgeTimers[index] = undefined
+        }
         deleted = true
         if (this.#size === 1) {
           this.#clear(reason)
