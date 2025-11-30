@@ -1555,7 +1555,12 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     const starts = new ZeroArray(this.#max)
     this.#ttls = ttls
     this.#starts = starts
-    const purgeTimers = this.ttlAutopurge ? new Array<undefined | ReturnType<typeof setTimeout>>(this.#max) : undefined
+    const purgeTimers =
+      this.ttlAutopurge ?
+        new Array<undefined | ReturnType<typeof setTimeout>>(
+          this.#max,
+        )
+      : undefined
     this.#autopurgeTimers = purgeTimers
 
     this.#setItemTTL = (index, ttl, start = this.#perf.now()) => {
@@ -2270,6 +2275,10 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       }
     }
     this.#removeItemSize(head)
+    if (this.#autopurgeTimers?.[head]) {
+      clearTimeout(this.#autopurgeTimers[head])
+      this.#autopurgeTimers[head] = undefined
+    }
     // if we aren't about to use the index, then null these out
     if (free) {
       this.#keyList[head] = undefined
@@ -2403,7 +2412,10 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       // cache and ignore the abort, or if it's still pending on this specific
       // background request, then write it to the cache.
       const vl = this.#valList[index as Index]
-      if (vl === p || ignoreAbort && updateCache && vl === undefined) {
+      if (
+        vl === p ||
+        (ignoreAbort && updateCache && vl === undefined)
+      ) {
         if (v === undefined) {
           if (bf.__staleWhileFetching !== undefined) {
             this.#valList[index as Index] = bf.__staleWhileFetching
@@ -2985,6 +2997,10 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     if (this.#ttls && this.#starts) {
       this.#ttls.fill(0)
       this.#starts.fill(0)
+      for (const t of this.#autopurgeTimers ?? []) {
+        if (t !== undefined) clearTimeout(t)
+      }
+      this.#autopurgeTimers?.fill(undefined)
     }
     if (this.#sizes) {
       this.#sizes.fill(0)
