@@ -39,9 +39,7 @@ const permute = (arr: number[] | number): number[][] => {
   for (let i = 0; i < arr.length; i++) {
     const items = arr.slice(0)
     const item = items.splice(i, 1)
-    permutations.push(
-      ...permute(items).map(perm => item.concat(perm)),
-    )
+    permutations.push(...permute(items).map(perm => item.concat(perm)))
   }
   return permutations
 }

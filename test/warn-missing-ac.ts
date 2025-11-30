@@ -9,33 +9,23 @@ const main = async () => {
   // need to run both tests in parallel so we don't miss the close event
   t.jobs = 3
 
-  const argv = process.execArgv.filter(
-    a => !a.startsWith('--no-warnings'),
-  )
-  const warn = spawn(
-    process.execPath,
-    [...argv, __filename, 'child'],
-    {
-      env: {
-        ...process.env,
-        NODE_OPTIONS: '',
-      },
+  const argv = process.execArgv.filter(a => !a.startsWith('--no-warnings'))
+  const warn = spawn(process.execPath, [...argv, __filename, 'child'], {
+    env: {
+      ...process.env,
+      NODE_OPTIONS: '',
     },
-  )
+  })
   const warnErr: Buffer[] = []
   warn.stderr.on('data', c => warnErr.push(c))
 
-  const noWarn = spawn(
-    process.execPath,
-    [...argv, __filename, 'child'],
-    {
-      env: {
-        ...process.env,
-        LRU_CACHE_IGNORE_AC_WARNING: '1',
-        NODE_OPTIONS: '',
-      },
+  const noWarn = spawn(process.execPath, [...argv, __filename, 'child'], {
+    env: {
+      ...process.env,
+      LRU_CACHE_IGNORE_AC_WARNING: '1',
+      NODE_OPTIONS: '',
     },
-  )
+  })
   const noWarnErr: Buffer[] = []
   noWarn.stderr.on('data', c => noWarnErr.push(c))
 

@@ -79,11 +79,7 @@ const options = {
 
   // async method to use for cache.fetch(), for
   // stale-while-revalidate type of behavior
-  fetchMethod: async (
-    key,
-    staleValue,
-    { options, signal, context },
-  ) => {},
+  fetchMethod: async (key, staleValue, { options, signal, context }) => {},
 }
 
 const cache = new LRUCache(options)

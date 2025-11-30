@@ -15,10 +15,7 @@ t.test('verify require works as expected', async t => {
     'require resolves to expected module',
   )
   const { LRUCache } = await t.mockImport('../dist/esm/index.js', {})
-  t.equal(
-    LRUCache.toString().split(/\r?\n/)[0].trim(),
-    'class LRUCache {',
-  )
+  t.equal(LRUCache.toString().split(/\r?\n/)[0].trim(), 'class LRUCache {')
 })
 
 t.test('basic operation', t => {
@@ -45,16 +42,8 @@ t.test('basic operation', t => {
   }
   t.equal(c.size, 5)
   t.matchSnapshot(c.entries())
-  t.equal(
-    c.getRemainingTTL(1),
-    Infinity,
-    'no ttl, so returns Infinity',
-  )
-  t.equal(
-    c.getRemainingTTL('not in cache'),
-    0,
-    'not in cache, no ttl',
-  )
+  t.equal(c.getRemainingTTL(1), Infinity, 'no ttl, so returns Infinity')
+  t.equal(c.getRemainingTTL('not in cache'), 0, 'not in cache, no ttl')
 
   for (let i = 5; i < 10; i++) {
     c.set(i, i, { status: s() })
@@ -188,10 +177,7 @@ t.test('setting maxSize with non-integer values', t => {
     () => new LRU({ max: 10, maxEntrySize: 'banana' }),
     TypeError,
   )
-  t.throws(
-    () => new LRU({ max: 10, maxEntrySize: Infinity }),
-    TypeError,
-  )
+  t.throws(() => new LRU({ max: 10, maxEntrySize: Infinity }), TypeError)
   // @ts-expect-error
   t.throws(() => new LRU({ max: 10, maxSize: 'banana' }), TypeError)
   t.throws(() => new LRU({ max: 10, maxSize: Infinity }), TypeError)

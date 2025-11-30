@@ -45,11 +45,7 @@ const runTests = (LRU: typeof LRUCache, t: Test) => {
       now: clock.now(),
     })
     t.equal(c.getRemainingTTL(1), 5, '5ms left to live')
-    t.equal(
-      c.getRemainingTTL('not in cache'),
-      0,
-      'thing doesnt exist',
-    )
+    t.equal(c.getRemainingTTL('not in cache'), 0, 'thing doesnt exist')
     clock.advance(5)
     t.equal(c.get(1, { status: s() }), 1, '1 get not stale', {
       now: clock.now(),
@@ -138,20 +134,17 @@ const runTests = (LRU: typeof LRUCache, t: Test) => {
     t.end()
   })
 
-  t.test(
-    'ttlResolution only respected if non-negative integer',
-    t => {
-      const invalids = [-1, null, undefined, 'banana', {}]
-      for (const i of invalids) {
-        //@ts-expect-error
-        const c = new LRU({ ttl: 5, ttlResolution: i, max: 5 })
-        t.not(c.ttlResolution, i)
-        t.equal(c.ttlResolution, Math.floor(c.ttlResolution))
-        t.ok(c.ttlResolution >= 0)
-      }
-      t.end()
-    },
-  )
+  t.test('ttlResolution only respected if non-negative integer', t => {
+    const invalids = [-1, null, undefined, 'banana', {}]
+    for (const i of invalids) {
+      //@ts-expect-error
+      const c = new LRU({ ttl: 5, ttlResolution: i, max: 5 })
+      t.not(c.ttlResolution, i)
+      t.equal(c.ttlResolution, Math.floor(c.ttlResolution))
+      t.ok(c.ttlResolution >= 0)
+    }
+    t.end()
+  })
 
   t.test('ttlAutopurge', t => {
     statuses.length = 0
@@ -349,11 +342,7 @@ const runTests = (LRU: typeof LRUCache, t: Test) => {
       undefined,
       'fell out of cache normally',
     )
-    t.equal(
-      c.get(1, { status: s() }),
-      1,
-      'still in cache, ttl updated',
-    )
+    t.equal(c.get(1, { status: s() }), 1, 'still in cache, ttl updated')
     t.equal(
       c.get(0, { status: s() }),
       undefined,
@@ -490,10 +479,7 @@ const runTests = (LRU: typeof LRUCache, t: Test) => {
     t.equal(c.has(1), false)
     t.equal(c.get(1), undefined)
     t.equal(c.get(1, { allowStale: true }), 1)
-    t.equal(
-      c.get(1, { allowStale: true, noDeleteOnStaleGet: false }),
-      1,
-    )
+    t.equal(c.get(1, { allowStale: true, noDeleteOnStaleGet: false }), 1)
     t.equal(c.get(1, { allowStale: true }), undefined)
     t.end()
   })

@@ -61,11 +61,7 @@ t.test('asynchronous fetching', async t => {
   clock.advance(10)
 
   const v6 = await c.fetch('key', { allowStale: true })
-  t.equal(
-    v6,
-    1,
-    'fetch while stale, starts new fetch, return stale data',
-  )
+  t.equal(v6, 1, 'fetch while stale, starts new fetch, return stale data')
   const e = expose(c)
   const v = e.valList[0]
 
@@ -162,10 +158,7 @@ t.test('fetch without fetch method', async t => {
   c.set(0, 0)
   c.set(1, 1)
   const status: LRUCache.Status<number> = {}
-  t.same(
-    await Promise.all([c.fetch(0, { status }), c.fetch(1)]),
-    [0, 1],
-  )
+  t.same(await Promise.all([c.fetch(0, { status }), c.fetch(1)]), [0, 1])
   t.matchSnapshot(status, 'status update')
 })
 
@@ -240,11 +233,7 @@ t.test('fetch options, signal', async t => {
 
   aborted = false
   await c.fetch(6, { ttl: 1000, status: s() })
-  t.equal(
-    c.getRemainingTTL(6),
-    1000,
-    'overridden ttl in fetch() opts',
-  )
+  t.equal(c.getRemainingTTL(6), 1000, 'overridden ttl in fetch() opts')
   await c.fetch(2, { ttl: 1, status: s() })
   t.equal(c.getRemainingTTL(2), 25, 'overridden ttl in fetchMethod')
   t.matchSnapshot(statuses, 'status updates')
@@ -285,11 +274,7 @@ t.test('fetchMethod throws', async t => {
   // clock advances, promise rejects
   clock.advance(20)
   await Promise.resolve().then(() => {})
-  t.equal(
-    cache.get('a', { status: s() }),
-    undefined,
-    'removed from cache',
-  )
+  t.equal(cache.get('a', { status: s() }), undefined, 'removed from cache')
   const b = await Promise.all([
     cache.fetch('b', { status: s() }),
     cache.fetch('b', { status: s() }),
@@ -298,91 +283,80 @@ t.test('fetchMethod throws', async t => {
   t.strictSame(b, [2, 2, 2])
   clock.advance(20)
   await Promise.resolve().then(() => {})
-  t.equal(
-    cache.get('b', { status: s() }),
-    undefined,
-    'removed from cache',
-  )
+  t.equal(cache.get('b', { status: s() }), undefined, 'removed from cache')
   const ap = cache.fetch('a', { status: s() })
   const testap = t.rejects(ap, 'aborted by replace')
   cache.set('a', 99, { status: s() })
   await testap
-  t.equal(
-    cache.get('a', { status: s() }),
-    99,
-    'did not delete new value',
-  )
+  t.equal(cache.get('a', { status: s() }), 99, 'did not delete new value')
   t.rejects(cache.fetch('b', { status: s() }), {
     message: 'fetch failure',
   })
   t.matchSnapshot(statuses, 'status updates')
 })
 
-t.test(
-  'fetchMethod throws, noDeleteOnFetchRejection option',
-  async t => {
-    // make sure that even if there's no one to sit around and wait for it,
-    // the background fetch throwing doesn't blow anything up.
-    let fetchFail = true
-    const cache = new LRU<string, number>({
-      max: 10,
-      ttl: 10,
-      allowStale: true,
-      noDeleteOnFetchRejection: true,
-      fetchMethod: async () => {
-        if (fetchFail) {
-          throw new Error('fetch failure')
-        } else {
-          return 1
-        }
-      },
-    })
+t.test('fetchMethod throws, noDeleteOnFetchRejection option', async t => {
+  // make sure that even if there's no one to sit around and wait for it,
+  // the background fetch throwing doesn't blow anything up.
+  let fetchFail = true
+  const cache = new LRU<string, number>({
+    max: 10,
+    ttl: 10,
+    allowStale: true,
+    noDeleteOnFetchRejection: true,
+    fetchMethod: async () => {
+      if (fetchFail) {
+        throw new Error('fetch failure')
+      } else {
+        return 1
+      }
+    },
+  })
 
-    // seed the cache, and make the values stale.
-    // this simulates the case where the fetch() DID work,
-    // and replaced the promise with the resolution, but
-    // then they got stale.
-    cache.set('a', 1)
-    cache.set('b', 2)
-    clock.advance(20)
-    await Promise.resolve().then(() => {})
-    const a = await Promise.all([
-      cache.fetch('a'),
-      cache.fetch('a'),
-      cache.fetch('a'),
-    ])
-    t.strictSame(a, [1, 1, 1])
-    // clock advances, promise rejects
-    clock.advance(20)
-    await Promise.resolve().then(() => {})
-    const e = expose(cache)
-    t.equal(e.keyMap.get('a'), 0)
-    t.equal(e.valList[0], 1, 'promise replaced with stale value')
-    const b = await Promise.all([
-      cache.fetch('b'),
-      cache.fetch('b'),
-      cache.fetch('b'),
-    ])
-    t.strictSame(b, [2, 2, 2])
-    clock.advance(20)
-    await Promise.resolve().then(() => {})
-    t.equal(e.keyMap.get('b'), 1)
-    t.equal(e.valList[1], 2, 'promise replaced with stale value')
-    cache.delete('a')
-    cache.delete('b')
+  // seed the cache, and make the values stale.
+  // this simulates the case where the fetch() DID work,
+  // and replaced the promise with the resolution, but
+  // then they got stale.
+  cache.set('a', 1)
+  cache.set('b', 2)
+  clock.advance(20)
+  await Promise.resolve().then(() => {})
+  const a = await Promise.all([
+    cache.fetch('a'),
+    cache.fetch('a'),
+    cache.fetch('a'),
+  ])
+  t.strictSame(a, [1, 1, 1])
+  // clock advances, promise rejects
+  clock.advance(20)
+  await Promise.resolve().then(() => {})
+  const e = expose(cache)
+  t.equal(e.keyMap.get('a'), 0)
+  t.equal(e.valList[0], 1, 'promise replaced with stale value')
+  const b = await Promise.all([
+    cache.fetch('b'),
+    cache.fetch('b'),
+    cache.fetch('b'),
+  ])
+  t.strictSame(b, [2, 2, 2])
+  clock.advance(20)
+  await Promise.resolve().then(() => {})
+  t.equal(e.keyMap.get('b'), 1)
+  t.equal(e.valList[1], 2, 'promise replaced with stale value')
+  cache.delete('a')
+  cache.delete('b')
 
-    // even though we don't noDeleteOnFetchRejection,
-    // if there's no stale, we still remove the *promise*.
-    const ap = cache.fetch('a')
-    const testap = t.rejects(ap, 'aborted by replace')
-    cache.set('a', 99)
-    await testap
-    t.equal(cache.get('a'), 99, 'did not delete, was replaced')
-    await t.rejects(cache.fetch('b'), { message: 'fetch failure' })
-    t.equal(e.keyMap.get('b'), undefined, 'not in cache')
-    t.equal(e.valList[1], undefined, 'not in cache')
-  },
-)
+  // even though we don't noDeleteOnFetchRejection,
+  // if there's no stale, we still remove the *promise*.
+  const ap = cache.fetch('a')
+  const testap = t.rejects(ap, 'aborted by replace')
+  cache.set('a', 99)
+  await testap
+  t.equal(cache.get('a'), 99, 'did not delete, was replaced')
+  await t.rejects(cache.fetch('b'), { message: 'fetch failure' })
+  t.equal(e.keyMap.get('b'), undefined, 'not in cache')
+  t.equal(e.valList[1], undefined, 'not in cache')
+})
 
 t.test('fetch context', async t => {
   const cache = new LRU<string, [string, any], string>({
@@ -455,10 +429,7 @@ t.test('forceRefresh', async t => {
   t.equal(status.fetch, 'refresh', 'status reflects forced refresh')
   t.equal(await cache.fetch(1, { forceRefresh: true }), 100)
   clock.advance(100)
-  t.equal(
-    await cache.fetch(2, { forceRefresh: true, status: s() }),
-    2,
-  )
+  t.equal(await cache.fetch(2, { forceRefresh: true, status: s() }), 2)
   t.equal(cache.peek(1), 100)
   // if we don't allow stale though, then that means that we wait
   // for the background fetch to complete, so we get the updated value.
@@ -506,51 +477,48 @@ t.test('allowStaleOnFetchRejection', async t => {
   t.equal(c.get(1), undefined)
 })
 
-t.test(
-  'placeholder promise is not removed when resolving',
-  async t => {
-    const resolves: Record<number, (v: number) => void> = {}
-    const c = new LRU<number, number>({
-      maxSize: 10,
-      sizeCalculation(v) {
-        return v
-      },
-      fetchMethod: k => {
-        return new Promise(resolve => (resolves[k] = resolve))
-      },
-    })
-    const p3 = c.fetch(3)
-    const p4 = c.fetch(4)
-    const p5 = c.fetch(5)
+t.test('placeholder promise is not removed when resolving', async t => {
+  const resolves: Record<number, (v: number) => void> = {}
+  const c = new LRU<number, number>({
+    maxSize: 10,
+    sizeCalculation(v) {
+      return v
+    },
+    fetchMethod: k => {
+      return new Promise(resolve => (resolves[k] = resolve))
+    },
+  })
+  const p3 = c.fetch(3)
+  const p4 = c.fetch(4)
+  const p5 = c.fetch(5)
 
-    resolves[4]?.(4)
-    await p4
+  resolves[4]?.(4)
+  await p4
 
-    t.match([...c], [[4, 4]])
-    resolves[5]?.(5)
-    await p5
-    t.match(
-      [...c],
-      [
-        [5, 5],
-        [4, 4],
-      ],
-    )
+  t.match([...c], [[4, 4]])
+  resolves[5]?.(5)
+  await p5
+  t.match(
+    [...c],
+    [
+      [5, 5],
+      [4, 4],
+    ],
+  )
 
-    resolves[3]?.(3)
-    await p3
-    t.same(
-      [...c],
-      [
-        [3, 3],
-        [5, 5],
-      ],
-    )
+  resolves[3]?.(3)
+  await p3
+  t.same(
+    [...c],
+    [
+      [3, 3],
+      [5, 5],
+    ],
+  )
 
-    t.equal(c.size, 2)
-    t.equal([...c].length, 2)
-  },
-)
+  t.equal(c.size, 2)
+  t.equal([...c].length, 2)
+})
 
 t.test('send a signal', async t => {
   const statuses: LRUCache.Status<number>[] = []
@@ -619,11 +587,7 @@ t.test('verify inflight works as expected', async t => {
     c.fetch(1),
   ]
   t.match(e.valList, [Promise, null, null, null, null])
-  t.equal(
-    e.isBackgroundFetch(e.valList[0]),
-    true,
-    'is background fetch',
-  )
+  t.equal(e.isBackgroundFetch(e.valList[0]), true, 'is background fetch')
   t.equal(c.get(1, { status: s() }), undefined, 'get while fetching')
   const a = await Promise.all(promises)
   for (let i = 1; i < a.length; i++) {
@@ -661,11 +625,7 @@ t.test('abort, but then keep on fetching anyway', async t => {
   ac.abort(er)
   clock.advance(100)
   t.equal(await p, 1)
-  t.equal(
-    status.fetchAbortIgnored,
-    true,
-    'status reflects ignored abort',
-  )
+  t.equal(status.fetchAbortIgnored, true, 'status reflects ignored abort')
   t.equal(status.fetchError, er)
   t.equal(status.fetchUpdated, true)
 
@@ -724,10 +684,7 @@ t.test('allowStaleOnFetchAbort', async t => {
   const p = c.fetch(1, { signal: ac.signal })
   ac.abort(new Error('gimme the stale value'))
   t.equal(await p, 10)
-  t.equal(
-    c.get(1, { allowStale: true, noDeleteOnStaleGet: true }),
-    10,
-  )
+  t.equal(c.get(1, { allowStale: true, noDeleteOnStaleGet: true }), 10)
   const p2 = c.fetch(1)
   c.set(1, 100)
   t.equal(await p2, 10)

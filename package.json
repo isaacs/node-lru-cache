@@ -66,18 +66,6 @@
   "engines": {
     "node": "20 || >=22"
   },
-  "prettier": {
-    "experimentalTernaries": true,
-    "semi": false,
-    "printWidth": 70,
-    "tabWidth": 2,
-    "useTabs": false,
-    "singleQuote": true,
-    "jsxSingleQuote": false,
-    "bracketSameLine": true,
-    "arrowParens": "avoid",
-    "endOfLine": "lf"
-  },
   "tap": {
     "node-arg": [
       "--expose-gc"
