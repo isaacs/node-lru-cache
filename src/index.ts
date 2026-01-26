@@ -2342,6 +2342,8 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     const cb = (v: V | undefined, updateCache = false): V | undefined => {
       const { aborted } = ac.signal
       const ignoreAbort = options.ignoreFetchAbort && v !== undefined
+      const proceed = options.ignoreFetchAbort ||
+        !!(options.allowStaleOnFetchAbort && v !== undefined)
       if (options.status) {
         if (aborted && !updateCache) {
           options.status.fetchAborted = true
@@ -2352,7 +2354,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
         }
       }
       if (aborted && !ignoreAbort && !updateCache) {
-        return fetchFail(ac.signal.reason)
+        return fetchFail(ac.signal.reason, proceed)
       }
       // either we didn't abort, and are still here, or we did, and ignored
       const bf = p as BackgroundFetch<V>
@@ -2380,10 +2382,11 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
         options.status.fetchRejected = true
         options.status.fetchError = er
       }
-      return fetchFail(er)
+      // do not pass go, do not collect $200
+      return fetchFail(er, false)
     }
 
-    const fetchFail = (er: any): V | undefined => {
+    const fetchFail = (er: any, proceed: boolean): V | undefined => {
       const { aborted } = ac.signal
       const allowStaleAborted = aborted && options.allowStaleOnFetchAbort
       const allowStale =
@@ -2393,7 +2396,8 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       if (this.#valList[index as Index] === p) {
         // if we allow stale on fetch rejections, then we need to ensure that
         // the stale value is not removed from the cache when the fetch fails.
-        const del = !noDelete || bf.__staleWhileFetching === undefined
+        const del = !noDelete ||
+          !proceed && bf.__staleWhileFetching === undefined
         if (del) {
           this.#delete(k, 'fetch')
         } else if (!allowStaleAborted) {
