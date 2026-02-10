@@ -1,7 +1,3 @@
-if (typeof performance === 'undefined') {
-  global.performance = require('perf_hooks').performance
-}
-
 import { createRequire } from 'module'
 import t from 'tap'
 import { LRUCache as LRU } from '../dist/esm/index.js'
