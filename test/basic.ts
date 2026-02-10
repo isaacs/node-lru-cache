@@ -11,11 +11,16 @@ t.test('verify require works as expected', async t => {
   const req = createRequire(import.meta.url)
   t.equal(
     req.resolve('../'),
-    req.resolve('../dist/commonjs/index.js'),
+    req.resolve('../dist/commonjs/index.min.js'),
     'require resolves to expected module',
   )
-  const { LRUCache } = await t.mockImport('../dist/esm/index.js', {})
+  const { LRUCache } = await t.mockImport('../dist/esm/index.js')
+  const { LRUCache: LRUCacheRaw } = await t.mockImport('lru-cache/raw')
   t.equal(LRUCache.toString().split(/\r?\n/)[0].trim(), 'class LRUCache {')
+  t.equal(LRUCache.toString(), LRUCacheRaw.toString(), './raw endpoint is unminified')
+  const { LRUCache: LRUCacheMain } = await t.mockImport('lru-cache')
+  const { LRUCache: LRUCacheMin } = await t.mockImport('../dist/esm/index.min.js')
+  t.equal(LRUCacheMin.toString(), LRUCacheMain.toString())
 })
 
 t.test('basic operation', t => {
