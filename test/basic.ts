@@ -13,9 +13,15 @@ t.test('verify require works as expected', async t => {
   const { LRUCache } = await t.mockImport('../dist/esm/index.js')
   const { LRUCache: LRUCacheRaw } = await t.mockImport('lru-cache/raw')
   t.equal(LRUCache.toString().split(/\r?\n/)[0].trim(), 'class LRUCache {')
-  t.equal(LRUCache.toString(), LRUCacheRaw.toString(), './raw endpoint is unminified')
+  t.equal(
+    LRUCache.toString(),
+    LRUCacheRaw.toString(),
+    './raw endpoint is unminified',
+  )
   const { LRUCache: LRUCacheMain } = await t.mockImport('lru-cache')
-  const { LRUCache: LRUCacheMin } = await t.mockImport('../dist/esm/index.min.js')
+  const { LRUCache: LRUCacheMin } = await t.mockImport(
+    '../dist/esm/index.min.js',
+  )
   t.equal(LRUCacheMin.toString(), LRUCacheMain.toString())
 })
 

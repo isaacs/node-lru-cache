@@ -498,7 +498,11 @@ const runTests = (LRU: typeof LRUCache, t: Test) => {
 
     // advance past the original TTL (80 + 30 = 110 from set, but only 30 from get)
     clock.advance(30)
-    t.equal(c.size, 1, 'entry survives past original TTL because get refreshed it')
+    t.equal(
+      c.size,
+      1,
+      'entry survives past original TTL because get refreshed it',
+    )
     t.equal(c.get('a'), 1, 'entry is still retrievable')
 
     // now let the refreshed TTL expire without any more gets
@@ -511,28 +515,35 @@ const runTests = (LRU: typeof LRUCache, t: Test) => {
     t.end()
   })
 
-  t.test('updateAgeOnGet + ttlAutopurge: entry eventually purged if not re-accessed', t => {
-    const c = new LRU({
-      ttl: 50,
-      ttlAutopurge: true,
-      updateAgeOnGet: true,
-      ttlResolution: 0,
-    })
-    c.set('b', 2)
-    t.equal(c.size, 1)
+  t.test(
+    'updateAgeOnGet + ttlAutopurge: entry eventually purged if not re-accessed',
+    t => {
+      const c = new LRU({
+        ttl: 50,
+        ttlAutopurge: true,
+        updateAgeOnGet: true,
+        ttlResolution: 0,
+      })
+      c.set('b', 2)
+      t.equal(c.size, 1)
 
-    // access once before TTL expires, refreshing the timer
-    clock.advance(30)
-    t.equal(c.get('b'), 2, 'alive before TTL')
+      // access once before TTL expires, refreshing the timer
+      clock.advance(30)
+      t.equal(c.get('b'), 2, 'alive before TTL')
 
-    // do NOT access again — let the refreshed TTL expire
-    // the refreshed TTL starts at t=30, expires at t=30+50+1=81
-    clock.advance(52)
-    t.equal(c.size, 0, 'entry autopurged after refreshed TTL with no further access')
-    t.equal(c.get('b'), undefined, 'entry is gone')
+      // do NOT access again — let the refreshed TTL expire
+      // the refreshed TTL starts at t=30, expires at t=30+50+1=81
+      clock.advance(52)
+      t.equal(
+        c.size,
+        0,
+        'entry autopurged after refreshed TTL with no further access',
+      )
+      t.equal(c.get('b'), undefined, 'entry is gone')
 
-    t.end()
-  })
+      t.end()
+    },
+  )
 
   t.end()
 }

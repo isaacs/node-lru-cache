@@ -66,14 +66,6 @@
   "engines": {
     "node": "20 || >=22"
   },
-  "tap": {
-    "node-arg": [
-      "--expose-gc"
-    ],
-    "plugin": [
-      "@tapjs/clock"
-    ]
-  },
   "exports": {
     "./raw": {
       "import": {
