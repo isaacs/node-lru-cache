@@ -1544,40 +1544,29 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     this.#setItemTTL = (index, ttl, start = this.#perf.now()) => {
       starts[index] = ttl !== 0 ? start : 0
       ttls[index] = ttl
-      // clear out the purge timer if we're setting TTL to 0, and
-      // previously had a ttl purge timer running, so it doesn't
-      // fire unnecessarily.
+      setPurgetTimer(index, ttl)
+    }
+
+    this.#updateItemAge = index => {
+      starts[index] = ttls[index] !== 0 ? this.#perf.now() : 0
+      setPurgetTimer(index, ttls[index])
+    }
+
+    // clear out the purge timer if we're setting TTL to 0, and
+    // previously had a ttl purge timer running, so it doesn't
+    // fire unnecessarily.
+    const setPurgetTimer = (index: Index, ttl?: number) => {
       if (purgeTimers?.[index]) {
         clearTimeout(purgeTimers[index])
         purgeTimers[index] = undefined
       }
-      if (ttl !== 0 && purgeTimers) {
+      if (ttl && ttl !== 0 && purgeTimers) {
         const t = setTimeout(() => {
           if (this.#isStale(index)) {
             this.#delete(this.#keyList[index] as K, 'expire')
           }
         }, ttl + 1)
         // unref() not supported on all platforms
-        /* c8 ignore start */
-        if (t.unref) {
-          t.unref()
-        }
-        /* c8 ignore stop */
-        purgeTimers[index] = t
-      }
-    }
-
-    this.#updateItemAge = index => {
-      starts[index] = ttls[index] !== 0 ? this.#perf.now() : 0
-      // reschedule autopurge timer so it doesn't find the entry non-stale and go silent
-      if (purgeTimers?.[index]) {
-        clearTimeout(purgeTimers[index])
-        const ttl = ttls[index] as number
-        const t = setTimeout(() => {
-          if (this.#isStale(index)) {
-            this.#delete(this.#keyList[index] as K, 'expire')
-          }
-        }, ttl + 1)
         /* c8 ignore start */
         if (t.unref) {
           t.unref()
