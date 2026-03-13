@@ -1569,6 +1569,22 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
 
     this.#updateItemAge = index => {
       starts[index] = ttls[index] !== 0 ? this.#perf.now() : 0
+      // reschedule autopurge timer so it doesn't find the entry non-stale and go silent
+      if (purgeTimers?.[index]) {
+        clearTimeout(purgeTimers[index])
+        const ttl = ttls[index] as number
+        const t = setTimeout(() => {
+          if (this.#isStale(index)) {
+            this.#delete(this.#keyList[index] as K, 'expire')
+          }
+        }, ttl + 1)
+        /* c8 ignore start */
+        if (t.unref) {
+          t.unref()
+        }
+        /* c8 ignore stop */
+        purgeTimers[index] = t
+      }
     }
 
     this.#statusTTL = (status, index) => {
