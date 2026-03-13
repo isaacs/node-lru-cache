@@ -1554,27 +1554,31 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
 
     // clear out the purge timer if we're setting TTL to 0, and
     // previously had a ttl purge timer running, so it doesn't
-    // fire unnecessarily.
-    const setPurgetTimer = (index: Index, ttl?: number) => {
-      if (purgeTimers?.[index]) {
-        clearTimeout(purgeTimers[index])
-        purgeTimers[index] = undefined
-      }
-      if (ttl && ttl !== 0 && purgeTimers) {
-        const t = setTimeout(() => {
-          if (this.#isStale(index)) {
-            this.#delete(this.#keyList[index] as K, 'expire')
+    // fire unnecessarily. Don't need to do this if we're not doing
+    // autopurge.
+    const setPurgetTimer =
+      !this.ttlAutopurge ?
+        () => {}
+      : (index: Index, ttl?: number) => {
+          if (purgeTimers?.[index]) {
+            clearTimeout(purgeTimers[index])
+            purgeTimers[index] = undefined
           }
-        }, ttl + 1)
-        // unref() not supported on all platforms
-        /* c8 ignore start */
-        if (t.unref) {
-          t.unref()
+          if (ttl && ttl !== 0 && purgeTimers) {
+            const t = setTimeout(() => {
+              if (this.#isStale(index)) {
+                this.#delete(this.#keyList[index] as K, 'expire')
+              }
+            }, ttl + 1)
+            // unref() not supported on all platforms
+            /* c8 ignore start */
+            if (t.unref) {
+              t.unref()
+            }
+            /* c8 ignore stop */
+            purgeTimers[index] = t
+          }
         }
-        /* c8 ignore stop */
-        purgeTimers[index] = t
-      }
-    }
 
     this.#statusTTL = (status, index) => {
       if (ttls[index]) {
@@ -2347,7 +2351,8 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     const cb = (v: V | undefined, updateCache = false): V | undefined => {
       const { aborted } = ac.signal
       const ignoreAbort = options.ignoreFetchAbort && v !== undefined
-      const proceed = options.ignoreFetchAbort ||
+      const proceed =
+        options.ignoreFetchAbort ||
         !!(options.allowStaleOnFetchAbort && v !== undefined)
       if (options.status) {
         if (aborted && !updateCache) {
@@ -2401,8 +2406,8 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       if (this.#valList[index as Index] === p) {
         // if we allow stale on fetch rejections, then we need to ensure that
         // the stale value is not removed from the cache when the fetch fails.
-        const del = !noDelete ||
-          !proceed && bf.__staleWhileFetching === undefined
+        const del =
+          !noDelete || (!proceed && bf.__staleWhileFetching === undefined)
         if (del) {
           this.#delete(k, 'fetch')
         } else if (!allowStaleAborted) {
