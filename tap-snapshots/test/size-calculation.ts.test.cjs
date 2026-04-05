@@ -9,21 +9,33 @@ exports[`test/size-calculation.ts > TAP > large item falls out of cache because 
 Array [
   Object {
     "entrySize": 2,
+    "key": 2,
+    "op": "set",
     "set": "add",
     "totalCalculatedSize": 2,
+    "value": 2,
   },
   Object {
+    "key": 1,
     "maxEntrySizeExceeded": true,
+    "op": "set",
     "set": "miss",
+    "value": 1,
   },
   Object {
     "entrySize": 3,
+    "key": 3,
+    "op": "set",
     "set": "add",
     "totalCalculatedSize": 3,
+    "value": 3,
   },
   Object {
+    "key": 4,
     "maxEntrySizeExceeded": true,
+    "op": "set",
     "set": "miss",
+    "value": 4,
   },
 ]
 `
@@ -32,21 +44,33 @@ exports[`test/size-calculation.ts > TAP > large item falls out of cache, sizes a
 Array [
   Object {
     "entrySize": 2,
+    "key": 2,
+    "op": "set",
     "set": "add",
     "totalCalculatedSize": 2,
+    "value": 2,
   },
   Object {
+    "key": 1,
     "maxEntrySizeExceeded": true,
+    "op": "set",
     "set": "miss",
+    "value": 1,
   },
   Object {
     "entrySize": 3,
+    "key": 3,
+    "op": "set",
     "set": "add",
     "totalCalculatedSize": 3,
+    "value": 3,
   },
   Object {
+    "key": 4,
     "maxEntrySizeExceeded": true,
+    "op": "set",
     "set": "miss",
+    "value": 4,
   },
 ]
 `

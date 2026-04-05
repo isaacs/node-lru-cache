@@ -215,9 +215,70 @@ const myGet = (key, value) => {
 }
 ```
 
+## Tracing and Observability
+
+Most methods can accept a `status` option, which is an
+[`LRUCache.Status`](https://isaacs.github.io/node-lru-cache/interfaces/LRUCache.Status.html)
+object that will be decorated along the operation with
+indications about what was done and why.
+
+Additionally, this library is instrumented using the
+[`node:diagnostics_channel`](https://nodejs.org/api/diagnostics_channel.html)
+module on Node and other platforms that support it. In order to
+get diagnostics metrics, listen on the
+`channel('lru-cache:metrics')`. To get Tracing Channel traces,
+subscribe to the `tracingChannel('lru-cache')`. The
+[`LRUCache.Status`](https://isaacs.github.io/node-lru-cache/interfaces/LRUCache.Status.html)
+objects will be provided as the message context to those channel
+listeners.
+
+For example, you could do the following to get comprehensive
+information about every LRUCache instance in your application:
+
+```ts
+import { tracingChannel, subscribe } from 'node:diagnostics_channel'
+
+subscribe( 'lru-cache:metrics', (message, name) => {
+  // name will always be 'lru-cache:metrics'
+  // message will be the LRUCache.Status object for whatever
+  // synchronous operation was performed.
+  console.error('LRUCache Metrics', message)
+})
+
+tracingChannel('lru-cache').subscribe({
+  start: status => {
+    // a traced operation is starting
+  },
+  asyncStart: status => {
+    // an async traced operation is starting
+  },
+  asyncEnd: status => {
+    // an async traced operation is ending
+  }
+  error: status => {
+    // a traced operation failed
+  },
+  end: status => {
+    // a traced operation is complete
+  },
+})
+```
+
+The async `cache.fetch()` and `cache.forceFetch` methods are
+covered by `tracingChannels`. All the other operations are
+covered by the `lru-cache:metrics` channel, because they are
+strictly synchronous, and thus don't have an asynchronous
+lifecycle to track.
+
+Note that using `status` objects or using
+`node:diagnostics_channel` listeners _will_ impose a modest
+permance penalty. Creating data objects is not ever free; do not
+believe anyone who tells you otherwise. But it is as small as
+possible.
+
 ## Performance
 
-As of January 2022, version 7 of this library is one of the most
+As of April 2026, version 11 of this library is one of the most
 performant LRU cache implementations in JavaScript.
 
 Benchmarks can be extremely difficult to get right. In
@@ -272,9 +333,9 @@ If performance matters to you:
    LRUCache](https://yomguithereal.github.io/mnemonist/lru-cache)
    which uses an Object as its data store.
 
-2. Failing that, if at all possible, use short non-numeric
-   strings (ie, less than 256 characters) as your keys, and use
-   [mnemonist's
+2. Failing that, if you can use short non-numeric strings (ie,
+   less than 256 characters) as your keys, and you do not need
+   any of the other features of this library, use [mnemonist's
    LRUCache](https://yomguithereal.github.io/mnemonist/lru-cache).
 
 3. If the types of your keys will be anything else, especially
@@ -286,14 +347,14 @@ If performance matters to you:
    (like asynchronous fetching, a variety of TTL staleness
    options, and so on), then [mnemonist's
    LRUMap](https://yomguithereal.github.io/mnemonist/lru-map) is
-   a very good option, and just slightly faster than this module
-   (since it does considerably less).
+   also a very good option, and just slightly faster than this
+   module (since it does considerably less).
 
 4. Do not use a `dispose` function, size tracking, or especially
-   ttl behavior, unless absolutely needed. These features are
-   convenient, and necessary in some use cases, and every attempt
-   has been made to make the performance impact minimal, but it
-   isn't nothing.
+   ttl behavior or observability features, unless absolutely
+   needed. These features are convenient, and necessary in some
+   use cases, and every attempt has been made to make the
+   performance impact minimal, but it isn't nothing.
 
 ## Testing
 

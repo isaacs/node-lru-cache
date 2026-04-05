@@ -4,17 +4,19 @@ import { LRUCache as LRU } from '../dist/esm/index.js'
 import { expose } from './fixtures/expose.js'
 
 const max = 10000
-const cache = new LRU<string, number[]>({ max })
+const cache = new LRU<string, string[]>({ max })
 
 import crypto from 'crypto'
-const getVal = () => [
+const getVal = (): [string, string, string, string] => [
   crypto.randomBytes(12).toString('hex'),
   crypto.randomBytes(12).toString('hex'),
   crypto.randomBytes(12).toString('hex'),
   crypto.randomBytes(12).toString('hex'),
 ]
 
-const seeds = new Array(max * 3)
+const seeds: [string, [string, string, string, string]][] = Array.from({
+  length: max * 3,
+})
 // fill up the cache to start
 for (let i = 0; i < max * 3; i++) {
   const v = getVal()
@@ -27,7 +29,7 @@ const verifyCache = () => {
   // index in the keyMap, and the value matches.
   const e = expose(cache)
   for (const [k, i] of e.keyMap.entries()) {
-    const v = e.valList[i] as number[]
+    const v = e.valList[i] as string[]
     const key = e.keyList[i]
     if (k !== key) {
       t.equal(k, key, 'key at proper index', { k, i })
@@ -43,6 +45,7 @@ const cycleLength = Math.floor(max / 100)
 while (cycles < max * 5) {
   const r = Math.floor(Math.random() * seeds.length)
   const seed = seeds[r]
+  if (!seed) throw new Error('impossible')
   const v = cache.get(seed[0])
   if (v === undefined) {
     cache.set(seed[0], seed[1])

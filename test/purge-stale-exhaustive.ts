@@ -29,7 +29,9 @@ const boolOpts = (n: number): number[][] => {
 
 const permute = (arr: number[] | number): number[][] => {
   if (typeof arr === 'number') {
-    return permute(Object.keys(new Array(arr).fill('')).map(n => +n))
+    return permute(
+      Object.keys(Array.from({ length: arr }).fill('')).map(n => +n),
+    )
   }
   if (arr.length === 1) {
     return [arr]

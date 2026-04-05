@@ -67,3 +67,16 @@ t.test('with context', t => {
   ])
   t.end()
 })
+
+t.test('forceRefresh', t => {
+  t.clock.enter()
+  const c = new LRUCache<string, number, undefined | number>({
+    memoMethod: (k, _, options) => parseInt(k, options.context ?? 10),
+    ttl: 100,
+    max: 10,
+  })
+  t.equal(c.memo('10'), 10)
+  t.equal(c.memo('10', { context: 8 }), 10)
+  t.equal(c.memo('10', { context: 8, forceRefresh: true }), 8)
+  t.end()
+})

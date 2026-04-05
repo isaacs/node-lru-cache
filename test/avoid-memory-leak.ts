@@ -2,7 +2,8 @@
 
 // https://github.com/isaacs/node-lru-cache/issues/227
 
-import t, { Test } from 'tap'
+import type { Test } from 'tap'
+import t from 'tap'
 import { expose } from './fixtures/expose.js'
 
 const maxSize = 100_000

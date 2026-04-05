@@ -1,5 +1,6 @@
-import t, { Test } from 'tap'
-import { LRUCache } from '../dist/esm/index.js'
+import type { Test } from 'tap'
+import t from 'tap'
+import type { LRUCache } from '../dist/esm/index.js'
 import { expose } from './fixtures/expose.js'
 
 const clock = t.clock

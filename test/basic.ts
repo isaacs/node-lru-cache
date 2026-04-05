@@ -250,3 +250,53 @@ t.test('re-use key before initial fill completed', t => {
   t.matchSnapshot(statuses)
   t.end()
 })
+
+t.test('peek tests', async t => {
+  t.clock.enter()
+  const c = new LRU<number, number>({
+    max: 10,
+    ttl: 100,
+    async fetchMethod(k) {
+      await new Promise<void>(res => setTimeout(res, 10))
+      return k * 1000
+    },
+  })
+  c.set(1, 10)
+  t.clock.advance(20)
+  c.set(2, 20)
+  t.clock.advance(30)
+  c.set(3, 30)
+  t.clock.advance(40)
+  c.set(4, 40)
+  t.clock.advance(50)
+  c.set(4, 50)
+  const s1: LRU.Status<number, number> = {}
+  t.equal(c.peek(1, { status: s1 }), undefined)
+  t.equal(s1.peek, 'stale')
+
+  const s2: LRU.Status<number, number> = {}
+  t.equal(c.peek(999, { status: s2 }), undefined)
+  t.equal(s2.peek, 'miss')
+
+  const s3: LRU.Status<number, number> = {}
+  t.equal(c.peek(1, { allowStale: true, status: s3 }), 10)
+  t.equal(s3.peek, 'hit')
+
+  const s4: LRU.Status<number, number> = {}
+  const p = c.fetch(5, { status: s4 })
+
+  const s5: LRU.Status<number, number> = {}
+  t.equal(c.peek(5, { status: s5 }), undefined)
+  t.equal(s5.peek, 'miss')
+
+  t.clock.advance(20)
+  t.equal(await p, 5000)
+  t.clock.advance(200)
+  const p2 = c.fetch(5)
+  t.equal(c.peek(5, { status: s5 }), undefined)
+  t.equal(s5.peek, 'stale')
+  t.equal(c.peek(5, { status: s5, allowStale: true }), 5000)
+  t.equal(s5.peek, 'hit')
+  t.clock.advance(100)
+  t.equal(await p2, 5000)
+})
