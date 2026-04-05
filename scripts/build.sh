@@ -2,6 +2,7 @@
 
 esbuild --minify \
   --sourcemap \
+  --platform=node \
   --bundle dist/commonjs/index.js \
   --outfile=dist/commonjs/index.min.js \
   --format=cjs

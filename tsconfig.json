@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "types": [
+      "node"
+    ],
+    "rootDir": "./",
     "declaration": true,
     "declarationMap": true,
     "esModuleInterop": true,

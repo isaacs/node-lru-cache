@@ -8,7 +8,8 @@
   ],
   "exclude": [
     "../src/**/*.mts",
-    "../src/package.json"
+    "../src/package.json",
+    "../src/diagnostics-channel-esm.mts"
   ],
   "compilerOptions": {
     "outDir": "../.tshy-build/commonjs"

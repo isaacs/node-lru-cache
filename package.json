@@ -11,7 +11,7 @@
   "sideEffects": false,
   "scripts": {
     "build": "npm run prepare",
-    "prepare": "tshy && bash fixup.sh",
+    "prepare": "tshy && bash scripts/build.sh",
     "pretest": "npm run prepare",
     "presnap": "npm run prepare",
     "test": "tap",
@@ -25,7 +25,10 @@
     "prebenchmark": "npm run prepare",
     "benchmark": "make -C benchmark",
     "preprofile": "npm run prepare",
-    "profile": "make -C benchmark profile"
+    "profile": "make -C benchmark profile",
+    "lint": "oxlint --fix src test",
+    "postsnap": "npm run lint",
+    "postlint": "npm run format"
   },
   "main": "./dist/commonjs/index.min.js",
   "types": "./dist/commonjs/index.d.ts",
@@ -42,22 +45,24 @@
           "default": "./dist/commonjs/index.min.js"
         }
       }
-    }
+    },
+    "selfLink": false
   },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/isaacs/node-lru-cache.git"
   },
   "devDependencies": {
-    "@types/node": "^24.3.0",
     "benchmark": "^2.1.4",
     "esbuild": "^0.25.9",
     "marked": "^4.2.12",
     "mkdirp": "^3.0.1",
-    "prettier": "^3.6.2",
-    "tap": "^21.1.0",
-    "tshy": "^3.0.2",
-    "typedoc": "^0.28.12"
+    "oxlint": "^1.58.0",
+    "oxlint-tsgolint": "^0.19.0",
+    "prettier": "^3.8.1",
+    "tap": "^21.6.3",
+    "tshy": "^4.1.1",
+    "typedoc": "^0.28.18"
   },
   "license": "BlueOak-1.0.0",
   "files": [

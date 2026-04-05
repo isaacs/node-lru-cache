@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches: ["main"]
-  pull_request_target:
+  pull_request:
     paths:
       - 'src/**'
       - 'test/**'

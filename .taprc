@@ -1,5 +1,5 @@
 # vim: set filetype=yaml :
 node-arg:
-  - "--expose-gc"
+  - --expose-gc
 plugin:
   - "@tapjs/clock"
