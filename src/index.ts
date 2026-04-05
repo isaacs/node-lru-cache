@@ -268,6 +268,18 @@ export namespace LRUCache {
     memo?: 'hit' | 'miss'
 
     /**
+     * The `context` option provided to a memo or fetch operation
+     *
+     * In practice, of course, this will be the same type as the `FC`
+     * fetch context param used to instantiate the LRUCache, but the
+     * convolutions of threading that through would get quite complicated,
+     * and preclude forcing/forbidding the passing of a `context` param
+     * where it is/isn't expected, which is more valuable for error
+     * prevention.
+     */
+    context?: unknown
+
+    /**
      * the ttl stored for the item, or undefined if ttls are not used.
      */
     ttl?: Milliseconds
@@ -2679,6 +2691,9 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     const ths = tracing.hasSubscribers
     const { status = hasSubscribers() ? {} : undefined } = fetchOptions
     fetchOptions.status = status
+    if (status && fetchOptions.context) {
+      status.context = fetchOptions.context
+    }
     const p = this.#fetch(k, fetchOptions)
     if (status && hasSubscribers()) {
       if (ths) {
@@ -2825,6 +2840,9 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     const ths = tracing.hasSubscribers
     const { status = hasSubscribers() ? {} : undefined } = fetchOptions
     fetchOptions.status = status
+    if (status && fetchOptions.context) {
+      status.context = fetchOptions.context
+    }
     const p = this.#forceFetch(k, fetchOptions)
     if (status && hasSubscribers()) {
       if (ths) {
@@ -2885,6 +2903,9 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     if (status) {
       status.op = 'memo'
       status.key = k
+      if (memoOptions.context) {
+        status.context = memoOptions.context
+      }
     }
     const result = this.#memo(k, memoOptions)
     if (status) status.value = result

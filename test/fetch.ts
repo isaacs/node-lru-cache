@@ -395,7 +395,7 @@ t.test('forceRefresh', async t => {
     return status
   }
 
-  const cache = new LRU<number, number>({
+  const cache = new LRU<number, number, boolean>({
     max: 10,
     allowStale: true,
     ttl: 100,
@@ -413,7 +413,7 @@ t.test('forceRefresh', async t => {
   // put in some values that don't match what fetchMethod returns
   cache.set(1, 100)
   cache.set(2, 200)
-  t.equal(await cache.fetch(1), 100)
+  t.equal(await cache.fetch(1, { context: true }), 100)
   // still there, because we're allowing stale, and it's not stale
   const status: LRUCache.Status<number, number> = {}
   t.equal(
@@ -421,25 +421,44 @@ t.test('forceRefresh', async t => {
       forceRefresh: true,
       allowStale: false,
       status,
+      context: false,
     }),
     2,
   )
   t.equal(status.fetch, 'refresh', 'status reflects forced refresh')
-  t.equal(await cache.fetch(1, { forceRefresh: true }), 100)
+  t.equal(
+    await cache.fetch(1, { forceRefresh: true, context: false }),
+    100,
+  )
   clock.advance(100)
-  t.equal(await cache.fetch(2, { forceRefresh: true, status: s() }), 2)
+  t.equal(
+    await cache.fetch(2, {
+      forceRefresh: true,
+      status: s(),
+      context: false,
+    }),
+    2,
+  )
   t.equal(cache.peek(1), 100)
   // if we don't allow stale though, then that means that we wait
   // for the background fetch to complete, so we get the updated value.
-  t.equal(await cache.fetch(1, { allowStale: false, status: s() }), 1)
+  t.equal(
+    await cache.fetch(1, {
+      allowStale: false,
+      context: false,
+      status: s(),
+    }),
+    1,
+  )
 
   cache.set(1, 100)
-  t.equal(await cache.fetch(1, { allowStale: false }), 100)
+  t.equal(await cache.fetch(1, { allowStale: false, context: false }), 100)
   t.equal(
     await cache.fetch(1, {
       forceRefresh: true,
       allowStale: false,
       status: s(),
+      context: true,
     }),
     1,
   )
@@ -599,7 +618,7 @@ t.test('abort, but then keep on fetching anyway', async t => {
   let aborted: Error | undefined = undefined
   let resolved: boolean = false
   let returnUndefined: boolean = false
-  const cache = new LRU<number, number>({
+  const cache = new LRU<number, number, boolean>({
     max: 10,
     ignoreFetchAbort: true,
     fetchMethod: async (k, _, { signal, options }) => {
@@ -618,7 +637,7 @@ t.test('abort, but then keep on fetching anyway', async t => {
   })
   const ac = new AbortController()
   const status: LRUCache.Status<number, number> = {}
-  const p = cache.fetch(1, { signal: ac.signal, status })
+  const p = cache.fetch(1, { signal: ac.signal, status, context: true })
   const er = new Error('ignored abort signal')
   ac.abort(er)
   clock.advance(100)
@@ -632,7 +651,7 @@ t.test('abort, but then keep on fetching anyway', async t => {
   t.equal(ac.signal.reason, er)
   t.equal(cache.get(1), 1)
 
-  const p2 = cache.forceFetch(2)
+  const p2 = cache.forceFetch(2, { context: true })
   t.equal(cache.get(2), undefined)
   cache.delete(2)
   t.equal(cache.get(2), undefined)
@@ -641,7 +660,7 @@ t.test('abort, but then keep on fetching anyway', async t => {
   t.equal(cache.get(2), undefined)
 
   // if aborted for cause, we don't save the fetched value
-  const p3 = cache.fetch(3)
+  const p3 = cache.fetch(3, { context: true })
   t.equal(cache.get(3), undefined)
   cache.set(3, 33)
   t.equal(cache.get(3), 33)
@@ -652,10 +671,10 @@ t.test('abort, but then keep on fetching anyway', async t => {
   const e = expose(cache)
   returnUndefined = true
   const before = e.valList.slice()
-  const p4 = cache.fetch(4)
+  const p4 = cache.fetch(4, { context: true })
   clock.advance(100)
   t.equal(await p4, undefined)
-  const p5 = cache.forceFetch(4)
+  const p5 = cache.forceFetch(4, { context: true })
   clock.advance(100)
   await t.rejects(p5, { message: 'fetch() returned undefined' })
   t.same(e.valList, before, 'did not update values with undefined')

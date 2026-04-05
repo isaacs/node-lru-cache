@@ -316,6 +316,7 @@ Array [
     "op": "fetch",
   },
   Object {
+    "context": true,
     "fetch": "refresh",
     "fetchDispatched": true,
     "fetchResolved": true,

@@ -1005,6 +1005,7 @@ Array [
     "trace": true,
   },
   Object {
+    "context": true,
     "fetch": "refresh",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -1234,6 +1235,7 @@ Array [
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > abort, but then keep on fetching anyway traces 1`] = `
 Map {
   Object {
+    "context": true,
     "fetch": "miss",
     "fetchAborted": true,
     "fetchAbortIgnored": true,
@@ -1253,6 +1255,7 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "context": true,
     "fetch": "miss",
     "fetchAborted": true,
     "fetchAbortIgnored": true,
@@ -1269,6 +1272,7 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "context": true,
     "fetch": "miss",
     "fetchAborted": true,
     "fetchAbortIgnored": true,
@@ -1285,6 +1289,7 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "context": true,
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -1299,6 +1304,7 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "context": true,
     "error": Error: fetch() returned undefined {
       "name": "Error",
     },
@@ -3832,6 +3838,9 @@ Array []
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > fetch context required if set in ctor type traces 1`] = `
 Map {
   Object {
+    "context": Object {
+      "a": 1,
+    },
     "fetch": "miss",
     "fetchDispatched": true,
     "key": "x",
@@ -3852,6 +3861,9 @@ Map {
     "end",
   ],
   Object {
+    "context": Object {
+      "x": 1,
+    },
     "fetch": "miss",
     "fetchDispatched": true,
     "key": "z",
@@ -3862,6 +3874,9 @@ Map {
     "end",
   ],
   Object {
+    "context": Object {
+      "a": 1,
+    },
     "fetch": "miss",
     "fetchDispatched": true,
     "key": "x",
@@ -3891,6 +3906,9 @@ Map {
     "end",
   ],
   Object {
+    "context": Object {
+      "x": 1,
+    },
     "fetch": "miss",
     "fetchDispatched": true,
     "key": "z",
@@ -3906,6 +3924,7 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > fetch context traces 1`] = `
 Map {
   Object {
+    "context": "overridden",
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -3933,6 +3952,7 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "context": "first context",
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -3960,6 +3980,7 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "context": "ignored",
     "fetch": "hit",
     "key": "x",
     "now": 1092,
@@ -4596,12 +4617,14 @@ Array [
     "value": 10,
   },
   Object {
+    "context": 8,
     "key": "10",
     "memo": "hit",
     "op": "memo",
     "value": 10,
   },
   Object {
+    "context": 8,
     "forceRefresh": true,
     "key": "10",
     "memo": "miss",
@@ -4660,6 +4683,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > forceRefresh traces 2`] = `
 Map {
   Object {
+    "context": true,
     "fetch": "hit",
     "key": 1,
     "now": 1092,
@@ -4773,6 +4797,7 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "context": true,
     "fetch": "refresh",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -4842,6 +4867,9 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "context": Object {
+      "a": 1,
+    },
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -4872,6 +4900,9 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "context": Object {
+      "x": 1,
+    },
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -4887,6 +4918,9 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "context": Object {
+      "a": 1,
+    },
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -4927,6 +4961,9 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "context": Object {
+      "x": 1,
+    },
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -10367,12 +10404,14 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > with context metrics 1`] = `
 Array [
   Object {
+    "context": true,
     "key": 1,
     "memo": "miss",
     "op": "memo",
     "value": 1,
   },
   Object {
+    "context": true,
     "key": 1,
     "memo": "hit",
     "op": "memo",
@@ -10391,6 +10430,7 @@ Array [
     "value": 4,
   },
   Object {
+    "context": true,
     "key": 2,
     "memo": "hit",
     "op": "memo",
