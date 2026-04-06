@@ -368,7 +368,7 @@ Array [
     "op": "fetch",
   },
   Object {
-    "get": "hit",
+    "get": "fetching",
     "key": 1,
     "op": "get",
   },

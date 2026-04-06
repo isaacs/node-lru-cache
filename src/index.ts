@@ -267,7 +267,7 @@ export namespace LRUCache {
      * The status of a memo() operation.
      *
      * - 'hit': the item was found in the cache and returned
-     * - refresh: the `memoMethod` function was called
+     * - 'miss': the `memoMethod` function was called
      */
     memo?: 'hit' | 'miss'
 
@@ -330,8 +330,7 @@ export namespace LRUCache {
     value?: V
 
     /**
-     * The old value, specified in the case of `set:'update'` or
-     * `set:'replace'`
+     * The old value, specified in the case of `set:'replace'`
      */
     oldValue?: V
 
@@ -390,7 +389,7 @@ export namespace LRUCache {
 
     /**
      * The abort signal received was ignored, and the fetch was allowed to
-     * continue.
+     * continue in the background.
      */
     fetchAbortIgnored?: true
 
@@ -409,11 +408,15 @@ export namespace LRUCache {
      *
      * - fetching: The item is currently being fetched.  If a previous value
      *   is present and allowed, that will be returned.
-     * - stale: The item is in the cache, and is stale.
+     * - stale: The item is in the cache, and is stale. If it was returned,
+     *   then the `returnedStale` flag will be set.
+     * - stale-fetching: The value is being fetched in the background, but is
+     *   currently stale. If the stale value was returned, then the
+     *   `returnedStale` flag will be set.
      * - hit: the item is in the cache
      * - miss: the item is not in the cache
      */
-    get?: 'stale' | 'hit' | 'miss'
+    get?: 'stale' | 'hit' | 'miss' | 'fetching' | 'stale-fetching'
 
     /**
      * A fetch or get operation returned a stale value.
@@ -2968,48 +2971,45 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       status,
     } = getOptions
     const index = this.#keyMap.get(k)
-    if (index !== undefined) {
-      const value = this.#valList[index]
-      const fetching = this.#isBackgroundFetch(value)
-      if (status) this.#statusTTL(status, index)
-      if (this.#isStale(index)) {
-        if (status) status.get = 'stale'
-        // delete only if not an in-flight background fetch
-        if (!fetching) {
-          if (!noDeleteOnStaleGet) {
-            this.#delete(k, 'expire')
-          }
-          if (status && allowStale) status.returnedStale = true
-          return allowStale ? value : undefined
-        } else {
-          if (
-            status &&
-            allowStale &&
-            value.__staleWhileFetching !== undefined
-          ) {
-            status.returnedStale = true
-          }
-          return allowStale ? value.__staleWhileFetching : undefined
-        }
-      } else {
-        if (status) status.get = 'hit'
-        // if we're currently fetching it, we don't actually have it yet
-        // it's not stale, which means this isn't a staleWhileRefetching.
-        // If it's not stale, and fetching, AND has a __staleWhileFetching
-        // value, then that means the user fetched with {forceRefresh:true},
-        // so it's safe to return that value.
-        if (fetching) {
-          return value.__staleWhileFetching
-        }
-        this.#moveToTail(index)
-        if (updateAgeOnGet) {
-          this.#updateItemAge(index)
-        }
-        return value
-      }
-    } else if (status) {
-      status.get = 'miss'
+    if (index === undefined) {
+      if (status) status.get = 'miss'
+      return undefined
     }
+    const value = this.#valList[index]
+    const fetching = this.#isBackgroundFetch(value)
+    if (status) this.#statusTTL(status, index)
+    if (this.#isStale(index)) {
+      // delete only if not an in-flight background fetch
+      if (!fetching) {
+        if (!noDeleteOnStaleGet) {
+          this.#delete(k, 'expire')
+        }
+        if (status) status.get = 'stale'
+        if (allowStale) {
+          if (status) status.returnedStale = true
+          return value
+        }
+        return undefined
+      }
+      if (status) status.get = 'stale-fetching'
+      if (allowStale && value.__staleWhileFetching !== undefined) {
+        if (status) status.returnedStale = true
+        return value.__staleWhileFetching
+      }
+      return undefined
+    }
+    // not stale
+    if (status) status.get = fetching ? 'fetching' : 'hit'
+    // if we're currently fetching it, we don't actually have it yet
+    // it's not stale, which means this isn't a staleWhileRefetching.
+    // If it's not stale, and fetching, AND has a __staleWhileFetching
+    // value, then that means the user fetched with {forceRefresh:true},
+    // so it's safe to return that value.
+    this.#moveToTail(index)
+    if (updateAgeOnGet) {
+      this.#updateItemAge(index)
+    }
+    return fetching ? value.__staleWhileFetching : value
   }
 
   #connect(p: Index, n: Index) {

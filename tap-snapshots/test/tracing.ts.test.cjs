@@ -1177,7 +1177,7 @@ Array [
     "value": 1,
   },
   Object {
-    "get": "hit",
+    "get": "fetching",
     "key": 2,
     "op": "get",
   },
@@ -1197,7 +1197,7 @@ Array [
     "op": "get",
   },
   Object {
-    "get": "hit",
+    "get": "fetching",
     "key": 3,
     "op": "get",
   },
@@ -1327,7 +1327,7 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > allowStaleOnFetchAbort and ignoreFetchAbort metrics 1`] = `
 Array [
   Object {
-    "get": "hit",
+    "get": "fetching",
     "key": 1,
     "now": 2443,
     "op": "get",
@@ -1558,7 +1558,7 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > asynchronous fetching metrics 1`] = `
 Array [
   Object {
-    "get": "stale",
+    "get": "stale-fetching",
     "key": "key",
     "now": 372,
     "op": "get",
@@ -1569,7 +1569,7 @@ Array [
     "value": 2,
   },
   Object {
-    "get": "hit",
+    "get": "fetching",
     "key": "key2",
     "now": 372,
     "op": "get",
@@ -1608,7 +1608,7 @@ Array [
     "value": 0,
   },
   Object {
-    "get": "stale",
+    "get": "stale-fetching",
     "key": "key4",
     "now": 672,
     "op": "get",
@@ -1617,7 +1617,7 @@ Array [
     "ttl": 5,
   },
   Object {
-    "get": "stale",
+    "get": "stale-fetching",
     "key": "key6",
     "now": 772,
     "op": "get",
@@ -1626,7 +1626,7 @@ Array [
     "ttl": 5,
   },
   Object {
-    "get": "stale",
+    "get": "stale-fetching",
     "key": "key6",
     "now": 872,
     "op": "get",
@@ -1981,7 +1981,7 @@ Array [
     "value": 10,
   },
   Object {
-    "get": "stale",
+    "get": "stale-fetching",
     "key": 1,
     "now": 1903,
     "op": "get",
@@ -2003,7 +2003,7 @@ Array [
     "value": 99,
   },
   Object {
-    "get": "stale",
+    "get": "stale-fetching",
     "key": 1,
     "now": 2203,
     "op": "get",
@@ -10185,7 +10185,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > verify inflight works as expected metrics 1`] = `
 Array [
   Object {
-    "get": "hit",
+    "get": "fetching",
     "key": 1,
     "op": "get",
   },
@@ -10291,7 +10291,7 @@ Array [
     "op": "delete",
   },
   Object {
-    "get": "hit",
+    "get": "fetching",
     "key": 1,
     "now": 52,
     "op": "get",
@@ -10300,7 +10300,7 @@ Array [
     "ttl": 1000,
   },
   Object {
-    "get": "hit",
+    "get": "fetching",
     "key": 2,
     "now": 52,
     "op": "get",
@@ -10319,7 +10319,7 @@ Array [
     "value": 1,
   },
   Object {
-    "get": "hit",
+    "get": "fetching",
     "key": 2,
     "now": 152,
     "op": "get",
@@ -11602,7 +11602,7 @@ Array [
     "trace": true,
   },
   Object {
-    "get": "hit",
+    "get": "fetching",
     "key": 1,
     "op": "get",
   },
