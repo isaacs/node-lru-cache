@@ -229,6 +229,10 @@ export namespace LRUCache {
    *
    * The `status` option should be a plain JavaScript object. The following
    * fields will be set on it appropriately, depending on the situation.
+   *
+   * These objects are also the context objects passed to listeners on the
+   * `lru-cache:metrics` diagnostic channel, and the `lru-cache` tracing
+   * channels, in platforms that support them.
    */
   export interface Status<K, V> {
     /**
