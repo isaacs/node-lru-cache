@@ -1,5 +1,10 @@
 # cringe lorg
 
+## 11.3
+
+- Add observability features, expand the coverage of
+  `LRUCache.Status` objects.
+
 ## 11.2
 
 - Add the `perf` option to specify `performance`, `Date`, or any
