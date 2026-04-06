@@ -238,7 +238,7 @@ information about every LRUCache instance in your application:
 ```ts
 import { tracingChannel, subscribe } from 'node:diagnostics_channel'
 
-subscribe( 'lru-cache:metrics', (message, name) => {
+subscribe('lru-cache:metrics', (message, name) => {
   // name will always be 'lru-cache:metrics'
   // message will be the LRUCache.Status object for whatever
   // synchronous operation was performed.
