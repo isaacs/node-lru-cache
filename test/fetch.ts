@@ -1,6 +1,6 @@
 import t from 'tap'
-import type { BackgroundFetch } from '../dist/esm/index.js'
-import { LRUCache } from '../dist/esm/index.js'
+import type { BackgroundFetch } from '../dist/esm/node/index.js'
+import { LRUCache } from '../dist/esm/node/index.js'
 import { expose } from './fixtures/expose.js'
 
 t.teardown(() => {})

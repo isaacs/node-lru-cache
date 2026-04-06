@@ -1,6 +1,6 @@
 // https://github.com/isaacs/node-lru-cache/issues/278
 import t from 'tap'
-import { LRUCache as LRU } from '../dist/esm/index.js'
+import { LRUCache as LRU } from '../dist/esm/node/index.js'
 const lru = new LRU<string, string>({
   maxSize: 2,
   sizeCalculation: () => 1,

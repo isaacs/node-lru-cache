@@ -37,7 +37,7 @@ global.setTimeout = newST
 //@ts-ignore
 global.clearTimeout = newCT
 
-const { LRUCache: LRU } = await import('../dist/esm/index.js')
+const { LRUCache: LRU } = await import('../dist/esm/node/index.js')
 
 t.test('a cache that overwrites a hot key many times', async t => {
   const cache = new LRU<string, number>({

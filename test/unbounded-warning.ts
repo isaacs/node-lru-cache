@@ -1,5 +1,5 @@
 import t from 'tap'
-import { LRUCache } from '../dist/esm/index.js'
+import { LRUCache } from '../dist/esm/node/index.js'
 
 t.test('emits warning', t => {
   const { emitWarning } = process

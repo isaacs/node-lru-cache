@@ -1,6 +1,6 @@
 import { createRequire } from 'module'
 import t from 'tap'
-import { LRUCache as LRU } from '../dist/esm/index.js'
+import { LRUCache as LRU } from '../dist/esm/node/index.js'
 import { expose } from './fixtures/expose.js'
 
 t.test('verify require works as expected', async t => {
@@ -10,7 +10,7 @@ t.test('verify require works as expected', async t => {
     req.resolve('../dist/commonjs/index.min.js'),
     'require resolves to expected module',
   )
-  const { LRUCache } = await t.mockImport('../dist/esm/index.js')
+  const { LRUCache } = await t.mockImport('../dist/esm/node/index.js')
   const { LRUCache: LRUCacheRaw } = await t.mockImport('lru-cache/raw')
   t.equal(LRUCache.toString().split(/\r?\n/)[0].trim(), 'class LRUCache {')
   t.equal(
@@ -20,7 +20,7 @@ t.test('verify require works as expected', async t => {
   )
   const { LRUCache: LRUCacheMain } = await t.mockImport('lru-cache')
   const { LRUCache: LRUCacheMin } = await t.mockImport(
-    '../dist/esm/index.min.js',
+    '../dist/esm/node/index.min.js',
   )
   t.equal(LRUCacheMin.toString(), LRUCacheMain.toString())
 })

@@ -1,5 +1,5 @@
 import t from 'tap'
-import { LRUCache } from '../dist/esm/index.js'
+import { LRUCache } from '../dist/esm/node/index.js'
 const c = new LRUCache({ max: 2 })
 t.type(c, LRUCache)
 c.set(1, 1)

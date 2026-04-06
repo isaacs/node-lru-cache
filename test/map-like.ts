@@ -2,7 +2,7 @@ import t from 'tap'
 const clock = t.clock
 t.teardown(clock.enter())
 
-import { LRUCache as LRU } from '../dist/esm/index.js'
+import { LRUCache as LRU } from '../dist/esm/node/index.js'
 import { expose } from './fixtures/expose.js'
 
 const entriesFromForeach = <K extends {}, V extends {}>(

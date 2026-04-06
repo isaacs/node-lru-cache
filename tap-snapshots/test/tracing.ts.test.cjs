@@ -4611,32 +4611,6 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > forceRefresh metrics 1`] = `
 Array [
   Object {
-    "key": "10",
-    "memo": "miss",
-    "op": "memo",
-    "value": 10,
-  },
-  Object {
-    "context": 8,
-    "key": "10",
-    "memo": "hit",
-    "op": "memo",
-    "value": 10,
-  },
-  Object {
-    "context": 8,
-    "forceRefresh": true,
-    "key": "10",
-    "memo": "miss",
-    "op": "memo",
-    "value": 8,
-  },
-]
-`
-
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > forceRefresh metrics 2`] = `
-Array [
-  Object {
     "key": 1,
     "now": 1092,
     "op": "set",
@@ -4676,11 +4650,33 @@ Array [
 ]
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > forceRefresh traces 1`] = `
-Map {}
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > forceRefresh metrics 2`] = `
+Array [
+  Object {
+    "key": "10",
+    "memo": "miss",
+    "op": "memo",
+    "value": 10,
+  },
+  Object {
+    "context": 8,
+    "key": "10",
+    "memo": "hit",
+    "op": "memo",
+    "value": 10,
+  },
+  Object {
+    "context": 8,
+    "forceRefresh": true,
+    "key": "10",
+    "memo": "miss",
+    "op": "memo",
+    "value": 8,
+  },
+]
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > forceRefresh traces 2`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > forceRefresh traces 1`] = `
 Map {
   Object {
     "context": true,
@@ -4821,6 +4817,10 @@ Map {
     "asyncEnd",
   ],
 }
+`
+
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > forceRefresh traces 2`] = `
+Map {}
 `
 
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > has false for pending fetch without stale val metrics 1`] = `
@@ -10295,8 +10295,8 @@ Array [
     "key": 1,
     "now": 52,
     "op": "get",
-    "remainingTTL": 949,
-    "start": 1,
+    "remainingTTL": 950,
+    "start": 2,
     "ttl": 1000,
   },
   Object {
@@ -10304,8 +10304,8 @@ Array [
     "key": 2,
     "now": 52,
     "op": "get",
-    "remainingTTL": 949,
-    "start": 1,
+    "remainingTTL": 950,
+    "start": 2,
     "ttl": 1000,
   },
   Object {
@@ -10323,8 +10323,8 @@ Array [
     "key": 2,
     "now": 152,
     "op": "get",
-    "remainingTTL": 849,
-    "start": 1,
+    "remainingTTL": 850,
+    "start": 2,
     "ttl": 1000,
   },
   Object {

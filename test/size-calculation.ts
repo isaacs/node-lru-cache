@@ -1,5 +1,5 @@
 import t from 'tap'
-import { LRUCache as LRU } from '../dist/esm/index.js'
+import { LRUCache as LRU } from '../dist/esm/node/index.js'
 
 import { expose } from './fixtures/expose.js'
 

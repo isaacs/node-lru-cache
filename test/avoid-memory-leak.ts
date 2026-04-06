@@ -28,7 +28,7 @@ const tryReq = (mod: string) => {
 
 const v8 = tryReq('v8')
 
-import { LRUCache } from '../dist/esm/index.js'
+import { LRUCache } from '../dist/esm/node/index.js'
 import { createRequire } from 'module'
 const expectItemCount = Math.ceil(maxSize / itemSize)
 const max = expectItemCount + 1

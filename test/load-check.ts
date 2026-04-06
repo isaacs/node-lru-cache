@@ -1,6 +1,6 @@
 process.env.TAP_BAIL = '1'
 import t from 'tap'
-import { LRUCache as LRU } from '../dist/esm/index.js'
+import { LRUCache as LRU } from '../dist/esm/node/index.js'
 import { expose } from './fixtures/expose.js'
 
 const max = 10000
