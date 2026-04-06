@@ -272,8 +272,8 @@ lifecycle to track.
 
 Note that using `status` objects or using
 `node:diagnostics_channel` listeners _will_ impose a modest
-permance penalty. Creating data objects is not ever free; do not
-believe anyone who tells you otherwise. But it is as small as
+performance penalty. Creating data objects is not ever free; do
+not believe anyone who tells you otherwise. But it is as small as
 possible.
 
 ## Performance
