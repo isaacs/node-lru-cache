@@ -218,7 +218,7 @@ const myGet = (key, value) => {
 ## Tracing and Observability
 
 Most methods can accept a `status` option, which is an
-[`LRUCache.Status`](https://isaacs.github.io/node-lru-cache/interfaces/LRUCache.Status.html)
+[`LRUCache.Status`](https://isaacs.github.io/node-lru-cache/interfaces/LRUCache.LRUCache.Status.html)
 object that will be decorated along the operation with
 indications about what was done and why.
 
@@ -228,7 +228,7 @@ module on Node and other platforms that support it. In order to
 get diagnostics metrics, listen on the
 `channel('lru-cache:metrics')`. To get Tracing Channel traces,
 subscribe to the `tracingChannel('lru-cache')`. The
-[`LRUCache.Status`](https://isaacs.github.io/node-lru-cache/interfaces/LRUCache.Status.html)
+[`LRUCache.Status`](https://isaacs.github.io/node-lru-cache/interfaces/LRUCache.LRUCache.Status.html)
 objects will be provided as the message context to those channel
 listeners.
 
