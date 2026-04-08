@@ -15,7 +15,7 @@ export type { TracingChannel, Channel }
  */
 
 // conditionally import from diagnostic_channel, fall back to dummyfill
-// all we actually have to mock is the hasSubscribers, since we alwasy check
+// all we actually have to mock is the hasSubscribers, since we always check
 /* v8 ignore next */
 const dummy = { hasSubscribers: false }
 export let metrics = dummy as Channel<unknown>
