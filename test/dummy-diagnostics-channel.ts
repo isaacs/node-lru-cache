@@ -17,7 +17,12 @@ t.test('diagnostics channel loads polyfills then fills in', async t => {
     end: () => {},
   })
 
-  // verify that the dummies were not used
+  // verify that the dummies were only used until being loaded
+  t.equal(dc.metrics.hasSubscribers, false)
+  t.equal(dc.tracing.hasSubscribers, false)
+  t.equal(actualDC.channel('lru-cache:metrics').hasSubscribers, true)
+  t.equal(tc.hasSubscribers, true)
+  await new Promise<void>(res => setTimeout(res))
   t.equal(dc.metrics.hasSubscribers, true)
   t.equal(dc.tracing.hasSubscribers, true)
   t.equal(actualDC.channel('lru-cache:metrics').hasSubscribers, true)
@@ -39,4 +44,8 @@ t.test('dummy dc that just says no subs', async t => {
   // these still have subs from previous test though
   t.equal(actualDC.channel('lru-cache:metrics').hasSubscribers, true)
   t.equal(actualDC.tracingChannel('lru-cache').hasSubscribers, true)
+  await new Promise<void>(res => setTimeout(res))
+  // still dummies
+  t.equal(dc.metrics.hasSubscribers, false)
+  t.equal(dc.tracing.hasSubscribers, false)
 })

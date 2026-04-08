@@ -8,8 +8,8 @@ export type { TracingChannel, Channel }
 
 /**
  * no-op polyfills for non-node environments. tries to load the actual
- * diagnostics_channel module on platforms (bun, deno) that support it, but
- * fails gracefully if not found. This means that the first tick of metrics
+ * diagnostics_channel module on platforms that support it, but fails
+ * gracefully if not found. This means that the first tick of metrics
  * and tracing will be missed, but that probably doesn't matter much.
  */
 
@@ -17,14 +17,11 @@ export type { TracingChannel, Channel }
 // all we actually have to mock is the hasSubscribers, since we alwasy check
 /* v8 ignore next */
 const dummy = { hasSubscribers: false }
-type LRUCacheDC = [Channel<unknown>, TracingChannel<unknown>]
-export const [metrics, tracing]: LRUCacheDC =
-  await import('node:diagnostics_channel')
-    .then(
-      dc =>
-        [
-          dc.channel('lru-cache:metrics'),
-          dc.tracingChannel('lru-cache'),
-        ] as LRUCacheDC,
-    )
-    .catch(() => [dummy, dummy] as unknown as LRUCacheDC)
+export let metrics = dummy as Channel<unknown>
+export let tracing = dummy as TracingChannel<unknown>
+import('node:diagnostics_channel')
+  .then(dc => {
+    metrics = dc.channel('lru-cache:metrics')
+    tracing = dc.tracingChannel('lru-cache')
+  })
+  .catch(() => {})

@@ -276,6 +276,31 @@ performance penalty. Creating data objects is not ever free; do
 not believe anyone who tells you otherwise. But it is as small as
 possible.
 
+### Platform Compatibility Caveat
+
+Not all platforms support the `node:diagnostics_channel` module.
+Currently, this is only available in Node, Bun, and Deno, and
+some edge computing platforms that provide a Node compatibility
+layer.
+
+To work around this, if you are loading in a non-Node
+environment, the package.json exports will direct your module
+loader to pull in a version that starts out with a dummy
+implementation, then does a conditional dynamic `import` of the
+`node:diagnostics_channel` module, and then swaps out those
+dummy objects with the real thing if it succeeds. This means that
+cache metrics and tracing channels started in the first load-time
+tick of your application will _not_ be covered, except in
+environments that load using the `require` import
+condition, or both the `node` and `esm` import conditions
+together.
+
+Top-level await _could_ be used to remove this caveat, but that
+feature is dead on arrival, unfortunately. See
+[#397](https://github.com/isaacs/node-lru-cache/issues/397) and
+[#398](https://github.com/isaacs/node-lru-cache/issues/398) for
+more details.
+
 ## Performance
 
 As of April 2026, version 11 of this library is one of the most
