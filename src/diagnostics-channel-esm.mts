@@ -1,5 +1,6 @@
-// this is used in ESM environments where top level await is allowed,
-// but node:diagnostics_channel might not be present, such as browsers.
+// this is used in ESM environments that do not follow the 'node' import
+// condition. So, `node:diagnostics_channel` MAY be present, but might not.
+// Eg: browsers, webpack, react-native, etc.
 import {
   type Channel,
   type TracingChannel,
