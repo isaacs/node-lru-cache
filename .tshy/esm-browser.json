@@ -9,9 +9,9 @@
   "exclude": [
     "../src/package.json",
     "../src/diagnostics-channel-esm.mts",
-    "../src/diagnostics-channel-browser.mts"
+    "../src/diagnostics-channel-node.mts"
   ],
   "compilerOptions": {
-    "outDir": "../.tshy-build/esm/node"
+    "outDir": "../.tshy-build/esm/browser"
   }
 }
