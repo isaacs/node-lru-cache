@@ -45,6 +45,10 @@
             "types": "./dist/esm/node/index.d.ts",
             "default": "./dist/esm/node/index.min.js"
           },
+          "browser": {
+            "types": "./dist/esm/browser/index.d.ts",
+            "default": "./dist/esm/browser/index.min.js"
+          },
           "types": "./dist/esm/index.d.ts",
           "default": "./dist/esm/index.min.js"
         },
@@ -103,6 +107,10 @@
         "node": {
           "types": "./dist/esm/node/index.d.ts",
           "default": "./dist/esm/node/index.min.js"
+        },
+        "browser": {
+          "types": "./dist/esm/browser/index.d.ts",
+          "default": "./dist/esm/browser/index.min.js"
         },
         "types": "./dist/esm/index.d.ts",
         "default": "./dist/esm/index.min.js"

@@ -15,6 +15,12 @@ esbuild --minify \
 
 esbuild --minify \
   --sourcemap \
+  --bundle dist/esm/browser/index.js \
+  --outfile=dist/esm/browser/index.min.js \
+  --format=esm
+
+esbuild --minify \
+  --sourcemap \
   --platform=node \
   --bundle dist/esm/node/index.js \
   --outfile=dist/esm/node/index.min.js \
