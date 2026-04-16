@@ -26,9 +26,9 @@ t.test('verify require works as expected', async t => {
 })
 
 t.test('basic operation', t => {
-  const statuses: LRU.Status<number>[] = []
-  const s = (): LRU.Status<number> => {
-    const status: LRU.Status<number> = {}
+  const statuses: LRU.Status<number, number>[] = []
+  const s = (): LRU.Status<number, number> => {
+    const status: LRU.Status<number, number> = {}
     statuses.push(status)
     return status
   }
@@ -39,7 +39,7 @@ t.test('basic operation', t => {
     message: 'perf option must have a now() method if specified',
   })
 
-  const c = new LRU({ max: 10, perf: Date })
+  const c = new LRU<number | string | boolean, number | string>({ max: 10, perf: Date })
   t.equal(c.perf, Date)
   for (let i = 0; i < 5; i++) {
     t.equal(c.set(i, i, { status: s() }), c)
@@ -225,14 +225,14 @@ t.test('peek does not disturb order', t => {
 })
 
 t.test('re-use key before initial fill completed', t => {
-  const statuses: LRU.Status<number>[] = []
-  const s = (): LRU.Status<number> => {
-    const status: LRU.Status<number> = {}
+  const statuses: LRU.Status<number, {}>[] = []
+  const s = (): LRU.Status<number, {}> => {
+    const status: LRU.Status<number, {}> = {}
     statuses.push(status)
     return status
   }
 
-  const c = new LRU({ max: 5 })
+  const c = new LRU<number, {}>({ max: 5 })
   c.set(0, 0, { status: s() })
   c.set(1, 1, { status: s() })
   c.set(2, 2, { status: s() })
