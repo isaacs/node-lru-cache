@@ -1,6 +1,5 @@
 // simple node version that imports from node builtin
-// this gets compiled to a require() commonjs-style override,
-// not using top level await on a conditional dynamic import
+// this gets compiled to the `require` conditional branch.
 import { tracingChannel, channel } from 'node:diagnostics_channel'
 import type { TracingChannel, Channel } from 'node:diagnostics_channel'
 export type { TracingChannel, Channel }

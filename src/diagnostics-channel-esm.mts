@@ -1,6 +1,7 @@
-// this is used in ESM environments that do not follow the 'node' import
-// condition. So, `node:diagnostics_channel` MAY be present, but might not.
-// Eg: browsers, webpack, react-native, etc.
+// This is used in ESM environments that do NOT follow the 'node' or 'browser'
+// import conditions. So, `node:diagnostics_channel` MAY be present.
+// Note that this is overridden in 'browser' conditional branch, because the
+// dynamic import can confound bundlers and cause CSP violations in browsers.
 import {
   type Channel,
   type TracingChannel,
