@@ -6,9 +6,9 @@ import { expose } from './fixtures/expose.js'
 const clock = t.clock
 
 const runTests = (LRU: typeof LRUCache, t: Test) => {
-  const statuses: LRUCache.Status<any>[] = []
-  const s = (): LRUCache.Status<any> => {
-    const status: LRUCache.Status<any> = {}
+  const statuses: LRUCache.Status<{}, {}>[] = []
+  const s = (): LRUCache.Status<{}, {}> => {
+    const status: LRUCache.Status<{}, {}> = {}
     statuses.push(status)
     return status
   }
@@ -310,9 +310,9 @@ const runTests = (LRU: typeof LRUCache, t: Test) => {
   })
 
   t.test('no update ttl', t => {
-    const statuses: LRUCache.Status<number>[] = []
-    const s = (): LRUCache.Status<number> => {
-      const status: LRUCache.Status<number> = {}
+    const statuses: LRUCache.Status<number, number>[] = []
+    const s = (): LRUCache.Status<number, number> => {
+      const status: LRUCache.Status<number, number> = {}
       statuses.push(status)
       return status
     }
@@ -394,13 +394,13 @@ const runTests = (LRU: typeof LRUCache, t: Test) => {
 
   // https://github.com/isaacs/node-lru-cache/issues/203
   t.test('clear() disposes stale entries', t => {
-    const disposed: any[] = []
-    const disposedAfter: any[] = []
+    const disposed: unknown[] = []
+    const disposedAfter: unknown[] = []
     const c = new LRU({
       max: 3,
       ttl: 10,
-      dispose: (v: any, k: any) => disposed.push([v, k]),
-      disposeAfter: (v: any, k: any) => disposedAfter.push([v, k]),
+      dispose: (v: unknown, k: unknown) => disposed.push([v, k]),
+      disposeAfter: (v: unknown, k: unknown) => disposedAfter.push([v, k]),
     })
     for (let i = 0; i < 4; i++) {
       c.set(i, i)
