@@ -39,7 +39,10 @@ t.test('basic operation', t => {
     message: 'perf option must have a now() method if specified',
   })
 
-  const c = new LRU<number | string | boolean, number | string>({ max: 10, perf: Date })
+  const c = new LRU<number | string | boolean, number | string>({
+    max: 10,
+    perf: Date,
+  })
   t.equal(c.perf, Date)
   for (let i = 0; i < 5; i++) {
     t.equal(c.set(i, i, { status: s() }), c)
