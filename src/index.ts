@@ -2702,11 +2702,9 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       status.context = fetchOptions.context
     }
     const p = this.#fetch(k, fetchOptions)
-    if (status && hasSubscribers()) {
-      if (ths) {
-        status.trace = true
-        tracing.tracePromise(() => p, status).catch(() => {})
-      }
+    if (status && ths) {
+      status.trace = true
+      tracing.tracePromise(() => p, status).catch(() => {})
     }
     return p
   }
@@ -2851,11 +2849,9 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       status.context = fetchOptions.context
     }
     const p = this.#forceFetch(k, fetchOptions)
-    if (status && hasSubscribers()) {
-      if (ths) {
-        status.trace = true
-        tracing.tracePromise(() => p, status).catch(() => {})
-      }
+    if (status && ths) {
+      status.trace = true
+      tracing.tracePromise(() => p, status).catch(() => {})
     }
     return p
   }
