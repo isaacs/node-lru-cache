@@ -34,8 +34,14 @@ t.test('dummy dc that just says no subs', async t => {
     typeof import('../src/diagnostics-channel-esm.mjs')
   >('../src/diagnostics-channel-esm.mjs', {
     'node:diagnostics_channel': {
+      get channel() {
+        throw new Error('no metrics channel for you!')
+      },
+      get tracingChannel() {
+        throw new Error('no tracingChannel for you!')
+      },
       get default() {
-        throw new Error('no diagnostics channel for you!')
+        throw new Error('no default for you!')
       },
     },
   })

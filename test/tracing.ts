@@ -1,6 +1,6 @@
 import t from 'tap'
 import { tracingChannel, subscribe } from 'node:diagnostics_channel'
-import type { LRUCache } from '../src/index.js'
+import type { LRUCache } from '../dist/esm/node/index.js'
 
 const metrics: LRUCache.Status<unknown, unknown>[] = []
 

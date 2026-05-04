@@ -3,6 +3,18 @@
 esbuild --minify \
   --sourcemap \
   --platform=node \
+  --bundle dist/commonjs/node/index.js \
+  --outfile=dist/commonjs/node/index.min.js \
+  --format=cjs
+
+esbuild --minify \
+  --sourcemap \
+  --bundle dist/commonjs/browser/index.js \
+  --outfile=dist/commonjs/browser/index.min.js \
+  --format=cjs
+
+esbuild --minify \
+  --sourcemap \
   --bundle dist/commonjs/index.js \
   --outfile=dist/commonjs/index.min.js \
   --format=cjs

@@ -8,8 +8,9 @@
   ],
   "exclude": [
     "../src/package.json",
-    "../src/diagnostics-channel-node.mts",
-    "../src/diagnostics-channel-browser.mts"
+    "../src/diagnostics-channel-cjs.cts",
+    "../src/diagnostics-channel-browser.ts",
+    "../src/diagnostics-channel-node.ts"
   ],
   "compilerOptions": {
     "outDir": "../.tshy-build/esm"

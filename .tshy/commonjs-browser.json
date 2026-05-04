@@ -9,11 +9,11 @@
   "exclude": [
     "../src/**/*.mts",
     "../src/package.json",
+    "../src/diagnostics-channel-cjs.cts",
     "../src/diagnostics-channel-esm.mts",
-    "../src/diagnostics-channel-browser.ts",
     "../src/diagnostics-channel-node.ts"
   ],
   "compilerOptions": {
-    "outDir": "../.tshy-build/commonjs"
+    "outDir": "../.tshy-build/commonjs/browser"
   }
 }

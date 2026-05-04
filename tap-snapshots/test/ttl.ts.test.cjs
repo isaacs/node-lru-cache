@@ -573,7 +573,7 @@ Array [
 ]
 `
 
-exports[`test/ttl.ts > TAP > tests with perf_hooks.performance.now() > set item pre-stale > dump with stale values 1`] = `
+exports[`test/ttl.ts > TAP > tests with performance.now() > set item pre-stale > dump with stale values 1`] = `
 Array [
   Array [
     1,
@@ -594,7 +594,7 @@ Array [
 ]
 `
 
-exports[`test/ttl.ts > TAP > tests with perf_hooks.performance.now() > ttl on set, not on cache > status updates 1`] = `
+exports[`test/ttl.ts > TAP > tests with performance.now() > ttl on set, not on cache > status updates 1`] = `
 Array [
   Object {
     "key": 1,
@@ -812,7 +812,7 @@ Array [
 ]
 `
 
-exports[`test/ttl.ts > TAP > tests with perf_hooks.performance.now() > ttl tests defaults > status updates 1`] = `
+exports[`test/ttl.ts > TAP > tests with performance.now() > ttl tests defaults > status updates 1`] = `
 Array [
   Object {
     "key": 1,
@@ -1023,7 +1023,7 @@ Array [
 ]
 `
 
-exports[`test/ttl.ts > TAP > tests with perf_hooks.performance.now() > ttl tests with ttlResolution=100 > status updates 1`] = `
+exports[`test/ttl.ts > TAP > tests with performance.now() > ttl tests with ttlResolution=100 > status updates 1`] = `
 Array [
   Object {
     "key": 1,
@@ -1105,7 +1105,7 @@ Array [
 ]
 `
 
-exports[`test/ttl.ts > TAP > tests with perf_hooks.performance.now() > ttlAutopurge > status updates 1`] = `
+exports[`test/ttl.ts > TAP > tests with performance.now() > ttlAutopurge > status updates 1`] = `
 Array [
   Object {
     "key": 1,

@@ -549,7 +549,7 @@ const runTests = (LRU: typeof LRUCache, t: Test) => {
   t.end()
 }
 
-t.test('tests with perf_hooks.performance.now()', t => {
+t.test('tests with performance.now()', async t => {
   const { performance, Date } = global
   // @ts-ignore
   t.teardown(() => Object.assign(global, { performance, Date }))
@@ -557,11 +557,13 @@ t.test('tests with perf_hooks.performance.now()', t => {
   global.Date = clock.Date
   // @ts-ignore
   global.performance = clock
-  const { LRUCache: LRU } = t.mockRequire('../', {})
+  const { LRUCache: LRU } = await t.mockImport<
+    typeof import('../dist/esm/node/index.js')
+  >('../dist/esm/node/index.js')
   runTests(LRU, t)
 })
 
-t.test('tests using Date.now()', t => {
+t.test('tests using Date.now()', async t => {
   const { performance, Date } = global
   // @ts-ignore
   t.teardown(() => Object.assign(global, { performance, Date }))
@@ -569,6 +571,8 @@ t.test('tests using Date.now()', t => {
   global.Date = clock.Date
   // @ts-ignore
   global.performance = null
-  const { LRUCache: LRU } = t.mockRequire('../', {})
+  const { LRUCache: LRU } = await t.mockImport<
+    typeof import('../dist/esm/node/index.js')
+  >('../dist/esm/node/index.js', {})
   runTests(LRU, t)
 })

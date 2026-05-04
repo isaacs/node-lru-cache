@@ -29,7 +29,10 @@ t.test('emits warning', t => {
 })
 
 t.test('prints to stderr if no process.emitWarning', t => {
-  const { LRUCache: LRU } = t.mockRequire('../', {}) as {
+  const { LRUCache: LRU } = t.mockRequire(
+    '../dist/commonjs/node/index.js',
+    {},
+  ) as {
     LRUCache: typeof LRUCache
   }
   const { error } = console

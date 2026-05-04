@@ -1,4 +1,5 @@
 // simple node version that imports from node builtin
+// this is built to both ESM and CommonJS on the 'node' import path
 import { tracingChannel, channel } from 'node:diagnostics_channel'
 import type { TracingChannel, Channel } from 'node:diagnostics_channel'
 export type { TracingChannel, Channel }

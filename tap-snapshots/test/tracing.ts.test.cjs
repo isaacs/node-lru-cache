@@ -8065,7 +8065,7 @@ exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests using Date.now() 
 Map {}
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > clear() disposes stale entries metrics 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > clear() disposes stale entries metrics 1`] = `
 Array [
   Object {
     "key": 0,
@@ -8110,11 +8110,11 @@ Array [
 ]
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > clear() disposes stale entries traces 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > clear() disposes stale entries traces 1`] = `
 Map {}
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > indexes/rindexes can walk over stale entries metrics 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > indexes/rindexes can walk over stale entries metrics 1`] = `
 Array [
   Object {
     "key": 0,
@@ -8239,11 +8239,11 @@ Array [
 ]
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > indexes/rindexes can walk over stale entries traces 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > indexes/rindexes can walk over stale entries traces 1`] = `
 Map {}
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > no delete on stale get metrics 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > no delete on stale get metrics 1`] = `
 Array [
   Object {
     "key": 1,
@@ -8308,11 +8308,11 @@ Array [
 ]
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > no delete on stale get traces 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > no delete on stale get traces 1`] = `
 Map {}
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > no update ttl metrics 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > no update ttl metrics 1`] = `
 Array [
   Object {
     "key": 0,
@@ -8407,11 +8407,11 @@ Array [
 ]
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > no update ttl traces 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > no update ttl traces 1`] = `
 Map {}
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > purge stale items metrics 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > purge stale items metrics 1`] = `
 Array [
   Object {
     "key": 0,
@@ -8566,11 +8566,11 @@ Array [
 ]
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > purge stale items traces 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > purge stale items traces 1`] = `
 Map {}
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > purgeStale() lockup metrics 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > purgeStale() lockup metrics 1`] = `
 Array [
   Object {
     "key": 1,
@@ -8630,11 +8630,11 @@ Array [
 ]
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > purgeStale() lockup traces 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > purgeStale() lockup traces 1`] = `
 Map {}
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > set item pre-stale metrics 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > set item pre-stale metrics 1`] = `
 Array [
   Object {
     "key": 1,
@@ -8748,11 +8748,11 @@ Array [
 ]
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > set item pre-stale traces 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > set item pre-stale traces 1`] = `
 Map {}
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > ttl on set, not on cache metrics 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > ttl on set, not on cache metrics 1`] = `
 Array [
   Object {
     "key": 1,
@@ -8985,11 +8985,11 @@ Array [
 ]
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > ttl on set, not on cache traces 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > ttl on set, not on cache traces 1`] = `
 Map {}
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > ttl tests defaults metrics 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > ttl tests defaults metrics 1`] = `
 Array [
   Object {
     "key": 1,
@@ -9251,11 +9251,11 @@ Array [
 ]
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > ttl tests defaults traces 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > ttl tests defaults traces 1`] = `
 Map {}
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > ttl tests with ttlResolution=100 metrics 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > ttl tests with ttlResolution=100 metrics 1`] = `
 Array [
   Object {
     "key": 1,
@@ -9342,11 +9342,11 @@ Array [
 ]
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > ttl tests with ttlResolution=100 traces 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > ttl tests with ttlResolution=100 traces 1`] = `
 Map {}
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > ttl with allowStale metrics 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > ttl with allowStale metrics 1`] = `
 Array [
   Object {
     "key": 1,
@@ -9611,11 +9611,11 @@ Array [
 ]
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > ttl with allowStale traces 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > ttl with allowStale traces 1`] = `
 Map {}
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > ttl with updateAgeOnGet/updateAgeOnHas metrics 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > ttl with updateAgeOnGet/updateAgeOnHas metrics 1`] = `
 Array [
   Object {
     "key": 1,
@@ -10024,11 +10024,11 @@ Array [
 ]
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > ttl with updateAgeOnGet/updateAgeOnHas traces 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > ttl with updateAgeOnGet/updateAgeOnHas traces 1`] = `
 Map {}
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > ttlAutopurge metrics 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > ttlAutopurge metrics 1`] = `
 Array [
   Object {
     "key": 1,
@@ -10074,19 +10074,19 @@ Array [
 ]
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > ttlAutopurge traces 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > ttlAutopurge traces 1`] = `
 Map {}
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > ttlResolution only respected if non-negative integer metrics 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > ttlResolution only respected if non-negative integer metrics 1`] = `
 Array []
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > ttlResolution only respected if non-negative integer traces 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > ttlResolution only respected if non-negative integer traces 1`] = `
 Map {}
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > updateAgeOnGet + ttlAutopurge: entry eventually purged if not re-accessed metrics 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > updateAgeOnGet + ttlAutopurge: entry eventually purged if not re-accessed metrics 1`] = `
 Array [
   Object {
     "key": "b",
@@ -10121,11 +10121,11 @@ Array [
 ]
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > updateAgeOnGet + ttlAutopurge: entry eventually purged if not re-accessed traces 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > updateAgeOnGet + ttlAutopurge: entry eventually purged if not re-accessed traces 1`] = `
 Map {}
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > updateAgeOnGet reschedules ttlAutopurge timer metrics 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > updateAgeOnGet reschedules ttlAutopurge timer metrics 1`] = `
 Array [
   Object {
     "key": "a",
@@ -10170,15 +10170,15 @@ Array [
 ]
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() > updateAgeOnGet reschedules ttlAutopurge timer traces 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > updateAgeOnGet reschedules ttlAutopurge timer traces 1`] = `
 Map {}
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() metrics 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() metrics 1`] = `
 Array []
 `
 
-exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with perf_hooks.performance.now() traces 1`] = `
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() traces 1`] = `
 Map {}
 `
 
@@ -11017,7 +11017,7 @@ Array [
 ]
 `
 
-exports[`test/tracing.ts > TAP > tests with perf_hooks.performance.now() > set item pre-stale > dump with stale values 1`] = `
+exports[`test/tracing.ts > TAP > tests with performance.now() > set item pre-stale > dump with stale values 1`] = `
 Array [
   Array [
     1,
@@ -11038,7 +11038,7 @@ Array [
 ]
 `
 
-exports[`test/tracing.ts > TAP > tests with perf_hooks.performance.now() > ttl on set, not on cache > status updates 1`] = `
+exports[`test/tracing.ts > TAP > tests with performance.now() > ttl on set, not on cache > status updates 1`] = `
 Array [
   Object {
     "key": 1,
@@ -11256,7 +11256,7 @@ Array [
 ]
 `
 
-exports[`test/tracing.ts > TAP > tests with perf_hooks.performance.now() > ttl tests defaults > status updates 1`] = `
+exports[`test/tracing.ts > TAP > tests with performance.now() > ttl tests defaults > status updates 1`] = `
 Array [
   Object {
     "key": 1,
@@ -11467,7 +11467,7 @@ Array [
 ]
 `
 
-exports[`test/tracing.ts > TAP > tests with perf_hooks.performance.now() > ttl tests with ttlResolution=100 > status updates 1`] = `
+exports[`test/tracing.ts > TAP > tests with performance.now() > ttl tests with ttlResolution=100 > status updates 1`] = `
 Array [
   Object {
     "key": 1,
@@ -11549,7 +11549,7 @@ Array [
 ]
 `
 
-exports[`test/tracing.ts > TAP > tests with perf_hooks.performance.now() > ttlAutopurge > status updates 1`] = `
+exports[`test/tracing.ts > TAP > tests with performance.now() > ttlAutopurge > status updates 1`] = `
 Array [
   Object {
     "key": 1,

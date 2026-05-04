@@ -3,23 +3,12 @@
  */
 
 import { metrics, tracing } from './diagnostics-channel.js'
+import { defaultPerf } from './perf.js'
+import type { Perf } from './perf.js'
+export type { Perf } from './perf.js'
 
 const hasSubscribers = () =>
   metrics.hasSubscribers || tracing.hasSubscribers
-
-// module-private names and types
-// this provides the default Perf object source.
-// it can be passed in via configuration to override it
-// for a single LRU object.
-export type Perf = { now: () => number }
-const defaultPerf: Perf =
-  (
-    typeof performance === 'object' &&
-    performance &&
-    typeof performance.now === 'function'
-  ) ?
-    performance
-  : Date
 
 const warned = new Set<string>()
 
@@ -88,7 +77,9 @@ export type { Stack }
 
 export type StackLike = Stack | Index[]
 class Stack {
+  /* c8 ignore start - not sure why this is showing up uncovered?? */
   heap: NumberArray
+  /* c8 ignore stop */
   length: number
   // private constructor
   static #constructing: boolean = false
