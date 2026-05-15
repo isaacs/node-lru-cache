@@ -225,7 +225,7 @@ export namespace LRUCache {
    * `lru-cache:metrics` diagnostic channel, and the `lru-cache` tracing
    * channels, in platforms that support them.
    */
-  export interface Status<K, V> {
+  export interface Status<K, V, FC = unknown> {
     /**
      * The operation being performed
      */
@@ -418,6 +418,11 @@ export namespace LRUCache {
      * A tracingChannel trace was started for this operation
      */
     trace?: boolean
+
+    /**
+     * A reference to the cache instance associated with this operation
+     */
+    cache?: LRUCache<K & {}, V & {}, FC>
   }
 
   /**
@@ -449,7 +454,7 @@ export namespace LRUCache {
     | 'ignoreFetchAbort'
     | 'allowStaleOnFetchAbort'
   > {
-    status?: Status<K, V>
+    status?: Status<K, V, FC>
     size?: Size
   }
 
@@ -476,7 +481,7 @@ export namespace LRUCache {
      */
     context?: FC
     signal?: AbortSignal
-    status?: Status<K, V>
+    status?: Status<K, V, FC>
   }
   /**
    * Options provided to {@link LRUCache#fetch} when the FC type is something
@@ -493,11 +498,11 @@ export namespace LRUCache {
    * Options provided to {@link LRUCache#fetch} when the FC type is
    * `undefined` or `void`
    */
-  export interface FetchOptionsNoContext<K, V> extends FetchOptions<
+  export interface FetchOptionsNoContext<
     K,
     V,
-    undefined
-  > {
+    FC extends undefined | void = undefined,
+  > extends FetchOptions<K, V, FC> {
     context?: undefined
   }
 
@@ -529,7 +534,7 @@ export namespace LRUCache {
      * be required.
      */
     context?: FC
-    status?: Status<K, V>
+    status?: Status<K, V, FC>
   }
   /**
    * Options provided to {@link LRUCache#memo} when the FC type is something
@@ -546,11 +551,11 @@ export namespace LRUCache {
    * Options provided to {@link LRUCache#memo} when the FC type is
    * `undefined` or `void`
    */
-  export interface MemoOptionsNoContext<K, V> extends MemoOptions<
+  export interface MemoOptionsNoContext<
     K,
     V,
-    undefined
-  > {
+    FC extends undefined | void = undefined,
+  > extends MemoOptions<K, V, FC> {
     context?: undefined
   }
 
@@ -590,7 +595,7 @@ export namespace LRUCache {
     | 'noDisposeOnSet'
     | 'noUpdateTTL'
   > {
-    status?: Status<K, V>
+    status?: Status<K, V, FC>
     size?: Size
     start?: Milliseconds
   }
@@ -602,7 +607,7 @@ export namespace LRUCache {
     OptionsBase<K, V, FC>,
     'updateAgeOnHas'
   > {
-    status?: Status<K, V>
+    status?: Status<K, V, FC>
   }
 
   /**
@@ -612,7 +617,7 @@ export namespace LRUCache {
     OptionsBase<K, V, FC>,
     'allowStale' | 'updateAgeOnGet' | 'noDeleteOnStaleGet'
   > {
-    status?: Status<K, V>
+    status?: Status<K, V, FC>
   }
 
   /**
@@ -622,7 +627,7 @@ export namespace LRUCache {
     OptionsBase<K, V, FC>,
     'allowStale'
   > {
-    status?: Status<K, V>
+    status?: Status<K, V, FC>
   }
 
   /**
@@ -647,7 +652,7 @@ export namespace LRUCache {
      * method is in use.
      */
     start?: Milliseconds
-    status?: Status<K, V>
+    status?: Status<K, V, FC>
   }
 
   /**
@@ -1680,7 +1685,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
 
   // conditionally set private methods related to TTL
   #updateItemAge: (index: Index) => void = () => {}
-  #statusTTL: (status: LRUCache.Status<K, V>, index: Index) => void =
+  #statusTTL: (status: LRUCache.Status<K, V, FC>, index: Index) => void =
     () => {}
   #setItemTTL: (
     index: Index,
@@ -1732,7 +1737,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     this.#addItemSize = (
       index: Index,
       size: LRUCache.Size,
-      status?: LRUCache.Status<K, V>,
+      status?: LRUCache.Status<K, V, FC>,
     ) => {
       sizes[index] = size
       if (this.#maxSize) {
@@ -1754,7 +1759,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   #addItemSize: (
     index: Index,
     size: LRUCache.Size,
-    status?: LRUCache.Status<K, V>,
+    status?: LRUCache.Status<K, V, FC>,
   ) => void = (_i, _s, _st) => {}
 
   #requireSize: (
@@ -1762,7 +1767,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     v: V | BackgroundFetch<V>,
     size?: LRUCache.Size,
     sizeCalculation?: LRUCache.SizeCalculator<K, V>,
-    status?: LRUCache.Status<K, V>,
+    status?: LRUCache.Status<K, V, FC>,
   ) => LRUCache.Size = (
     _k: K,
     _v: V | BackgroundFetch<V>,
@@ -2133,6 +2138,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       status.op = 'set'
       status.key = k
       if (v !== undefined) status.value = v
+      status.cache = this
     }
     const result = this.#set(k, v, setOptions)
     if (status && metrics.hasSubscribers) {
@@ -2374,6 +2380,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     if (status) {
       status.op = 'has'
       status.key = k
+      status.cache = this
     }
     const result = this.#has(k, hasOptions)
     if (metrics.hasSubscribers) metrics.publish(status)
@@ -2421,6 +2428,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     if (status) {
       status.op = 'peek'
       status.key = k
+      status.cache = this
     }
     peekOptions.status = status
     const result = this.#peek(k, peekOptions)
@@ -2695,7 +2703,8 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   fetch(
     k: K,
     fetchOptions: unknown extends FC ? LRUCache.FetchOptions<K, V, FC>
-    : FC extends undefined | void ? LRUCache.FetchOptionsNoContext<K, V>
+    : FC extends undefined | void ?
+      LRUCache.FetchOptionsNoContext<K, V, FC>
     : LRUCache.FetchOptionsWithContext<K, V, FC>,
   ): Promise<undefined | V>
 
@@ -2705,7 +2714,8 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     : FC extends undefined | void ? K
     : never,
     fetchOptions?: unknown extends FC ? LRUCache.FetchOptions<K, V, FC>
-    : FC extends undefined | void ? LRUCache.FetchOptionsNoContext<K, V>
+    : FC extends undefined | void ?
+      LRUCache.FetchOptionsNoContext<K, V, FC>
     : never,
   ): Promise<undefined | V>
   fetch(
@@ -2755,6 +2765,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       status.op = 'fetch'
       status.key = k
       if (forceRefresh) status.forceRefresh = true
+      status.cache = this
     }
 
     if (!this.#hasFetchMethod) {
@@ -2843,7 +2854,8 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   forceFetch(
     k: K,
     fetchOptions: unknown extends FC ? LRUCache.FetchOptions<K, V, FC>
-    : FC extends undefined | void ? LRUCache.FetchOptionsNoContext<K, V>
+    : FC extends undefined | void ?
+      LRUCache.FetchOptionsNoContext<K, V, FC>
     : LRUCache.FetchOptionsWithContext<K, V, FC>,
   ): Promise<V>
   // this overload not allowed if context is required
@@ -2852,7 +2864,8 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     : FC extends undefined | void ? K
     : never,
     fetchOptions?: unknown extends FC ? LRUCache.FetchOptions<K, V, FC>
-    : FC extends undefined | void ? LRUCache.FetchOptionsNoContext<K, V>
+    : FC extends undefined | void ?
+      LRUCache.FetchOptionsNoContext<K, V, FC>
     : never,
   ): Promise<V>
   forceFetch(
@@ -2877,12 +2890,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     k: K,
     fetchOptions: LRUCache.FetchOptions<K, V, FC> = {},
   ) {
-    const v = await this.#fetch(
-      k,
-      fetchOptions as unknown extends FC ? LRUCache.FetchOptions<K, V, FC>
-      : FC extends undefined | void ? LRUCache.FetchOptionsNoContext<K, V>
-      : LRUCache.FetchOptionsWithContext<K, V, FC>,
-    )
+    const v = await this.#fetch(k, fetchOptions)
     if (v === undefined) throw new Error('fetch() returned undefined')
     return v
   }
@@ -2904,7 +2912,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   memo(
     k: K,
     memoOptions: unknown extends FC ? LRUCache.MemoOptions<K, V, FC>
-    : FC extends undefined | void ? LRUCache.MemoOptionsNoContext<K, V>
+    : FC extends undefined | void ? LRUCache.MemoOptionsNoContext<K, V, FC>
     : LRUCache.MemoOptionsWithContext<K, V, FC>,
   ): V
   // this overload not allowed if context is required
@@ -2913,7 +2921,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     : FC extends undefined | void ? K
     : never,
     memoOptions?: unknown extends FC ? LRUCache.MemoOptions<K, V, FC>
-    : FC extends undefined | void ? LRUCache.MemoOptionsNoContext<K, V>
+    : FC extends undefined | void ? LRUCache.MemoOptionsNoContext<K, V, FC>
     : never,
   ): V
   memo(k: K, memoOptions: LRUCache.MemoOptions<K, V, FC> = {}) {
@@ -2926,6 +2934,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       if (memoOptions.context) {
         status.context = memoOptions.context
       }
+      status.cache = this
     }
     const result = this.#memo(k, memoOptions)
     if (status) status.value = result
@@ -2967,6 +2976,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     if (status) {
       status.op = 'get'
       status.key = k
+      status.cache = this
     }
     const result = this.#get(k, getOptions)
     if (status) {
@@ -3068,6 +3078,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
         op: 'delete',
         delete: reason,
         key: k,
+        cache: this,
       })
     }
     let deleted = false

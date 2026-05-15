@@ -29,6 +29,7 @@ Array [
 exports[`test/ttl.ts > TAP > tests using Date.now() > ttl on set, not on cache > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 2259,
     "op": "set",
@@ -39,6 +40,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 2259,
@@ -49,6 +51,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 2264,
@@ -59,6 +62,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 2269,
@@ -69,6 +73,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 1,
     "now": 2270,
@@ -78,6 +83,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 1,
     "now": 2270,
@@ -87,6 +93,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 2270,
     "op": "set",
@@ -97,6 +104,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 2320,
@@ -106,6 +114,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 2320,
@@ -116,6 +125,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 2,
     "now": 2371,
@@ -125,6 +135,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 2,
     "now": 2371,
@@ -134,6 +145,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "key": 0,
     "now": 2371,
     "op": "set",
@@ -144,6 +156,7 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 2371,
     "op": "set",
@@ -154,6 +167,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 2371,
     "op": "set",
@@ -164,6 +178,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 3,
     "now": 2371,
     "op": "set",
@@ -174,6 +189,7 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [],
     "key": 4,
     "now": 2371,
     "op": "set",
@@ -184,6 +200,7 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [],
     "key": 5,
     "now": 2371,
     "op": "set",
@@ -194,6 +211,7 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [],
     "key": 6,
     "now": 2371,
     "op": "set",
@@ -204,6 +222,7 @@ Array [
     "value": 6,
   },
   Object {
+    "cache": LRUCache [],
     "key": 7,
     "now": 2371,
     "op": "set",
@@ -214,6 +233,7 @@ Array [
     "value": 7,
   },
   Object {
+    "cache": LRUCache [],
     "key": 8,
     "now": 2371,
     "op": "set",
@@ -224,6 +244,7 @@ Array [
     "value": 8,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 4,
     "now": 2382,
@@ -233,6 +254,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 4,
     "now": 2382,
@@ -247,6 +269,12 @@ Array [
 exports[`test/ttl.ts > TAP > tests using Date.now() > ttl tests defaults > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 1,
     "now": 1812,
     "op": "set",
@@ -257,6 +285,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 1812,
@@ -267,6 +301,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 1817,
@@ -277,6 +317,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 1822,
@@ -287,6 +333,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "has": "stale",
     "key": 1,
     "now": 1824,
@@ -296,6 +348,12 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "stale",
     "key": 1,
     "now": 1824,
@@ -305,6 +363,12 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "has": "hit",
     "key": 2,
     "now": 1874,
@@ -314,6 +378,12 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 2,
     "now": 1874,
@@ -324,6 +394,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "stale",
     "key": 2,
     "now": 1925,
@@ -333,6 +409,12 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 0,
     "now": 1925,
     "op": "set",
@@ -343,6 +425,12 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 1,
     "now": 1925,
     "op": "set",
@@ -353,6 +441,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 2,
     "now": 1925,
     "op": "set",
@@ -363,6 +457,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 3,
     "now": 1925,
     "op": "set",
@@ -373,6 +473,12 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 4,
     "now": 1925,
     "op": "set",
@@ -383,6 +489,12 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 5,
     "now": 1925,
     "op": "set",
@@ -393,6 +505,12 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 6,
     "now": 1925,
     "op": "set",
@@ -403,6 +521,12 @@ Array [
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 7,
     "now": 1925,
     "op": "set",
@@ -413,6 +537,12 @@ Array [
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 8,
     "now": 1925,
     "op": "set",
@@ -423,6 +553,12 @@ Array [
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "has": "stale",
     "key": 4,
     "now": 1936,
@@ -432,6 +568,12 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "stale",
     "key": 4,
     "now": 1936,
@@ -441,12 +583,24 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": "immortal",
     "op": "get",
     "value": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": "immortal",
     "op": "get",
@@ -458,6 +612,7 @@ Array [
 exports[`test/ttl.ts > TAP > tests using Date.now() > ttl tests with ttlResolution=100 > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 2136,
     "op": "set",
@@ -468,6 +623,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 2136,
@@ -478,6 +634,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 2136,
@@ -488,6 +645,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 2136,
@@ -498,6 +656,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 1,
     "now": 2136,
@@ -507,6 +666,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 2136,
@@ -517,6 +677,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 1,
     "now": 2247,
@@ -526,6 +687,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 1,
     "now": 2247,
@@ -540,6 +702,7 @@ Array [
 exports[`test/ttl.ts > TAP > tests using Date.now() > ttlAutopurge > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 2247,
     "op": "set",
@@ -550,6 +713,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 2247,
     "op": "set",
@@ -560,6 +724,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 2247,
     "oldValue": 2,
@@ -597,6 +762,7 @@ Array [
 exports[`test/ttl.ts > TAP > tests with performance.now() > ttl on set, not on cache > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 449,
     "op": "set",
@@ -607,6 +773,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 449,
@@ -617,6 +784,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 454,
@@ -627,6 +795,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 459,
@@ -637,6 +806,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 1,
     "now": 460,
@@ -646,6 +816,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 1,
     "now": 460,
@@ -655,6 +826,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 460,
     "op": "set",
@@ -665,6 +837,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 510,
@@ -674,6 +847,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 510,
@@ -684,6 +858,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 2,
     "now": 561,
@@ -693,6 +868,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 2,
     "now": 561,
@@ -702,6 +878,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "key": 0,
     "now": 561,
     "op": "set",
@@ -712,6 +889,7 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 561,
     "op": "set",
@@ -722,6 +900,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 561,
     "op": "set",
@@ -732,6 +911,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 3,
     "now": 561,
     "op": "set",
@@ -742,6 +922,7 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [],
     "key": 4,
     "now": 561,
     "op": "set",
@@ -752,6 +933,7 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [],
     "key": 5,
     "now": 561,
     "op": "set",
@@ -762,6 +944,7 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [],
     "key": 6,
     "now": 561,
     "op": "set",
@@ -772,6 +955,7 @@ Array [
     "value": 6,
   },
   Object {
+    "cache": LRUCache [],
     "key": 7,
     "now": 561,
     "op": "set",
@@ -782,6 +966,7 @@ Array [
     "value": 7,
   },
   Object {
+    "cache": LRUCache [],
     "key": 8,
     "now": 561,
     "op": "set",
@@ -792,6 +977,7 @@ Array [
     "value": 8,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 4,
     "now": 572,
@@ -801,6 +987,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 4,
     "now": 572,
@@ -815,6 +1002,12 @@ Array [
 exports[`test/ttl.ts > TAP > tests with performance.now() > ttl tests defaults > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 1,
     "now": 2,
     "op": "set",
@@ -825,6 +1018,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 2,
@@ -835,6 +1034,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 7,
@@ -845,6 +1050,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 12,
@@ -855,6 +1066,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "has": "stale",
     "key": 1,
     "now": 14,
@@ -864,6 +1081,12 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "stale",
     "key": 1,
     "now": 14,
@@ -873,6 +1096,12 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "has": "hit",
     "key": 2,
     "now": 64,
@@ -882,6 +1111,12 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 2,
     "now": 64,
@@ -892,6 +1127,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "stale",
     "key": 2,
     "now": 115,
@@ -901,6 +1142,12 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 0,
     "now": 115,
     "op": "set",
@@ -911,6 +1158,12 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 1,
     "now": 115,
     "op": "set",
@@ -921,6 +1174,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 2,
     "now": 115,
     "op": "set",
@@ -931,6 +1190,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 3,
     "now": 115,
     "op": "set",
@@ -941,6 +1206,12 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 4,
     "now": 115,
     "op": "set",
@@ -951,6 +1222,12 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 5,
     "now": 115,
     "op": "set",
@@ -961,6 +1238,12 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 6,
     "now": 115,
     "op": "set",
@@ -971,6 +1254,12 @@ Array [
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 7,
     "now": 115,
     "op": "set",
@@ -981,6 +1270,12 @@ Array [
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 8,
     "now": 115,
     "op": "set",
@@ -991,6 +1286,12 @@ Array [
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "has": "stale",
     "key": 4,
     "now": 126,
@@ -1000,6 +1301,12 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "stale",
     "key": 4,
     "now": 126,
@@ -1009,12 +1316,24 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": "immortal",
     "op": "get",
     "value": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": "immortal",
     "op": "get",
@@ -1026,6 +1345,7 @@ Array [
 exports[`test/ttl.ts > TAP > tests with performance.now() > ttl tests with ttlResolution=100 > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 326,
     "op": "set",
@@ -1036,6 +1356,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 326,
@@ -1046,6 +1367,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 326,
@@ -1056,6 +1378,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 326,
@@ -1066,6 +1389,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 1,
     "now": 326,
@@ -1075,6 +1399,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 326,
@@ -1085,6 +1410,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 1,
     "now": 437,
@@ -1094,6 +1420,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 1,
     "now": 437,
@@ -1108,6 +1435,7 @@ Array [
 exports[`test/ttl.ts > TAP > tests with performance.now() > ttlAutopurge > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 437,
     "op": "set",
@@ -1118,6 +1446,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 437,
     "op": "set",
@@ -1128,6 +1457,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 437,
     "oldValue": 2,

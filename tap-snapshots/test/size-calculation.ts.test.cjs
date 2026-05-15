@@ -8,6 +8,12 @@
 exports[`test/size-calculation.ts > TAP > large item falls out of cache because maxEntrySize > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "entrySize": 2,
     "key": 2,
     "op": "set",
@@ -16,6 +22,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "key": 1,
     "maxEntrySizeExceeded": true,
     "op": "set",
@@ -23,6 +35,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "entrySize": 3,
     "key": 3,
     "op": "set",
@@ -31,6 +49,12 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "key": 4,
     "maxEntrySizeExceeded": true,
     "op": "set",
@@ -43,6 +67,12 @@ Array [
 exports[`test/size-calculation.ts > TAP > large item falls out of cache, sizes are kept correct > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "entrySize": 2,
     "key": 2,
     "op": "set",
@@ -51,6 +81,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "key": 1,
     "maxEntrySizeExceeded": true,
     "op": "set",
@@ -58,6 +94,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "entrySize": 3,
     "key": 3,
     "op": "set",
@@ -66,6 +108,12 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "key": 4,
     "maxEntrySizeExceeded": true,
     "op": "set",

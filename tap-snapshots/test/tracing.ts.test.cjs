@@ -11,6 +11,12 @@ exports[`test/tracing.ts > TAP > asynchronous fetching > safe to stringify dump 
 
 exports[`test/tracing.ts > TAP > asynchronous fetching > status 1 1`] = `
 Object {
+  "cache": LRUCache [
+    Array [
+      "key",
+      0,
+    ],
+  ],
   "fetch": "miss",
   "fetchDispatched": true,
   "fetchResolved": true,
@@ -30,6 +36,12 @@ Object {
 
 exports[`test/tracing.ts > TAP > asynchronous fetching > status 2 1`] = `
 Object {
+  "cache": LRUCache [
+    Array [
+      "key",
+      0,
+    ],
+  ],
   "fetch": "hit",
   "key": "key",
   "now": 252,
@@ -44,6 +56,7 @@ Object {
 
 exports[`test/tracing.ts > TAP > asynchronous fetching > status 3 1`] = `
 Object {
+  "cache": LRUCache [],
   "fetch": "stale",
   "fetchDispatched": true,
   "key": "key",
@@ -56,6 +69,7 @@ Object {
 
 exports[`test/tracing.ts > TAP > asynchronous fetching > status 3.1 1`] = `
 Object {
+  "cache": LRUCache [],
   "fetch": "inflight",
   "key": "key",
   "op": "fetch",
@@ -67,6 +81,12 @@ Object {
 
 exports[`test/tracing.ts > TAP > asynchronous fetching > status 4 1`] = `
 Object {
+  "cache": LRUCache [
+    Array [
+      "key",
+      1,
+    ],
+  ],
   "fetch": "inflight",
   "key": "key",
   "op": "fetch",
@@ -77,6 +97,12 @@ Object {
 
 exports[`test/tracing.ts > TAP > asynchronous fetching > status 5 1`] = `
 Object {
+  "cache": LRUCache [
+    Array [
+      "key",
+      1,
+    ],
+  ],
   "fetch": "hit",
   "key": "key",
   "now": 262,
@@ -342,384 +368,2892 @@ Generator [
 exports[`test/tracing.ts > TAP > basic operation > status tracking 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 0,
     "op": "set",
     "set": "add",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 1,
     "op": "set",
     "set": "add",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 3,
     "op": "set",
     "set": "add",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 4,
     "op": "set",
     "set": "add",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 0,
     "op": "get",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "op": "get",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 2,
     "op": "get",
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 3,
     "op": "get",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 4,
     "op": "get",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 5,
     "op": "set",
     "set": "add",
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 6,
     "op": "set",
     "set": "add",
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 7,
     "op": "set",
     "set": "add",
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 8,
     "op": "set",
     "set": "add",
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 9,
     "op": "set",
     "set": "add",
     "value": 9,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 5,
     "op": "set",
     "set": "update",
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 6,
     "op": "set",
     "set": "update",
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 7,
     "op": "set",
     "set": "update",
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 8,
     "op": "set",
     "set": "update",
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 9,
     "op": "set",
     "set": "update",
     "value": 9,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 0,
     "op": "get",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "op": "get",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 2,
     "op": "get",
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 3,
     "op": "get",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 4,
     "op": "get",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 5,
     "op": "get",
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 6,
     "op": "get",
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 7,
     "op": "get",
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 8,
     "op": "get",
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 9,
     "op": "get",
     "value": 9,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 10,
     "op": "set",
     "set": "add",
     "value": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 11,
     "op": "set",
     "set": "add",
     "value": 11,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 12,
     "op": "set",
     "set": "add",
     "value": 12,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 13,
     "op": "set",
     "set": "add",
     "value": 13,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 14,
     "op": "set",
     "set": "add",
     "value": 14,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 15,
     "op": "set",
     "set": "add",
     "value": 15,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 16,
     "op": "set",
     "set": "add",
     "value": 16,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 17,
     "op": "set",
     "set": "add",
     "value": 17,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 18,
     "op": "set",
     "set": "add",
     "value": 18,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 19,
     "op": "set",
     "set": "add",
     "value": 19,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 0,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 1,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 2,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 3,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 4,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 5,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 6,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 7,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 8,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 9,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 10,
     "op": "set",
     "set": "add",
     "value": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 0,
     "op": "set",
     "set": "add",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 1,
     "op": "set",
     "set": "add",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 3,
     "op": "set",
     "set": "add",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 4,
     "op": "set",
     "set": "add",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 5,
     "op": "set",
     "set": "add",
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 6,
     "op": "set",
     "set": "add",
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 7,
     "op": "set",
     "set": "add",
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 8,
     "op": "set",
     "set": "add",
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 9,
     "op": "set",
     "set": "add",
     "value": 9,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "has": "hit",
     "key": 0,
     "op": "has",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": true,
     "op": "set",
     "set": "add",
     "value": "true",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "has": "hit",
     "key": true,
     "op": "has",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": true,
     "op": "get",
     "value": "true",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "has": "miss",
     "key": true,
     "op": "has",
@@ -730,6 +3264,20 @@ Array [
 exports[`test/tracing.ts > TAP > fetch options, signal > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        1,
+      ],
+      Array [
+        6,
+        1,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "error": Error: deleted {
       "name": "Error",
     },
@@ -744,6 +3292,20 @@ Array [
     "trace": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        1,
+      ],
+      Array [
+        6,
+        1,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "error": Error: replaced {
       "name": "Error",
     },
@@ -758,6 +3320,20 @@ Array [
     "trace": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        1,
+      ],
+      Array [
+        6,
+        1,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "error": Error: evicted {
       "name": "Error",
     },
@@ -772,6 +3348,20 @@ Array [
     "trace": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        1,
+      ],
+      Array [
+        6,
+        1,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 3,
     "now": 972,
     "op": "set",
@@ -782,6 +3372,20 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        1,
+      ],
+      Array [
+        6,
+        1,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 4,
     "now": 972,
     "op": "set",
@@ -792,6 +3396,20 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        1,
+      ],
+      Array [
+        6,
+        1,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 5,
     "now": 972,
     "op": "set",
@@ -802,6 +3420,20 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        1,
+      ],
+      Array [
+        6,
+        1,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -818,6 +3450,20 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        1,
+      ],
+      Array [
+        6,
+        1,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -838,6 +3484,16 @@ Array [
 
 exports[`test/tracing.ts > TAP > fetch without fetch method > status update 1`] = `
 Object {
+  "cache": LRUCache [
+    Array [
+      1,
+      1,
+    ],
+    Array [
+      0,
+      0,
+    ],
+  ],
   "fetch": "get",
   "get": "hit",
   "key": 0,
@@ -850,6 +3506,12 @@ Object {
 exports[`test/tracing.ts > TAP > fetchMethod throws > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "key": "a",
     "now": 972,
     "op": "set",
@@ -860,6 +3522,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "key": "b",
     "now": 972,
     "op": "set",
@@ -870,6 +3538,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "fetch": "stale",
     "fetchDispatched": true,
     "fetchError": Error: fetch failure,
@@ -881,6 +3555,12 @@ Array [
     "trace": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "fetch": "inflight",
     "key": "a",
     "op": "fetch",
@@ -889,6 +3569,12 @@ Array [
     "trace": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "fetch": "inflight",
     "key": "a",
     "op": "fetch",
@@ -897,11 +3583,23 @@ Array [
     "trace": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "get": "miss",
     "key": "a",
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "fetch": "stale",
     "fetchDispatched": true,
     "fetchError": Error: fetch failure,
@@ -913,6 +3611,12 @@ Array [
     "trace": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "fetch": "inflight",
     "key": "b",
     "op": "fetch",
@@ -921,6 +3625,12 @@ Array [
     "trace": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "fetch": "inflight",
     "key": "b",
     "op": "fetch",
@@ -929,11 +3639,23 @@ Array [
     "trace": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "get": "miss",
     "key": "b",
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "error": Error: replaced {
       "name": "Error",
     },
@@ -948,6 +3670,12 @@ Array [
     "trace": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "key": "a",
     "now": 1032,
     "op": "set",
@@ -958,6 +3686,12 @@ Array [
     "value": 99,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "get": "hit",
     "key": "a",
     "now": 1032,
@@ -968,6 +3702,12 @@ Array [
     "value": 99,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "fetch": "miss",
     "fetchDispatched": true,
     "key": "b",
@@ -980,6 +3720,16 @@ Array [
 exports[`test/tracing.ts > TAP > forceRefresh > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        2,
+        2,
+      ],
+    ],
     "fetch": "refresh",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -998,6 +3748,16 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        2,
+        2,
+      ],
+    ],
     "fetch": "inflight",
     "key": 1,
     "op": "fetch",
@@ -1005,6 +3765,16 @@ Array [
     "trace": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        2,
+        2,
+      ],
+    ],
     "context": true,
     "fetch": "refresh",
     "fetchDispatched": true,
@@ -1029,6 +3799,12 @@ Array [
 exports[`test/tracing.ts > TAP > large item falls out of cache because maxEntrySize > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "entrySize": 2,
     "key": 2,
     "op": "set",
@@ -1037,6 +3813,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "key": 1,
     "maxEntrySizeExceeded": true,
     "op": "set",
@@ -1044,6 +3826,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "entrySize": 3,
     "key": 3,
     "op": "set",
@@ -1052,6 +3840,12 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "key": 4,
     "maxEntrySizeExceeded": true,
     "op": "set",
@@ -1064,6 +3858,12 @@ Array [
 exports[`test/tracing.ts > TAP > large item falls out of cache, sizes are kept correct > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "entrySize": 2,
     "key": 2,
     "op": "set",
@@ -1072,6 +3872,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "key": 1,
     "maxEntrySizeExceeded": true,
     "op": "set",
@@ -1079,6 +3885,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "entrySize": 3,
     "key": 3,
     "op": "set",
@@ -1087,6 +3899,12 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "key": 4,
     "maxEntrySizeExceeded": true,
     "op": "set",
@@ -1099,24 +3917,96 @@ Array [
 exports[`test/tracing.ts > TAP > re-use key before initial fill completed > must match snapshot 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        1,
+        2,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 0,
     "op": "set",
     "set": "add",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        1,
+        2,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 1,
     "op": "set",
     "set": "add",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        1,
+        2,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        1,
+        2,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 1,
     "oldValue": 1,
     "op": "set",
@@ -1124,6 +4014,24 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        1,
+        2,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 3,
     "op": "set",
     "set": "add",
@@ -1135,6 +4043,7 @@ Array [
 exports[`test/tracing.ts > TAP > send a signal > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "error": Error: custom abort signal {
       "name": "Error",
     },
@@ -1149,6 +4058,7 @@ Array [
     "trace": true,
   },
   Object {
+    "cache": LRUCache [],
     "get": "miss",
     "key": 1,
     "op": "get",
@@ -1175,6 +4085,12 @@ Array []
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > a fetch method that does not return a promise traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [
+      Array [
+        123,
+        123,
+      ],
+    ],
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -1201,60 +4117,170 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > abort, but then keep on fetching anyway metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        33,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "op": "get",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        33,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "fetching",
     "key": 2,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        33,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "delete": "delete",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        33,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 2,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        33,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 2,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        33,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "fetching",
     "key": 3,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        33,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 3,
     "op": "set",
     "set": "add",
     "value": 33,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        33,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 3,
     "op": "get",
     "value": 33,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        33,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 3,
     "op": "get",
     "value": 33,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        33,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "delete": "fetch",
     "key": 4,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        33,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "delete": "fetch",
     "key": 4,
     "op": "delete",
@@ -1265,6 +4291,16 @@ Array [
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > abort, but then keep on fetching anyway traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        33,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "context": true,
     "fetch": "miss",
     "fetchAborted": true,
@@ -1285,6 +4321,16 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        33,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "context": true,
     "fetch": "miss",
     "fetchAborted": true,
@@ -1302,6 +4348,16 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        33,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "context": true,
     "fetch": "miss",
     "fetchAborted": true,
@@ -1319,6 +4375,16 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        33,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "context": true,
     "fetch": "miss",
     "fetchDispatched": true,
@@ -1334,6 +4400,16 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        33,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "context": true,
     "error": Error: fetch() returned undefined {
       "name": "Error",
@@ -1357,6 +4433,12 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > allowStaleOnFetchAbort and ignoreFetchAbort metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "fetching",
     "key": 1,
     "now": 2443,
@@ -1366,6 +4448,12 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 2643,
@@ -1381,6 +4469,12 @@ Array [
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > allowStaleOnFetchAbort and ignoreFetchAbort traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+    ],
     "fetch": "miss",
     "fetchAborted": true,
     "fetchDispatched": true,
@@ -1409,6 +4503,12 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > allowStaleOnFetchAbort metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        100,
+      ],
+    ],
     "key": 1,
     "now": 1703,
     "op": "set",
@@ -1419,6 +4519,12 @@ Array [
     "value": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        100,
+      ],
+    ],
     "get": "stale",
     "key": 1,
     "now": 1803,
@@ -1430,6 +4536,12 @@ Array [
     "value": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        100,
+      ],
+    ],
     "key": 1,
     "now": 1803,
     "oldValue": 10,
@@ -1441,6 +4553,12 @@ Array [
     "value": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        100,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 1803,
@@ -1456,6 +4574,12 @@ Array [
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > allowStaleOnFetchAbort traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        100,
+      ],
+    ],
     "fetch": "stale",
     "fetchAborted": true,
     "fetchDispatched": true,
@@ -1473,6 +4597,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        100,
+      ],
+    ],
     "fetch": "stale",
     "fetchAborted": true,
     "fetchDispatched": true,
@@ -1495,11 +4625,13 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > allowStaleOnFetchRejection metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "delete": "fetch",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "miss",
     "key": 1,
     "op": "get",
@@ -1510,6 +4642,7 @@ Array [
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > allowStaleOnFetchRejection traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [],
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -1531,6 +4664,7 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [],
     "fetch": "stale",
     "fetchDispatched": true,
     "fetchError": Error: fetch rejection,
@@ -1547,6 +4681,7 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [],
     "fetch": "stale",
     "fetchDispatched": true,
     "fetchError": Error: fetch rejection,
@@ -1563,6 +4698,7 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [],
     "error": Error: fetch rejection {
       "name": "Error",
     },
@@ -1588,6 +4724,12 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > asynchronous fetching metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "get": "stale-fetching",
     "key": "key",
     "now": 372,
@@ -1599,6 +4741,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "get": "fetching",
     "key": "key2",
     "now": 372,
@@ -1608,6 +4756,12 @@ Array [
     "ttl": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "get": "hit",
     "key": "key2",
     "now": 372,
@@ -1618,16 +4772,34 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "delete": "delete",
     "key": "key3",
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "has": "miss",
     "key": "key3",
     "op": "has",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "key": "key5",
     "now": 472,
     "op": "set",
@@ -1638,6 +4810,12 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "get": "stale-fetching",
     "key": "key4",
     "now": 672,
@@ -1647,6 +4825,12 @@ Array [
     "ttl": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "get": "stale-fetching",
     "key": "key6",
     "now": 772,
@@ -1656,6 +4840,12 @@ Array [
     "ttl": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "get": "stale-fetching",
     "key": "key6",
     "now": 872,
@@ -1672,6 +4862,12 @@ Array [
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > asynchronous fetching traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -1693,6 +4889,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "fetch": "hit",
     "key": "key",
     "now": 252,
@@ -1709,6 +4911,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "fetch": "stale",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -1732,6 +4940,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "fetch": "inflight",
     "key": "key",
     "op": "fetch",
@@ -1745,6 +4959,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "fetch": "inflight",
     "key": "key",
     "op": "fetch",
@@ -1757,6 +4977,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "fetch": "hit",
     "key": "key",
     "now": 262,
@@ -1773,6 +4999,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "fetch": "stale",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -1796,6 +5028,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "fetch": "hit",
     "key": "key",
     "now": 272,
@@ -1812,6 +5050,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "fetch": "stale",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -1835,6 +5079,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -1856,6 +5106,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "error": Error: deleted {
       "name": "Error",
     },
@@ -1876,6 +5132,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -1897,6 +5159,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "fetch": "inflight",
     "key": "key4",
     "op": "fetch",
@@ -1909,6 +5177,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "fetch": "stale",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -1931,6 +5205,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "fetch": "stale",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -1953,6 +5233,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -1974,6 +5260,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "key6",
+        1,
+      ],
+    ],
     "fetch": "stale",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -2001,6 +5293,7 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > background update on timeout, return stale metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 1803,
     "op": "set",
@@ -2011,6 +5304,7 @@ Array [
     "value": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale-fetching",
     "key": 1,
     "now": 1903,
@@ -2022,6 +5316,7 @@ Array [
     "value": 10,
   },
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 2103,
     "oldValue": 1,
@@ -2033,6 +5328,7 @@ Array [
     "value": 99,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale-fetching",
     "key": 1,
     "now": 2203,
@@ -2049,6 +5345,7 @@ Array [
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > background update on timeout, return stale traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [],
     "fetch": "stale",
     "fetchAborted": true,
     "fetchDispatched": true,
@@ -2074,6 +5371,7 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [],
     "fetch": "stale",
     "fetchAborted": true,
     "fetchDispatched": true,
@@ -2120,458 +5418,3460 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > basic operation metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 0,
     "op": "set",
     "set": "add",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 1,
     "op": "set",
     "set": "add",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 3,
     "op": "set",
     "set": "add",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 4,
     "op": "set",
     "set": "add",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 0,
     "op": "get",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "op": "get",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 2,
     "op": "get",
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 3,
     "op": "get",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 4,
     "op": "get",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 5,
     "op": "set",
     "set": "add",
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 6,
     "op": "set",
     "set": "add",
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 7,
     "op": "set",
     "set": "add",
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 8,
     "op": "set",
     "set": "add",
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 9,
     "op": "set",
     "set": "add",
     "value": 9,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 5,
     "op": "set",
     "set": "update",
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 6,
     "op": "set",
     "set": "update",
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 7,
     "op": "set",
     "set": "update",
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 8,
     "op": "set",
     "set": "update",
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 9,
     "op": "set",
     "set": "update",
     "value": 9,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 0,
     "op": "get",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "op": "get",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 2,
     "op": "get",
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 3,
     "op": "get",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 4,
     "op": "get",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 5,
     "op": "get",
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 6,
     "op": "get",
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 7,
     "op": "get",
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 8,
     "op": "get",
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 9,
     "op": "get",
     "value": 9,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 10,
     "op": "set",
     "set": "add",
     "value": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 11,
     "op": "set",
     "set": "add",
     "value": 11,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 12,
     "op": "set",
     "set": "add",
     "value": 12,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 13,
     "op": "set",
     "set": "add",
     "value": 13,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 14,
     "op": "set",
     "set": "add",
     "value": 14,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 15,
     "op": "set",
     "set": "add",
     "value": 15,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 16,
     "op": "set",
     "set": "add",
     "value": 16,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 17,
     "op": "set",
     "set": "add",
     "value": 17,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 18,
     "op": "set",
     "set": "add",
     "value": 18,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 19,
     "op": "set",
     "set": "add",
     "value": 19,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 0,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 1,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 2,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 3,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 4,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 5,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 6,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 7,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 8,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 9,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 0,
     "op": "set",
     "set": "add",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 1,
     "op": "set",
     "set": "add",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 3,
     "op": "set",
     "set": "add",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 4,
     "op": "set",
     "set": "add",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 5,
     "op": "set",
     "set": "add",
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 6,
     "op": "set",
     "set": "add",
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 7,
     "op": "set",
     "set": "add",
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 8,
     "op": "set",
     "set": "add",
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "delete": "delete",
     "key": 19,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "delete": "delete",
     "key": 19,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 10,
     "op": "set",
     "set": "add",
     "value": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 0,
     "op": "set",
     "set": "add",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 1,
     "op": "set",
     "set": "add",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 3,
     "op": "set",
     "set": "add",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 4,
     "op": "set",
     "set": "add",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 5,
     "op": "set",
     "set": "add",
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 6,
     "op": "set",
     "set": "add",
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 7,
     "op": "set",
     "set": "add",
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 8,
     "op": "set",
     "set": "add",
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 9,
     "op": "set",
     "set": "add",
     "value": 9,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "has": "hit",
     "key": 0,
     "op": "has",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": true,
     "op": "set",
     "set": "add",
     "value": "true",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "has": "hit",
     "key": true,
     "op": "has",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": true,
     "op": "get",
     "value": "true",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "delete": "delete",
     "key": true,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": true,
     "op": "set",
     "set": "deleted",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "has": "miss",
     "key": true,
     "op": "has",
@@ -2586,41 +8886,195 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > delete from middle, reuses that index metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 0,
     "op": "set",
     "set": "add",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 1,
     "op": "set",
     "set": "add",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 3,
     "op": "set",
     "set": "add",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 4,
     "op": "set",
     "set": "add",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "delete": "delete",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 5,
     "op": "set",
     "set": "add",
@@ -2636,6 +9090,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > delete while empty, or missing key, is no-op metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "entrySize": 2,
     "key": 1,
     "op": "set",
@@ -2644,11 +9099,13 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "delete",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "entrySize": 2,
     "key": 1,
     "op": "set",
@@ -2657,28 +9114,33 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "op": "set",
     "set": "update",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "op": "set",
     "set": "update",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "delete",
     "key": 99,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "delete",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "delete",
     "key": 1,
     "op": "delete",
@@ -2693,72 +9155,336 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > disposal metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 0,
     "op": "set",
     "set": "add",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 1,
     "op": "set",
     "set": "add",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 3,
     "op": "set",
     "set": "add",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 4,
     "op": "set",
     "set": "add",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 5,
     "op": "set",
     "set": "add",
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 6,
     "op": "set",
     "set": "add",
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 7,
     "op": "set",
     "set": "add",
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 8,
     "op": "set",
     "set": "add",
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 9,
     "op": "set",
     "set": "add",
     "value": 9,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": "asdf",
     "op": "set",
     "set": "add",
     "value": "foo",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": "asdf",
     "oldValue": "foo",
     "op": "set",
@@ -2766,99 +9492,473 @@ Array [
     "value": "asdf",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 0,
     "op": "set",
     "set": "add",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 1,
     "op": "set",
     "set": "add",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 3,
     "op": "set",
     "set": "add",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 4,
     "op": "set",
     "set": "add",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": "asdf",
     "op": "set",
     "set": "add",
     "value": "foo",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "delete": "delete",
     "key": "asdf",
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "delete": "delete",
     "key": "asdf",
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 3,
     "op": "set",
     "set": "add",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "get": "hit",
     "key": 3,
     "op": "get",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "delete": "delete",
     "key": 3,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 0,
     "op": "set",
     "set": "add",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 1,
     "op": "set",
     "set": "add",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 3,
     "op": "set",
     "set": "add",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 4,
     "op": "set",
     "set": "add",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 2,
     "oldValue": 2,
     "op": "set",
@@ -2866,66 +9966,308 @@ Array [
     "value": "two",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "get": "hit",
     "key": 0,
     "op": "get",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "op": "get",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "get": "hit",
     "key": 2,
     "op": "get",
     "value": "two",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "get": "hit",
     "key": 3,
     "op": "get",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "get": "hit",
     "key": 4,
     "op": "get",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 0,
     "op": "set",
     "set": "add",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 1,
     "op": "set",
     "set": "add",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 3,
     "op": "set",
     "set": "add",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 4,
     "op": "set",
     "set": "add",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 2,
     "oldValue": 2,
     "op": "set",
@@ -2933,30 +10275,140 @@ Array [
     "value": "two",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "get": "hit",
     "key": 0,
     "op": "get",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "op": "get",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "get": "hit",
     "key": 2,
     "op": "get",
     "value": "two",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "get": "hit",
     "key": 3,
     "op": "get",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        "two",
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "get": "hit",
     "key": 4,
     "op": "get",
@@ -2972,6 +10424,20 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > dispose() stale value if fetch is evicted metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        40,
+      ],
+      Array [
+        3,
+        30,
+      ],
+      Array [
+        2,
+        20,
+      ],
+    ],
     "key": 1,
     "now": 2643,
     "op": "set",
@@ -2982,6 +10448,20 @@ Array [
     "value": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        40,
+      ],
+      Array [
+        3,
+        30,
+      ],
+      Array [
+        2,
+        20,
+      ],
+    ],
     "key": 2,
     "now": 2654,
     "op": "set",
@@ -2992,6 +10472,20 @@ Array [
     "value": 20,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        40,
+      ],
+      Array [
+        3,
+        30,
+      ],
+      Array [
+        2,
+        20,
+      ],
+    ],
     "key": 3,
     "now": 2654,
     "op": "set",
@@ -3002,6 +10496,20 @@ Array [
     "value": 30,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        40,
+      ],
+      Array [
+        3,
+        30,
+      ],
+      Array [
+        2,
+        20,
+      ],
+    ],
     "key": 4,
     "now": 2654,
     "op": "set",
@@ -3017,6 +10525,20 @@ Array [
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > dispose() stale value if fetch is evicted traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        40,
+      ],
+      Array [
+        3,
+        30,
+      ],
+      Array [
+        2,
+        20,
+      ],
+    ],
     "error": Error: evicted {
       "name": "Error",
     },
@@ -3042,731 +10564,1463 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > disposeAfter metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 0,
     "op": "set",
     "set": "add",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 1,
     "op": "set",
     "set": "add",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 3,
     "op": "set",
     "set": "add",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 4,
     "op": "set",
     "set": "add",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 5,
     "op": "set",
     "set": "add",
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 6,
     "op": "set",
     "set": "add",
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 7,
     "op": "set",
     "set": "add",
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 8,
     "op": "set",
     "set": "add",
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 9,
     "op": "set",
     "set": "add",
     "value": 9,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 10,
     "op": "set",
     "set": "add",
     "value": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 11,
     "op": "set",
     "set": "add",
     "value": 11,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 12,
     "op": "set",
     "set": "add",
     "value": 12,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 13,
     "op": "set",
     "set": "add",
     "value": 13,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 14,
     "op": "set",
     "set": "add",
     "value": 14,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 15,
     "op": "set",
     "set": "add",
     "value": 15,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 16,
     "op": "set",
     "set": "add",
     "value": 16,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 17,
     "op": "set",
     "set": "add",
     "value": 17,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 18,
     "op": "set",
     "set": "add",
     "value": 18,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 19,
     "op": "set",
     "set": "add",
     "value": 19,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 20,
     "op": "set",
     "set": "add",
     "value": 20,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 21,
     "op": "set",
     "set": "add",
     "value": 21,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 22,
     "op": "set",
     "set": "add",
     "value": 22,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 23,
     "op": "set",
     "set": "add",
     "value": 23,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 24,
     "op": "set",
     "set": "add",
     "value": 24,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 25,
     "op": "set",
     "set": "add",
     "value": 25,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 26,
     "op": "set",
     "set": "add",
     "value": 26,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 27,
     "op": "set",
     "set": "add",
     "value": 27,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 28,
     "op": "set",
     "set": "add",
     "value": 28,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 29,
     "op": "set",
     "set": "add",
     "value": 29,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 30,
     "op": "set",
     "set": "add",
     "value": 30,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 31,
     "op": "set",
     "set": "add",
     "value": 31,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 32,
     "op": "set",
     "set": "add",
     "value": 32,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 33,
     "op": "set",
     "set": "add",
     "value": 33,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 34,
     "op": "set",
     "set": "add",
     "value": 34,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 35,
     "op": "set",
     "set": "add",
     "value": 35,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 36,
     "op": "set",
     "set": "add",
     "value": 36,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 9,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 37,
     "op": "set",
     "set": "add",
     "value": 37,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 38,
     "op": "set",
     "set": "add",
     "value": 38,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 39,
     "op": "set",
     "set": "add",
     "value": 39,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 40,
     "op": "set",
     "set": "add",
     "value": 40,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 41,
     "op": "set",
     "set": "add",
     "value": 41,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 42,
     "op": "set",
     "set": "add",
     "value": 42,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 43,
     "op": "set",
     "set": "add",
     "value": 43,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 44,
     "op": "set",
     "set": "add",
     "value": 44,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 45,
     "op": "set",
     "set": "add",
     "value": 45,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 46,
     "op": "set",
     "set": "add",
     "value": 46,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 11,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 47,
     "op": "set",
     "set": "add",
     "value": 47,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 48,
     "op": "set",
     "set": "add",
     "value": 48,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 49,
     "op": "set",
     "set": "add",
     "value": 49,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 50,
     "op": "set",
     "set": "add",
     "value": 50,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 51,
     "op": "set",
     "set": "add",
     "value": 51,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 12,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 52,
     "op": "set",
     "set": "add",
     "value": 52,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 53,
     "op": "set",
     "set": "add",
     "value": 53,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 54,
     "op": "set",
     "set": "add",
     "value": 54,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 55,
     "op": "set",
     "set": "add",
     "value": 55,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 56,
     "op": "set",
     "set": "add",
     "value": 56,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 13,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 57,
     "op": "set",
     "set": "add",
     "value": 57,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 58,
     "op": "set",
     "set": "add",
     "value": 58,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 59,
     "op": "set",
     "set": "add",
     "value": 59,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 60,
     "op": "set",
     "set": "add",
     "value": 60,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 61,
     "op": "set",
     "set": "add",
     "value": 61,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 14,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 62,
     "op": "set",
     "set": "add",
     "value": 62,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 63,
     "op": "set",
     "set": "add",
     "value": 63,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 64,
     "op": "set",
     "set": "add",
     "value": 64,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 65,
     "op": "set",
     "set": "add",
     "value": 65,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 66,
     "op": "set",
     "set": "add",
     "value": 66,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 15,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 67,
     "op": "set",
     "set": "add",
     "value": 67,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 68,
     "op": "set",
     "set": "add",
     "value": 68,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 69,
     "op": "set",
     "set": "add",
     "value": 69,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 70,
     "op": "set",
     "set": "add",
     "value": 70,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 71,
     "op": "set",
     "set": "add",
     "value": 71,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 16,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 72,
     "op": "set",
     "set": "add",
     "value": 72,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 73,
     "op": "set",
     "set": "add",
     "value": 73,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 74,
     "op": "set",
     "set": "add",
     "value": 74,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 75,
     "op": "set",
     "set": "add",
     "value": 75,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 76,
     "op": "set",
     "set": "add",
     "value": 76,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 17,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 77,
     "op": "set",
     "set": "add",
     "value": 77,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 78,
     "op": "set",
     "set": "add",
     "value": 78,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 79,
     "op": "set",
     "set": "add",
     "value": 79,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 80,
     "op": "set",
     "set": "add",
     "value": 80,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 81,
     "op": "set",
     "set": "add",
     "value": 81,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 18,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 82,
     "op": "set",
     "set": "add",
     "value": 82,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 83,
     "op": "set",
     "set": "add",
     "value": 83,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 84,
     "op": "set",
     "set": "add",
     "value": 84,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 85,
     "op": "set",
     "set": "add",
     "value": 85,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 86,
     "op": "set",
     "set": "add",
     "value": 86,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 19,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 87,
     "op": "set",
     "set": "add",
     "value": 87,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 88,
     "op": "set",
     "set": "add",
     "value": 88,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 89,
     "op": "set",
     "set": "add",
     "value": 89,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 90,
     "op": "set",
     "set": "add",
     "value": 90,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 91,
     "op": "set",
     "set": "add",
     "value": 91,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 20,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 92,
     "op": "set",
     "set": "add",
     "value": 92,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 93,
     "op": "set",
     "set": "add",
     "value": 93,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 94,
     "op": "set",
     "set": "add",
     "value": 94,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 95,
     "op": "set",
     "set": "add",
     "value": 95,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 96,
     "op": "set",
     "set": "add",
     "value": 96,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 21,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 97,
     "op": "set",
     "set": "add",
     "value": 97,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 98,
     "op": "set",
     "set": "add",
     "value": 98,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 99,
     "op": "set",
     "set": "add",
     "value": 99,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "delete": "delete",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 22,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 96,
     "oldValue": 96,
     "op": "set",
@@ -3774,6 +12028,12 @@ Array [
     "value": 97,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 97,
     "oldValue": 97,
     "op": "set",
@@ -3781,6 +12041,12 @@ Array [
     "value": 98,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 98,
     "oldValue": 98,
     "op": "set",
@@ -3788,6 +12054,12 @@ Array [
     "value": 99,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 99,
     "oldValue": 99,
     "op": "set",
@@ -3795,6 +12067,12 @@ Array [
     "value": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        23,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
@@ -3818,6 +12096,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > expiration reflected in dispose reason metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 2,
     "op": "set",
@@ -3828,6 +12107,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 2,
     "op": "set",
@@ -3838,6 +12118,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 3,
     "now": 2,
     "op": "set",
@@ -3848,6 +12129,7 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [],
     "key": 4,
     "now": 2,
     "op": "set",
@@ -3858,6 +12140,7 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [],
     "key": 5,
     "now": 2,
     "op": "set",
@@ -3868,6 +12151,7 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [],
     "key": 6,
     "now": 2,
     "op": "set",
@@ -3878,26 +12162,31 @@ Array [
     "value": 6,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "delete",
     "key": 6,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "delete",
     "key": 5,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "delete",
     "key": 4,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 2,
     "now": 22,
@@ -3907,11 +12196,13 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 3,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 3,
     "now": 222,
@@ -3938,6 +12229,7 @@ Array []
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > fetch context required if set in ctor type traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [],
     "context": Object {
       "a": 1,
     },
@@ -3951,6 +12243,7 @@ Map {
     "end",
   ],
   Object {
+    "cache": LRUCache [],
     "fetch": "miss",
     "fetchDispatched": true,
     "key": "y",
@@ -3961,6 +12254,7 @@ Map {
     "end",
   ],
   Object {
+    "cache": LRUCache [],
     "context": Object {
       "x": 1,
     },
@@ -3974,6 +12268,7 @@ Map {
     "end",
   ],
   Object {
+    "cache": LRUCache [],
     "context": Object {
       "a": 1,
     },
@@ -3987,6 +12282,7 @@ Map {
     "end",
   ],
   Object {
+    "cache": LRUCache [],
     "fetch": "miss",
     "fetchDispatched": true,
     "key": "y",
@@ -3997,6 +12293,7 @@ Map {
     "end",
   ],
   Object {
+    "cache": LRUCache [],
     "fetch": "inflight",
     "key": "y",
     "op": "fetch",
@@ -4006,6 +12303,7 @@ Map {
     "end",
   ],
   Object {
+    "cache": LRUCache [],
     "context": Object {
       "x": 1,
     },
@@ -4024,6 +12322,22 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > fetch context traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [
+      Array [
+        "x",
+        Array [
+          "x",
+          "first context",
+        ],
+      ],
+      Array [
+        "y",
+        Array [
+          "y",
+          "overridden",
+        ],
+      ],
+    ],
     "context": "overridden",
     "fetch": "miss",
     "fetchDispatched": true,
@@ -4052,6 +12366,22 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "x",
+        Array [
+          "x",
+          "first context",
+        ],
+      ],
+      Array [
+        "y",
+        Array [
+          "y",
+          "overridden",
+        ],
+      ],
+    ],
     "context": "first context",
     "fetch": "miss",
     "fetchDispatched": true,
@@ -4080,6 +12410,22 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "x",
+        Array [
+          "x",
+          "first context",
+        ],
+      ],
+      Array [
+        "y",
+        Array [
+          "y",
+          "overridden",
+        ],
+      ],
+    ],
     "context": "ignored",
     "fetch": "hit",
     "key": "x",
@@ -4105,11 +12451,39 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > fetch options, signal metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        1,
+      ],
+      Array [
+        6,
+        1,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "delete": "delete",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        1,
+      ],
+      Array [
+        6,
+        1,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 2,
     "now": 972,
     "op": "set",
@@ -4120,11 +12494,39 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        1,
+      ],
+      Array [
+        6,
+        1,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "delete": "delete",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        1,
+      ],
+      Array [
+        6,
+        1,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 3,
     "now": 972,
     "op": "set",
@@ -4135,6 +12537,20 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        1,
+      ],
+      Array [
+        6,
+        1,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 4,
     "now": 972,
     "op": "set",
@@ -4145,6 +12561,20 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        1,
+      ],
+      Array [
+        6,
+        1,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 5,
     "now": 972,
     "op": "set",
@@ -4160,6 +12590,20 @@ Array [
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > fetch options, signal traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        1,
+      ],
+      Array [
+        6,
+        1,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "error": Error: deleted {
       "name": "Error",
     },
@@ -4180,6 +12624,20 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        1,
+      ],
+      Array [
+        6,
+        1,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "error": Error: replaced {
       "name": "Error",
     },
@@ -4200,6 +12658,20 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        1,
+      ],
+      Array [
+        6,
+        1,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "error": Error: evicted {
       "name": "Error",
     },
@@ -4220,6 +12692,20 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        1,
+      ],
+      Array [
+        6,
+        1,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -4241,6 +12727,20 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        1,
+      ],
+      Array [
+        6,
+        1,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -4267,12 +12767,32 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > fetch without fetch method metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 0,
     "op": "set",
     "set": "add",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 1,
     "op": "set",
     "set": "add",
@@ -4284,6 +12804,16 @@ Array [
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > fetch without fetch method traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "fetch": "get",
     "get": "hit",
     "key": 0,
@@ -4297,6 +12827,16 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "fetch": "get",
     "get": "hit",
     "key": 1,
@@ -4323,6 +12863,12 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > fetchMethod throws metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "key": "a",
     "now": 972,
     "op": "set",
@@ -4333,6 +12879,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "key": "b",
     "now": 972,
     "op": "set",
@@ -4343,26 +12895,56 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "delete": "fetch",
     "key": "a",
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "get": "miss",
     "key": "a",
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "delete": "fetch",
     "key": "b",
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "get": "miss",
     "key": "b",
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "key": "a",
     "now": 1032,
     "op": "set",
@@ -4373,6 +12955,12 @@ Array [
     "value": 99,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "get": "hit",
     "key": "a",
     "now": 1032,
@@ -4383,6 +12971,12 @@ Array [
     "value": 99,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "delete": "fetch",
     "key": "b",
     "op": "delete",
@@ -4393,6 +12987,12 @@ Array [
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > fetchMethod throws traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "fetch": "stale",
     "fetchDispatched": true,
     "fetchError": Error: fetch failure,
@@ -4409,6 +13009,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "fetch": "inflight",
     "key": "a",
     "op": "fetch",
@@ -4422,6 +13028,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "fetch": "inflight",
     "key": "a",
     "op": "fetch",
@@ -4435,6 +13047,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "fetch": "stale",
     "fetchDispatched": true,
     "fetchError": Error: fetch failure,
@@ -4451,6 +13069,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "fetch": "inflight",
     "key": "b",
     "op": "fetch",
@@ -4464,6 +13088,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "fetch": "inflight",
     "key": "b",
     "op": "fetch",
@@ -4477,6 +13107,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "error": Error: replaced {
       "name": "Error",
     },
@@ -4497,6 +13133,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "error": Error: fetch failure {
       "name": "Error",
     },
@@ -4522,6 +13164,12 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > fetchMethod throws, noDeleteOnFetchRejection option metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "key": "a",
     "now": 1032,
     "op": "set",
@@ -4532,6 +13180,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "key": "b",
     "now": 1032,
     "op": "set",
@@ -4542,16 +13196,34 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "delete": "delete",
     "key": "a",
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "delete": "delete",
     "key": "b",
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "key": "a",
     "now": 1092,
     "op": "set",
@@ -4562,6 +13234,12 @@ Array [
     "value": 99,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "get": "hit",
     "key": "a",
     "now": 1092,
@@ -4572,6 +13250,12 @@ Array [
     "value": 99,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "delete": "fetch",
     "key": "b",
     "op": "delete",
@@ -4582,6 +13266,12 @@ Array [
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > fetchMethod throws, noDeleteOnFetchRejection option traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "fetch": "stale",
     "fetchDispatched": true,
     "fetchError": Error: fetch failure,
@@ -4598,6 +13288,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "fetch": "inflight",
     "key": "a",
     "op": "fetch",
@@ -4611,6 +13307,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "fetch": "inflight",
     "key": "a",
     "op": "fetch",
@@ -4624,6 +13326,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "fetch": "stale",
     "fetchDispatched": true,
     "fetchError": Error: fetch failure,
@@ -4640,6 +13348,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "fetch": "inflight",
     "key": "b",
     "op": "fetch",
@@ -4653,6 +13367,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "fetch": "inflight",
     "key": "b",
     "op": "fetch",
@@ -4666,6 +13386,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "error": Error: replaced {
       "name": "Error",
     },
@@ -4686,6 +13412,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        99,
+      ],
+    ],
     "error": Error: fetch failure {
       "name": "Error",
     },
@@ -4711,6 +13443,16 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > forceRefresh metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        2,
+        2,
+      ],
+    ],
     "key": 1,
     "now": 1092,
     "op": "set",
@@ -4721,6 +13463,16 @@ Array [
     "value": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        2,
+        2,
+      ],
+    ],
     "key": 2,
     "now": 1092,
     "op": "set",
@@ -4731,12 +13483,32 @@ Array [
     "value": 200,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        2,
+        2,
+      ],
+    ],
     "key": 1,
     "op": "peek",
     "peek": "hit",
     "value": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        2,
+        2,
+      ],
+    ],
     "key": 1,
     "now": 1192,
     "oldValue": 1,
@@ -4753,12 +13525,24 @@ Array [
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > forceRefresh metrics 2`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        "10",
+        8,
+      ],
+    ],
     "key": "10",
     "memo": "miss",
     "op": "memo",
     "value": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "10",
+        8,
+      ],
+    ],
     "context": 8,
     "key": "10",
     "memo": "hit",
@@ -4766,6 +13550,12 @@ Array [
     "value": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "10",
+        8,
+      ],
+    ],
     "context": 8,
     "forceRefresh": true,
     "key": "10",
@@ -4779,6 +13569,16 @@ Array [
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > forceRefresh traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        2,
+        2,
+      ],
+    ],
     "context": true,
     "fetch": "hit",
     "key": 1,
@@ -4796,6 +13596,16 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        2,
+        2,
+      ],
+    ],
     "fetch": "refresh",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -4819,6 +13629,16 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        2,
+        2,
+      ],
+    ],
     "fetch": "refresh",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -4842,6 +13662,16 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        2,
+        2,
+      ],
+    ],
     "fetch": "refresh",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -4865,6 +13695,16 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        2,
+        2,
+      ],
+    ],
     "fetch": "inflight",
     "key": 1,
     "op": "fetch",
@@ -4877,6 +13717,16 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        2,
+        2,
+      ],
+    ],
     "fetch": "hit",
     "key": 1,
     "now": 1192,
@@ -4893,6 +13743,16 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        2,
+        2,
+      ],
+    ],
     "context": true,
     "fetch": "refresh",
     "fetchDispatched": true,
@@ -4926,20 +13786,44 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > has false for pending fetch without stale val metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 1,
     "op": "has",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+    ],
     "has": "hit",
     "key": 1,
     "op": "has",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+    ],
     "has": "hit",
     "key": 1,
     "op": "has",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+    ],
     "has": "hit",
     "key": 1,
     "op": "has",
@@ -4950,6 +13834,12 @@ Array [
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > has false for pending fetch without stale val traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+    ],
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -4967,6 +13857,20 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "z",
+        "z",
+      ],
+      Array [
+        "y",
+        "y",
+      ],
+      Array [
+        "x",
+        "x",
+      ],
+    ],
     "context": Object {
       "a": 1,
     },
@@ -4985,6 +13889,20 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "z",
+        "z",
+      ],
+      Array [
+        "y",
+        "y",
+      ],
+      Array [
+        "x",
+        "x",
+      ],
+    ],
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -5000,6 +13918,20 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "z",
+        "z",
+      ],
+      Array [
+        "y",
+        "y",
+      ],
+      Array [
+        "x",
+        "x",
+      ],
+    ],
     "context": Object {
       "x": 1,
     },
@@ -5018,6 +13950,20 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "z",
+        "z",
+      ],
+      Array [
+        "y",
+        "y",
+      ],
+      Array [
+        "x",
+        "x",
+      ],
+    ],
     "context": Object {
       "a": 1,
     },
@@ -5036,6 +13982,20 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "z",
+        "z",
+      ],
+      Array [
+        "y",
+        "y",
+      ],
+      Array [
+        "x",
+        "x",
+      ],
+    ],
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -5051,6 +14011,20 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "z",
+        "z",
+      ],
+      Array [
+        "y",
+        "y",
+      ],
+      Array [
+        "x",
+        "x",
+      ],
+    ],
     "fetch": "inflight",
     "key": "y",
     "op": "fetch",
@@ -5061,6 +14035,20 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        "z",
+        "z",
+      ],
+      Array [
+        "y",
+        "y",
+      ],
+      Array [
+        "x",
+        "x",
+      ],
+    ],
     "context": Object {
       "x": 1,
     },
@@ -5079,6 +14067,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+    ],
     "fetch": "refresh",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -5103,6 +14097,12 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > large item falls out of cache because maxEntrySize metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "entrySize": 2,
     "key": 2,
     "op": "set",
@@ -5111,16 +14111,34 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "delete": "delete",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "delete": "set",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "key": 1,
     "maxEntrySizeExceeded": true,
     "op": "set",
@@ -5128,6 +14146,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "entrySize": 3,
     "key": 3,
     "op": "set",
@@ -5136,11 +14160,23 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "delete": "set",
     "key": 4,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "key": 4,
     "maxEntrySizeExceeded": true,
     "op": "set",
@@ -5157,6 +14193,12 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > large item falls out of cache, sizes are kept correct metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "entrySize": 2,
     "key": 2,
     "op": "set",
@@ -5165,16 +14207,34 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "delete": "delete",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "delete": "set",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "key": 1,
     "maxEntrySizeExceeded": true,
     "op": "set",
@@ -5182,6 +14242,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "entrySize": 3,
     "key": 3,
     "op": "set",
@@ -5190,11 +14256,23 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "delete": "set",
     "key": 4,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+    ],
     "key": 4,
     "maxEntrySizeExceeded": true,
     "op": "set",
@@ -5211,11 +14289,31 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > maxEntrySize, no maxSize metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "xxx",
+      ],
+      Array [
+        2,
+        "xx",
+      ],
+    ],
     "delete": "set",
     "key": 11,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "xxx",
+      ],
+      Array [
+        2,
+        "xx",
+      ],
+    ],
     "has": "miss",
     "key": 11,
     "op": "has",
@@ -5226,6 +14324,16 @@ Array [
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > maxEntrySize, no maxSize traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "xxx",
+      ],
+      Array [
+        2,
+        "xx",
+      ],
+    ],
     "entrySize": 2,
     "fetch": "miss",
     "fetchDispatched": true,
@@ -5245,6 +14353,16 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "xxx",
+      ],
+      Array [
+        2,
+        "xx",
+      ],
+    ],
     "entrySize": 3,
     "fetch": "miss",
     "fetchDispatched": true,
@@ -5264,6 +14382,16 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "xxx",
+      ],
+      Array [
+        2,
+        "xx",
+      ],
+    ],
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -5287,23 +14415,47 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > no funny business metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        4,
+      ],
+    ],
     "get": "miss",
     "key": 2,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        4,
+      ],
+    ],
     "key": 2,
     "memo": "miss",
     "op": "memo",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        4,
+      ],
+    ],
     "key": 2,
     "memo": "hit",
     "op": "memo",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        4,
+      ],
+    ],
     "get": "hit",
     "key": 2,
     "op": "get",
@@ -5319,36 +14471,120 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > noDisposeOnSet with delete() metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "key": 0,
     "op": "set",
     "set": "add",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "key": 1,
     "op": "set",
     "set": "add",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "key": 3,
     "op": "set",
     "set": "add",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "key": 4,
     "op": "set",
     "set": "add",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "key": 0,
     "oldValue": 0,
     "op": "set",
@@ -5356,6 +14592,20 @@ Array [
     "value": "new 0",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "key": 1,
     "oldValue": 1,
     "op": "set",
@@ -5363,6 +14613,20 @@ Array [
     "value": "new 1",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "key": 2,
     "oldValue": 2,
     "op": "set",
@@ -5370,6 +14634,20 @@ Array [
     "value": "new 2",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "key": 3,
     "oldValue": 3,
     "op": "set",
@@ -5377,46 +14655,158 @@ Array [
     "value": "new 3",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "delete": "delete",
     "key": 0,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "delete": "delete",
     "key": 4,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "key": 0,
     "op": "set",
     "set": "add",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "key": 1,
     "op": "set",
     "set": "add",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "key": 3,
     "op": "set",
     "set": "add",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "key": 4,
     "op": "set",
     "set": "add",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "key": 0,
     "oldValue": 0,
     "op": "set",
@@ -5424,6 +14814,20 @@ Array [
     "value": "new 0",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "key": 1,
     "oldValue": 1,
     "op": "set",
@@ -5431,6 +14835,20 @@ Array [
     "value": "new 1",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "key": 2,
     "oldValue": 2,
     "op": "set",
@@ -5438,6 +14856,20 @@ Array [
     "value": "new 2",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "key": 3,
     "oldValue": 3,
     "op": "set",
@@ -5445,11 +14877,39 @@ Array [
     "value": "new 3",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "delete": "delete",
     "key": 0,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        "new 3",
+      ],
+      Array [
+        2,
+        "new 2",
+      ],
+      Array [
+        1,
+        "new 1",
+      ],
+    ],
     "delete": "delete",
     "key": 4,
     "op": "delete",
@@ -5464,36 +14924,168 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > peek does not disturb order metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 0,
     "op": "set",
     "set": "add",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 1,
     "op": "set",
     "set": "add",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 3,
     "op": "set",
     "set": "add",
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 4,
     "op": "set",
     "set": "add",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        4,
+        4,
+      ],
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 2,
     "op": "peek",
     "peek": "hit",
@@ -5509,6 +15101,12 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > peek tests metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        5,
+        5000,
+      ],
+    ],
     "key": 1,
     "now": 1,
     "op": "set",
@@ -5519,6 +15117,12 @@ Array [
     "value": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        5,
+        5000,
+      ],
+    ],
     "key": 2,
     "now": 21,
     "op": "set",
@@ -5529,6 +15133,12 @@ Array [
     "value": 20,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        5,
+        5000,
+      ],
+    ],
     "key": 3,
     "now": 51,
     "op": "set",
@@ -5539,6 +15149,12 @@ Array [
     "value": 30,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        5,
+        5000,
+      ],
+    ],
     "key": 4,
     "now": 91,
     "op": "set",
@@ -5549,6 +15165,12 @@ Array [
     "value": 40,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        5,
+        5000,
+      ],
+    ],
     "key": 4,
     "now": 141,
     "oldValue": 40,
@@ -5560,34 +15182,70 @@ Array [
     "value": 50,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        5,
+        5000,
+      ],
+    ],
     "key": 1,
     "op": "peek",
     "peek": "stale",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        5,
+        5000,
+      ],
+    ],
     "key": 999,
     "op": "peek",
     "peek": "miss",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        5,
+        5000,
+      ],
+    ],
     "key": 1,
     "op": "peek",
     "peek": "hit",
     "value": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        5,
+        5000,
+      ],
+    ],
     "key": 5,
     "op": "peek",
     "peek": "hit",
     "value": 5000,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        5,
+        5000,
+      ],
+    ],
     "key": 5,
     "op": "peek",
     "peek": "hit",
     "value": 5000,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        5,
+        5000,
+      ],
+    ],
     "key": 5,
     "op": "peek",
     "peek": "hit",
@@ -5599,6 +15257,12 @@ Array [
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > peek tests traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [
+      Array [
+        5,
+        5000,
+      ],
+    ],
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -5620,6 +15284,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        5,
+        5000,
+      ],
+    ],
     "fetch": "stale",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -5651,6 +15321,16 @@ Array []
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > placeholder promise is not removed when resolving traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "entrySize": 3,
     "fetch": "miss",
     "fetchDispatched": true,
@@ -5670,6 +15350,16 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "entrySize": 4,
     "fetch": "miss",
     "fetchDispatched": true,
@@ -5689,6 +15379,16 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "entrySize": 5,
     "fetch": "miss",
     "fetchDispatched": true,
@@ -5725,6 +15425,12 @@ Array []
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > properly dispose when using fetch traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+    ],
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -5746,6 +15452,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+    ],
     "fetch": "stale",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -5773,24 +15485,96 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > re-use key before initial fill completed metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        1,
+        2,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 0,
     "op": "set",
     "set": "add",
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        1,
+        2,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 1,
     "op": "set",
     "set": "add",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        1,
+        2,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 2,
     "op": "set",
     "set": "add",
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        1,
+        2,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 1,
     "oldValue": 1,
     "op": "set",
@@ -5798,6 +15582,24 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        1,
+        2,
+      ],
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        0,
+        0,
+      ],
+    ],
     "key": 3,
     "op": "set",
     "set": "add",
@@ -5813,11 +15615,13 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > send a signal metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "delete": "fetch",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "miss",
     "key": 1,
     "op": "get",
@@ -5828,6 +15632,7 @@ Array [
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > send a signal traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [],
     "error": Error: custom abort signal {
       "name": "Error",
     },
@@ -5869,6 +15674,12 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > store strings, size = length metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "entrySize": 5,
     "key": 5,
     "op": "set",
@@ -5877,6 +15688,12 @@ Array [
     "value": "xxxxx",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "entrySize": 10,
     "key": 10,
     "op": "set",
@@ -5885,6 +15702,12 @@ Array [
     "value": "xxxxxxxxxx",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "entrySize": 20,
     "key": 20,
     "op": "set",
@@ -5893,16 +15716,34 @@ Array [
     "value": "xxxxxxxxxxxxxxxxxxxx",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "delete": "delete",
     "key": 20,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "delete": "delete",
     "key": 5,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "entrySize": 10,
     "key": 0,
     "op": "set",
@@ -5911,6 +15752,12 @@ Array [
     "value": "xxxxxxxxxx",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "entrySize": 10,
     "key": 1,
     "op": "set",
@@ -5919,6 +15766,12 @@ Array [
     "value": "xxxxxxxxxx",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "entrySize": 10,
     "key": 2,
     "op": "set",
@@ -5927,6 +15780,12 @@ Array [
     "value": "xxxxxxxxxx",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "entrySize": 10,
     "key": 3,
     "op": "set",
@@ -5935,6 +15794,12 @@ Array [
     "value": "xxxxxxxxxx",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "entrySize": 10,
     "key": 4,
     "op": "set",
@@ -5943,6 +15808,12 @@ Array [
     "value": "xxxxxxxxxx",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "entrySize": 100,
     "key": "big",
     "op": "set",
@@ -5951,6 +15822,12 @@ Array [
     "value": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "entrySize": 10,
     "key": "big",
     "oldValue": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
@@ -5960,11 +15837,23 @@ Array [
     "value": "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "delete": "delete",
     "key": "big",
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "entrySize": 10,
     "key": "repeated",
     "op": "set",
@@ -5973,6 +15862,12 @@ Array [
     "value": "iiiiiiiiii",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "entrySize": 10,
     "key": "repeated",
     "oldValue": "iiiiiiiiii",
@@ -5982,6 +15877,12 @@ Array [
     "value": "jjjjjjjjjj",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "entrySize": 10,
     "key": "repeated",
     "oldValue": "jjjjjjjjjj",
@@ -5991,6 +15892,12 @@ Array [
     "value": "iiiiiiiiii",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "entrySize": 10,
     "key": "repeated",
     "oldValue": "iiiiiiiiii",
@@ -6000,6 +15907,12 @@ Array [
     "value": "jjjjjjjjjj",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "entrySize": 10,
     "key": "repeated",
     "oldValue": "jjjjjjjjjj",
@@ -6009,6 +15922,12 @@ Array [
     "value": "iiiiiiiiii",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "entrySize": 10,
     "key": "repeated",
     "oldValue": "iiiiiiiiii",
@@ -6018,6 +15937,12 @@ Array [
     "value": "jjjjjjjjjj",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "entrySize": 10,
     "key": "repeated",
     "oldValue": "jjjjjjjjjj",
@@ -6027,6 +15952,12 @@ Array [
     "value": "iiiiiiiiii",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "entrySize": 10,
     "key": "repeated",
     "oldValue": "iiiiiiiiii",
@@ -6036,6 +15967,12 @@ Array [
     "value": "jjjjjjjjjj",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "repeated",
+        "jjjjjjjjjj",
+      ],
+    ],
     "get": "hit",
     "key": "repeated",
     "op": "get",
@@ -6051,6 +15988,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests using Date.now() > clear() disposes stale entries metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 0,
     "now": 5929,
     "op": "set",
@@ -6061,6 +15999,7 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 5929,
     "op": "set",
@@ -6071,6 +16010,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 5929,
     "op": "set",
@@ -6081,6 +16021,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 3,
     "now": 5929,
     "op": "set",
@@ -6100,6 +16041,36 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests using Date.now() > indexes/rindexes can walk over stale entries metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "key": 0,
     "now": 5911,
     "op": "set",
@@ -6110,6 +16081,36 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "key": 1,
     "now": 5911,
     "op": "set",
@@ -6120,6 +16121,36 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "key": 2,
     "now": 5911,
     "op": "set",
@@ -6130,6 +16161,36 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "key": 3,
     "now": 5920,
     "op": "set",
@@ -6140,6 +16201,36 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "key": 4,
     "now": 5920,
     "op": "set",
@@ -6150,6 +16241,36 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "key": 5,
     "now": 5920,
     "op": "set",
@@ -6160,6 +16281,36 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "key": 6,
     "now": 5920,
     "op": "set",
@@ -6170,6 +16321,36 @@ Array [
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "key": 7,
     "now": 5920,
     "op": "set",
@@ -6180,6 +16361,36 @@ Array [
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "key": 8,
     "now": 5920,
     "op": "set",
@@ -6190,6 +16401,36 @@ Array [
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "key": 9,
     "now": 5920,
     "op": "set",
@@ -6200,6 +16441,36 @@ Array [
     "value": 9,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 5920,
@@ -6210,6 +16481,36 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "get": "hit",
     "key": 3,
     "now": 5920,
@@ -6229,6 +16530,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests using Date.now() > no delete on stale get metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 5969,
     "op": "set",
@@ -6239,6 +16541,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 1,
     "now": 5980,
@@ -6248,6 +16551,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 1,
     "now": 5980,
@@ -6257,6 +16561,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 1,
     "now": 5980,
@@ -6268,11 +16573,13 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 1,
     "now": 5980,
@@ -6284,6 +16591,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "miss",
     "key": 1,
     "op": "get",
@@ -6298,6 +16606,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests using Date.now() > no update ttl metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 0,
     "now": 5884,
     "op": "set",
@@ -6308,6 +16617,7 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 5884,
     "op": "set",
@@ -6318,6 +16628,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 5884,
     "op": "set",
@@ -6328,6 +16639,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 0,
     "now": 5893,
     "op": "set",
@@ -6338,6 +16650,7 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 5893,
     "op": "set",
@@ -6348,21 +16661,25 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 0,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "miss",
     "key": 2,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 5902,
@@ -6373,16 +16690,19 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "miss",
     "key": 0,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "miss",
     "key": 1,
     "op": "get",
@@ -6397,6 +16717,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests using Date.now() > purge stale items metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 0,
     "now": 5781,
     "op": "set",
@@ -6407,6 +16728,7 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 5781,
     "op": "set",
@@ -6417,6 +16739,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 5781,
     "op": "set",
@@ -6427,6 +16750,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 3,
     "now": 5781,
     "op": "set",
@@ -6437,6 +16761,7 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [],
     "key": 4,
     "now": 5781,
     "op": "set",
@@ -6447,6 +16772,7 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [],
     "key": 5,
     "now": 5781,
     "op": "set",
@@ -6457,6 +16783,7 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [],
     "key": 6,
     "now": 5781,
     "op": "set",
@@ -6467,6 +16794,7 @@ Array [
     "value": 6,
   },
   Object {
+    "cache": LRUCache [],
     "key": 7,
     "now": 5781,
     "op": "set",
@@ -6477,6 +16805,7 @@ Array [
     "value": 7,
   },
   Object {
+    "cache": LRUCache [],
     "key": 8,
     "now": 5781,
     "op": "set",
@@ -6487,6 +16816,7 @@ Array [
     "value": 8,
   },
   Object {
+    "cache": LRUCache [],
     "key": 9,
     "now": 5781,
     "op": "set",
@@ -6497,51 +16827,61 @@ Array [
     "value": 9,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 0,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 3,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 4,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 5,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 6,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 7,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 8,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 9,
     "op": "delete",
@@ -6556,6 +16896,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests using Date.now() > purgeStale() lockup metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 5949,
     "op": "set",
@@ -6566,6 +16907,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 5949,
     "op": "set",
@@ -6576,6 +16918,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 3,
     "now": 5949,
     "op": "set",
@@ -6586,6 +16929,7 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 5954,
@@ -6596,16 +16940,19 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 3,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 2,
     "op": "delete",
@@ -6620,6 +16967,16 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests using Date.now() > set item pre-stale metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 1,
     "now": 5969,
     "op": "set",
@@ -6630,6 +16987,16 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "has": "hit",
     "key": 1,
     "now": 5969,
@@ -6639,6 +17006,16 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 5969,
@@ -6649,6 +17026,16 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 2,
     "now": 5969,
     "op": "set",
@@ -6659,6 +17046,16 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "has": "stale",
     "key": 2,
     "now": 5969,
@@ -6668,11 +17065,31 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "delete": "expire",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "stale",
     "key": 2,
     "now": 5969,
@@ -6684,11 +17101,31 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 2,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 2,
     "now": 5969,
     "op": "set",
@@ -6699,6 +17136,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+    ],
     "has": "stale",
     "key": 2,
     "now": 5969,
@@ -6708,11 +17151,23 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+    ],
     "delete": "expire",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "stale",
     "key": 2,
     "now": 5969,
@@ -6724,6 +17179,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 2,
     "op": "get",
@@ -6738,6 +17199,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests using Date.now() > ttl on set, not on cache metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 4912,
     "op": "set",
@@ -6748,6 +17210,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 4912,
@@ -6758,6 +17221,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 4917,
@@ -6768,6 +17232,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 4922,
@@ -6778,6 +17243,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 1,
     "now": 4923,
@@ -6787,11 +17253,13 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 1,
     "now": 4923,
@@ -6801,6 +17269,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 4923,
     "op": "set",
@@ -6811,6 +17280,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 4973,
@@ -6820,6 +17290,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 4973,
@@ -6830,6 +17301,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 2,
     "now": 5024,
@@ -6839,11 +17311,13 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 2,
     "now": 5024,
@@ -6853,6 +17327,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "key": 0,
     "now": 5024,
     "op": "set",
@@ -6863,6 +17338,7 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 5024,
     "op": "set",
@@ -6873,6 +17349,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 5024,
     "op": "set",
@@ -6883,6 +17360,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 3,
     "now": 5024,
     "op": "set",
@@ -6893,6 +17371,7 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [],
     "key": 4,
     "now": 5024,
     "op": "set",
@@ -6903,6 +17382,7 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [],
     "key": 5,
     "now": 5024,
     "op": "set",
@@ -6913,6 +17393,7 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [],
     "key": 6,
     "now": 5024,
     "op": "set",
@@ -6923,6 +17404,7 @@ Array [
     "value": 6,
   },
   Object {
+    "cache": LRUCache [],
     "key": 7,
     "now": 5024,
     "op": "set",
@@ -6933,6 +17415,7 @@ Array [
     "value": 7,
   },
   Object {
+    "cache": LRUCache [],
     "key": 8,
     "now": 5024,
     "op": "set",
@@ -6943,6 +17426,7 @@ Array [
     "value": 8,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 4,
     "now": 5035,
@@ -6952,11 +17436,13 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 4,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 4,
     "now": 5035,
@@ -6975,6 +17461,12 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests using Date.now() > ttl tests defaults metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 1,
     "now": 4465,
     "op": "set",
@@ -6985,6 +17477,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 4465,
@@ -6995,6 +17493,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 4470,
@@ -7005,6 +17509,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 4475,
@@ -7015,6 +17525,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "has": "stale",
     "key": 1,
     "now": 4477,
@@ -7024,11 +17540,23 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "delete": "expire",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "stale",
     "key": 1,
     "now": 4477,
@@ -7038,6 +17566,12 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 2,
     "now": 4477,
     "op": "set",
@@ -7048,6 +17582,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "has": "hit",
     "key": 2,
     "now": 4527,
@@ -7057,6 +17597,12 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 2,
     "now": 4527,
@@ -7067,6 +17613,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "has": "stale",
     "key": 2,
     "now": 4578,
@@ -7076,11 +17628,23 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "delete": "expire",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "stale",
     "key": 2,
     "now": 4578,
@@ -7090,6 +17654,12 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 0,
     "now": 4578,
     "op": "set",
@@ -7100,6 +17670,12 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 1,
     "now": 4578,
     "op": "set",
@@ -7110,6 +17686,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 2,
     "now": 4578,
     "op": "set",
@@ -7120,6 +17702,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 3,
     "now": 4578,
     "op": "set",
@@ -7130,6 +17718,12 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 4,
     "now": 4578,
     "op": "set",
@@ -7140,6 +17734,12 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 5,
     "now": 4578,
     "op": "set",
@@ -7150,6 +17750,12 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 6,
     "now": 4578,
     "op": "set",
@@ -7160,6 +17766,12 @@ Array [
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 7,
     "now": 4578,
     "op": "set",
@@ -7170,6 +17782,12 @@ Array [
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 8,
     "now": 4578,
     "op": "set",
@@ -7180,11 +17798,23 @@ Array [
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 4,
     "op": "peek",
     "peek": "stale",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "has": "stale",
     "key": 4,
     "now": 4589,
@@ -7194,11 +17824,23 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "delete": "expire",
     "key": 4,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "stale",
     "key": 4,
     "now": 4589,
@@ -7208,24 +17850,48 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": "immortal",
     "op": "set",
     "set": "add",
     "value": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": "immortal",
     "op": "get",
     "value": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": "immortal",
     "op": "get",
     "value": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": "immortal",
     "op": "get",
@@ -7241,6 +17907,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests using Date.now() > ttl tests with ttlResolution=100 metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 4789,
     "op": "set",
@@ -7251,6 +17918,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 4789,
@@ -7261,6 +17929,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 4789,
@@ -7271,6 +17940,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 4789,
@@ -7281,6 +17951,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 1,
     "now": 4789,
@@ -7290,6 +17961,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 4789,
@@ -7300,6 +17972,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 1,
     "now": 4900,
@@ -7309,11 +17982,13 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 1,
     "now": 4900,
@@ -7332,6 +18007,24 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests using Date.now() > ttl with allowStale metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 1,
     "now": 5035,
     "op": "set",
@@ -7342,6 +18035,24 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 5035,
@@ -7352,6 +18063,24 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 5040,
@@ -7362,6 +18091,24 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 5045,
@@ -7372,6 +18119,24 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "has": "stale",
     "key": 1,
     "now": 5046,
@@ -7381,6 +18146,24 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "stale",
     "key": 1,
     "now": 5046,
@@ -7392,11 +18175,47 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "delete": "expire",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "stale",
     "key": 1,
     "now": 5046,
@@ -7408,11 +18227,47 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "miss",
     "key": 1,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 2,
     "now": 5046,
     "op": "set",
@@ -7423,6 +18278,24 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "has": "hit",
     "key": 2,
     "now": 5096,
@@ -7432,6 +18305,24 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "hit",
     "key": 2,
     "now": 5096,
@@ -7442,6 +18333,24 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "has": "stale",
     "key": 2,
     "now": 5147,
@@ -7451,11 +18360,47 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "delete": "expire",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "stale",
     "key": 2,
     "now": 5147,
@@ -7467,11 +18412,47 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "miss",
     "key": 2,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 0,
     "now": 5147,
     "op": "set",
@@ -7482,6 +18463,24 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 1,
     "now": 5147,
     "op": "set",
@@ -7492,6 +18491,24 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 2,
     "now": 5147,
     "op": "set",
@@ -7502,6 +18519,24 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 3,
     "now": 5147,
     "op": "set",
@@ -7512,6 +18547,24 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 4,
     "now": 5147,
     "op": "set",
@@ -7522,6 +18575,24 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 5,
     "now": 5147,
     "op": "set",
@@ -7532,6 +18603,24 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 6,
     "now": 5147,
     "op": "set",
@@ -7542,6 +18631,24 @@ Array [
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 7,
     "now": 5147,
     "op": "set",
@@ -7552,6 +18659,24 @@ Array [
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 8,
     "now": 5147,
     "op": "set",
@@ -7562,6 +18687,24 @@ Array [
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "has": "stale",
     "key": 4,
     "now": 5158,
@@ -7571,11 +18714,47 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "delete": "expire",
     "key": 4,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "stale",
     "key": 4,
     "now": 5158,
@@ -7587,6 +18766,24 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "miss",
     "key": 4,
     "op": "get",
@@ -7601,6 +18798,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests using Date.now() > ttl with updateAgeOnGet/updateAgeOnHas metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 5158,
     "op": "set",
@@ -7611,6 +18809,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 5158,
@@ -7621,6 +18820,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 1,
     "now": 5163,
@@ -7630,6 +18830,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 5168,
@@ -7640,6 +18841,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 1,
     "now": 5169,
@@ -7649,6 +18851,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 5169,
@@ -7659,6 +18862,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 5169,
     "op": "set",
@@ -7669,6 +18873,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 5219,
@@ -7678,6 +18883,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 5219,
@@ -7688,6 +18894,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 5269,
@@ -7697,6 +18904,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 5269,
@@ -7707,6 +18915,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 5319,
@@ -7716,6 +18925,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 5319,
@@ -7726,6 +18936,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 5369,
@@ -7735,6 +18946,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 5369,
@@ -7745,6 +18957,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 5419,
@@ -7754,6 +18967,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 5419,
@@ -7764,6 +18978,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 5469,
@@ -7773,6 +18988,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 5469,
@@ -7783,6 +18999,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 5519,
@@ -7792,6 +19009,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 5519,
@@ -7802,6 +19020,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 5569,
@@ -7811,6 +19030,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 5569,
@@ -7821,6 +19041,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 5619,
@@ -7830,6 +19051,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 5619,
@@ -7840,6 +19062,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 5669,
@@ -7849,6 +19072,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 5669,
@@ -7859,6 +19083,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 2,
     "now": 5770,
@@ -7868,11 +19093,13 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 2,
     "now": 5770,
@@ -7882,6 +19109,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "key": 0,
     "now": 5770,
     "op": "set",
@@ -7892,6 +19120,7 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 5770,
     "op": "set",
@@ -7902,6 +19131,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 5770,
     "op": "set",
@@ -7912,6 +19142,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 3,
     "now": 5770,
     "op": "set",
@@ -7922,6 +19153,7 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [],
     "key": 4,
     "now": 5770,
     "op": "set",
@@ -7932,6 +19164,7 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [],
     "key": 5,
     "now": 5770,
     "op": "set",
@@ -7942,6 +19175,7 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [],
     "key": 6,
     "now": 5770,
     "op": "set",
@@ -7952,6 +19186,7 @@ Array [
     "value": 6,
   },
   Object {
+    "cache": LRUCache [],
     "key": 7,
     "now": 5770,
     "op": "set",
@@ -7962,6 +19197,7 @@ Array [
     "value": 7,
   },
   Object {
+    "cache": LRUCache [],
     "key": 8,
     "now": 5770,
     "op": "set",
@@ -7972,16 +19208,19 @@ Array [
     "value": 8,
   },
   Object {
+    "cache": LRUCache [],
     "has": "miss",
     "key": 3,
     "op": "has",
   },
   Object {
+    "cache": LRUCache [],
     "get": "miss",
     "key": 3,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 4,
     "now": 5781,
@@ -7991,11 +19230,13 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 4,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 4,
     "now": 5781,
@@ -8014,6 +19255,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests using Date.now() > ttlAutopurge metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 4900,
     "op": "set",
@@ -8024,6 +19266,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 4900,
     "op": "set",
@@ -8034,6 +19277,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 4900,
     "oldValue": 2,
@@ -8045,11 +19289,13 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 2,
     "op": "delete",
@@ -8072,6 +19318,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests using Date.now() > updateAgeOnGet + ttlAutopurge: entry eventually purged if not re-accessed metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": "b",
     "now": 6192,
     "op": "set",
@@ -8082,6 +19329,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": "b",
     "now": 6222,
@@ -8092,11 +19340,13 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": "b",
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "miss",
     "key": "b",
     "op": "get",
@@ -8111,6 +19361,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests using Date.now() > updateAgeOnGet reschedules ttlAutopurge timer metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": "a",
     "now": 5980,
     "op": "set",
@@ -8121,6 +19372,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": "a",
     "now": 6060,
@@ -8131,6 +19383,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": "a",
     "now": 6090,
@@ -8141,11 +19394,13 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": "a",
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "miss",
     "key": "a",
     "op": "get",
@@ -8168,6 +19423,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > clear() disposes stale entries metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 0,
     "now": 4119,
     "op": "set",
@@ -8178,6 +19434,7 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 4119,
     "op": "set",
@@ -8188,6 +19445,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 4119,
     "op": "set",
@@ -8198,6 +19456,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 3,
     "now": 4119,
     "op": "set",
@@ -8217,6 +19476,36 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > indexes/rindexes can walk over stale entries metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "key": 0,
     "now": 4101,
     "op": "set",
@@ -8227,6 +19516,36 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "key": 1,
     "now": 4101,
     "op": "set",
@@ -8237,6 +19556,36 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "key": 2,
     "now": 4101,
     "op": "set",
@@ -8247,6 +19596,36 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "key": 3,
     "now": 4110,
     "op": "set",
@@ -8257,6 +19636,36 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "key": 4,
     "now": 4110,
     "op": "set",
@@ -8267,6 +19676,36 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "key": 5,
     "now": 4110,
     "op": "set",
@@ -8277,6 +19716,36 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "key": 6,
     "now": 4110,
     "op": "set",
@@ -8287,6 +19756,36 @@ Array [
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "key": 7,
     "now": 4110,
     "op": "set",
@@ -8297,6 +19796,36 @@ Array [
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "key": 8,
     "now": 4110,
     "op": "set",
@@ -8307,6 +19836,36 @@ Array [
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "key": 9,
     "now": 4110,
     "op": "set",
@@ -8317,6 +19876,36 @@ Array [
     "value": 9,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 4110,
@@ -8327,6 +19916,36 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        3,
+        3,
+      ],
+      Array [
+        9,
+        9,
+      ],
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+      Array [
+        4,
+        4,
+      ],
+    ],
     "get": "hit",
     "key": 3,
     "now": 4110,
@@ -8346,6 +19965,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > no delete on stale get metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 4159,
     "op": "set",
@@ -8356,6 +19976,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 1,
     "now": 4170,
@@ -8365,6 +19986,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 1,
     "now": 4170,
@@ -8374,6 +19996,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 1,
     "now": 4170,
@@ -8385,11 +20008,13 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 1,
     "now": 4170,
@@ -8401,6 +20026,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "miss",
     "key": 1,
     "op": "get",
@@ -8415,6 +20041,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > no update ttl metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 0,
     "now": 4074,
     "op": "set",
@@ -8425,6 +20052,7 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 4074,
     "op": "set",
@@ -8435,6 +20063,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 4074,
     "op": "set",
@@ -8445,6 +20074,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 0,
     "now": 4083,
     "op": "set",
@@ -8455,6 +20085,7 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 4083,
     "op": "set",
@@ -8465,21 +20096,25 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 0,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "miss",
     "key": 2,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 4092,
@@ -8490,16 +20125,19 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "miss",
     "key": 0,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "miss",
     "key": 1,
     "op": "get",
@@ -8514,6 +20152,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > purge stale items metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 0,
     "now": 3971,
     "op": "set",
@@ -8524,6 +20163,7 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 3971,
     "op": "set",
@@ -8534,6 +20174,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 3971,
     "op": "set",
@@ -8544,6 +20185,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 3,
     "now": 3971,
     "op": "set",
@@ -8554,6 +20196,7 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [],
     "key": 4,
     "now": 3971,
     "op": "set",
@@ -8564,6 +20207,7 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [],
     "key": 5,
     "now": 3971,
     "op": "set",
@@ -8574,6 +20218,7 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [],
     "key": 6,
     "now": 3971,
     "op": "set",
@@ -8584,6 +20229,7 @@ Array [
     "value": 6,
   },
   Object {
+    "cache": LRUCache [],
     "key": 7,
     "now": 3971,
     "op": "set",
@@ -8594,6 +20240,7 @@ Array [
     "value": 7,
   },
   Object {
+    "cache": LRUCache [],
     "key": 8,
     "now": 3971,
     "op": "set",
@@ -8604,6 +20251,7 @@ Array [
     "value": 8,
   },
   Object {
+    "cache": LRUCache [],
     "key": 9,
     "now": 3971,
     "op": "set",
@@ -8614,51 +20262,61 @@ Array [
     "value": 9,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 0,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 3,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 4,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 5,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 6,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 7,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 8,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 9,
     "op": "delete",
@@ -8673,6 +20331,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > purgeStale() lockup metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 4139,
     "op": "set",
@@ -8683,6 +20342,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 4139,
     "op": "set",
@@ -8693,6 +20353,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 3,
     "now": 4139,
     "op": "set",
@@ -8703,6 +20364,7 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 4144,
@@ -8713,16 +20375,19 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 3,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 2,
     "op": "delete",
@@ -8737,6 +20402,16 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > set item pre-stale metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 1,
     "now": 4159,
     "op": "set",
@@ -8747,6 +20422,16 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "has": "hit",
     "key": 1,
     "now": 4159,
@@ -8756,6 +20441,16 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 4159,
@@ -8766,6 +20461,16 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 2,
     "now": 4159,
     "op": "set",
@@ -8776,6 +20481,16 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "has": "stale",
     "key": 2,
     "now": 4159,
@@ -8785,11 +20500,31 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "delete": "expire",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "stale",
     "key": 2,
     "now": 4159,
@@ -8801,11 +20536,31 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 2,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 2,
     "now": 4159,
     "op": "set",
@@ -8816,6 +20571,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+    ],
     "has": "stale",
     "key": 2,
     "now": 4159,
@@ -8825,11 +20586,23 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+    ],
     "delete": "expire",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "stale",
     "key": 2,
     "now": 4159,
@@ -8841,6 +20614,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "miss",
     "key": 2,
     "op": "get",
@@ -8855,6 +20634,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > ttl on set, not on cache metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 3102,
     "op": "set",
@@ -8865,6 +20645,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 3102,
@@ -8875,6 +20656,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 3107,
@@ -8885,6 +20667,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 3112,
@@ -8895,6 +20678,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 1,
     "now": 3113,
@@ -8904,11 +20688,13 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 1,
     "now": 3113,
@@ -8918,6 +20704,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 3113,
     "op": "set",
@@ -8928,6 +20715,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 3163,
@@ -8937,6 +20725,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 3163,
@@ -8947,6 +20736,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 2,
     "now": 3214,
@@ -8956,11 +20746,13 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 2,
     "now": 3214,
@@ -8970,6 +20762,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "key": 0,
     "now": 3214,
     "op": "set",
@@ -8980,6 +20773,7 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 3214,
     "op": "set",
@@ -8990,6 +20784,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 3214,
     "op": "set",
@@ -9000,6 +20795,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 3,
     "now": 3214,
     "op": "set",
@@ -9010,6 +20806,7 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [],
     "key": 4,
     "now": 3214,
     "op": "set",
@@ -9020,6 +20817,7 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [],
     "key": 5,
     "now": 3214,
     "op": "set",
@@ -9030,6 +20828,7 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [],
     "key": 6,
     "now": 3214,
     "op": "set",
@@ -9040,6 +20839,7 @@ Array [
     "value": 6,
   },
   Object {
+    "cache": LRUCache [],
     "key": 7,
     "now": 3214,
     "op": "set",
@@ -9050,6 +20850,7 @@ Array [
     "value": 7,
   },
   Object {
+    "cache": LRUCache [],
     "key": 8,
     "now": 3214,
     "op": "set",
@@ -9060,6 +20861,7 @@ Array [
     "value": 8,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 4,
     "now": 3225,
@@ -9069,11 +20871,13 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 4,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 4,
     "now": 3225,
@@ -9092,6 +20896,12 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > ttl tests defaults metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 1,
     "now": 2655,
     "op": "set",
@@ -9102,6 +20912,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 2655,
@@ -9112,6 +20928,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 2660,
@@ -9122,6 +20944,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 2665,
@@ -9132,6 +20960,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "has": "stale",
     "key": 1,
     "now": 2667,
@@ -9141,11 +20975,23 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "delete": "expire",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "stale",
     "key": 1,
     "now": 2667,
@@ -9155,6 +21001,12 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 2,
     "now": 2667,
     "op": "set",
@@ -9165,6 +21017,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "has": "hit",
     "key": 2,
     "now": 2717,
@@ -9174,6 +21032,12 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 2,
     "now": 2717,
@@ -9184,6 +21048,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "has": "stale",
     "key": 2,
     "now": 2768,
@@ -9193,11 +21063,23 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "delete": "expire",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "stale",
     "key": 2,
     "now": 2768,
@@ -9207,6 +21089,12 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 0,
     "now": 2768,
     "op": "set",
@@ -9217,6 +21105,12 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 1,
     "now": 2768,
     "op": "set",
@@ -9227,6 +21121,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 2,
     "now": 2768,
     "op": "set",
@@ -9237,6 +21137,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 3,
     "now": 2768,
     "op": "set",
@@ -9247,6 +21153,12 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 4,
     "now": 2768,
     "op": "set",
@@ -9257,6 +21169,12 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 5,
     "now": 2768,
     "op": "set",
@@ -9267,6 +21185,12 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 6,
     "now": 2768,
     "op": "set",
@@ -9277,6 +21201,12 @@ Array [
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 7,
     "now": 2768,
     "op": "set",
@@ -9287,6 +21217,12 @@ Array [
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 8,
     "now": 2768,
     "op": "set",
@@ -9297,11 +21233,23 @@ Array [
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 4,
     "op": "peek",
     "peek": "stale",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "has": "stale",
     "key": 4,
     "now": 2779,
@@ -9311,11 +21259,23 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "delete": "expire",
     "key": 4,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "stale",
     "key": 4,
     "now": 2779,
@@ -9325,24 +21285,48 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": "immortal",
     "op": "set",
     "set": "add",
     "value": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": "immortal",
     "op": "get",
     "value": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": "immortal",
     "op": "get",
     "value": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": "immortal",
     "op": "get",
@@ -9358,6 +21342,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > ttl tests with ttlResolution=100 metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 2979,
     "op": "set",
@@ -9368,6 +21353,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 2979,
@@ -9378,6 +21364,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 2979,
@@ -9388,6 +21375,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 2979,
@@ -9398,6 +21386,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 1,
     "now": 2979,
@@ -9407,6 +21396,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 2979,
@@ -9417,6 +21407,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 1,
     "now": 3090,
@@ -9426,11 +21417,13 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 1,
     "now": 3090,
@@ -9449,6 +21442,24 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > ttl with allowStale metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 1,
     "now": 3225,
     "op": "set",
@@ -9459,6 +21470,24 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 3225,
@@ -9469,6 +21498,24 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 3230,
@@ -9479,6 +21526,24 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 3235,
@@ -9489,6 +21554,24 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "has": "stale",
     "key": 1,
     "now": 3236,
@@ -9498,6 +21581,24 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "stale",
     "key": 1,
     "now": 3236,
@@ -9509,11 +21610,47 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "delete": "expire",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "stale",
     "key": 1,
     "now": 3236,
@@ -9525,11 +21662,47 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "miss",
     "key": 1,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 2,
     "now": 3236,
     "op": "set",
@@ -9540,6 +21713,24 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "has": "hit",
     "key": 2,
     "now": 3286,
@@ -9549,6 +21740,24 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "hit",
     "key": 2,
     "now": 3286,
@@ -9559,6 +21768,24 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "has": "stale",
     "key": 2,
     "now": 3337,
@@ -9568,11 +21795,47 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "delete": "expire",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "stale",
     "key": 2,
     "now": 3337,
@@ -9584,11 +21847,47 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "miss",
     "key": 2,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 0,
     "now": 3337,
     "op": "set",
@@ -9599,6 +21898,24 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 1,
     "now": 3337,
     "op": "set",
@@ -9609,6 +21926,24 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 2,
     "now": 3337,
     "op": "set",
@@ -9619,6 +21954,24 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 3,
     "now": 3337,
     "op": "set",
@@ -9629,6 +21982,24 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 4,
     "now": 3337,
     "op": "set",
@@ -9639,6 +22010,24 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 5,
     "now": 3337,
     "op": "set",
@@ -9649,6 +22038,24 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 6,
     "now": 3337,
     "op": "set",
@@ -9659,6 +22066,24 @@ Array [
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 7,
     "now": 3337,
     "op": "set",
@@ -9669,6 +22094,24 @@ Array [
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "key": 8,
     "now": 3337,
     "op": "set",
@@ -9679,6 +22122,24 @@ Array [
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "has": "stale",
     "key": 4,
     "now": 3348,
@@ -9688,11 +22149,47 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "delete": "expire",
     "key": 4,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "stale",
     "key": 4,
     "now": 3348,
@@ -9704,6 +22201,24 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        8,
+        8,
+      ],
+      Array [
+        7,
+        7,
+      ],
+      Array [
+        6,
+        6,
+      ],
+      Array [
+        5,
+        5,
+      ],
+    ],
     "get": "miss",
     "key": 4,
     "op": "get",
@@ -9718,6 +22233,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > ttl with updateAgeOnGet/updateAgeOnHas metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 3348,
     "op": "set",
@@ -9728,6 +22244,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 3348,
@@ -9738,6 +22255,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 1,
     "now": 3353,
@@ -9747,6 +22265,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 3358,
@@ -9757,6 +22276,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 1,
     "now": 3359,
@@ -9766,6 +22286,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 3359,
@@ -9776,6 +22297,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 3359,
     "op": "set",
@@ -9786,6 +22308,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 3409,
@@ -9795,6 +22318,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 3409,
@@ -9805,6 +22329,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 3459,
@@ -9814,6 +22339,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 3459,
@@ -9824,6 +22350,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 3509,
@@ -9833,6 +22360,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 3509,
@@ -9843,6 +22371,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 3559,
@@ -9852,6 +22381,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 3559,
@@ -9862,6 +22392,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 3609,
@@ -9871,6 +22402,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 3609,
@@ -9881,6 +22413,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 3659,
@@ -9890,6 +22423,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 3659,
@@ -9900,6 +22434,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 3709,
@@ -9909,6 +22444,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 3709,
@@ -9919,6 +22455,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 3759,
@@ -9928,6 +22465,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 3759,
@@ -9938,6 +22476,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 3809,
@@ -9947,6 +22486,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 3809,
@@ -9957,6 +22497,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 3859,
@@ -9966,6 +22507,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 3859,
@@ -9976,6 +22518,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 2,
     "now": 3960,
@@ -9985,11 +22528,13 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 2,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 2,
     "now": 3960,
@@ -9999,6 +22544,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "key": 0,
     "now": 3960,
     "op": "set",
@@ -10009,6 +22555,7 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 3960,
     "op": "set",
@@ -10019,6 +22566,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 3960,
     "op": "set",
@@ -10029,6 +22577,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 3,
     "now": 3960,
     "op": "set",
@@ -10039,6 +22588,7 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [],
     "key": 4,
     "now": 3960,
     "op": "set",
@@ -10049,6 +22599,7 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [],
     "key": 5,
     "now": 3960,
     "op": "set",
@@ -10059,6 +22610,7 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [],
     "key": 6,
     "now": 3960,
     "op": "set",
@@ -10069,6 +22621,7 @@ Array [
     "value": 6,
   },
   Object {
+    "cache": LRUCache [],
     "key": 7,
     "now": 3960,
     "op": "set",
@@ -10079,6 +22632,7 @@ Array [
     "value": 7,
   },
   Object {
+    "cache": LRUCache [],
     "key": 8,
     "now": 3960,
     "op": "set",
@@ -10089,16 +22643,19 @@ Array [
     "value": 8,
   },
   Object {
+    "cache": LRUCache [],
     "has": "miss",
     "key": 3,
     "op": "has",
   },
   Object {
+    "cache": LRUCache [],
     "get": "miss",
     "key": 3,
     "op": "get",
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 4,
     "now": 3971,
@@ -10108,11 +22665,13 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 4,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 4,
     "now": 3971,
@@ -10131,6 +22690,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > ttlAutopurge metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 3090,
     "op": "set",
@@ -10141,6 +22701,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 3090,
     "op": "set",
@@ -10151,6 +22712,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 3090,
     "oldValue": 2,
@@ -10162,11 +22724,13 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 1,
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": 2,
     "op": "delete",
@@ -10189,6 +22753,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > updateAgeOnGet + ttlAutopurge: entry eventually purged if not re-accessed metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": "b",
     "now": 4382,
     "op": "set",
@@ -10199,6 +22764,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": "b",
     "now": 4412,
@@ -10209,11 +22775,13 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": "b",
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "miss",
     "key": "b",
     "op": "get",
@@ -10228,6 +22796,7 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > tests with performance.now() > updateAgeOnGet reschedules ttlAutopurge timer metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": "a",
     "now": 4170,
     "op": "set",
@@ -10238,6 +22807,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": "a",
     "now": 4250,
@@ -10248,6 +22818,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": "a",
     "now": 4280,
@@ -10258,11 +22829,13 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "delete": "expire",
     "key": "a",
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "get": "miss",
     "key": "a",
     "op": "get",
@@ -10285,6 +22858,12 @@ Map {}
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > verify inflight works as expected metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        Object {},
+      ],
+    ],
     "get": "fetching",
     "key": 1,
     "op": "get",
@@ -10295,6 +22874,12 @@ Array [
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > verify inflight works as expected traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        Object {},
+      ],
+    ],
     "fetch": "miss",
     "fetchDispatched": true,
     "fetchResolved": true,
@@ -10312,6 +22897,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        Object {},
+      ],
+    ],
     "fetch": "inflight",
     "key": 1,
     "op": "fetch",
@@ -10324,6 +22915,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        Object {},
+      ],
+    ],
     "fetch": "inflight",
     "key": 1,
     "op": "fetch",
@@ -10336,6 +22933,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        Object {},
+      ],
+    ],
     "fetch": "inflight",
     "key": 1,
     "op": "fetch",
@@ -10348,6 +22951,12 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        Object {},
+      ],
+    ],
     "fetch": "inflight",
     "key": 1,
     "op": "fetch",
@@ -10365,6 +22974,7 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > verify require works as expected metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "entrySize": 1,
     "key": "x",
     "op": "set",
@@ -10373,6 +22983,7 @@ Array [
     "value": "x",
   },
   Object {
+    "cache": LRUCache [],
     "entrySize": 1,
     "key": "y",
     "op": "set",
@@ -10381,16 +22992,28 @@ Array [
     "value": "y",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "delete",
     "key": "x",
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [],
     "delete": "delete",
     "key": "y",
     "op": "delete",
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "fetching",
     "key": 1,
     "now": 52,
@@ -10400,6 +23023,16 @@ Array [
     "ttl": 1000,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "fetching",
     "key": 2,
     "now": 52,
@@ -10409,6 +23042,16 @@ Array [
     "ttl": 1000,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 152,
@@ -10419,6 +23062,16 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "fetching",
     "key": 2,
     "now": 152,
@@ -10428,6 +23081,16 @@ Array [
     "ttl": 1000,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 252,
@@ -10438,6 +23101,16 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "get": "hit",
     "key": 2,
     "now": 252,
@@ -10453,6 +23126,16 @@ Array [
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > verify require works as expected traces 1`] = `
 Map {
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "fetch": "miss",
     "fetchAborted": true,
     "fetchDispatched": true,
@@ -10476,6 +23159,16 @@ Map {
     "asyncEnd",
   ],
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        2,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "fetch": "miss",
     "fetchAborted": true,
     "fetchDispatched": true,
@@ -10504,6 +23197,16 @@ Map {
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > with context metrics 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        4,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "context": true,
     "key": 1,
     "memo": "miss",
@@ -10511,6 +23214,16 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        4,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "context": true,
     "key": 1,
     "memo": "hit",
@@ -10518,18 +23231,48 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        4,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 1,
     "memo": "hit",
     "op": "memo",
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        4,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 2,
     "memo": "miss",
     "op": "memo",
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        4,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "context": true,
     "key": 2,
     "memo": "hit",
@@ -10537,6 +23280,16 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        2,
+        4,
+      ],
+      Array [
+        1,
+        1,
+      ],
+    ],
     "key": 2,
     "memo": "hit",
     "op": "memo",
@@ -10573,6 +23326,7 @@ Array [
 exports[`test/tracing.ts > TAP > tests using Date.now() > ttl on set, not on cache > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 4912,
     "op": "set",
@@ -10583,6 +23337,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 4912,
@@ -10593,6 +23348,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 4917,
@@ -10603,6 +23359,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 4922,
@@ -10613,6 +23370,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 1,
     "now": 4923,
@@ -10622,6 +23380,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 1,
     "now": 4923,
@@ -10631,6 +23390,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 4923,
     "op": "set",
@@ -10641,6 +23401,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 4973,
@@ -10650,6 +23411,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 4973,
@@ -10660,6 +23422,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 2,
     "now": 5024,
@@ -10669,6 +23432,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 2,
     "now": 5024,
@@ -10678,6 +23442,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "key": 0,
     "now": 5024,
     "op": "set",
@@ -10688,6 +23453,7 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 5024,
     "op": "set",
@@ -10698,6 +23464,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 5024,
     "op": "set",
@@ -10708,6 +23475,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 3,
     "now": 5024,
     "op": "set",
@@ -10718,6 +23486,7 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [],
     "key": 4,
     "now": 5024,
     "op": "set",
@@ -10728,6 +23497,7 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [],
     "key": 5,
     "now": 5024,
     "op": "set",
@@ -10738,6 +23508,7 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [],
     "key": 6,
     "now": 5024,
     "op": "set",
@@ -10748,6 +23519,7 @@ Array [
     "value": 6,
   },
   Object {
+    "cache": LRUCache [],
     "key": 7,
     "now": 5024,
     "op": "set",
@@ -10758,6 +23530,7 @@ Array [
     "value": 7,
   },
   Object {
+    "cache": LRUCache [],
     "key": 8,
     "now": 5024,
     "op": "set",
@@ -10768,6 +23541,7 @@ Array [
     "value": 8,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 4,
     "now": 5035,
@@ -10777,6 +23551,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 4,
     "now": 5035,
@@ -10791,6 +23566,12 @@ Array [
 exports[`test/tracing.ts > TAP > tests using Date.now() > ttl tests defaults > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 1,
     "now": 4465,
     "op": "set",
@@ -10801,6 +23582,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 4465,
@@ -10811,6 +23598,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 4470,
@@ -10821,6 +23614,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 4475,
@@ -10831,6 +23630,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "has": "stale",
     "key": 1,
     "now": 4477,
@@ -10840,6 +23645,12 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "stale",
     "key": 1,
     "now": 4477,
@@ -10849,6 +23660,12 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "has": "hit",
     "key": 2,
     "now": 4527,
@@ -10858,6 +23675,12 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 2,
     "now": 4527,
@@ -10868,6 +23691,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "stale",
     "key": 2,
     "now": 4578,
@@ -10877,6 +23706,12 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 0,
     "now": 4578,
     "op": "set",
@@ -10887,6 +23722,12 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 1,
     "now": 4578,
     "op": "set",
@@ -10897,6 +23738,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 2,
     "now": 4578,
     "op": "set",
@@ -10907,6 +23754,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 3,
     "now": 4578,
     "op": "set",
@@ -10917,6 +23770,12 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 4,
     "now": 4578,
     "op": "set",
@@ -10927,6 +23786,12 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 5,
     "now": 4578,
     "op": "set",
@@ -10937,6 +23802,12 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 6,
     "now": 4578,
     "op": "set",
@@ -10947,6 +23818,12 @@ Array [
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 7,
     "now": 4578,
     "op": "set",
@@ -10957,6 +23834,12 @@ Array [
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 8,
     "now": 4578,
     "op": "set",
@@ -10967,6 +23850,12 @@ Array [
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "has": "stale",
     "key": 4,
     "now": 4589,
@@ -10976,6 +23865,12 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "stale",
     "key": 4,
     "now": 4589,
@@ -10985,12 +23880,24 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": "immortal",
     "op": "get",
     "value": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": "immortal",
     "op": "get",
@@ -11002,6 +23909,7 @@ Array [
 exports[`test/tracing.ts > TAP > tests using Date.now() > ttl tests with ttlResolution=100 > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 4789,
     "op": "set",
@@ -11012,6 +23920,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 4789,
@@ -11022,6 +23931,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 4789,
@@ -11032,6 +23942,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 4789,
@@ -11042,6 +23953,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 1,
     "now": 4789,
@@ -11051,6 +23963,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 4789,
@@ -11061,6 +23974,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 1,
     "now": 4900,
@@ -11070,6 +23984,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 1,
     "now": 4900,
@@ -11084,6 +23999,7 @@ Array [
 exports[`test/tracing.ts > TAP > tests using Date.now() > ttlAutopurge > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 4900,
     "op": "set",
@@ -11094,6 +24010,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 4900,
     "op": "set",
@@ -11104,6 +24021,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 4900,
     "oldValue": 2,
@@ -11141,6 +24059,7 @@ Array [
 exports[`test/tracing.ts > TAP > tests with performance.now() > ttl on set, not on cache > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 3102,
     "op": "set",
@@ -11151,6 +24070,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 3102,
@@ -11161,6 +24081,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 3107,
@@ -11171,6 +24092,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 3112,
@@ -11181,6 +24103,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 1,
     "now": 3113,
@@ -11190,6 +24113,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 1,
     "now": 3113,
@@ -11199,6 +24123,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 3113,
     "op": "set",
@@ -11209,6 +24134,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 2,
     "now": 3163,
@@ -11218,6 +24144,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 2,
     "now": 3163,
@@ -11228,6 +24155,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 2,
     "now": 3214,
@@ -11237,6 +24165,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 2,
     "now": 3214,
@@ -11246,6 +24175,7 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [],
     "key": 0,
     "now": 3214,
     "op": "set",
@@ -11256,6 +24186,7 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 3214,
     "op": "set",
@@ -11266,6 +24197,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 3214,
     "op": "set",
@@ -11276,6 +24208,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 3,
     "now": 3214,
     "op": "set",
@@ -11286,6 +24219,7 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [],
     "key": 4,
     "now": 3214,
     "op": "set",
@@ -11296,6 +24230,7 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [],
     "key": 5,
     "now": 3214,
     "op": "set",
@@ -11306,6 +24241,7 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [],
     "key": 6,
     "now": 3214,
     "op": "set",
@@ -11316,6 +24252,7 @@ Array [
     "value": 6,
   },
   Object {
+    "cache": LRUCache [],
     "key": 7,
     "now": 3214,
     "op": "set",
@@ -11326,6 +24263,7 @@ Array [
     "value": 7,
   },
   Object {
+    "cache": LRUCache [],
     "key": 8,
     "now": 3214,
     "op": "set",
@@ -11336,6 +24274,7 @@ Array [
     "value": 8,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 4,
     "now": 3225,
@@ -11345,6 +24284,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 4,
     "now": 3225,
@@ -11359,6 +24299,12 @@ Array [
 exports[`test/tracing.ts > TAP > tests with performance.now() > ttl tests defaults > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 1,
     "now": 2655,
     "op": "set",
@@ -11369,6 +24315,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 2655,
@@ -11379,6 +24331,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 2660,
@@ -11389,6 +24347,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 1,
     "now": 2665,
@@ -11399,6 +24363,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "has": "stale",
     "key": 1,
     "now": 2667,
@@ -11408,6 +24378,12 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "stale",
     "key": 1,
     "now": 2667,
@@ -11417,6 +24393,12 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "has": "hit",
     "key": 2,
     "now": 2717,
@@ -11426,6 +24408,12 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": 2,
     "now": 2717,
@@ -11436,6 +24424,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "stale",
     "key": 2,
     "now": 2768,
@@ -11445,6 +24439,12 @@ Array [
     "ttl": 100,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 0,
     "now": 2768,
     "op": "set",
@@ -11455,6 +24455,12 @@ Array [
     "value": 0,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 1,
     "now": 2768,
     "op": "set",
@@ -11465,6 +24471,12 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 2,
     "now": 2768,
     "op": "set",
@@ -11475,6 +24487,12 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 3,
     "now": 2768,
     "op": "set",
@@ -11485,6 +24503,12 @@ Array [
     "value": 3,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 4,
     "now": 2768,
     "op": "set",
@@ -11495,6 +24519,12 @@ Array [
     "value": 4,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 5,
     "now": 2768,
     "op": "set",
@@ -11505,6 +24535,12 @@ Array [
     "value": 5,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 6,
     "now": 2768,
     "op": "set",
@@ -11515,6 +24551,12 @@ Array [
     "value": 6,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 7,
     "now": 2768,
     "op": "set",
@@ -11525,6 +24567,12 @@ Array [
     "value": 7,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "key": 8,
     "now": 2768,
     "op": "set",
@@ -11535,6 +24583,12 @@ Array [
     "value": 8,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "has": "stale",
     "key": 4,
     "now": 2779,
@@ -11544,6 +24598,12 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "stale",
     "key": 4,
     "now": 2779,
@@ -11553,12 +24613,24 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": "immortal",
     "op": "get",
     "value": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        "immortal",
+        true,
+      ],
+    ],
     "get": "hit",
     "key": "immortal",
     "op": "get",
@@ -11570,6 +24642,7 @@ Array [
 exports[`test/tracing.ts > TAP > tests with performance.now() > ttl tests with ttlResolution=100 > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 2979,
     "op": "set",
@@ -11580,6 +24653,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 2979,
@@ -11590,6 +24664,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 2979,
@@ -11600,6 +24675,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 2979,
@@ -11610,6 +24686,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "hit",
     "key": 1,
     "now": 2979,
@@ -11619,6 +24696,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "hit",
     "key": 1,
     "now": 2979,
@@ -11629,6 +24707,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "has": "stale",
     "key": 1,
     "now": 3090,
@@ -11638,6 +24717,7 @@ Array [
     "ttl": 10,
   },
   Object {
+    "cache": LRUCache [],
     "get": "stale",
     "key": 1,
     "now": 3090,
@@ -11652,6 +24732,7 @@ Array [
 exports[`test/tracing.ts > TAP > tests with performance.now() > ttlAutopurge > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [],
     "key": 1,
     "now": 3090,
     "op": "set",
@@ -11662,6 +24743,7 @@ Array [
     "value": 1,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 3090,
     "op": "set",
@@ -11672,6 +24754,7 @@ Array [
     "value": 2,
   },
   Object {
+    "cache": LRUCache [],
     "key": 2,
     "now": 3090,
     "oldValue": 2,
@@ -11688,6 +24771,12 @@ Array [
 exports[`test/tracing.ts > TAP > verify inflight works as expected > status updates 1`] = `
 Array [
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        Object {},
+      ],
+    ],
     "fetch": "inflight",
     "key": 1,
     "op": "fetch",
@@ -11695,6 +24784,12 @@ Array [
     "trace": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        Object {},
+      ],
+    ],
     "fetch": "inflight",
     "key": 1,
     "op": "fetch",
@@ -11702,6 +24797,12 @@ Array [
     "trace": true,
   },
   Object {
+    "cache": LRUCache [
+      Array [
+        1,
+        Object {},
+      ],
+    ],
     "get": "fetching",
     "key": 1,
     "op": "get",
