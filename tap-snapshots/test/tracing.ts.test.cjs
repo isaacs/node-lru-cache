@@ -4002,6 +4002,36 @@ Map {
 }
 `
 
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > fetch initializes ttl tracking from fetch options metrics 1`] = `
+Array []
+`
+
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > fetch initializes ttl tracking from fetch options traces 1`] = `
+Map {
+  Object {
+    "fetch": "miss",
+    "fetchDispatched": true,
+    "fetchResolved": true,
+    "fetchUpdated": true,
+    "key": 1,
+    "now": 972,
+    "op": "fetch",
+    "remainingTTL": 100,
+    "result": 1,
+    "set": "replace",
+    "start": 972,
+    "trace": true,
+    "ttl": 100,
+    "value": 1,
+  } => Array [
+    "start",
+    "end",
+    "asyncStart",
+    "asyncEnd",
+  ],
+}
+`
+
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > fetch options, signal metrics 1`] = `
 Array [
   Object {
