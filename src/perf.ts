@@ -14,5 +14,4 @@ export const defaultPerf: Perf =
   ) ?
     /* c8 ignore start - this gets covered, but c8 gets confused */
     performance
-  : /* c8 ignore stop */
-    Date
+  : /* c8 ignore stop */ Date
