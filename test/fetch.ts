@@ -70,9 +70,12 @@ t.test('asynchronous fetching', async t => {
   }
   t.matchSnapshot(JSON.stringify(dump), 'safe to stringify dump')
 
-  t.equal(e.isBackgroundFetch(v), true)
-  t.equal(e.backgroundFetch('key', 0, {}, undefined), v)
-  await v
+  const bf = e.fetchList?.[0]
+  t.equal(v, 1, 'stale value remains in valList while fetching')
+  t.type(bf, Promise, 'background fetch stored separately')
+  t.equal(e.valList[0], 1)
+  t.equal(e.backgroundFetch('key', 0, {}, undefined), bf)
+  await bf
   const v7 = await c.fetch('key', {
     allowStale: true,
     updateAgeOnGet: true,
@@ -158,6 +161,17 @@ t.test('fetch without fetch method', async t => {
   const status: LRUCache.Status<string, number> = {}
   t.same(await Promise.all([c.fetch(0, { status }), c.fetch(1)]), [0, 1])
   t.matchSnapshot(status, 'status update')
+})
+
+t.test('fetch initializes ttl tracking from fetch options', async t => {
+  const c = new LRUCache<number, number>({
+    max: 2,
+    fetchMethod: async k => k,
+  })
+  t.equal(c.getRemainingTTL(1), 0)
+  t.equal(await c.fetch(1, { ttl: 100 }), 1)
+  const ttl = c.getRemainingTTL(1)
+  t.ok(ttl > 0 && ttl <= 100)
 })
 
 t.test('fetch options, signal', async t => {
@@ -603,8 +617,8 @@ t.test('verify inflight works as expected', async t => {
     c.fetch(1, { status: s() }),
     c.fetch(1),
   ]
-  t.match(e.valList, [Promise, null, null, null, null])
-  t.equal(e.isBackgroundFetch(e.valList[0]), true, 'is background fetch')
+  t.equal(e.valList[0], undefined)
+  t.type(e.fetchList?.[0], Promise, 'is background fetch')
   t.equal(c.get(1, { status: s() }), undefined, 'get while fetching')
   const a = await Promise.all(promises)
   for (let i = 1; i < a.length; i++) {
@@ -729,7 +743,8 @@ t.test('background update on timeout, return stale', async t => {
   const ac = new AbortController()
   const p = c.fetch(1, { signal: ac.signal })
   await new Promise<void>(res => queueMicrotask(res))
-  t.match(e.valList[0], { __staleWhileFetching: 10 })
+  t.equal(e.valList[0], 10)
+  t.type(e.fetchList?.[0], Promise)
   ac.abort(new Error('gimme the stale value'))
   t.equal(await p, 10)
   t.equal(c.get(1, { allowStale: true }), 10)
@@ -743,15 +758,19 @@ t.test('background update on timeout, return stale', async t => {
   const ac2 = new AbortController()
   const p2 = c.fetch(1, { signal: ac2.signal })
   await new Promise<void>(res => queueMicrotask(res))
-  t.match(e.valList[0], { __staleWhileFetching: 99 })
+  t.equal(e.valList[0], 99)
+  t.type(e.fetchList?.[0], Promise)
   ac2.abort(new Error('gimme stale 99'))
   t.equal(await p2, 99)
-  t.match(e.valList[0], { __staleWhileFetching: 99 })
+  t.equal(e.valList[0], 99)
+  t.type(e.fetchList?.[0], Promise)
   t.equal(c.get(1, { allowStale: true }), 99)
-  t.match(e.valList[0], { __staleWhileFetching: 99 })
+  t.equal(e.valList[0], 99)
+  t.type(e.fetchList?.[0], Promise)
   clock.advance(200)
   await new Promise<void>(res => queueMicrotask(res))
   t.equal(e.valList[0], 99)
+  t.equal(e.fetchList?.[0], undefined)
 })
 
 t.test('fetch context required if set in ctor type', async t => {
@@ -800,9 +819,9 @@ t.test('has false for pending fetch without stale val', async t => {
     const p = c.fetch(1)
     const index = e.keyMap.get(1) as number
     t.not(index, undefined)
-    const bf = e.valList[index] as BackgroundFetch<number>
+    const bf = e.fetchList?.[index] as BackgroundFetch<number>
     t.type(bf, Promise, 'pending fetch')
-    t.equal(bf.hasOwnProperty('__staleWhileFetching'), true)
+    t.equal(e.valList[index], undefined)
     t.equal(c.has(1), false)
     clock.advance(10)
     const res = await p
@@ -811,13 +830,13 @@ t.test('has false for pending fetch without stale val', async t => {
   }
 
   {
-    // background fetch that DOES have a __staleWhileFetching value
+    // background fetch that DOES have a stale while fetching value
     const p = c.fetch(1, { forceRefresh: true })
     const index = e.keyMap.get(1) as number
     t.not(index, undefined)
-    const bf = e.valList[index] as BackgroundFetch<number>
+    const bf = e.fetchList?.[index] as BackgroundFetch<number>
     t.type(bf, Promise, 'pending fetch')
-    t.equal(bf.__staleWhileFetching, 1)
+    t.equal(e.valList[index], 1)
     t.equal(c.has(1), true)
     clock.advance(10)
     const res = await p
