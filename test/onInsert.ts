@@ -81,10 +81,12 @@ t.test('no onInsert for background fetch promises', async t => {
     max: 5,
     onInsert: (v, k, r) => inserted.push([v, k, r]),
     fetchMethod: async x => x,
-    ttl: 1,
+    ttl: 10,
   })
   c.set('y', 'Y')
+  t.strictSame(inserted, [['Y', 'y' ,'add']])
   c.set('z', 'Z')
+  t.strictSame(inserted, [['Y', 'y' ,'add'], ['Z', 'z', 'add']])
   const x = await c.fetch('x')
   const y = await c.fetch('y')
   await new Promise(res => setTimeout(res, 50))
