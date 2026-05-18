@@ -869,3 +869,45 @@ t.test('allowStaleOnFetchAbort and ignoreFetchAbort', async t => {
   await new Promise<void>(res => queueMicrotask(res)).then(() => {})
   t.equal(c.get(1), 1)
 })
+
+// this is allowed by the types? maybe shouldn't be?
+t.test('a fetch method that does not return a promise', async t => {
+  const c = new LRUCache<number, number>({
+    ttl: 10,
+    max: 10,
+    fetchMethod: k => k,
+  })
+  const x = await c.fetch(123)
+  t.equal(x, 123)
+})
+
+t.test('dispose() stale value if fetch is evicted', async t => {
+  const disposed: [number, number, LRUCache.DisposeReason][] = []
+  const disposedAfter: [number, number, LRUCache.DisposeReason][] = []
+  const c = new LRUCache<number, number>({
+    ttl: 10,
+    max: 3,
+    dispose(v, k, r) {
+      disposed.push([v, k, r])
+    },
+    disposeAfter(v, k, r) {
+      disposedAfter.push([v, k, r])
+    },
+    fetchMethod: async k => {
+      await new Promise<void>(res => queueMicrotask(res)).then(() => {})
+      return k
+    },
+  })
+  c.set(1, 10)
+  clock.advance(11)
+  await new Promise<void>(res => queueMicrotask(res)).then(() => {})
+
+  const p = c.fetch(1)
+  await new Promise<void>(res => queueMicrotask(res)).then(() => {})
+  c.set(2, 20)
+  c.set(3, 30)
+  c.set(4, 40)
+  await t.rejects(p, new Error('evicted'))
+  t.strictSame(disposed, disposedAfter)
+  t.strictSame(disposed, [[10, 1, 'evict']])
+})

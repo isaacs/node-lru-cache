@@ -1736,12 +1736,12 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     ) => {
       sizes[index] = size
       if (this.#maxSize) {
-        const maxSize = this.#maxSize - (sizes[index] as number)
+        const maxSize = this.#maxSize - sizes[index]
         while (this.#calculatedSize > maxSize) {
           this.#evict(true)
         }
       }
-      this.#calculatedSize += sizes[index] as number
+      this.#calculatedSize += sizes[index]
       if (status) {
         status.entrySize = size
         status.totalCalculatedSize = this.#calculatedSize
@@ -2144,7 +2144,8 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   #set(
     k: K,
     v: V | BackgroundFetch<V> | undefined,
-    setOptions: LRUCache.SetOptions<K, V, FC> = {},
+    setOptions: LRUCache.SetOptions<K, V, FC>,
+    bf?: BackgroundFetch<V>,
   ) {
     const {
       ttl = this.ttl,
@@ -2161,7 +2162,8 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     }
     let { noUpdateTTL = this.noUpdateTTL } = setOptions
 
-    if (status && !this.#isBackgroundFetch(v)) status.value = v
+    const isBF = this.#isBackgroundFetch(v)
+    if (status && !isBF) status.value = v
 
     const size = this.#requireSize(
       k,
@@ -2199,50 +2201,66 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       this.#addItemSize(index, size, status)
       if (status) status.set = 'add'
       noUpdateTTL = false
-      if (this.#hasOnInsert) {
-        this.#onInsert?.(v as V, k, 'add')
+      if (this.#hasOnInsert && !isBF) {
+        this.#onInsert?.(v, k, 'add')
       }
     } else {
       // update
+      // might be updating a background fetch!
       this.#moveToTail(index)
-      const oldVal = this.#valList[index] as V | BackgroundFetch<V>
+      const oldVal = this.#valList[index]!
       if (v !== oldVal) {
-        if (this.#hasFetchMethod && this.#isBackgroundFetch(oldVal)) {
-          oldVal.__abortController.abort(new Error('replaced'))
-          const { __staleWhileFetching: s } = oldVal
-          if (s !== undefined && !noDisposeOnSet) {
+        if (!noDisposeOnSet) {
+          if (this.#isBackgroundFetch(oldVal)) {
+            if (oldVal !== bf) {
+              // setting over a background fetch, not merely resolving it.
+              oldVal.__abortController.abort(new Error('replaced'))
+            }
+            const { __staleWhileFetching: s } = oldVal
+            if (s !== undefined && s !== v) {
+              if (this.#hasDispose) {
+                this.#dispose?.(s, k, 'set')
+              }
+              if (this.#hasDisposeAfter) {
+                this.#disposed?.push([s, k, 'set'])
+              }
+            }
+          } else {
             if (this.#hasDispose) {
-              this.#dispose?.(s as V, k, 'set')
+              this.#dispose?.(oldVal, k, 'set')
             }
             if (this.#hasDisposeAfter) {
-              this.#disposed?.push([s as V, k, 'set'])
+              this.#disposed?.push([oldVal, k, 'set'])
             }
-          }
-        } else if (!noDisposeOnSet) {
-          if (this.#hasDispose) {
-            this.#dispose?.(oldVal as V, k, 'set')
-          }
-          if (this.#hasDisposeAfter) {
-            this.#disposed?.push([oldVal as V, k, 'set'])
           }
         }
         this.#removeItemSize(index)
         this.#addItemSize(index, size, status)
         this.#valList[index] = v
-        if (status) {
-          status.set = 'replace'
+        if (!isBF) {
           const oldValue =
             oldVal && this.#isBackgroundFetch(oldVal) ?
               oldVal.__staleWhileFetching
             : oldVal
-          if (oldValue !== undefined) status.oldValue = oldValue
+          const setType =
+            oldValue === undefined ? 'add'
+            : v !== oldValue ? 'replace'
+            : 'update'
+          if (status) {
+            status.set = setType
+            if (oldValue !== undefined) status.oldValue = oldValue
+          }
+          if (this.#hasOnInsert) {
+            this.onInsert?.(v, k, setType)
+          }
         }
-      } else if (status) {
-        status.set = 'update'
-      }
-
-      if (this.#hasOnInsert) {
-        this.onInsert?.(v as V, k, v === oldVal ? 'update' : 'replace')
+      } else if (!isBF) {
+        if (status) {
+          status.set = 'update'
+        }
+        if (this.#hasOnInsert) {
+          this.onInsert?.(v, k, 'update')
+        }
       }
     }
     if (ttl !== 0 && !this.#ttls) {
@@ -2294,16 +2312,22 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
 
   #evict(free: boolean) {
     const head = this.#head
-    const k = this.#keyList[head] as K
-    const v = this.#valList[head] as V
-    if (this.#hasFetchMethod && this.#isBackgroundFetch(v)) {
+    const k = this.#keyList[head]!
+    const v = this.#valList[head]!
+    const isBF = this.#isBackgroundFetch(v)
+    if (isBF) {
       v.__abortController.abort(new Error('evicted'))
-    } else if (this.#hasDispose || this.#hasDisposeAfter) {
+    }
+    const oldValue = isBF ? v.__staleWhileFetching : v
+    if (
+      (this.#hasDispose || this.#hasDisposeAfter) &&
+      oldValue !== undefined
+    ) {
       if (this.#hasDispose) {
-        this.#dispose?.(v, k, 'evict')
+        this.#dispose?.(oldValue, k, 'evict')
       }
       if (this.#hasDisposeAfter) {
-        this.#disposed?.push([v, k, 'evict'])
+        this.#disposed?.push([oldValue, k, 'evict'])
       }
     }
     this.#removeItemSize(head)
@@ -2482,7 +2506,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
           }
         } else {
           if (options.status) options.status.fetchUpdated = true
-          this.#set(k, v, fetchOpts.options)
+          this.#set(k, v, fetchOpts.options, bf)
         }
       }
       return v
@@ -2534,9 +2558,6 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       rej: (e: unknown) => void,
     ) => {
       const fmp = this.#fetchMethod?.(k, v, fetchOpts)
-      if (fmp && fmp instanceof Promise) {
-        fmp.then(v => res(v === undefined ? undefined : v), rej)
-      }
       // ignored, we go until we finish, regardless.
       // defer check until we are actually aborting,
       // so fetchMethod can override.
@@ -2549,6 +2570,11 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
           }
         }
       })
+      if (fmp && fmp instanceof Promise) {
+        fmp.then(v => res(v === undefined ? undefined : v), rej)
+      } else if (fmp !== undefined) {
+        res(fmp)
+      }
     }
 
     if (options.status) options.status.fetchDispatched = true
@@ -3119,7 +3145,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     }
 
     this.#keyMap.clear()
-    this.#valList.fill(undefined)
+    void this.#valList.fill(undefined)
     this.#keyList.fill(undefined)
     if (this.#ttls && this.#starts) {
       this.#ttls.fill(0)

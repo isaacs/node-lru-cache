@@ -74,3 +74,31 @@ t.test('onInsert with update (same value)', t => {
 
   t.end()
 })
+
+t.test('no onInsert for background fetch promises', async t => {
+  const inserted: [string, string, LRU.InsertReason][] = []
+  const c = new LRU<string, string>({
+    max: 5,
+    onInsert: (v, k, r) => inserted.push([v, k, r]),
+    fetchMethod: async x => x,
+    ttl: 1,
+  })
+  c.set('y', 'Y')
+  c.set('z', 'Z')
+  const x = await c.fetch('x')
+  const y = await c.fetch('y')
+  await new Promise(res => setTimeout(res, 50))
+  const z = await c.fetch('z')
+  t.equal(x, 'x')
+  t.equal(y, 'Y')
+  t.equal(z, 'z')
+  t.strictSame(
+    new Set(inserted),
+    new Set([
+      ['Y', 'y', 'add'],
+      ['Z', 'z', 'add'],
+      ['x', 'x', 'add'],
+      ['z', 'z', 'replace'],
+    ]),
+  )
+})
