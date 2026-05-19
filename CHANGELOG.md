@@ -1,5 +1,11 @@
 # cringe lorg
 
+## 11.5
+
+- Add `backgroundFetchSize` option, defaulting to 1, to set an
+  effective size for provisional background fetch objects while
+  in flight, if they do not shadow an existing stale entry.
+
 ## 11.4
 
 - Add `cache` property to status objects, in order to

@@ -930,6 +930,21 @@ export namespace LRUCache {
     maxSize?: Size
 
     /**
+     * The effective size for background fetch promises.
+     *
+     * This has no effect unless `maxSize` and `sizeCalculation` are used,
+     * and a {@link LRUCache.OptionsBase.fetchMethod} is provided to
+     * support {@link LRUCache#fetch}.
+     *
+     * If a stale value is present in the cache, then the effective size of
+     * the background fetch is the size of the stale item it will eventually
+     * replace. If not, then this value is used as its effective size.
+     *
+     * @default 1
+     */
+    backgroundFetchSize?: number
+
+    /**
      * The maximum allowed size for any single item in the cache.
      *
      * If a larger item is passed to {@link LRUCache#set} or returned by a
@@ -1274,6 +1289,9 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
    */
   ignoreFetchAbort: boolean
 
+  /** {@link LRUCache.OptionsBase.backgroundFetchSize} */
+  backgroundFetchSize: number
+
   // computed properties
   #size: LRUCache.Count
   #calculatedSize: LRUCache.Size
@@ -1428,8 +1446,11 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       allowStaleOnFetchRejection,
       allowStaleOnFetchAbort,
       ignoreFetchAbort,
+      backgroundFetchSize = 1,
       perf,
     } = options
+
+    this.backgroundFetchSize = backgroundFetchSize
 
     if (perf !== undefined) {
       if (typeof perf?.now !== 'function') {
@@ -1707,12 +1728,15 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       sizes[index] = 0
     }
     this.#requireSize = (k, v, size, sizeCalculation) => {
-      // provisionally accept background fetches.
-      // actual value size will be checked when they return.
-      if (this.#isBackgroundFetch(v)) {
-        return 0
-      }
       if (!isPosInt(size)) {
+        // provisionally accept background fetches.
+        // actual value size will be checked when they return.
+        if (this.#isBackgroundFetch(v)) {
+          // NB: this cannot occur if v.__staleWhileFetching is set,
+          // because in that case, it would take on the size of the
+          // existing entry that it temporarily replaces.
+          return this.backgroundFetchSize
+        }
         if (sizeCalculation) {
           if (typeof sizeCalculation !== 'function') {
             throw new TypeError('sizeCalculation must be a function')
@@ -2161,6 +2185,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       status,
     } = setOptions
 
+    const isBF = this.#isBackgroundFetch(v)
     if (v === undefined) {
       if (status) status.set = 'deleted'
       this.delete(k)
@@ -2168,7 +2193,6 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     }
     let { noUpdateTTL = this.noUpdateTTL } = setOptions
 
-    const isBF = this.#isBackgroundFetch(v)
     if (status && !isBF) status.value = v
 
     const size = this.#requireSize(
@@ -2598,6 +2622,10 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       this.#set(k, bf, { ...fetchOpts.options, status: undefined })
       index = this.#keyMap.get(k)
     } else {
+      // do not call #set, because we do not want to adjust its place
+      // in the lru queue, as it has not yet been "used". Also, we don't
+      // need to worry about evicting for size, because a background fetch
+      // over a stale value is treated as the same size as its stale value.
       this.#valList[index] = bf
     }
     return bf

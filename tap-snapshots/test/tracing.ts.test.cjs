@@ -15369,7 +15369,7 @@ Map {
     "op": "fetch",
     "result": 4,
     "set": "add",
-    "totalCalculatedSize": 4,
+    "totalCalculatedSize": 6,
     "trace": true,
     "value": 4,
   } => Array [
@@ -15398,7 +15398,7 @@ Map {
     "op": "fetch",
     "result": 5,
     "set": "add",
-    "totalCalculatedSize": 9,
+    "totalCalculatedSize": 10,
     "trace": true,
     "value": 5,
   } => Array [
