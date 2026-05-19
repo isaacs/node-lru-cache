@@ -5,16 +5,16 @@
 - Add `cache` property to status objects, in order to
   differentiate which cache is emitting the metric or trace.
 - Several small bugs regarding fetch behavior edge cases.
-    - `onInsert` does not fire for background fetch internal
-      promises.
-    - `dispose()` and `disposeAfter()` now fire for the stale
-      value left behind when an in-process background fetch is
-      pre-empted by eviction.
-    - `fetchMethod` that returns a non-Promise value is handled
-      correctly.
-    - No `Error` is created, or `abort()` signaled, when a
-      background fetch promise is resolved. (Presumably the
-      implementation is done by that point.)
+  - `onInsert` does not fire for background fetch internal
+    promises.
+  - `dispose()` and `disposeAfter()` now fire for the stale
+    value left behind when an in-process background fetch is
+    pre-empted by eviction.
+  - `fetchMethod` that returns a non-Promise value is handled
+    correctly.
+  - No `Error` is created, or `abort()` signaled, when a
+    background fetch promise is resolved. (Presumably the
+    implementation is done by that point.)
 
 ## 11.3
 
