@@ -503,7 +503,7 @@ export namespace LRUCache {
     V,
     FC extends undefined | void = undefined,
   > extends FetchOptions<K, V, FC> {
-    context?: undefined
+    context?: FC
   }
 
   export interface MemoOptions<K, V, FC = unknown> extends Pick<
@@ -556,7 +556,7 @@ export namespace LRUCache {
     V,
     FC extends undefined | void = undefined,
   > extends MemoOptions<K, V, FC> {
-    context?: undefined
+    context?: FC
   }
 
   /**
