@@ -508,6 +508,21 @@ t.test('allowStaleOnFetchRejection', async t => {
   t.equal(c.get(1), undefined)
 })
 
+t.test('returned background fetch rejects after slot reuse', async t => {
+  const resolves: Record<string, (v: number) => void> = {}
+  const c = new LRU<string, number>({
+    max: 1,
+    fetchMethod: k => new Promise(resolve => (resolves[k] = resolve)),
+  })
+
+  const p1 = c.fetch('one')
+  const p2 = c.fetch('two')
+
+  await t.rejects(p1, { message: 'evicted' })
+  resolves.two?.(2)
+  t.equal(await p2, 2)
+})
+
 t.test('placeholder promise is not removed when resolving', async t => {
   const resolves: Record<number, (v: number) => void> = {}
   const c = new LRU<number, number>({

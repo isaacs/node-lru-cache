@@ -74,3 +74,15 @@ t.test('onInsert with update (same value)', t => {
 
   t.end()
 })
+
+t.test('onInsert with fetch-created entry', async t => {
+  const inserted: any[] = []
+  const c = new LRU({
+    max: 5,
+    onInsert: (v, k, r) => inserted.push([v, k, r]),
+    fetchMethod: async k => `value:${k}`,
+  })
+
+  t.equal(await c.fetch('key'), 'value:key')
+  t.strictSame(inserted, [['value:key', 'key', 'add']])
+})

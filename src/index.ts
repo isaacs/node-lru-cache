@@ -1273,7 +1273,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   #valList: (V | undefined)[]
   #fetchList?: (BackgroundFetch<V> | undefined)[]
   #abortControllerList?: (AbortController | undefined)[]
-  #returnedFetch?: NumberArray
+  #returnedFetch?: WeakSet<BackgroundFetch<V>>
   #next: NumberArray
   #prev: NumberArray
   #head: Index
@@ -1779,21 +1779,13 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     ac: AbortController,
   ) {
     if (!this.#fetchList) {
-      this.#fetchList = Array.from({ length: this.#max }).fill(
-        undefined,
-      ) as (BackgroundFetch<V> | undefined)[]
+      this.#fetchList = Array.from({ length: this.#max })
     }
     if (!this.#abortControllerList) {
-      this.#abortControllerList = Array.from({ length: this.#max }).fill(
-        undefined,
-      ) as (AbortController | undefined)[]
-    }
-    if (!this.#returnedFetch) {
-      this.#returnedFetch = this.#max ? new Uint8Array(this.#max) : []
+      this.#abortControllerList = Array.from({ length: this.#max })
     }
     this.#fetchList[index] = bf
     this.#abortControllerList[index] = ac
-    this.#returnedFetch[index] = 0
   }
 
   #clearBackgroundFetch(index: Index) {
@@ -1807,21 +1799,47 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
 
   #abortBackgroundFetch(
     index: Index,
-    reason: Error,
+    reason: () => Error,
   ): BackgroundFetch<V> | undefined {
     const bf = this.#fetchList?.[index]
     if (bf) {
-      this.#abortControllerList?.[index]?.abort(reason)
+      this.#abortControllerList?.[index]?.abort(reason())
       this.#clearBackgroundFetch(index)
     }
     return bf
   }
 
   #returnBackgroundFetch(index: Index, bf: BackgroundFetch<V>) {
-    if (this.#returnedFetch) {
-      this.#returnedFetch[index] = 1
-    }
+    this.#returnedFetch ??= new WeakSet()
+    this.#returnedFetch.add(bf)
     return bf
+  }
+
+  #addItem(
+    k: K,
+    v: V | undefined,
+    size: LRUCache.Size,
+    status?: LRUCache.Status<K, V>,
+    onInsert?: false,
+  ) {
+    const index = (
+      this.#size === 0 ? this.#tail
+      : this.#free.length !== 0 ? this.#free.pop()
+      : this.#size === this.#max ? this.#evict(false)
+      : this.#size) as Index
+    this.#keyList[index] = k
+    this.#valList[index] = v
+    this.#keyMap.set(k, index)
+    this.#next[this.#tail] = index
+    this.#prev[index] = this.#tail
+    this.#tail = index
+    this.#size++
+    this.#addItemSize(index, size, status)
+    if (status) status.set = 'add'
+    if (onInsert !== false && this.#hasOnInsert) {
+      this.#onInsert?.(v as V, k, 'add')
+    }
+    return index
   }
 
   *#indexes({ allowStale = this.allowStale } = {}) {
@@ -2224,24 +2242,8 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     let index = this.#size === 0 ? undefined : this.#keyMap.get(k)
     if (index === undefined) {
       // addition
-      index = (
-        this.#size === 0 ? this.#tail
-        : this.#free.length !== 0 ? this.#free.pop()
-        : this.#size === this.#max ? this.#evict(false)
-        : this.#size) as Index
-      this.#keyList[index] = k
-      this.#valList[index] = v
-      this.#keyMap.set(k, index)
-      this.#next[this.#tail] = index
-      this.#prev[index] = this.#tail
-      this.#tail = index
-      this.#size++
-      this.#addItemSize(index, size, status)
-      if (status) status.set = 'add'
+      index = this.#addItem(k, v, size, status)
       noUpdateTTL = false
-      if (this.#hasOnInsert) {
-        this.#onInsert?.(v as V, k, 'add')
-      }
     } else {
       // update
       this.#moveToTail(index)
@@ -2279,7 +2281,13 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       }
 
       if (this.#hasOnInsert) {
-        this.onInsert?.(v as V, k, v === oldVal ? 'update' : 'replace')
+        this.onInsert?.(
+          v as V,
+          k,
+          oldFetch && oldVal === undefined ? 'add'
+          : v === oldVal ? 'update'
+          : 'replace',
+        )
       }
     }
     if (ttl !== 0 && !this.#ttls) {
@@ -2308,12 +2316,9 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   pop(): V | undefined {
     try {
       while (this.#size) {
-        const fetching = this.#fetchList?.[this.#head] !== undefined
         const val = this.#valList[this.#head]
         this.#evict(true)
-        if (fetching && val !== undefined) {
-          return val
-        } else if (!fetching && val !== undefined) {
+        if (val !== undefined) {
           return val
         }
       }
@@ -2332,7 +2337,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     const head = this.#head
     const k = this.#keyList[head] as K
     const v = this.#valList[head] as V | undefined
-    const bf = this.#abortBackgroundFetch(head, new Error('evicted'))
+    const bf = this.#abortBackgroundFetch(head, () => new Error('evicted'))
     if (
       !bf &&
       v !== undefined &&
@@ -2551,7 +2556,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       const i = index as Index
       const staleWhileFetching =
         this.#fetchList?.[i] === bf ? this.#valList[i] : v
-      const returned = !!this.#returnedFetch?.[i]
+      const returned = !!this.#returnedFetch?.has(bf)
       if (this.#fetchList?.[i] === bf) {
         // if we allow stale on fetch rejections, then we need to ensure that
         // the stale value is not removed from the cache when the fetch fails.
@@ -2604,19 +2609,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
 
     if (index === undefined) {
       const { ttl = this.ttl } = fetchOpts.options
-      index = (
-        this.#size === 0 ? this.#tail
-        : this.#free.length !== 0 ? this.#free.pop()
-        : this.#size === this.#max ? this.#evict(false)
-        : this.#size) as Index
-      this.#keyList[index] = k
-      this.#valList[index] = undefined
-      this.#keyMap.set(k, index)
-      this.#next[this.#tail] = index
-      this.#prev[index] = this.#tail
-      this.#tail = index
-      this.#size++
-      this.#addItemSize(index, 0)
+      index = this.#addItem(k, undefined, 0, undefined, false)
       if (ttl !== 0 && !this.#ttls) {
         this.#initializeTTLTracking()
       }
@@ -3117,7 +3110,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
           const v = this.#valList[index]
           const bf = this.#abortBackgroundFetch(
             index,
-            new Error('deleted'),
+            () => new Error('deleted'),
           )
           if (
             !bf &&
@@ -3168,7 +3161,10 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   #clear(reason: LRUCache.DisposeReason) {
     for (const index of this.#rindexes({ allowStale: true })) {
       const v = this.#valList[index]
-      const bf = this.#abortBackgroundFetch(index, new Error('deleted'))
+      const bf = this.#abortBackgroundFetch(
+        index,
+        () => new Error('deleted'),
+      )
       if (!bf && v !== undefined) {
         const k = this.#keyList[index]
         if (this.#hasDispose) {
@@ -3184,6 +3180,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     this.#valList.fill(undefined)
     this.#fetchList?.fill(undefined)
     this.#abortControllerList?.fill(undefined)
+    this.#returnedFetch = undefined
     this.#keyList.fill(undefined)
     if (this.#ttls && this.#starts) {
       this.#ttls.fill(0)
