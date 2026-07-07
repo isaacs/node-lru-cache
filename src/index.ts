@@ -1612,19 +1612,19 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     this.#setItemTTL = (index, ttl, start = this.#perf.now()) => {
       starts[index] = ttl !== 0 ? start : 0
       ttls[index] = ttl
-      setPurgetTimer(index, ttl)
+      setPurgeTimer(index, ttl)
     }
 
     this.#updateItemAge = index => {
       starts[index] = ttls[index] !== 0 ? this.#perf.now() : 0
-      setPurgetTimer(index, ttls[index])
+      setPurgeTimer(index, ttls[index])
     }
 
     // clear out the purge timer if we're setting TTL to 0, and
     // previously had a ttl purge timer running, so it doesn't
     // fire unnecessarily. Don't need to do this if we're not doing
     // autopurge.
-    const setPurgetTimer =
+    const setPurgeTimer =
       !this.ttlAutopurge ?
         () => {}
       : (index: Index, ttl?: number) => {
@@ -1636,6 +1636,9 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
             const t = setTimeout(() => {
               if (this.#isStale(index)) {
                 this.#delete(this.#keyList[index] as K, 'expire')
+                purgeTimers[index] = undefined
+              } else {
+                setPurgeTimer(index, getRemainingTTL(index))
               }
             }, ttl + 1)
             // unref() not supported on all platforms
@@ -1688,6 +1691,9 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       if (index === undefined) {
         return 0
       }
+      return getRemainingTTL(index)
+    }
+    const getRemainingTTL = (index: Index) => {
       const ttl = ttls[index]
       const start = starts[index]
       if (!ttl || !start) {
@@ -3114,7 +3120,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       const index = this.#keyMap.get(k)
       if (index !== undefined) {
         if (this.#autopurgeTimers?.[index]) {
-          clearTimeout(this.#autopurgeTimers?.[index])
+          clearTimeout(this.#autopurgeTimers[index])
           this.#autopurgeTimers[index] = undefined
         }
         deleted = true
