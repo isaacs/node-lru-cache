@@ -45,6 +45,9 @@ export type Index = number & { [TYPE]: 'LRUCache Index' }
 const isPosInt = (n: unknown): n is PosInt =>
   !!n && n === Math.floor(n as number) && n > 0 && isFinite(n)
 
+const isNonNegativeInt = (n: unknown): n is number =>
+  typeof n === 'number' && (n === 0 || isPosInt(n))
+
 export type UintArray = Uint8Array | Uint16Array | Uint32Array
 export type NumberArray = UintArray | number[]
 
@@ -115,6 +118,7 @@ export type BackgroundFetch<V> = Promise<V | undefined> & {
   __returned: BackgroundFetch<V> | undefined
   __abortController: AbortController
   __staleWhileFetching: V | undefined
+  __size?: number
 }
 
 export type DisposeTask<K, V> = [
@@ -941,6 +945,8 @@ export namespace LRUCache {
      * replace. If not, then this value is used as its effective size.
      *
      * @default 1
+     *
+     * Must be a nonnegative integer if provided.
      */
     backgroundFetchSize?: number
 
@@ -1450,6 +1456,12 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       perf,
     } = options
 
+    if (!isNonNegativeInt(backgroundFetchSize)) {
+      throw new TypeError(
+        'backgroundFetchSize must be a nonnegative integer',
+      )
+    }
+
     this.backgroundFetchSize = backgroundFetchSize
 
     if (perf !== undefined) {
@@ -1741,7 +1753,13 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
           // NB: this cannot occur if v.__staleWhileFetching is set,
           // because in that case, it would take on the size of the
           // existing entry that it temporarily replaces.
-          return this.backgroundFetchSize
+          const backgroundFetchSize = v.__size
+          if (!isNonNegativeInt(backgroundFetchSize)) {
+            throw new TypeError(
+              'backgroundFetchSize must be a nonnegative integer',
+            )
+          }
+          return backgroundFetchSize
         }
         if (sizeCalculation) {
           if (typeof sizeCalculation !== 'function') {
@@ -2498,6 +2516,19 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       return v
     }
 
+    // Capture the provisional size before invoking user fetchMethod code.
+    // Accounting must consume this validated snapshot rather than re-reading
+    // the mutable public field after the synchronous Promise executor returns.
+    let backgroundFetchSize: number | undefined
+    if (index === undefined && this.#sizes !== undefined) {
+      backgroundFetchSize = this.backgroundFetchSize
+      if (!isNonNegativeInt(backgroundFetchSize)) {
+        throw new TypeError(
+          'backgroundFetchSize must be a nonnegative integer',
+        )
+      }
+    }
+
     const ac = new AbortController()
     const { signal } = options
     // when/if our AC signals, then stop listening to theirs.
@@ -2621,6 +2652,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       __abortController: ac,
       __staleWhileFetching: v,
       __returned: undefined,
+      __size: backgroundFetchSize,
     })
 
     if (index === undefined) {
