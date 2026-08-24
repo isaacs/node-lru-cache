@@ -1814,9 +1814,16 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
 
   *#indexes({ allowStale = this.allowStale } = {}) {
     if (this.#size) {
+      // A fn called during iteration (eg get()) can move entries within the
+      // list, which would send this walk in circles. Track what has been
+      // yielded so each index is visited at most once.
+      const yielded = new Set<Index>()
       for (let i = this.#tail; this.#isValidIndex(i); ) {
-        if (allowStale || !this.#isStale(i)) {
-          yield i
+        if (!yielded.has(i)) {
+          yielded.add(i)
+          if (allowStale || !this.#isStale(i)) {
+            yield i
+          }
         }
         if (i === this.#head) {
           break
@@ -1829,9 +1836,13 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
 
   *#rindexes({ allowStale = this.allowStale } = {}) {
     if (this.#size) {
+      const yielded = new Set<Index>()
       for (let i = this.#head; this.#isValidIndex(i); ) {
-        if (allowStale || !this.#isStale(i)) {
-          yield i
+        if (!yielded.has(i)) {
+          yielded.add(i)
+          if (allowStale || !this.#isStale(i)) {
+            yield i
+          }
         }
         if (i === this.#tail) {
           break
