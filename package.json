@@ -45,6 +45,10 @@
       "./raw": "./src/index.ts",
       ".": {
         "import": {
+          "react-native": {
+            "types": "./dist/esm/browser/index.d.ts",
+            "default": "./dist/esm/browser/index.min.js"
+          },
           "browser": {
             "types": "./dist/esm/browser/index.d.ts",
             "default": "./dist/esm/browser/index.min.js"
@@ -57,6 +61,10 @@
           "default": "./dist/esm/index.min.js"
         },
         "require": {
+          "react-native": {
+            "types": "./dist/commonjs/browser/index.d.ts",
+            "default": "./dist/commonjs/browser/index.min.js"
+          },
           "browser": {
             "types": "./dist/commonjs/browser/index.d.ts",
             "default": "./dist/commonjs/browser/index.min.js"
@@ -124,6 +132,10 @@
     },
     ".": {
       "import": {
+        "react-native": {
+          "types": "./dist/esm/browser/index.d.ts",
+          "default": "./dist/esm/browser/index.min.js"
+        },
         "browser": {
           "types": "./dist/esm/browser/index.d.ts",
           "default": "./dist/esm/browser/index.min.js"
@@ -136,6 +148,10 @@
         "default": "./dist/esm/index.min.js"
       },
       "require": {
+        "react-native": {
+          "types": "./dist/commonjs/browser/index.d.ts",
+          "default": "./dist/commonjs/browser/index.min.js"
+        },
         "browser": {
           "types": "./dist/commonjs/browser/index.d.ts",
           "default": "./dist/commonjs/browser/index.min.js"

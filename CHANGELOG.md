@@ -5,6 +5,9 @@
 - Add `backgroundFetchSize` option, defaulting to 1, to set an
   effective size for provisional background fetch objects while
   in flight, if they do not shadow an existing stale entry.
+- Add a `react-native` export condition that resolves to the
+  browser build, so that Metro does not load the default build,
+  which imports `node:diagnostics_channel`.
 
 ## 11.4
 
