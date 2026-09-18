@@ -10,7 +10,8 @@
     "../src/package.json",
     "../src/diagnostics-channel-cjs.cts",
     "../src/diagnostics-channel-esm.mts",
-    "../src/diagnostics-channel-browser.ts"
+    "../src/diagnostics-channel-browser.ts",
+    "../src/diagnostics-channel-react-native.ts"
   ],
   "compilerOptions": {
     "outDir": "../.tshy-build/esm/node"

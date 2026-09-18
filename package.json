@@ -35,10 +35,12 @@
   "tshy": {
     "esmDialects": [
       "browser",
+      "react-native",
       "node"
     ],
     "commonjsDialects": [
       "browser",
+      "react-native",
       "node"
     ],
     "exports": {
@@ -48,6 +50,10 @@
           "browser": {
             "types": "./dist/esm/browser/index.d.ts",
             "default": "./dist/esm/browser/index.min.js"
+          },
+          "react-native": {
+            "types": "./dist/esm/react-native/index.d.ts",
+            "default": "./dist/esm/react-native/index.min.js"
           },
           "node": {
             "types": "./dist/esm/node/index.d.ts",
@@ -60,6 +66,10 @@
           "browser": {
             "types": "./dist/commonjs/browser/index.d.ts",
             "default": "./dist/commonjs/browser/index.min.js"
+          },
+          "react-native": {
+            "types": "./dist/commonjs/react-native/index.d.ts",
+            "default": "./dist/commonjs/react-native/index.min.js"
           },
           "node": {
             "types": "./dist/commonjs/node/index.d.ts",
@@ -102,6 +112,10 @@
           "types": "./dist/esm/browser/index.d.ts",
           "default": "./dist/esm/browser/index.js"
         },
+        "react-native": {
+          "types": "./dist/esm/react-native/index.d.ts",
+          "default": "./dist/esm/react-native/index.js"
+        },
         "node": {
           "types": "./dist/esm/node/index.d.ts",
           "default": "./dist/esm/node/index.js"
@@ -113,6 +127,10 @@
         "browser": {
           "types": "./dist/commonjs/browser/index.d.ts",
           "default": "./dist/commonjs/browser/index.js"
+        },
+        "react-native": {
+          "types": "./dist/commonjs/react-native/index.d.ts",
+          "default": "./dist/commonjs/react-native/index.js"
         },
         "node": {
           "types": "./dist/commonjs/node/index.d.ts",
@@ -128,6 +146,10 @@
           "types": "./dist/esm/browser/index.d.ts",
           "default": "./dist/esm/browser/index.min.js"
         },
+        "react-native": {
+          "types": "./dist/esm/react-native/index.d.ts",
+          "default": "./dist/esm/react-native/index.min.js"
+        },
         "node": {
           "types": "./dist/esm/node/index.d.ts",
           "default": "./dist/esm/node/index.min.js"
@@ -139,6 +161,10 @@
         "browser": {
           "types": "./dist/commonjs/browser/index.d.ts",
           "default": "./dist/commonjs/browser/index.min.js"
+        },
+        "react-native": {
+          "types": "./dist/commonjs/react-native/index.d.ts",
+          "default": "./dist/commonjs/react-native/index.min.js"
         },
         "node": {
           "types": "./dist/commonjs/node/index.d.ts",
