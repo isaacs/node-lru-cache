@@ -12,7 +12,7 @@
   "scripts": {
     "build": "npm run prepare",
     "prepare": "tshy && bash scripts/build.sh",
-    "pretest": "npm run prepare",
+    "pretest": "npm run prepare && tap build",
     "presnap": "npm run prepare",
     "test": "tap",
     "snap": "tap",
@@ -87,6 +87,7 @@
     "url": "git+ssh://git@github.com/isaacs/node-lru-cache.git"
   },
   "devDependencies": {
+    "@tapjs/clock": "^3.3.10",
     "benchmark": "^2.1.4",
     "esbuild": "^0.28.0",
     "marked": "^4.2.12",
