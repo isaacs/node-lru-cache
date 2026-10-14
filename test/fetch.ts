@@ -911,3 +911,186 @@ t.test('dispose() stale value if fetch is evicted', async t => {
   t.strictSame(disposed, disposedAfter)
   t.strictSame(disposed, [[10, 1, 'evict']])
 })
+
+t.test('refetch after aborted fetch rejects later', async t => {
+  let calls = 0
+  let fail = true
+  const c = new LRUCache<number, number, void>({
+    ttl: 10,
+    max: 10,
+    ignoreFetchAbort: true,
+    allowStaleOnFetchAbort: true,
+    allowStaleOnFetchRejection: true,
+    fetchMethod: async k => {
+      calls++
+      return new Promise((res, rej) => {
+        setTimeout(() => (fail ? rej(new Error('fail')) : res(k)), 100)
+      })
+    },
+  })
+  const e = expose(c)
+  c.set(1, 10)
+  clock.advance(100)
+  const ac = new AbortController()
+  const p = c.fetch(1, { signal: ac.signal })
+  await new Promise<void>(res => queueMicrotask(res))
+  ac.abort(new Error('gimme the stale value'))
+  t.equal(await p, 10)
+  clock.advance(200)
+  for (let i = 0; i < 5; i++) await Promise.resolve()
+  t.equal(e.valList[0], 10, 'pending promise replaced by stale value')
+  fail = false
+  const p2 = c.fetch(1)
+  clock.advance(100)
+  t.equal(await p2, 1, 'fetchMethod called again')
+  t.equal(calls, 2)
+})
+
+t.test('aborted fetch rejects later, no stale value kept', async t => {
+  const c = new LRUCache<number, number, void>({
+    ttl: 10,
+    max: 10,
+    ignoreFetchAbort: true,
+    allowStaleOnFetchAbort: true,
+    fetchMethod: async () =>
+      new Promise((_, rej) => {
+        setTimeout(() => rej(new Error('fail')), 100)
+      }),
+  })
+  c.set(1, 10)
+  clock.advance(100)
+  const ac = new AbortController()
+  const p = c.fetch(1, { signal: ac.signal })
+  await new Promise<void>(res => queueMicrotask(res))
+  ac.abort(new Error('gimme the stale value'))
+  t.equal(await p, 10)
+  clock.advance(200)
+  for (let i = 0; i < 5; i++) await Promise.resolve()
+  t.equal(c.has(1), false, 'deleted after the late rejection')
+})
+
+t.test('staleFetchTimeout', async t => {
+  t.throws(
+    () =>
+      new LRUCache({
+        max: 1,
+        fetchMethod: async () => 1,
+        staleFetchTimeout: 1.5,
+      }),
+    TypeError,
+  )
+
+  let delay = 100
+  let fail = false
+  let calls = 0
+  const c = new LRUCache<number, number, void>({
+    ttl: 1000,
+    max: 10,
+    staleFetchTimeout: 50,
+    fetchMethod: async k => {
+      calls++
+      const n = calls
+      return new Promise((res, rej) => {
+        setTimeout(
+          () => (fail ? rej(new Error('fail')) : res(k * 100 + n)),
+          delay,
+        )
+      })
+    },
+  })
+  const flush = async () => {
+    for (let i = 0; i < 5; i++) await Promise.resolve()
+  }
+  const peek = (k: number) => c.peek(k, { allowStale: true })
+
+  t.test('no stale value: wait for the fetchMethod', async t => {
+    const p = c.fetch(1)
+    clock.advance(50)
+    await flush()
+    clock.advance(50)
+    t.equal(await p, 101)
+  })
+
+  t.test('fetchMethod settles in time: fresh value', async t => {
+    clock.advance(1100)
+    delay = 10
+    const s: LRUCache.Status<number, number> = {}
+    const p = c.fetch(1, { status: s })
+    clock.advance(10)
+    t.equal(await p, 102)
+    t.equal(s.fetchTimedOut, undefined)
+    t.equal(s.returnedStale, undefined)
+    clock.advance(100)
+    await flush()
+    t.equal(peek(1), 102, 'not affected by the timer')
+  })
+
+  t.test('timeout: stale value, updated in the background', async t => {
+    clock.advance(1100)
+    delay = 100
+    const s: LRUCache.Status<number, number> = {}
+    const p = c.fetch(1, { status: s })
+    clock.advance(50)
+    t.equal(await p, 102)
+    t.equal(s.fetchTimedOut, true)
+    t.equal(s.returnedStale, true)
+    t.equal(
+      await c.fetch(1),
+      102,
+      'joins the pending fetch, stale at once',
+    )
+    t.equal(calls, 3)
+    clock.advance(50)
+    await flush()
+    t.equal(c.get(1), 103, 'updated when the fetchMethod resolved')
+  })
+
+  t.test('timeout, then rejection: refetch next time', async t => {
+    clock.advance(1100)
+    fail = true
+    const p = c.fetch(1)
+    clock.advance(50)
+    t.equal(await p, 103)
+    clock.advance(50)
+    await flush()
+    t.equal(c.has(1), false, 'deleted after the late rejection')
+    fail = false
+    delay = 10
+    const p2 = c.fetch(1)
+    clock.advance(10)
+    t.equal(await p2, 105, 'fetchMethod called again')
+  })
+
+  t.test('timeout, then abort: fetch() not affected', async t => {
+    clock.advance(1100)
+    delay = 100
+    const ac = new AbortController()
+    const p = c.fetch(1, { signal: ac.signal })
+    clock.advance(50)
+    t.equal(await p, 105)
+    ac.abort(new Error('too late'))
+    clock.advance(50)
+    await flush()
+    t.equal(c.get(1), 106)
+  })
+
+  t.test('abort before timeout', async t => {
+    clock.advance(1100)
+    const ac = new AbortController()
+    const p = c.fetch(1, { signal: ac.signal })
+    ac.abort(new Error('nope'))
+    await t.rejects(p)
+    clock.advance(100)
+    await flush()
+  })
+
+  t.test('per-call option', async t => {
+    c.set(2, 2)
+    clock.advance(1100)
+    const p = c.fetch(2, { staleFetchTimeout: 0 })
+    clock.advance(50)
+    await flush()
+    clock.advance(50)
+    t.equal(await p, 208, 'waited for the fetchMethod')
+  })
+})
