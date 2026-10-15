@@ -1633,14 +1633,20 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
             purgeTimers[index] = undefined
           }
           if (ttl && ttl !== 0 && purgeTimers) {
+            // setTimeout delays above 2^31-1 overflow, and fire after 1ms.
+            // If the item is not stale yet when a capped timer fires, then
+            // it is set again for the time that remains.
+            const delay = Math.min(ttl + 1, 2 ** 31 - 1)
             const t = setTimeout(() => {
               if (this.#isStale(index)) {
                 this.#delete(this.#keyList[index] as K, 'expire')
                 purgeTimers[index] = undefined
               } else {
-                setPurgeTimer(index, getRemainingTTL(index))
+                // if the timer fired exactly at the ttl (ttl === 2^31-1),
+                // the item is stale 1ms from now, not right now.
+                setPurgeTimer(index, getRemainingTTL(index) || 1)
               }
-            }, ttl + 1)
+            }, delay)
             // unref() not supported on all platforms
             /* c8 ignore start */
             if (t.unref) {
