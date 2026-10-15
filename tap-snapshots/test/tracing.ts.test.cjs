@@ -9115,16 +9115,20 @@ Array [
   },
   Object {
     "cache": LRUCache [],
+    "entrySize": 2,
     "key": 1,
     "op": "set",
     "set": "update",
+    "totalCalculatedSize": 2,
     "value": 1,
   },
   Object {
     "cache": LRUCache [],
+    "entrySize": 2,
     "key": 1,
     "op": "set",
     "set": "update",
+    "totalCalculatedSize": 2,
     "value": 1,
   },
   Object {
@@ -15480,6 +15484,345 @@ Map {
     "asyncEnd",
   ],
 }
+`
+
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > re-setting the same value does not dispose it metrics 1`] = `
+Array [
+  Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        Array [
+          1,
+          2,
+          3,
+        ],
+      ],
+    ],
+    "entrySize": 1,
+    "key": "a",
+    "op": "set",
+    "set": "add",
+    "totalCalculatedSize": 1,
+    "value": Array [
+      1,
+      2,
+      3,
+    ],
+  },
+  Object {
+    "cache": LRUCache [
+      Array [
+        "a",
+        Array [
+          1,
+          2,
+          3,
+        ],
+      ],
+    ],
+    "entrySize": 3,
+    "key": "a",
+    "op": "set",
+    "set": "update",
+    "totalCalculatedSize": 3,
+    "value": Array [
+      1,
+      2,
+      3,
+    ],
+  },
+]
+`
+
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > re-setting the same value does not dispose it traces 1`] = `
+Map {}
+`
+
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > re-setting the same value recalculates its size metrics 1`] = `
+Array [
+  Object {
+    "cache": LRUCache [
+      Array [
+        "b",
+        Array [
+          0,
+          0,
+          0,
+          0,
+          0,
+        ],
+      ],
+    ],
+    "entrySize": 3,
+    "key": "a",
+    "op": "set",
+    "set": "add",
+    "totalCalculatedSize": 3,
+    "value": Array [
+      1,
+      2,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+    ],
+  },
+  Object {
+    "cache": LRUCache [
+      Array [
+        "b",
+        Array [
+          0,
+          0,
+          0,
+          0,
+          0,
+        ],
+      ],
+    ],
+    "entrySize": 50,
+    "key": "a",
+    "op": "set",
+    "set": "update",
+    "totalCalculatedSize": 50,
+    "value": Array [
+      1,
+      2,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+    ],
+  },
+  Object {
+    "cache": LRUCache [
+      Array [
+        "b",
+        Array [
+          0,
+          0,
+          0,
+          0,
+          0,
+        ],
+      ],
+    ],
+    "entrySize": 60,
+    "key": "b",
+    "op": "set",
+    "set": "add",
+    "totalCalculatedSize": 60,
+    "value": Array [
+      0,
+      0,
+      0,
+      0,
+      0,
+    ],
+  },
+  Object {
+    "cache": LRUCache [
+      Array [
+        "b",
+        Array [
+          0,
+          0,
+          0,
+          0,
+          0,
+        ],
+      ],
+    ],
+    "get": "hit",
+    "key": "b",
+    "op": "get",
+    "value": Array [
+      0,
+      0,
+      0,
+      0,
+      0,
+    ],
+  },
+  Object {
+    "cache": LRUCache [
+      Array [
+        "b",
+        Array [
+          0,
+          0,
+          0,
+          0,
+          0,
+        ],
+      ],
+    ],
+    "entrySize": 5,
+    "key": "b",
+    "op": "set",
+    "set": "update",
+    "totalCalculatedSize": 5,
+    "value": Array [
+      0,
+      0,
+      0,
+      0,
+      0,
+    ],
+  },
+]
+`
+
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > re-setting the same value recalculates its size traces 1`] = `
+Map {}
+`
+
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > re-setting the same value with a new explicit size metrics 1`] = `
+Array [
+  Object {
+    "cache": LRUCache [],
+    "entrySize": 2,
+    "key": "a",
+    "op": "set",
+    "set": "add",
+    "totalCalculatedSize": 2,
+    "value": Object {},
+  },
+  Object {
+    "cache": LRUCache [],
+    "entrySize": 5,
+    "key": "b",
+    "op": "set",
+    "set": "add",
+    "totalCalculatedSize": 7,
+    "value": Object {},
+  },
+  Object {
+    "cache": LRUCache [],
+    "entrySize": 9,
+    "key": "a",
+    "op": "set",
+    "set": "update",
+    "totalCalculatedSize": 9,
+    "value": Object {},
+  },
+  Object {
+    "cache": LRUCache [],
+    "entrySize": 1,
+    "key": "a",
+    "op": "set",
+    "set": "update",
+    "totalCalculatedSize": 1,
+    "value": Object {},
+  },
+  Object {
+    "cache": LRUCache [],
+    "delete": "set",
+    "key": "a",
+    "op": "delete",
+  },
+  Object {
+    "cache": LRUCache [],
+    "key": "a",
+    "maxEntrySizeExceeded": true,
+    "op": "set",
+    "set": "miss",
+    "value": Object {},
+  },
+]
+`
+
+exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > re-setting the same value with a new explicit size traces 1`] = `
+Map {}
 `
 
 exports[`test/tracing.ts > TAP > test/tracing.ts > TAP > re-use key before initial fill completed metrics 1`] = `

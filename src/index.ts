@@ -2291,6 +2291,10 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
           }
         }
       } else if (!isBF) {
+        // same value, but it may have been mutated, or been given a
+        // different size, so the size still has to be recalculated.
+        this.#removeItemSize(index)
+        this.#addItemSize(index, size, status)
         if (status) {
           status.set = 'update'
         }
