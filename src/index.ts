@@ -2500,10 +2500,17 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
 
     const ac = new AbortController()
     const { signal } = options
-    // when/if our AC signals, then stop listening to theirs.
-    signal?.addEventListener('abort', () => ac.abort(signal.reason), {
-      signal: ac.signal,
-    })
+    // pass along an abort from their signal. This has to be removed when
+    // the fetch settles, or a long-lived signal would keep every handler
+    // (and everything in this scope) around until it aborts.
+    const onSignalAbort = () => ac.abort(signal?.reason)
+    const stopListening = () =>
+      signal?.removeEventListener('abort', onSignalAbort)
+    if (signal?.aborted) {
+      ac.abort(signal.reason)
+    } else {
+      signal?.addEventListener('abort', onSignalAbort)
+    }
 
     const fetchOpts = {
       signal: ac.signal,
@@ -2512,6 +2519,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     }
 
     const cb = (v: V | undefined, updateCache = false): V | undefined => {
+      stopListening()
       const { aborted } = ac.signal
       const ignoreAbort = options.ignoreFetchAbort && v !== undefined
       const proceed =
@@ -2551,6 +2559,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     }
 
     const eb = (er: unknown) => {
+      stopListening()
       if (options.status) {
         options.status.fetchRejected = true
         options.status.fetchError = er as Error
@@ -2599,7 +2608,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       // ignored, we go until we finish, regardless.
       // defer check until we are actually aborting,
       // so fetchMethod can override.
-      ac.signal.addEventListener('abort', () => {
+      const onAbort = () => {
         if (!options.ignoreFetchAbort || options.allowStaleOnFetchAbort) {
           res(undefined)
           // when it eventually resolves, update the cache.
@@ -2607,7 +2616,10 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
             res = v => cb(v, true)
           }
         }
-      })
+      }
+      ac.signal.addEventListener('abort', onAbort)
+      // the event does not fire if their signal was already aborted.
+      if (ac.signal.aborted) onAbort()
       if (fmp && fmp instanceof Promise) {
         fmp.then(v => res(v === undefined ? undefined : v), rej)
       } else if (fmp !== undefined) {
