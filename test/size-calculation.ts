@@ -278,3 +278,83 @@ t.test('maxEntrySize, no maxSize', async t => {
   t.equal(c.size, 2)
   t.equal(c.has(11), false)
 })
+
+t.test('re-setting the same value recalculates its size', t => {
+  const c = new LRU<string, number[]>({
+    maxSize: 100,
+    sizeCalculation: v => v.length,
+  })
+  const a = [1, 2, 3]
+  c.set('a', a)
+  checkSize(c)
+  t.equal(c.calculatedSize, 3)
+
+  // grow the same object in place, then set it again
+  a.push(...Array.from({ length: 47 }, () => 0))
+  const status: LRU.Status<string, number[]> = {}
+  c.set('a', a, { status })
+  checkSize(c)
+  t.equal(c.calculatedSize, 50)
+  t.equal(status.set, 'update')
+  t.equal(status.entrySize, 50)
+  t.equal(status.totalCalculatedSize, 50)
+
+  // 50 + 60 > 100, so the (now least recently used) a is evicted
+  c.set(
+    'b',
+    Array.from({ length: 60 }, () => 0),
+  )
+  checkSize(c)
+  t.same([...c.keys()], ['b'])
+  t.equal(c.calculatedSize, 60)
+
+  // and it can shrink as well
+  const b = c.get('b') as number[]
+  b.length = 5
+  c.set('b', b)
+  checkSize(c)
+  t.equal(c.calculatedSize, 5)
+  t.end()
+})
+
+t.test('re-setting the same value with a new explicit size', t => {
+  const c = new LRU<string, object>({ maxSize: 10 })
+  const v = {}
+  c.set('a', v, { size: 2 })
+  c.set('b', {}, { size: 5 })
+  checkSize(c)
+  t.equal(c.calculatedSize, 7)
+
+  c.set('a', v, { size: 9 })
+  checkSize(c)
+  t.equal(c.calculatedSize, 9, 'new size replaces old size')
+  t.same([...c.keys()], ['a'], 'b was evicted to make room')
+
+  c.set('a', v, { size: 1 })
+  checkSize(c)
+  t.equal(c.calculatedSize, 1)
+
+  // too big for the cache: the entry is removed, as with any other set
+  c.set('a', v, { size: 11 })
+  checkSize(c)
+  t.equal(c.size, 0)
+  t.equal(c.calculatedSize, 0)
+  t.end()
+})
+
+t.test('re-setting the same value does not dispose it', t => {
+  const disposed: unknown[] = []
+  const c = new LRU<string, number[]>({
+    maxSize: 100,
+    sizeCalculation: v => v.length,
+    dispose: (v, k, reason) => disposed.push([k, reason]),
+  })
+  const a = [1]
+  c.set('a', a)
+  a.push(2, 3)
+  c.set('a', a)
+  checkSize(c)
+  t.equal(c.calculatedSize, 3)
+  t.same(disposed, [])
+  t.end()
+})
