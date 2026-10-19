@@ -33,6 +33,11 @@ jobs:
           shell: bash
         - os: windows-latest
           shell: powershell
+        include:
+        - node-version: 26.x
+          platform:
+            os: ubuntu-latest
+            shell: bash
       fail-fast: false
 
     runs-on: ${{ matrix.platform.os }}

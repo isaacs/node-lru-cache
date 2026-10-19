@@ -1,11 +1,22 @@
 import t from 'tap'
 import actualDC from 'node:diagnostics_channel'
 
-t.test('diagnostics channel loads polyfills then fills in', async t => {
+t.test('diagnostics channel fills in after import', async t => {
+  let initialized: () => void = () => {}
+  const ready = new Promise<void>(resolve => {
+    initialized = resolve
+  })
   const dc = await t.mockImport<
     typeof import('../src/diagnostics-channel-esm.mjs')
   >('../src/diagnostics-channel-esm.mjs', {
-    'node:diagnostics_channel': actualDC,
+    'node:diagnostics_channel': {
+      ...actualDC,
+      tracingChannel: (name: string) => {
+        const channel = actualDC.tracingChannel(name)
+        initialized()
+        return channel
+      },
+    },
   })
   actualDC.subscribe('lru-cache:metrics', () => {})
   const tc = actualDC.tracingChannel('lru-cache')
@@ -17,12 +28,13 @@ t.test('diagnostics channel loads polyfills then fills in', async t => {
     end: () => {},
   })
 
-  // verify that the dummies were only used until being loaded
-  t.equal(dc.metrics.hasSubscribers, false)
-  t.equal(dc.tracing.hasSubscribers, false)
+  // The dynamic import can finish before or after mockImport resolves.
+  // Wait for initialization itself, rather than assuming either ordering.
   t.equal(actualDC.channel('lru-cache:metrics').hasSubscribers, true)
   t.equal(tc.hasSubscribers, true)
-  await new Promise<void>(res => setTimeout(res))
+  await ready
+  t.equal(dc.metrics, actualDC.channel('lru-cache:metrics'))
+  t.equal(dc.tracing.start, tc.start)
   t.equal(dc.metrics.hasSubscribers, true)
   t.equal(dc.tracing.hasSubscribers, true)
   t.equal(actualDC.channel('lru-cache:metrics').hasSubscribers, true)
