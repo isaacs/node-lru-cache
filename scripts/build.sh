@@ -15,6 +15,12 @@ esbuild --minify \
 
 esbuild --minify \
   --sourcemap \
+  --bundle dist/commonjs/react-native/index.js \
+  --outfile=dist/commonjs/react-native/index.min.js \
+  --format=cjs
+
+esbuild --minify \
+  --sourcemap \
   --bundle dist/commonjs/index.js \
   --outfile=dist/commonjs/index.min.js \
   --format=cjs
@@ -29,6 +35,12 @@ esbuild --minify \
   --sourcemap \
   --bundle dist/esm/browser/index.js \
   --outfile=dist/esm/browser/index.min.js \
+  --format=esm
+
+esbuild --minify \
+  --sourcemap \
+  --bundle dist/esm/react-native/index.js \
+  --outfile=dist/esm/react-native/index.min.js \
   --format=esm
 
 esbuild --minify \
