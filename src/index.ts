@@ -2113,17 +2113,18 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   load(arr: [K, LRUCache.Entry<V>][]) {
     this.clear()
     for (const [key, entry] of arr) {
-      if (entry.start) {
+      const options = { ...entry }
+      if (options.start) {
         // entry.start is a portable timestamp, but we may be using
         // node's performance.now(), so calculate the offset, so that
         // we get the intended remaining TTL, no matter how long it's
         // been on ice.
         //
         // it's ok for this to be a bit slow, it's a rare operation.
-        const age = Date.now() - entry.start
-        entry.start = this.#perf.now() - age
+        const age = Date.now() - options.start
+        options.start = this.#perf.now() - age
       }
-      this.#set(key, entry.value, entry)
+      this.#set(key, entry.value, options)
     }
   }
 
