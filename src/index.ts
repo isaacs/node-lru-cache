@@ -480,6 +480,21 @@ export namespace LRUCache {
      * be required.
      */
     context?: FC
+    /**
+     * Abort the fetch. The {@link FetcherOptions.signal} passed to the
+     * {@link OptionsBase.fetchMethod} is aborted, and the returned promise
+     * settles as {@link OptionsBase.allowStaleOnFetchAbort} and
+     * {@link OptionsBase.ignoreFetchAbort} specify.
+     *
+     * The cache listens on this signal until it aborts, and the listener
+     * keeps the background fetch reachable, including the stale value it
+     * replaced. If the fetch completes and the signal is never aborted,
+     * none of it can be garbage collected while the signal is alive.
+     *
+     * Use a new signal for each call, and abort it once the fetch settles,
+     * for example `cache.fetch(k, { signal: ac.signal }).finally(() =>
+     * ac.abort())`. Aborting after the fetch has settled has no effect.
+     */
     signal?: AbortSignal
     status?: Status<K, V, FC>
   }
