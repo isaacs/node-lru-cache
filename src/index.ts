@@ -2114,16 +2114,20 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     this.clear()
     for (const [key, entry] of arr) {
       if (entry.start) {
-        // entry.start is a portable timestamp, but we may be using
-        // node's performance.now(), so calculate the offset, so that
-        // we get the intended remaining TTL, no matter how long it's
-        // been on ice.
+        // entry.start is a portable Date.now()-based timestamp from dump(),
+        // but we may be using performance.now() internally. Convert for this
+        // set only — do not mutate the caller's dump entries, or a second
+        // load() of the same array treats every TTL as already expired.
         //
         // it's ok for this to be a bit slow, it's a rare operation.
         const age = Date.now() - entry.start
-        entry.start = this.#perf.now() - age
+        this.#set(key, entry.value, {
+          ...entry,
+          start: this.#perf.now() - age,
+        })
+      } else {
+        this.#set(key, entry.value, entry)
       }
-      this.#set(key, entry.value, entry)
     }
   }
 
