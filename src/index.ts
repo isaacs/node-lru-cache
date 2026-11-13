@@ -2308,7 +2308,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       }
       if (status) this.#statusTTL(status, index)
     }
-    if (!noDisposeOnSet && this.#hasDisposeAfter && this.#disposed) {
+    if (this.#hasDisposeAfter && this.#disposed) {
       const dt = this.#disposed
       let task: DisposeTask<K, V> | undefined
       while ((task = dt?.shift())) {
