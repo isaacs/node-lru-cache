@@ -3129,14 +3129,20 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
         } else {
           this.#removeItemSize(index)
           const v = this.#valList[index]
-          if (this.#isBackgroundFetch(v)) {
+          const isBF = this.#isBackgroundFetch(v)
+          if (isBF) {
             v.__abortController.abort(new Error('deleted'))
-          } else if (this.#hasDispose || this.#hasDisposeAfter) {
+          }
+          const oldValue = isBF ? v.__staleWhileFetching : v
+          if (
+            oldValue !== undefined &&
+            (this.#hasDispose || this.#hasDisposeAfter)
+          ) {
             if (this.#hasDispose) {
-              this.#dispose?.(v as V, k, reason)
+              this.#dispose?.(oldValue, k, reason)
             }
             if (this.#hasDisposeAfter) {
-              this.#disposed?.push([v as V, k, reason])
+              this.#disposed?.push([oldValue, k, reason])
             }
           }
           this.#keyMap.delete(k)
@@ -3176,15 +3182,18 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   #clear(reason: LRUCache.DisposeReason) {
     for (const index of this.#rindexes({ allowStale: true })) {
       const v = this.#valList[index]
-      if (this.#isBackgroundFetch(v)) {
+      const isBF = this.#isBackgroundFetch(v)
+      if (isBF) {
         v.__abortController.abort(new Error('deleted'))
-      } else {
+      }
+      const oldValue = isBF ? v.__staleWhileFetching : v
+      if (oldValue !== undefined) {
         const k = this.#keyList[index]
         if (this.#hasDispose) {
-          this.#dispose?.(v as V, k as K, reason)
+          this.#dispose?.(oldValue, k as K, reason)
         }
         if (this.#hasDisposeAfter) {
-          this.#disposed?.push([v as V, k as K, reason])
+          this.#disposed?.push([oldValue, k as K, reason])
         }
       }
     }
