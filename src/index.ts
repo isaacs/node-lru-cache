@@ -2246,12 +2246,12 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       this.#moveToTail(index)
       const oldVal = this.#valList[index]!
       if (v !== oldVal) {
-        if (!noDisposeOnSet) {
-          if (this.#isBackgroundFetch(oldVal)) {
-            if (oldVal !== bf) {
-              // setting over a background fetch, not merely resolving it.
-              oldVal.__abortController.abort(new Error('replaced'))
-            }
+        if (this.#isBackgroundFetch(oldVal)) {
+          if (oldVal !== bf) {
+            // setting over a background fetch, not merely resolving it.
+            oldVal.__abortController.abort(new Error('replaced'))
+          }
+          if (!noDisposeOnSet) {
             const { __staleWhileFetching: s } = oldVal
             if (s !== undefined && s !== v) {
               if (this.#hasDispose) {
@@ -2261,13 +2261,13 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
                 this.#disposed?.push([s, k, 'set'])
               }
             }
-          } else {
-            if (this.#hasDispose) {
-              this.#dispose?.(oldVal, k, 'set')
-            }
-            if (this.#hasDisposeAfter) {
-              this.#disposed?.push([oldVal, k, 'set'])
-            }
+          }
+        } else if (!noDisposeOnSet) {
+          if (this.#hasDispose) {
+            this.#dispose?.(oldVal, k, 'set')
+          }
+          if (this.#hasDisposeAfter) {
+            this.#disposed?.push([oldVal, k, 'set'])
           }
         }
         this.#removeItemSize(index)
