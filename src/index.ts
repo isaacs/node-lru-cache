@@ -2328,7 +2328,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
         const val = this.#valList[this.#head]
         this.#evict(true)
         if (this.#isBackgroundFetch(val)) {
-          if (val.__staleWhileFetching) {
+          if (val.__staleWhileFetching !== undefined) {
             return val.__staleWhileFetching
           }
         } else if (val !== undefined) {

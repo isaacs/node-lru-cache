@@ -76,3 +76,66 @@ t.test('pop calls dispose and disposeAfter', t => {
   t.equal(disposeAfterCalled, 3)
   t.end()
 })
+
+for (const value of [0, -0, false, '', NaN, 0n]) {
+  for (const expired of [false, true]) {
+    for (const withNext of [false, true]) {
+      t.test(
+        'pop refreshing ' +
+          String(value) +
+          (expired ? ' after expiry' : ' when forced') +
+          (withNext ? ' before another entry' : ' alone'),
+        async t => {
+          let now = 1
+          let finish!: (result: typeof value | number) => void
+          let signal!: AbortSignal
+          const disposed: unknown[][] = []
+          const after: unknown[][] = []
+          const c = new LRU<string, typeof value | number>({
+            max: 2,
+            ttl: 1,
+            ttlResolution: 0,
+            perf: { now: () => now },
+            dispose: (...event) => disposed.push(event),
+            disposeAfter: (...event) => after.push(event),
+            fetchMethod: (_key, _previous, options) => {
+              signal = options.signal
+              return new Promise(resolve => {
+                finish = resolve
+              })
+            },
+          })
+          c.set('refreshing', value)
+          if (expired) now = 3
+          const work = c
+            .fetch('refreshing', { forceRefresh: !expired })
+            .then(
+              result => ({ result }),
+              error => ({ error }),
+            )
+          if (withNext) c.set('next', 123, { ttl: 0 })
+          t.equal(
+            Object.is(c.pop(), value),
+            true,
+            'returns the previous value',
+          )
+          t.equal(
+            c.size,
+            withNext ? 1 : 0,
+            'only removes one stored value',
+          )
+          t.equal(c.peek('next'), withNext ? 123 : undefined)
+          t.same(disposed, [[value, 'refreshing', 'evict']])
+          t.same(after, [[value, 'refreshing', 'evict']])
+          t.equal(signal.aborted, true, 'cancels the removed refresh')
+          finish(999)
+          t.match(await work, { error: { message: 'evicted' } })
+          t.equal(c.has('refreshing'), false, 'late result is not stored')
+          if (withNext)
+            t.equal(c.pop(), 123, 'next value remains available')
+          t.equal(c.pop(), undefined, 'empty cache returns undefined')
+        },
+      )
+    }
+  }
+}
