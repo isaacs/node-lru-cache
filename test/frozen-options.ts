@@ -41,6 +41,33 @@ t.test('reusing options does not reuse generated status', t => {
   t.end()
 })
 
+t.test('reusing options for concurrent fetches', async t => {
+  const metrics = channel('lru-cache:metrics')
+  const statuses = new Map<string, LRUCache.Status<string, number>>()
+  const resolvers = new Map<string, (v: number) => void>()
+  const cache = new LRUCache<string, number>({
+    max: 10,
+    fetchMethod: (k, _v, { options }) => {
+      statuses.set(k, options.status!)
+      return new Promise<number>(resolve => resolvers.set(k, resolve))
+    },
+  })
+  const listener = () => {}
+  metrics.subscribe(listener)
+  t.teardown(() => metrics.unsubscribe(listener))
+  const options = {}
+  const one = cache.fetch('one', options)
+  const two = cache.fetch('two', options)
+  t.equal(resolvers.size, 2, 'both fetches pending')
+  resolvers.get('one')!(1)
+  resolvers.get('two')!(2)
+  t.equal(await one, 1)
+  t.equal(await two, 2)
+  t.not(statuses.get('one'), statuses.get('two'))
+  t.equal(statuses.get('one')?.key, 'one')
+  t.equal(statuses.get('two')?.key, 'two')
+})
+
 for (const subscribed of [false, true]) {
   t.test(`frozen options, diagnostics ${subscribed}`, async t => {
     const metrics = channel('lru-cache:metrics')
