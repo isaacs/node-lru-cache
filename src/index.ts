@@ -2163,14 +2163,13 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     setOptions: LRUCache.SetOptions<K, V, FC> = {},
   ) {
     const { status = metrics.hasSubscribers ? {} : undefined } = setOptions
-    setOptions.status = status
     if (status) {
       status.op = 'set'
       status.key = k
       if (v !== undefined) status.value = v
       status.cache = this
     }
-    const result = this.#set(k, v, setOptions)
+    const result = this.#set(k, v, setOptions, undefined, status)
     if (status && metrics.hasSubscribers) {
       metrics.publish(status)
     }
@@ -2182,13 +2181,13 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     v: V | BackgroundFetch<V> | undefined,
     setOptions: LRUCache.SetOptions<K, V, FC>,
     bf?: BackgroundFetch<V>,
+    status = setOptions.status,
   ) {
     const {
       ttl = this.ttl,
       start,
       noDisposeOnSet = this.noDisposeOnSet,
       sizeCalculation = this.sizeCalculation,
-      status,
     } = setOptions
 
     const isBF = this.#isBackgroundFetch(v)
@@ -2406,18 +2405,21 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
    */
   has(k: K, hasOptions: LRUCache.HasOptions<K, V, FC> = {}) {
     const { status = metrics.hasSubscribers ? {} : undefined } = hasOptions
-    hasOptions.status = status
     if (status) {
       status.op = 'has'
       status.key = k
       status.cache = this
     }
-    const result = this.#has(k, hasOptions)
+    const result = this.#has(k, hasOptions, status)
     if (metrics.hasSubscribers) metrics.publish(status)
     return result
   }
-  #has(k: K, hasOptions: LRUCache.HasOptions<K, V, FC> = {}) {
-    const { updateAgeOnHas = this.updateAgeOnHas, status } = hasOptions
+  #has(
+    k: K,
+    hasOptions: LRUCache.HasOptions<K, V, FC> = {},
+    status = hasOptions.status,
+  ) {
+    const { updateAgeOnHas = this.updateAgeOnHas } = hasOptions
     const index = this.#keyMap.get(k)
     if (index !== undefined) {
       const v = this.#valList[index]
@@ -2460,15 +2462,18 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       status.key = k
       status.cache = this
     }
-    peekOptions.status = status
-    const result = this.#peek(k, peekOptions)
+    const result = this.#peek(k, peekOptions, status)
     if (metrics.hasSubscribers) {
       metrics.publish(status)
     }
     return result
   }
-  #peek(k: K, peekOptions: LRUCache.PeekOptions<K, V, FC>) {
-    const { status, allowStale = this.allowStale } = peekOptions
+  #peek(
+    k: K,
+    peekOptions: LRUCache.PeekOptions<K, V, FC>,
+    status = peekOptions.status,
+  ) {
+    const { allowStale = this.allowStale } = peekOptions
     const index = this.#keyMap.get(k)
     if (index === undefined || (!allowStale && this.#isStale(index))) {
       if (status) status.peek = index === undefined ? 'miss' : 'stale'
@@ -2758,11 +2763,10 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   ): Promise<undefined | V> {
     const ths = tracing.hasSubscribers
     const { status = hasSubscribers() ? {} : undefined } = fetchOptions
-    fetchOptions.status = status
     if (status && fetchOptions.context) {
       status.context = fetchOptions.context
     }
-    const p = this.#fetch(k, fetchOptions)
+    const p = this.#fetch(k, fetchOptions, status)
     if (status && ths) {
       status.trace = true
       tracing.tracePromise(() => p, status).catch(() => {})
@@ -2773,6 +2777,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   async #fetch(
     k: K,
     fetchOptions: LRUCache.FetchOptions<K, V, FC> = {},
+    status = fetchOptions.status,
   ): Promise<undefined | V> {
     const {
       // get options
@@ -2792,7 +2797,6 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       allowStaleOnFetchAbort = this.allowStaleOnFetchAbort,
       context,
       forceRefresh = false,
-      status,
       signal,
     } = fetchOptions
     if (status) {
@@ -2908,11 +2912,10 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   ): Promise<V> {
     const ths = tracing.hasSubscribers
     const { status = hasSubscribers() ? {} : undefined } = fetchOptions
-    fetchOptions.status = status
     if (status && fetchOptions.context) {
       status.context = fetchOptions.context
     }
-    const p = this.#forceFetch(k, fetchOptions)
+    const p = this.#forceFetch(k, fetchOptions, status)
     if (status && ths) {
       status.trace = true
       tracing.tracePromise(() => p, status).catch(() => {})
@@ -2923,8 +2926,9 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   async #forceFetch(
     k: K,
     fetchOptions: LRUCache.FetchOptions<K, V, FC> = {},
+    status = fetchOptions.status,
   ) {
-    const v = await this.#fetch(k, fetchOptions)
+    const v = await this.#fetch(k, fetchOptions, status)
     if (v === undefined) throw new Error('fetch() returned undefined')
     return v
   }
@@ -2961,7 +2965,6 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
   memo(k: K, memoOptions: LRUCache.MemoOptions<K, V, FC> = {}) {
     const { status = metrics.hasSubscribers ? {} : undefined } =
       memoOptions
-    memoOptions.status = status
     if (status) {
       status.op = 'memo'
       status.key = k
@@ -2970,17 +2973,22 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
       }
       status.cache = this
     }
-    const result = this.#memo(k, memoOptions)
+    const result = this.#memo(k, memoOptions, status)
     if (status) status.value = result
     if (metrics.hasSubscribers) metrics.publish(status)
     return result
   }
-  #memo(k: K, memoOptions: LRUCache.MemoOptions<K, V, FC> = {}) {
+  #memo(
+    k: K,
+    memoOptions: LRUCache.MemoOptions<K, V, FC> = {},
+    operationStatus = memoOptions.status,
+  ) {
     const memoMethod = this.#memoMethod
     if (!memoMethod) {
       throw new Error('no memoMethod provided to constructor')
     }
-    const { context, status, forceRefresh, ...options } = memoOptions
+    const { context, status = operationStatus, forceRefresh, ...options } =
+      memoOptions
     if (status && forceRefresh) status.forceRefresh = true
     const v = this.#get(k, options)
     const refresh = forceRefresh || v === undefined
@@ -3006,13 +3014,12 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
    */
   get(k: K, getOptions: LRUCache.GetOptions<K, V, FC> = {}) {
     const { status = metrics.hasSubscribers ? {} : undefined } = getOptions
-    getOptions.status = status
     if (status) {
       status.op = 'get'
       status.key = k
       status.cache = this
     }
-    const result = this.#get(k, getOptions)
+    const result = this.#get(k, getOptions, status)
     if (status) {
       if (result !== undefined) status.value = result
       if (metrics.hasSubscribers) metrics.publish(status)
@@ -3020,12 +3027,15 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown> {
     return result
   }
 
-  #get(k: K, getOptions: LRUCache.GetOptions<K, V, FC> = {}) {
+  #get(
+    k: K,
+    getOptions: LRUCache.GetOptions<K, V, FC> = {},
+    status = getOptions.status,
+  ) {
     const {
       allowStale = this.allowStale,
       updateAgeOnGet = this.updateAgeOnGet,
       noDeleteOnStaleGet = this.noDeleteOnStaleGet,
-      status,
     } = getOptions
     const index = this.#keyMap.get(k)
     if (index === undefined) {
